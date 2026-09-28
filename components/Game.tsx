@@ -15,6 +15,8 @@ import type { PublicPlayer, RoomState } from '@/lib/types';
 import { Icon } from './icons';
 import { Lobby } from './Lobby';
 import { Reactions } from './Reactions';
+import { ActionFeed } from './ActionFeed';
+import { SettingsButton } from './SettingsPanel';
 import { AnswerPhase, DuelIntro, Finished, GuessPhase, Rack, ReactPhase, RevealPhase, type Act } from './phases';
 import { Header, Hud, TimeBar, Toast } from './ui';
 
@@ -31,6 +33,7 @@ export function Game({ state, token, offset, refresh }: {
   state: RoomState; token: string | null; offset: number; refresh: () => Promise<void>;
 }) {
   const [toast, setToast] = useState<{ msg: string; good?: boolean } | null>(null);
+  const [confirmQuit, setConfirmQuit] = useState(false);
   const msLeft = useCountdown(state.room.phase_ends_at, offset);
   const phase = state.room.phase;
   const me = state.me;
@@ -136,7 +139,7 @@ export function Game({ state, token, offset, refresh }: {
     const before = knownOut.current;
     knownOut.current = out;
     if (!before || phase === 'lobby' || phase === 'finished') return;
-    const fresh = state.players.filter((p) => out.has(p.id) && !before.has(p.id));
+    const fresh = state.players.filter((p) => out.has(p.id) && !before.has(p.id) && !p.quit);
     if (fresh.length === 0) return;
     const names = fresh.map((p, i) => (p.id === me?.id ? 'You' : classCall(p, state.players, i === 0)));
     announcer.say(`${names.join(' and ')} ${names.length === 1 && names[0] !== 'You' ? 'is' : 'are'} out!`, { delay: 1600 });
@@ -166,16 +169,17 @@ export function Game({ state, token, offset, refresh }: {
     if (secs % 2 === 0) audio.tick(false);
   }, [secs, phase, msLeft]);
 
-  async function leave() {
+  async function leave(delayMs = 0) {
     if (token) { try { await rpc.leave(token); } catch { /* ignore */ } }
     clearSession(state.room.code);
-    window.location.href = '/';
+    window.setTimeout(() => { window.location.href = '/'; }, delayMs);
   }
 
+  const midGame = phase !== 'lobby' && phase !== 'finished' && !!me && !me.eliminated;
   const props = { state, token, msLeft, act };
   let main: React.ReactNode;
   switch (phase) {
-    case 'lobby': main = <Lobby state={state} token={token} act={act} />; break;
+    case 'lobby': main = <Lobby state={state} token={token} act={act} onLeave={() => void leave()} />; break;
     case 'answer': main = <AnswerPhase {...props} />; break;
     case 'reveal': main = <RevealPhase {...props} />; break;
     case 'guess': main = <GuessPhase {...props} />; break;
@@ -189,12 +193,16 @@ export function Game({ state, token, offset, refresh }: {
   return (
     <MotionConfig reducedMotion="user">
       <div className="shell">
-        <Header right={
-          <>
-            <span className="room-chip">{state.room.code}</span>
-            {me ? <button className="textbtn" onClick={leave}>Leave</button> : <Link className="textbtn" href="/">Home</Link>}
-          </>
-        } />
+        <Header
+          settings={<SettingsButton state={state} token={token} act={act} />}
+          right={
+            <>
+              <span className="room-chip">{state.room.code}</span>
+              {!me ? <Link className="textbtn" href="/">Home</Link>
+                : midGame ? <button className="textbtn danger" onClick={() => setConfirmQuit(true)}><Icon name="logout" size={15} /> Quit</button>
+                : <button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> Leave</button>}
+            </>
+          } />
         {phase !== 'lobby' && <Hud state={state} meId={me?.id ?? null} />}
         <AnimatePresence>
           {me?.eliminated && phase !== 'finished' && (
@@ -223,6 +231,26 @@ export function Game({ state, token, offset, refresh }: {
       </div>
       <Rack state={state} token={token} act={act} />
       <Reactions state={state} token={token} />
+      <ActionFeed state={state} />
+      <AnimatePresence>
+        {confirmQuit && (
+          <motion.div className="sheet-backdrop" onClick={() => setConfirmQuit(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div className="sheet quit-sheet" role="dialog" aria-modal="true" aria-label="Quit the game?" onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 460, damping: 28 }}>
+              <motion.div className="quit-art" animate={{ rotate: [0, -12, 10, -6, 0] }} transition={{ repeat: Infinity, duration: 1.4 }}>
+                <Icon name="feather" size={44} />
+              </motion.div>
+              <h2>Rage quit?</h2>
+              <p className="muted">You&apos;re out for the rest of this game, and the whole room hears that you chickened out.</p>
+              <div className="row" style={{ justifyContent: 'center', gap: 10 }}>
+                <button className="btn ghost" onClick={() => setConfirmQuit(false)}>Keep playing</button>
+                <button className="btn danger" onClick={() => { audio.chicken(); setConfirmQuit(false); void leave(1300); }}>Quit anyway</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <Toast msg={toast?.msg ?? null} good={toast?.good} onDone={clearToast} />
     </MotionConfig>
   );

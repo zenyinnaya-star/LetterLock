@@ -3,7 +3,7 @@ const MESSAGES: Record<string, string> = {
   CLASS_REQUIRED: 'Pick a class first.',
   ROOM_NOT_FOUND: "That room doesn't exist. Check the code.",
   GAME_IN_PROGRESS: 'That game already started — you can watch as a spectator.',
-  ROOM_FULL: 'That room is full (8 players max).',
+  ROOM_FULL: 'That room is full.',
   NAME_TAKEN: 'Someone in the room already has that name.',
   BAD_TOKEN: 'Your seat in this room was lost. Rejoin from the home page.',
   NOT_HOST: 'Only the host can do that.',
@@ -24,7 +24,11 @@ const MESSAGES: Record<string, string> = {
   PERK_USED: "You've already used your perk.",
   PERK_NOT_READY: 'Ninja vision unlocks from round 3.',
   NOTHING_TO_ABSORB: 'Nothing is aimed at that player.',
-  NO_ACTIVE_PERK: 'The Villain perk is passive — your attacks hit twice as hard.',
+  NO_ACTIVE_PERK: 'Your perk is passive — it kicks in when you play an Attack card.',
+  PERKS_OFF: 'Class perks are switched off in this room.',
+  NOT_HACKED: "You're not hacked right now.",
+  ALREADY_TRACED: 'You already used your trace this round.',
+  SLOW_DOWN: 'Easy — one at a time.',
 };
 
 export const REASONS: Record<string, string> = {

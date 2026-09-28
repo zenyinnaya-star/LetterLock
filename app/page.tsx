@@ -88,7 +88,7 @@ export default function Home() {
       </motion.div>
 
       <p className="center muted small" style={{ marginTop: 6 }}>
-        2–8 players · each on their own device · <Link href="/how-to-play">Read the rules</Link>
+        2–12 players · each on their own device · <Link href="/how-to-play">Read the rules</Link>
       </p>
     </main>
   );

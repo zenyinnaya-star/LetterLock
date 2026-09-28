@@ -4,7 +4,7 @@ import { ThemeMusic } from '@/components/ThemeMusic';
 
 export const metadata: Metadata = {
   title: 'Letterlock — the word game that fights back',
-  description: 'A real-time multiplayer word game. Every round you survive, another letter gets locked. 2–8 players.',
+  description: 'A real-time multiplayer word game. Every round you survive, another letter gets locked. 2–12 players.',
 };
 
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#0b0d1b' };

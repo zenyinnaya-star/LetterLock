@@ -21,9 +21,14 @@ export const CLASSES: Record<PlayerClass, { name: string; tagline: string; perk:
     perk: 'Your Attack cards add 2 letters instead of 1.',
     cost: "You can't use Shield cards.",
   },
+  hacker: {
+    name: 'Hacker', tagline: 'Ghost in the machine',
+    perk: 'Your Attack cards are anonymous hacks: the victim plays next round without seeing their own locks.',
+    cost: 'A hacked player gets one trace. If they name you, you are exposed and your own locks go dark for a round.',
+  },
 };
 
-export const CLASS_ORDER: PlayerClass[] = ['ninja', 'mastermind', 'hero', 'villain'];
+export const CLASS_ORDER: PlayerClass[] = ['ninja', 'mastermind', 'hero', 'villain', 'hacker'];
 
 export const CARD_INFO: Record<CardKind, { name: string; text: string }> = {
   attack: { name: 'Attack', text: 'Add a letter to someone' },

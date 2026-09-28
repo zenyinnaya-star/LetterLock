@@ -1,5 +1,6 @@
 // Game-show announcer using the browser's built-in speech synthesis (free, works offline, speaks player names).
 import { audio } from './audio';
+import { getPrefs } from './prefs';
 
 let voice: SpeechSynthesisVoice | null = null;
 let unlocked = false;
@@ -42,7 +43,7 @@ export const announcer = {
   },
   say(text: string, opts: { delay?: number; urgent?: boolean; hype?: boolean } = {}) {
     const s = synth();
-    if (!s || audio.isMuted()) return;
+    if (!s || audio.isMuted() || !getPrefs().voice) return;
     const go = () => {
       if (audio.isMuted()) return;
       if (opts.urgent) s.cancel();

@@ -7,6 +7,7 @@ import { audio } from '@/lib/audio';
 import { CLASSES, CLASS_ORDER } from '@/lib/classes';
 import type { PlayerClass, PublicPlayer, RoomState } from '@/lib/types';
 import { ClassIcon, Icon } from './icons';
+import { SettingsButton } from './SettingsPanel';
 
 export const spring = { type: 'spring', stiffness: 520, damping: 26 } as const;
 export const softSpring = { type: 'spring', stiffness: 260, damping: 24 } as const;
@@ -21,7 +22,7 @@ export function Wordmark() {
   );
 }
 
-export function Header({ right }: { right?: React.ReactNode }) {
+export function Header({ right, settings }: { right?: React.ReactNode; settings?: React.ReactNode }) {
   const [muted, setMuted] = useState(false);
   useEffect(() => setMuted(audio.isMuted()), []);
   return (
@@ -29,7 +30,8 @@ export function Header({ right }: { right?: React.ReactNode }) {
       <Wordmark />
       <div className="tools">
         {right}
-        <Link href="/how-to-play" className="textbtn" target="_blank">Rules</Link>
+        <Link href="/how-to-play" className="textbtn rules-link" target="_blank">Rules</Link>
+        {settings ?? <SettingsButton state={null} token={null} />}
         <button className="iconbtn" aria-label={muted ? 'Unmute' : 'Mute'} title={muted ? 'Unmute' : 'Mute'}
           onClick={() => { audio.setMuted(!muted); setMuted(!muted); }}>
           <Icon name={muted ? 'mute' : 'volume'} />
@@ -168,7 +170,10 @@ function HudChip({ p, me, phase }: { p: PublicPlayer; me: boolean; phase: RoomSt
         <span className="nm">
           {p.name}
           {p.is_host && <span className="host" title="Host"><Icon name="crown" size={13} /></span>}
-          {p.eliminated && <span title="Eliminated" style={{ color: 'var(--lock)' }}><Icon name="x" size={13} strokeWidth={3} /></span>}
+          {p.eliminated && !p.quit && <span title="Eliminated" style={{ color: 'var(--lock)' }}><Icon name="x" size={13} strokeWidth={3} /></span>}
+          {p.quit && <span className="tagchip chicken" title="Rage quit">chicken</span>}
+          {p.exposed && <span className="tagchip exposed" title="Caught hacking">exposed</span>}
+          {p.hacked && <span className="tagchip hacked" title="Hacked — can't see their own locks"><Icon name="glitch" size={11} /> hacked</span>}
         </span>
         <span className="stats">
           <span className="stat" title="Banned letters"><Icon name="lock" size={12} />{p.letter_count}</span>

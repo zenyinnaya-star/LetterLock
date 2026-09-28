@@ -1,5 +1,5 @@
 export type Phase = 'lobby' | 'answer' | 'reveal' | 'guess' | 'react' | 'duel_intro' | 'finished';
-export type PlayerClass = 'ninja' | 'mastermind' | 'hero' | 'villain';
+export type PlayerClass = 'ninja' | 'mastermind' | 'hero' | 'villain' | 'hacker';
 export type CardKind = 'attack' | 'shield' | 'cleanse';
 
 export interface PublicPlayer {
@@ -19,6 +19,9 @@ export interface PublicPlayer {
   letters: string[] | null; // only for spectators / game over
   answered: boolean;
   guessed: boolean;
+  quit: boolean;
+  exposed: boolean;
+  hacked: boolean;
 }
 
 export interface IntelNinja { kind: 'ninja'; round: number; letters: string[] }
@@ -35,7 +38,9 @@ export interface Me {
   points: number;
   eliminated: boolean;
   perk_used: boolean;
-  letters: { letter: string; revealed: boolean }[];
+  hacked: boolean;
+  can_trace: boolean;
+  letters: { letter: string; revealed: boolean; hidden?: boolean }[];
   cards: { id: number; kind: CardKind }[];
   answer: { word: string; valid: boolean; reason: string | null; points: number } | null;
   guess: { target_id: string; letter: string; correct: boolean } | null;
@@ -46,7 +51,7 @@ export interface Me {
 export interface RevealRow { player_id: string; word: string; valid: boolean; reason: string | null; points: number }
 export interface GuessResult { guesser_id: string; target_id: string; correct: boolean; letter: string | null }
 export interface Pending {
-  id: number; target_id: string; source_id: string | null; kind: 'attack' | 'ninja';
+  id: number; target_id: string; source_id: string | null; kind: 'attack' | 'ninja' | 'hack';
   amount: number; status: 'pending' | 'blocked' | 'applied'; absorbed_by: string | null;
 }
 
@@ -62,6 +67,7 @@ export interface RoomState {
     winner_id: string | null;
     phase_ends_at: string | null;
     answer_seconds: number;
+    settings: RoomSettings;
   };
   prompt: string | null;
   me: Me | null;
@@ -70,7 +76,32 @@ export interface RoomState {
   reveal: RevealRow[];
   guess_results: GuessResult[];
   pending: Pending[];
+  feed: FeedItem[];
   titles: { champion: string | null; einstein: string | null; villain: string | null } | null;
 }
 
 export interface Session { token: string; playerId: string }
+
+export interface RoomSettings {
+  max_players: number;
+  answer_seconds: number;
+  shrink: boolean;
+  guess_seconds: number;
+  react_seconds: number;
+  duel_seconds: number;
+  cards: boolean;
+  perks: boolean;
+  strikes: number;
+}
+
+export type FeedType = 'attack' | 'hack' | 'block' | 'cleanse' | 'absorb' | 'caught' | 'trace_miss' | 'chicken';
+export interface FeedItem {
+  id: number;
+  round: number;
+  type: FeedType;
+  from: string | null;
+  to?: string | null;
+  amount?: number;
+  what?: string;
+  name?: string;
+}

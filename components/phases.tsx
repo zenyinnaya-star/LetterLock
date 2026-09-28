@@ -61,7 +61,7 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
   useEffect(() => { setWord(''); inputRef.current?.focus(); }, [state.room.round]);
 
   const clean = word.toLowerCase().replace(/[^a-z]/g, '');
-  const hasBanned = clean.toUpperCase().split('').some((c) => banned.has(c));
+  const hasBanned = !me?.hacked && clean.toUpperCase().split('').some((c) => banned.has(c));
   const canPlay = !!me && !me.eliminated && !!token;
 
   async function submit() {
@@ -78,6 +78,12 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
       <motion.h1 className="prompt" initial={{ opacity: 0, scale: 0.85, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={softSpring}>
         {state.prompt}
       </motion.h1>
+      {canPlay && me.hacked && (
+        <motion.div className="note hack" style={{ maxWidth: 620, margin: '0 auto', width: '100%' }}
+          initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1, x: [0, -3, 3, 0] }} transition={{ x: { repeat: 3, duration: 0.2 } }}>
+          <Icon name="terminal" size={16} /> You&apos;ve been hacked — your locks are hidden this round. Play carefully{me.can_trace ? ', and trace the hacker from your rack' : ''}.
+        </motion.div>
+      )}
       {canPlay ? (
         <div className="narrow-col">
           <form className="col" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
@@ -87,9 +93,9 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
             <div className="word-preview" aria-hidden>
               <AnimatePresence initial={false} mode="popLayout">
                 {clean.toUpperCase().split('').map((c, i) => (
-                  <motion.span key={`${i}-${c}`} layout className={`ch${banned.has(c) ? ' bad' : ''}`}
+                  <motion.span key={`${i}-${c}`} layout className={`ch${!me?.hacked && banned.has(c) ? ' bad' : ''}`}
                     initial={{ y: -10, opacity: 0, scale: 0.6 }}
-                    animate={banned.has(c) ? { y: 0, opacity: 1, scale: 1, x: [0, -4, 4, -3, 0] } : { y: 0, opacity: 1, scale: 1 }}
+                    animate={!me?.hacked && banned.has(c) ? { y: 0, opacity: 1, scale: 1, x: [0, -4, 4, -3, 0] } : { y: 0, opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.5 }} transition={{ duration: 0.22 }}>
                     {c}
                   </motion.span>
@@ -243,16 +249,18 @@ export function ReactPhase({ state, token, msLeft, act }: PhaseProps) {
             <motion.div key={`p-${p.id}`} layout className={`feed-item${p.status === 'blocked' ? ' blocked' : ''}`}
               initial={{ opacity: 0, x: 30, scale: 0.9 }} animate={{ opacity: 1, x: 0, scale: 1 }} transition={stagger(i++)}>
               <span className={`glyph ${p.status === 'blocked' ? 'block' : 'hit'}`}>
-                <Icon name={p.status === 'blocked' ? 'shield' : p.kind === 'ninja' ? 'eye' : 'burst'} size={16} />
+                <Icon name={p.status === 'blocked' ? 'shield' : p.kind === 'ninja' ? 'eye' : p.kind === 'hack' ? 'terminal' : 'burst'} size={16} />
               </span>
               <span className="txt">
                 {p.kind === 'ninja'
                   ? <>Ninja penalty: <b>{nameOf(state, p.target_id)}</b> takes +{p.amount} letters</>
+                  : p.kind === 'hack'
+                  ? <><b>{p.source_id ? nameOf(state, p.source_id) : 'Someone'}</b> hacks <b>{nameOf(state, p.target_id)}</b> (+{p.amount}, locks hidden next round)</>
                   : <><b>{nameOf(state, p.source_id)}</b> attacks <b>{nameOf(state, p.target_id)}</b> (+{p.amount})</>}
                 {p.absorbed_by && <> — absorbed by {nameOf(state, p.absorbed_by)}</>}
                 {p.status === 'blocked' && <> — blocked</>}
               </span>
-              {canPlay && me.class === 'hero' && !me.perk_used && p.status === 'pending' && p.target_id !== me.id && (
+              {canPlay && me.class === 'hero' && !me.perk_used && state.room.settings.perks && p.status === 'pending' && p.target_id !== me.id && (
                 <button className="btn sm ok" onClick={() => token && void act(() => rpc.usePerk(token, p.target_id), 'Absorbed! +5 points')}>
                   Take the hit (+5)
                 </button>
@@ -302,7 +310,7 @@ export function DuelIntro({ state }: PhaseProps) {
         </motion.div>
       </div>
       <motion.div className="center muted" style={{ maxWidth: 440 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
-        +1 letter each · 20-second rounds · strikes never reset. Last one standing wins.
+        +1 letter each · {state.room.settings.duel_seconds}-second rounds · strikes never reset. Last one standing wins.
         {[a, b].some((p) => p.class === 'hero') && <><br />The Hero&apos;s comeback: cut down to a single letter.</>}
       </motion.div>
     </div>
@@ -321,10 +329,10 @@ export function Finished({ state, token, act }: PhaseProps) {
   ];
   return (
     <>
-      <div className="winner">
+      <div className="winner victory-stage">
         {winner && (
           <motion.div initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 14 }}>
-            <ClassIcon cls={winner.class} size={96} />
+            <ClassIcon cls={winner.class} size={120} />
           </motion.div>
         )}
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...softSpring, delay: 0.2 }}>
@@ -345,7 +353,7 @@ export function Finished({ state, token, act }: PhaseProps) {
         <div className="label">Everyone&apos;s locks</div>
         {state.players.map((p) => (
           <div key={p.id} className="locks-row">
-            <span className="row" style={{ gap: 8 }}><ClassIcon cls={p.class} size={26} /><b>{p.name}</b></span>
+            <span className="row" style={{ gap: 8 }}><ClassIcon cls={p.class} size={26} /><b>{p.name}</b>{p.quit && <span className="tagchip chicken">chicken</span>}</span>
             <TileRow small letters={(p.letters ?? []).map((l) => ({ letter: l, revealed: p.revealed.includes(l) }))} />
             <span className="muted small">{p.points} pts</span>
           </div>
@@ -363,14 +371,16 @@ export function Finished({ state, token, act }: PhaseProps) {
 /* ───────────── RACK: my letters, cards, perk ───────────── */
 export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
   const me = state.me;
-  const [open, setOpen] = useState<null | { kind: 'card'; id: number } | { kind: 'perk' }>(null);
+  const [open, setOpen] = useState<null | { kind: 'card'; id: number } | { kind: 'perk' } | { kind: 'trace' }>(null);
   const phase = state.room.phase;
   useEffect(() => setOpen(null), [phase]);
   if (!me || !token || phase === 'lobby' || phase === 'finished') return null;
 
   const info = CLASSES[me.class];
+  const cfg = state.room.settings;
   const others = state.players.filter((p) => !p.eliminated && p.id !== me.id);
-  const perkUsable = !me.perk_used && !me.eliminated && (
+  const suspects = state.players.filter((p) => p.id !== me.id && !p.quit);
+  const perkUsable = cfg.perks && !me.perk_used && !me.eliminated && (
     (me.class === 'ninja' && state.room.round >= 3) ||
     (me.class === 'mastermind' && ['answer', 'reveal', 'guess'].includes(phase)));
 
@@ -382,7 +392,9 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
     return false;
   }
 
-  const perkLabel = me.class === 'villain' ? 'Passive: attacks hit ×2'
+  const perkLabel = !cfg.perks ? 'Perks are off'
+    : me.class === 'villain' ? 'Passive: attacks hit ×2'
+    : me.class === 'hacker' ? (me.perk_used ? 'Used' : 'Passive: attacks hack')
     : me.class === 'hero' ? (me.perk_used ? 'Used' : 'Absorb a hit in the cards phase')
     : me.perk_used ? 'Used'
     : me.class === 'ninja' ? (state.room.round < 3 ? 'Unlocks round 3' : 'See all letters in play')
@@ -391,14 +403,40 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
   return (
     <motion.div className="rack" initial={{ y: 120 }} animate={{ y: 0 }} transition={softSpring}>
       <div className="rack-inner">
-        <div className="sect">
+        <div className="sect" style={{ position: 'relative' }}>
           <span className="sect-label">Locks</span>
-          <TileRow letters={me.letters} />
+          {me.hacked ? (
+            <div className="tiles hacked-tiles" title="Hacked — you can't see your locks this round">
+              {me.letters.map((_, i) => (
+                <motion.span key={i} className="tile glitch" animate={{ opacity: [1, 0.4, 1, 0.7, 1], x: [0, -2, 2, 0] }}
+                  transition={{ repeat: Infinity, duration: 0.9 + i * 0.13 }}>?</motion.span>
+              ))}
+            </div>
+          ) : <TileRow letters={me.letters} />}
+          {me.can_trace && (
+            <motion.button className="btn sm hackbtn" onClick={() => setOpen(open?.kind === 'trace' ? null : { kind: 'trace' })}
+              animate={{ scale: [1, 1.06, 1] }} transition={{ repeat: Infinity, duration: 1.4 }}>
+              <Icon name="terminal" size={15} /> Trace hacker
+            </motion.button>
+          )}
+          <AnimatePresence>
+            {open?.kind === 'trace' && (
+              <motion.div className="popover" initial={{ opacity: 0, y: 8, x: '-50%' }} animate={{ opacity: 1, y: 0, x: '-50%' }} exit={{ opacity: 0, y: 8, x: '-50%' }}>
+                <span className="label">Who hacked you? One guess.</span>
+                {suspects.map((p) => (
+                  <button key={p.id} className="btn sm ghost" onClick={() => {
+                    setOpen(null);
+                    void act(() => rpc.trace(token, p.id));
+                  }}><ClassIcon cls={p.class} size={18} /> {p.name}</button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         <span className="sep" />
         <div className="sect" style={{ position: 'relative' }}>
           <span className="sect-label">Cards</span>
-          {me.cards.length === 0 && <span className="small" style={{ color: '#e8cfa6' }}>Crack a lock to draw one</span>}
+          {me.cards.length === 0 && <span className="small" style={{ color: '#e8cfa6' }}>{cfg.cards ? 'Crack a lock to draw one' : 'Cards are off'}</span>}
           <AnimatePresence initial={false}>
             {me.cards.map((c) => (
               <motion.div key={c.id} style={{ position: 'relative' }} layout
@@ -410,16 +448,16 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
                     else void act(() => rpc.playCard(token, c.id, null), c.kind === 'shield' ? 'Blocked!' : 'Cleansed a letter');
                   }}>
                   <span className="art"><CardIcon kind={c.kind} size={22} /></span>
-                  <span>{CARD_INFO[c.kind].name}<small>{c.kind === 'attack' && me.class === 'villain' ? '+2 letters' : CARD_INFO[c.kind].text}</small></span>
+                  <span>{CARD_INFO[c.kind].name}<small>{c.kind === 'attack' && me.class === 'villain' ? '+2 letters' : c.kind === 'attack' && me.class === 'hacker' ? 'Anonymous hack' : CARD_INFO[c.kind].text}</small></span>
                 </motion.button>
                 <AnimatePresence>
                   {open?.kind === 'card' && open.id === c.id && (
                     <motion.div className="popover" initial={{ opacity: 0, y: 8, x: '-50%' }} animate={{ opacity: 1, y: 0, x: '-50%' }} exit={{ opacity: 0, y: 8, x: '-50%' }}>
-                      <span className="label">Attack who?</span>
+                      <span className="label">{me.class === 'hacker' ? 'Hack who?' : 'Attack who?'}</span>
                       {others.map((p) => (
                         <button key={p.id} className="btn sm danger" onClick={() => {
                           setOpen(null);
-                          void act(() => rpc.playCard(token, c.id, p.id), `Attack queued on ${p.name}`);
+                          void act(() => rpc.playCard(token, c.id, p.id), me.class === 'hacker' ? `Hack queued on ${p.name}` : `Attack queued on ${p.name}`);
                         }}><ClassIcon cls={p.class} size={18} /> {p.name}</button>
                       ))}
                     </motion.div>

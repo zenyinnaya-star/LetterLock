@@ -1,6 +1,7 @@
 // Background music: the site theme everywhere, the duel track during a 1v1.
 // Uses plain <audio> elements (streamed, cheap) with volume crossfades.
 import { audio } from './audio';
+import { getPrefs } from './prefs';
 
 export type Track = 'theme' | 'duel' | 'none';
 
@@ -54,7 +55,7 @@ function hookGesture() {
 function apply() {
   if (typeof window === 'undefined') return;
   (['theme', 'duel'] as const).forEach((t) => {
-    const on = want === t && !audio.isMuted();
+    const on = want === t && !audio.isMuted() && getPrefs().music;
     const a = els[t];
     if (on) {
       const x = el(t);
@@ -63,7 +64,7 @@ function apply() {
       }
       fade(x, target(t), 900);
     } else if (a && !a.paused) {
-      fade(a, 0, t === 'duel' ? 700 : 900, () => { if (want !== t || audio.isMuted()) a.pause(); });
+      fade(a, 0, t === 'duel' ? 700 : 900, () => { if (want !== t || audio.isMuted() || !getPrefs().music) a.pause(); });
     }
   });
 }

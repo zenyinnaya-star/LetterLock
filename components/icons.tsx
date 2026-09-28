@@ -1,10 +1,14 @@
+'use client';
+
+import { useState } from 'react';
 import type { CardKind, PlayerClass } from '@/lib/types';
 
 /* ───────────── UI line icons (24px grid, 2px stroke, currentColor) ───────────── */
 
 export type IconName =
   | 'lock' | 'volume' | 'mute' | 'x' | 'check' | 'trophy' | 'bulb' | 'eye' | 'skull' | 'target'
-  | 'crown' | 'bolt' | 'swords' | 'alert' | 'link' | 'miss' | 'burst' | 'shield' | 'sparkle' | 'horns';
+  | 'crown' | 'bolt' | 'swords' | 'alert' | 'link' | 'miss' | 'burst' | 'shield' | 'sparkle' | 'horns'
+  | 'gear' | 'logout' | 'terminal' | 'glitch' | 'feather' | 'play' | 'pause' | 'replay' | 'users' | 'clock' | 'cards';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   lock: (<><rect x="5" y="11" width="14" height="10" rx="2.5" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /><path d="M12 15.2v2" /></>),
@@ -26,6 +30,17 @@ const PATHS: Record<IconName, React.ReactNode> = {
   burst: (<path d="M12 2.5l2 5 4.9-2.2-2 5L21.5 12l-4.6 1.7 2 5-4.9-2.2-2 5-2-5-4.9 2.2 2-5L2.5 12l4.6-1.7-2-5 4.9 2.2z" />),
   shield: (<><path d="M12 3l7.5 2.8V12c0 4.6-3.2 7.7-7.5 9-4.3-1.3-7.5-4.4-7.5-9V5.8z" /><path d="M8.7 12.2l2.3 2.3 4.3-4.6" /></>),
   sparkle: (<><path d="M11 3.5c.6 4.3 2.4 6.1 6.8 6.8-4.4.6-6.2 2.4-6.8 6.8-.6-4.4-2.4-6.2-6.8-6.8 4.4-.7 6.2-2.5 6.8-6.8z" /><path d="M18.5 15.5v5M16 18h5" /></>),
+  gear: (<><circle cx="12" cy="12" r="3" /><path d="M12 2.5v2.6M12 18.9v2.6M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12h2.6M18.9 12h2.6M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8" /><circle cx="12" cy="12" r="6.5" /></>),
+  logout: (<><path d="M14 4.5h4.5a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 1-1.5 1.5H14" /><path d="M10 8l-4 4 4 4M6 12h10" /></>),
+  terminal: (<><rect x="3" y="4.5" width="18" height="15" rx="2.5" /><path d="M7 9.5l3 2.5-3 2.5M12.5 15h4.5" /></>),
+  glitch: (<><path d="M4 6h9M15 6h5M4 10h4M10 10h10M4 14h11M17 14h3M4 18h6M12 18h8" /></>),
+  feather: (<><path d="M19.5 4.5c-6 0-11 4.5-11 11v4" /><path d="M8.5 15.5c4.5 0 9-2.5 11-11-3 1-6 1.5-8.5 4" /><path d="M8.5 19.5L5 21" /></>),
+  play: (<path d="M8 5.5v13l10.5-6.5z" />),
+  pause: (<><path d="M8.5 5.5v13M15.5 5.5v13" /></>),
+  replay: (<><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" /><path d="M4.5 4.5v4h4" /></>),
+  users: (<><circle cx="9" cy="8.5" r="3.5" /><path d="M2.5 19.5c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5" /><path d="M15.5 5.3a3.5 3.5 0 0 1 0 6.4M17.5 14.8c2 .6 3.4 2.2 4 4.7" /></>),
+  clock: (<><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>),
+  cards: (<><rect x="3.5" y="6" width="11" height="15" rx="2" /><path d="M9 3.5h9.5a2 2 0 0 1 2 2V17" /></>),
   horns: (<><path d="M7 9.5L5 3.5l5.2 3.8M17 9.5l2-6-5.2 3.8" /><circle cx="12" cy="13.5" r="6.5" /><path d="M9 12.3l2 .9M15 12.3l-2 .9M9.8 16.3c1.4 1 3 1 4.4 0" /></>),
 };
 
@@ -49,6 +64,7 @@ export const CLASS_COLORS: Record<PlayerClass, [string, string]> = {
   mastermind: ['#b69cff', '#5b2fd0'],
   hero: ['#ffd05a', '#d97a06'],
   villain: ['#ff7a90', '#b3123a'],
+  hacker: ['#9dff6a', '#1f8a3b'],
 };
 
 const INK = '#141733';
@@ -88,9 +104,19 @@ const GLYPHS: Record<PlayerClass, React.ReactNode> = {
       <path d="M14.8 26.2c3.3 2.6 7.1 2.6 10.4 0" stroke={INK} strokeWidth="2.4" strokeLinecap="round" fill="none" />
     </>
   ),
+  // hooded head with a visor and a code chevron
+  hacker: (
+    <>
+      <path d="M9 31c0-9 4.5-19 11-19s11 10 11 19z" fill="#fff" />
+      <rect x="12" y="19" width="16" height="6.5" rx="3.2" fill={INK} />
+      <path d="M16 20.8l-2 1.4 2 1.4M24 20.8l2 1.4-2 1.4" stroke="#9dff6a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </>
+  ),
 };
 
-export function ClassIcon({ cls, size = 32, className }: { cls: PlayerClass; size?: number; className?: string }) {
+const failedArt = new Set<string>();
+
+function ClassBadge({ cls, size, className }: { cls: PlayerClass; size: number; className?: string }) {
   const [a, b] = CLASS_COLORS[cls];
   const id = `llg-${cls}`;
   return (
@@ -105,6 +131,22 @@ export function ClassIcon({ cls, size = 32, className }: { cls: PlayerClass; siz
       <rect x="1.5" y="1.5" width="37" height="37" rx="10" fill="none" stroke="#fff" strokeOpacity=".22" strokeWidth="1.5" />
       <g style={{ filter: 'drop-shadow(0 1.5px 0 rgba(0,0,0,.25))' }}>{GLYPHS[cls]}</g>
     </svg>
+  );
+}
+
+/** Painted Higgsfield portrait with a class-coloured ring; falls back to the SVG badge if the art is missing. */
+export function ClassIcon({ cls, size = 32, className }: { cls: PlayerClass; size?: number; className?: string }) {
+  const [broken, setBroken] = useState(() => failedArt.has(cls));
+  if (broken) return <ClassBadge cls={cls} size={size} className={className} />;
+  const [a] = CLASS_COLORS[cls];
+  return (
+    <span className={`class-ico portrait${className ? ` ${className}` : ''}`}
+      style={{ width: size, height: size, borderRadius: Math.max(8, size * 0.26), boxShadow: `0 0 0 ${size >= 60 ? 3 : 2}px ${a}` }}
+      aria-hidden>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={`/art/class-${cls}.webp`} alt="" width={size} height={size} draggable={false}
+        onError={() => { failedArt.add(cls); setBroken(true); }} />
+    </span>
   );
 }
 

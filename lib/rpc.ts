@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { CardKind, PlayerClass, RoomState } from './types';
+import type { CardKind, PlayerClass, RoomSettings, RoomState } from './types';
 
 async function call<T>(fn: string, args: Record<string, unknown>): Promise<T> {
   const { data, error } = await supabase().rpc(fn, args);
@@ -34,4 +34,8 @@ export const rpc = {
   reactReady: (token: string) => call<void>('react_ready', { p_token: token }),
   advance: (code: string) => call<{ ok: boolean; phase?: string; reason?: string }>('advance_phase', { p_code: code }),
   playAgain: (token: string) => call<void>('play_again', { p_token: token }),
+  updateSettings: (token: string, settings: Partial<RoomSettings>) =>
+    call<RoomSettings>('update_settings', { p_token: token, p_settings: settings }),
+  trace: (token: string, suspectId: string) =>
+    call<{ caught: boolean }>('trace_hacker', { p_token: token, p_suspect_id: suspectId }),
 };
