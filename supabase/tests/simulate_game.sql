@@ -6,15 +6,19 @@ begin if not coalesce(c, false) then raise exception 'ASSERT FAILED: %', msg; en
 
 -- a dictionary word the player can legally play (not banned, not reused)
 create or replace function t_word(p_token uuid) returns text language sql as $$
-  select w.word from words w, players me
-  where me.token = p_token and char_length(w.word) between 5 and 9
+  select w.word from words w, players me, rooms r
+  where me.token = p_token and r.id = me.room_id and char_length(w.word) between 3 and 9
+    and (not exists (select 1 from prompt_words pw where pw.prompt_id = r.prompt_id)
+         or exists (select 1 from prompt_words pw where pw.prompt_id = r.prompt_id and pw.word = w.word))
     and not exists (select 1 from banned_letters bl where bl.player_id = me.id and position(bl.letter::text in upper(w.word)) > 0)
     and not exists (select 1 from answers a where a.player_id = me.id and a.word = w.word)
   order by random() limit 1;
 $$;
 create or replace function t_bad_word(p_token uuid) returns text language sql as $$
-  select w.word from words w, players me
-  where me.token = p_token and char_length(w.word) between 4 and 8
+  select w.word from words w, players me, rooms r
+  where me.token = p_token and r.id = me.room_id and char_length(w.word) between 3 and 9
+    and (not exists (select 1 from prompt_words pw where pw.prompt_id = r.prompt_id)
+         or exists (select 1 from prompt_words pw where pw.prompt_id = r.prompt_id and pw.word = w.word))
     and exists (select 1 from banned_letters bl where bl.player_id = me.id and position(bl.letter::text in upper(w.word)) > 0)
   limit 1;
 $$;
