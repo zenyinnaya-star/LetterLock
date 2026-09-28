@@ -15,6 +15,7 @@ export function useRoom(code: string, token: string | null) {
   const [state, setState] = useState<RoomState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [offset, setOffset] = useState(0); // serverNow - clientNow (ms)
+  const [stateToken, setStateToken] = useState<string | null>(null); // the token the current snapshot was fetched with
   const versionRef = useRef(-1);
   const inflight = useRef(false);
   const queued = useRef(false);
@@ -34,6 +35,7 @@ export function useRoom(code: string, token: string | null) {
       if (s.room.state_version >= versionRef.current) {
         versionRef.current = s.room.state_version;
         setState(s);
+        setStateToken(usedToken);
       }
       setError(null);
     } catch (e) {
@@ -105,5 +107,5 @@ export function useRoom(code: string, token: string | null) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phaseKey, offset, code]);
 
-  return { state, error, refresh, offset };
+  return { state, error, refresh, offset, stateToken };
 }

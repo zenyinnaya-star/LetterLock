@@ -7,7 +7,9 @@ export type CardKind = 'attack' | 'shield' | 'cleanse';
 export interface PublicPlayer {
   id: string;
   name: string;
-  class: PlayerClass;
+  avatar_url: string | null;
+  /** null = hidden (classic mode keeps other players' classes secret until the game ends) */
+  class: PlayerClass | null;
   strikes: number;
   points: number;
   eliminated: boolean;
@@ -60,7 +62,7 @@ export interface Me {
 export interface RevealRow { player_id: string; word: string; valid: boolean; reason: string | null; points: number }
 export interface GuessResult { guesser_id: string; target_id: string; correct: boolean; letter: string | null }
 export interface Pending {
-  id: number; target_id: string; source_id: string | null; kind: 'attack' | 'ninja' | 'hack';
+  id: number; target_id: string; source_id: string | null; source_class: PlayerClass | null; kind: 'attack' | 'ninja' | 'hack';
   amount: number; status: 'pending' | 'blocked' | 'applied'; absorbed_by: string | null;
 }
 
@@ -112,6 +114,7 @@ export interface FeedItem {
   round: number;
   type: FeedType;
   from: string | null;
+  from_class?: PlayerClass | null;
   to?: string | null;
   amount?: number;
   what?: string;

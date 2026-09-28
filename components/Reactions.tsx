@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { rpc } from '@/lib/rpc';
 import { supabase } from '@/lib/supabase';
 import type { RoomState } from '@/lib/types';
-import { ClassIcon } from './icons';
+import { PlayerAvatar } from './PlayerAvatar';
 import './reactions.css';
 
 type Kind = 'emoji' | 'sticker' | 'gif';
@@ -99,7 +99,7 @@ export function Reactions({ state, token }: { state: RoomState; token: string | 
                   // eslint-disable-next-line @next/next/no-img-element
                   <img className="rx-gif" src={f.content} alt="GIF reaction" />
                 )}
-                {p && <span className="rx-from"><ClassIcon cls={p.class} size={16} /> {p.name}</span>}
+                {p && <span className="rx-from"><PlayerAvatar p={p} size={16} /> {p.name}</span>}
               </motion.div>
             );
           })}

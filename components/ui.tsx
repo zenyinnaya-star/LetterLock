@@ -7,6 +7,7 @@ import { audio } from '@/lib/audio';
 import { CLASSES, CLASS_ORDER } from '@/lib/classes';
 import type { PlayerClass, PublicPlayer, RoomState } from '@/lib/types';
 import { ClassIcon, Icon } from './icons';
+import { PlayerAvatar } from './PlayerAvatar';
 import { SettingsButton } from './SettingsPanel';
 
 export const spring = { type: 'spring', stiffness: 520, damping: 26 } as const;
@@ -170,7 +171,7 @@ function HudChip({ p, me, phase, nameOfPlayer }: { p: PublicPlayer; me: boolean;
     <motion.div layout role="listitem" className={`chip${me ? ' me' : ''}${p.eliminated ? ' out' : ''}${p.connected ? '' : ' offline'}`}
       initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
       transition={softSpring}>
-      <ClassIcon cls={p.class} size={34} />
+      <PlayerAvatar p={p} size={34} badge={!!p.class} />
       <div className="who">
         <span className="nm">
           {p.name}
@@ -233,5 +234,5 @@ export function nameOf(state: RoomState, id: string | null | undefined): string 
 export function Avatar({ state, id, size = 28 }: { state: RoomState; id: string | null | undefined; size?: number }) {
   const p = state.players.find((x) => x.id === id);
   if (!p) return <span style={{ width: size, height: size, display: 'inline-block' }} />;
-  return <ClassIcon cls={p.class} size={size} />;
+  return <PlayerAvatar p={p} size={size} />;
 }

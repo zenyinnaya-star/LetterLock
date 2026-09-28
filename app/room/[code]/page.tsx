@@ -3,7 +3,9 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { AvatarPicker } from '@/components/AvatarPicker';
 import { Game } from '@/components/Game';
+import { loadAvatar, saveAvatar } from '@/lib/avatar';
 import { ClassPicker, Header } from '@/components/ui';
 import { useRoom } from '@/hooks/useRoom';
 import { audio } from '@/lib/audio';
@@ -23,12 +25,13 @@ export default function RoomPage() {
     setLoaded(true);
   }, [code]);
 
-  const { state, error, refresh, offset } = useRoom(code, loaded ? token : null);
+  const { state, error, refresh, offset, stateToken } = useRoom(code, loaded ? token : null);
 
-  // our saved seat no longer exists (e.g. removed after a rematch) → forget it
+  // our saved seat no longer exists (e.g. removed after a rematch) → forget it.
+  // Only judge a snapshot fetched WITH this token — right after joining, the old token-less snapshot is still on screen.
   useEffect(() => {
-    if (state && token && !state.me) { clearSession(code); setToken(null); }
-  }, [state, token, code]);
+    if (state && token && stateToken === token && !state.me) { clearSession(code); setToken(null); }
+  }, [state, token, stateToken, code]);
 
   if (error && !state) {
     return (
@@ -47,6 +50,10 @@ export default function RoomPage() {
     return <main className="shell narrow"><Header /><div className="sheet center muted">Loading room {code}…</div></main>;
   }
 
+  if (token && stateToken !== token) {
+    return <main className="shell narrow"><Header /><div className="sheet center muted">Taking your seat…</div></main>;
+  }
+
   if (!state.me && state.room.phase === 'lobby') {
     return <JoinHere code={code} onJoined={(t) => { setToken(t); void refresh(); }} />;
   }
@@ -59,7 +66,8 @@ function JoinHere({ code, onJoined }: { code: string; onJoined: (token: string) 
   const [cls, setCls] = useState<PlayerClass | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  useEffect(() => setName(loadName()), []);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  useEffect(() => { setName(loadName()); setAvatar(loadAvatar()); }, []);
 
   async function join() {
     if (!cls || !name.trim()) { setErr('Enter a name and pick a class.'); return; }
@@ -69,6 +77,7 @@ function JoinHere({ code, onJoined }: { code: string; onJoined: (token: string) 
       const r = await rpc.joinRoom(code, name.trim(), cls);
       saveName(name.trim());
       saveSession(r.code, { token: r.token, playerId: r.player_id });
+      if (avatar) await rpc.setAvatar(r.token, avatar).catch(() => undefined);
       onJoined(r.token);
     } catch (e) {
       setErr(friendlyError(e));
@@ -88,6 +97,8 @@ function JoinHere({ code, onJoined }: { code: string; onJoined: (token: string) 
           <span className="label">Your name</span>
           <input className="input" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Zab" />
         </label>
+        <span className="label">Your avatar</span>
+        <AvatarPicker name={name} url={avatar} onChange={(u) => { setAvatar(u); saveAvatar(u); }} />
         <span className="label">Pick your class</span>
         <ClassPicker value={cls} onChange={setCls} />
         <button className="btn lg block" disabled={busy || !cls || !name.trim()} onClick={join}>Join game</button>

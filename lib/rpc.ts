@@ -36,6 +36,7 @@ export const rpc = {
   playAgain: (token: string) => call<void>('play_again', { p_token: token }),
   updateSettings: (token: string, settings: Partial<RoomSettings>) =>
     call<RoomSettings>('update_settings', { p_token: token, p_settings: settings }),
+  setAvatar: (token: string, url: string | null) => call<void>('set_avatar', { p_token: token, p_url: url }),
   trace: (token: string, suspectId: string) =>
     call<{ caught: boolean }>('trace_hacker', { p_token: token, p_suspect_id: suspectId }),
 };

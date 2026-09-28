@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { AvatarPicker } from '@/components/AvatarPicker';
 import { Icon } from '@/components/icons';
+import { loadAvatar, saveAvatar } from '@/lib/avatar';
 import { ClassPicker, Header, spring } from '@/components/ui';
 import { audio } from '@/lib/audio';
 import { friendlyError } from '@/lib/errors';
@@ -22,7 +24,8 @@ export default function Home() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  useEffect(() => setName(loadName()), []);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  useEffect(() => { setName(loadName()); setAvatar(loadAvatar()); }, []);
 
   const ready = name.trim().length > 0 && cls !== null;
 
@@ -37,6 +40,7 @@ export default function Home() {
         ? await rpc.joinRoom(code.trim().toUpperCase(), name.trim(), cls)
         : await rpc.createRoom(name.trim(), cls);
       if (kind === 'duel') await rpc.updateSettings(r.token, { mode: 'duel', max_players: 2 });
+      if (avatar) await rpc.setAvatar(r.token, avatar).catch(() => undefined);
       saveName(name.trim());
       saveSession(r.code, { token: r.token, playerId: r.player_id });
       router.push(`/room/${r.code}`);
@@ -74,6 +78,10 @@ export default function Home() {
           <input className="input" maxLength={20} value={name} onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Zab" autoComplete="nickname" />
         </label>
+        <div className="col" style={{ gap: 8 }}>
+          <span className="label">Your avatar</span>
+          <AvatarPicker name={name} url={avatar} onChange={(u) => { setAvatar(u); saveAvatar(u); }} />
+        </div>
         <div className="col" style={{ gap: 8 }}>
           <span className="label">Pick your class</span>
           <ClassPicker value={cls} onChange={setCls} />

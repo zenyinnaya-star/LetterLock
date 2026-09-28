@@ -25,6 +25,7 @@ const PHASE_TOTAL: Record<string, number> = { reveal: 6, guess: 20, react: 8, du
 
 /** Announcer name for a player: "the Ninja", or "Ninja Ava" when two players share a class. */
 function classCall(p: PublicPlayer, all: PublicPlayer[], capital = false): string {
+  if (!p.class) return p.name;
   const cls = CLASSES[p.class].name;
   if (all.filter((x) => x.class === p.class).length > 1) return `${cls} ${p.name}`;
   return `${capital ? 'The' : 'the'} ${cls}`;

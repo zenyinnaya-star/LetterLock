@@ -2,9 +2,12 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
+import { saveAvatar } from '@/lib/avatar';
 import { rpc } from '@/lib/rpc';
 import type { RoomState } from '@/lib/types';
-import { ClassIcon, Icon } from './icons';
+import { Icon } from './icons';
+import { AvatarPicker } from './AvatarPicker';
+import { PlayerAvatar } from './PlayerAvatar';
 import type { Act } from './phases';
 import { SettingsButton } from './SettingsPanel';
 import { ClassPicker, softSpring, spring } from './ui';
@@ -59,11 +62,12 @@ export function Lobby({ state, token, act, onLeave }: { state: RoomState; token:
             {state.players.map((p) => (
               <motion.div key={p.id} layout className={`seat${p.id === me?.id ? ' me' : ''}`}
                 initial={{ opacity: 0, scale: 0.6, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.6 }} transition={spring}>
-                <motion.div key={p.class} initial={{ rotateY: 90 }} animate={{ rotateY: 0 }} transition={softSpring}>
-                  <ClassIcon cls={p.class} size={52} />
+                <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }} transition={softSpring}>
+                  <PlayerAvatar p={p} size={56} badge={!!p.class} />
                 </motion.div>
                 <b>{p.name}{p.is_host && <span style={{ color: 'var(--accent)' }} title="Host"><Icon name="crown" size={14} /></span>}</b>
-                <span className="muted small" style={{ textTransform: 'capitalize' }}>{p.class}</span>
+                {p.class ? <span className="muted small" style={{ textTransform: 'capitalize' }}>{p.class}</span>
+                  : <span className="class-hidden"><Icon name="mask" size={12} /> secret</span>}
               </motion.div>
             ))}
             {Array.from({ length: Math.max(0, Math.min(max, Math.max(4, count + 1)) - count) }, (_, i) => (
@@ -77,7 +81,15 @@ export function Lobby({ state, token, act, onLeave }: { state: RoomState; token:
 
       {me && (
         <div className="narrow-col">
-          <span className="label">Your class</span>
+          <span className="label">Your avatar</span>
+          <AvatarPicker name={me.name} url={state.players.find((p) => p.id === me.id)?.avatar_url ?? null}
+            onChange={(url) => { saveAvatar(url); if (token) void act(() => rpc.setAvatar(token, url)); }} />
+        </div>
+      )}
+
+      {me && (
+        <div className="narrow-col">
+          <span className="label">Your class{cfg?.mode !== 'duel' ? ' — secret until the game ends' : ''}</span>
           <ClassPicker value={me.class} onChange={(c) => token && void act(() => rpc.setClass(token, c))} />
         </div>
       )}
@@ -130,9 +142,9 @@ function DuelSeat({ p, meId, side }: { p: RoomState['players'][number] | undefin
     <motion.div className={`dl-seat ${side}${p.id === meId ? ' me' : ''}`}
       initial={{ x: side === 'left' ? -120 : 120, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 260, damping: 18 }}>
-      <motion.div key={p.class} initial={{ rotateY: 90 }} animate={{ rotateY: 0 }}><ClassIcon cls={p.class} size={120} /></motion.div>
+      <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }}><PlayerAvatar p={p} size={120} badge className="dl-av" /></motion.div>
       <b>{p.name}{p.is_host && <span style={{ color: 'var(--accent)' }}><Icon name="crown" size={14} /></span>}</b>
-      <span className="muted small" style={{ textTransform: 'capitalize' }}>{p.class}</span>
+      <span className="muted small" style={{ textTransform: 'capitalize' }}>{p.class ?? 'secret class'}</span>
     </motion.div>
   );
 }

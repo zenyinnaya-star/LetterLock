@@ -7,6 +7,7 @@ import { REASONS } from '@/lib/errors';
 import { rpc } from '@/lib/rpc';
 import type { RoomState } from '@/lib/types';
 import { CLASS_COLORS, CardIcon, ClassIcon, Icon } from './icons';
+import { PlayerAvatar } from './PlayerAvatar';
 import { Avatar, Clock, nameOf, softSpring, spring, TileRow } from './ui';
 
 export type Act = <T>(fn: () => Promise<T>, okMsg?: string) => Promise<T | undefined>;
@@ -224,7 +225,7 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
             {targets.map((p, i) => (
               <motion.button key={p.id} className={`target${target === p.id ? ' sel' : ''}`} onClick={() => setTarget(p.id)}
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={stagger(i, 0.05)} whileTap={{ scale: 0.95 }}>
-                <ClassIcon cls={p.class} size={28} /> {p.name}
+                <PlayerAvatar p={p} size={28} /> {p.name}
                 <span className="muted small" style={{ display: 'inline-flex', gap: 3, alignItems: 'center' }}><Icon name="lock" size={12} />{p.letter_count}</span>
               </motion.button>
             ))}
@@ -281,7 +282,7 @@ export function ReactPhase({ state, token, msLeft, act }: PhaseProps) {
                   ? <>Ninja penalty: <b>{nameOf(state, p.target_id)}</b> takes +{p.amount} letters</>
                   : p.kind === 'hack'
                   ? <><b>{p.source_id ? nameOf(state, p.source_id) : 'Someone'}</b> hacks <b>{nameOf(state, p.target_id)}</b> (+{p.amount}, locks hidden next round)</>
-                  : <><b>{nameOf(state, p.source_id)}</b> attacks <b>{nameOf(state, p.target_id)}</b> (+{p.amount})</>}
+                  : <><b>{p.source_id ? nameOf(state, p.source_id) : p.source_class ? `The ${CLASSES[p.source_class].name}` : 'Someone'}</b> attacks <b>{nameOf(state, p.target_id)}</b> (+{p.amount})</>}
                 {p.absorbed_by && <> — absorbed by {nameOf(state, p.absorbed_by)}</>}
                 {p.status === 'blocked' && <> — blocked</>}
               </span>
@@ -337,12 +338,12 @@ export function DuelIntro({ state, msLeft }: PhaseProps) {
       </AnimatePresence>
       <div className="fighters">
         <motion.div className="fighter" initial={{ x: -160, opacity: 0, rotate: -12 }} animate={{ x: 0, opacity: 1, rotate: 0 }} transition={{ ...spring, delay: 0.1 }}>
-          <ClassIcon cls={a.class} size={110} /><b>{a.name}</b><span className="muted">{a.points} pts</span>
+          <PlayerAvatar p={a} size={110} badge /><b>{a.name}</b><span className="muted">{a.points} pts</span>
         </motion.div>
         <motion.div className="vs" initial={{ scale: 4, opacity: 0, rotate: -20 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}
           transition={{ type: 'spring', stiffness: 700, damping: 18, delay: 0.55 }}>VS</motion.div>
         <motion.div className="fighter" initial={{ x: 160, opacity: 0, rotate: 12 }} animate={{ x: 0, opacity: 1, rotate: 0 }} transition={{ ...spring, delay: 0.25 }}>
-          <ClassIcon cls={b.class} size={110} /><b>{b.name}</b><span className="muted">{b.points} pts</span>
+          <PlayerAvatar p={b} size={110} badge /><b>{b.name}</b><span className="muted">{b.points} pts</span>
         </motion.div>
       </div>
       <motion.div className="center muted" style={{ maxWidth: 440 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
@@ -368,7 +369,7 @@ export function Finished({ state, token, act }: PhaseProps) {
       <div className="winner victory-stage">
         {winner && (
           <motion.div initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 14 }}>
-            <ClassIcon cls={winner.class} size={120} />
+            <PlayerAvatar p={winner} size={120} badge />
           </motion.div>
         )}
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...softSpring, delay: 0.2 }}>
@@ -389,7 +390,7 @@ export function Finished({ state, token, act }: PhaseProps) {
         <div className="label">Everyone&apos;s locks</div>
         {state.players.map((p) => (
           <div key={p.id} className="locks-row">
-            <span className="row" style={{ gap: 8 }}><ClassIcon cls={p.class} size={26} /><b>{p.name}</b>{p.quit && <span className="tagchip chicken">chicken</span>}</span>
+            <span className="row" style={{ gap: 8 }}><PlayerAvatar p={p} size={26} /><b>{p.name}</b>{p.class && <span className="muted small"> · {CLASSES[p.class].name}{p.orig_class ? ` (was ${CLASSES[p.orig_class].name})` : ''}</span>}{p.quit && <span className="tagchip chicken">chicken</span>}</span>
             <TileRow small letters={(p.letters ?? []).map((l) => ({ letter: l, revealed: p.revealed.includes(l) }))} />
             <span className="muted small">{p.points} pts</span>
           </div>
@@ -474,7 +475,7 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
                   <button key={p.id} className="btn sm ghost" onClick={() => {
                     setOpen(null);
                     void act(() => rpc.trace(token, p.id));
-                  }}><ClassIcon cls={p.class} size={18} /> {p.name}</button>
+                  }}><PlayerAvatar p={p} size={18} /> {p.name}</button>
                 ))}
               </motion.div>
             )}
@@ -505,7 +506,7 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
                         <button key={p.id} className="btn sm danger" onClick={() => {
                           setOpen(null);
                           void act(() => rpc.playCard(token, c.id, p.id), me.class === 'hacker' ? `Hack queued on ${p.name}` : `Attack queued on ${p.name}`);
-                        }}><ClassIcon cls={p.class} size={18} /> {p.name}</button>
+                        }}><PlayerAvatar p={p} size={18} /> {p.name}</button>
                       ))}
                     </motion.div>
                   )}
@@ -535,7 +536,7 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
                   <button key={p.id} className="btn sm ghost" onClick={() => {
                     setOpen(null);
                     void act(() => rpc.usePerk(token, p.id), perk?.ok);
-                  }}><ClassIcon cls={p.class} size={18} /> {p.name}{me.class === 'mimic' && <span className="muted small"> · {CLASSES[p.class].name}</span>}</button>
+                  }}><PlayerAvatar p={p} size={18} /> {p.name}{me.class === 'mimic' && p.class && <span className="muted small"> · {CLASSES[p.class].name}</span>}</button>
                 ))}
               </motion.div>
             )}

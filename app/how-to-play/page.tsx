@@ -54,6 +54,7 @@ export default function HowToPlay() {
       ))}
 
       <h2>Classes</h2>
+      <p>In classic mode <b>your class is secret</b>. Everyone sees your avatar (the default one or a photo you upload), and the action banners only name the class — <i>“The Ninja attacked Ava”</i> — so part of the game is working out who&apos;s who. All classes are revealed at the end. In 1v1 mode classes are open.</p>
       {CLASS_ORDER.map((c) => (
         <div key={c} className="line">
           <ClassIcon cls={c} size={36} />

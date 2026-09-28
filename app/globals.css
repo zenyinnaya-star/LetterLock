@@ -629,3 +629,13 @@ input { font: inherit; }
   .stage-head { flex-wrap: wrap; row-gap: 6px; }
   .chaos-chip { order: 3; margin: 0; }
 }
+
+/* ───────── player avatars ───────── */
+.pavatar { position: relative; display: inline-block; flex-shrink: 0; }
+.pavatar-face { display: block; width: 100%; height: 100%; overflow: hidden; box-shadow: 0 0 0 2px rgba(255,255,255,.14); }
+.pavatar-face img, .pavatar-face svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pavatar-badge { position: absolute; right: -5px; bottom: -5px; filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
+.pavatar-badge .class-ico.portrait { box-shadow: 0 0 0 2px #0b0d1b !important; }
+.class-hidden { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+.avatar-picker { display: flex; align-items: center; gap: 12px; }
+.avatar-picker.compact { gap: 8px; }
