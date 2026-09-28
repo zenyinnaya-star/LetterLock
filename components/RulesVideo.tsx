@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { CLASSES, CLASS_ORDER } from '@/lib/classes';
+import { CHAOS_INFO, CLASSES, CLASS_ORDER } from '@/lib/classes';
 import { getPrefs } from '@/lib/prefs';
 import { CardIcon, ClassIcon, Icon } from './icons';
 
@@ -122,8 +122,10 @@ const SCENES: Scene[] = [
             <motion.div key={k} className={`rv-bigcard ${k}`} initial={{ y: 80, rotate: (i - 1) * 14, opacity: 0 }}
               animate={{ y: 0, rotate: (i - 1) * 6, opacity: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.3 + i * 0.9 }}>
               <CardIcon kind={k} size={40} />
-              <b>{k === 'attack' ? 'Attack' : k === 'shield' ? 'Shield' : 'Cleanse'}</b>
-              <small>{k === 'attack' ? '+1 lock on a rival' : k === 'shield' ? 'Block a hit on you' : 'Remove one of yours'}</small>
+              <div>
+                <b>{k === 'attack' ? 'Attack' : k === 'shield' ? 'Shield' : 'Cleanse'}</b>
+                <small>{k === 'attack' ? '+1 lock on a rival' : k === 'shield' ? 'Block a hit on you' : 'Remove one of yours'}</small>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -131,14 +133,14 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    say: 'Pick a class. Ninja, Mastermind, Hero, Villain, or the new Hacker. Each has a power, and a price.',
-    caption: 'Five classes. Every power comes with a price.',
-    min: 6500,
+    say: 'Pick one of twelve classes. From the Ninja and the Hacker, to the Mimic, the Gambler, the Thief, the Parasite, the Oracle, the Wildcard and the Jester. Every power comes with a price.',
+    caption: 'Twelve classes. Every power comes with a price.',
+    min: 8500,
     render: () => (
       <div className="rv-center">
         <div className="rv-classes">
           {CLASS_ORDER.map((c, i) => (
-            <motion.div key={c} className="rv-class" initial={{ rotateY: 90, opacity: 0 }} animate={{ rotateY: 0, opacity: 1 }} transition={{ delay: 0.3 + i * 0.35 }}>
+            <motion.div key={c} className="rv-class" initial={{ rotateY: 90, opacity: 0 }} animate={{ rotateY: 0, opacity: 1 }} transition={{ delay: 0.2 + i * 0.22 }}>
               <ClassIcon cls={c} size={78} />
               <b>{CLASSES[c].name}</b>
               <small>{CLASSES[c].tagline}</small>
@@ -169,12 +171,30 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    say: 'When two players remain, it\'s the final duel. Shorter rounds, and strikes never reset.',
-    caption: 'Two left? Final duel — shorter rounds, strikes never reset.',
+    say: 'The Wildcard brings chaos. Every round opens with a random twist, like a lock swap, a round with no letter E, a card shuffle, or double points.',
+    caption: 'Wildcard: every round starts with a random twist.',
+    min: 8000,
+    render: () => (
+      <div className="rv-center">
+        <motion.div className="rv-wheel" animate={{ rotate: 1440 }} transition={{ duration: 2.4, ease: [0.2, 0.8, 0.3, 1] }}>
+          <Icon name="dice" size={56} />
+        </motion.div>
+        <div className="rv-chaos">
+          {(['swap', 'no_e', 'shuffle', 'double', 'amnesty', 'speed'] as const).map((k, i) => (
+            <motion.span key={k} className="chaos-chip" style={{ margin: 0 }} initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 2.4 + i * 0.25, type: 'spring', stiffness: 500, damping: 18 }}>{CHAOS_INFO[k].name}</motion.span>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+  {
+    say: 'When two players remain, it\'s the final duel. Shorter rounds, and strikes never reset. Or skip straight to it with one versus one mode.',
+    caption: 'Final duel — or pick 1v1 mode and fight from round one.',
     min: 5500,
     render: () => (
       <div className="rv-center rv-duel">
-        <div className="rv-two">
+        <div className="rv-two row">
           <motion.div initial={{ x: -140, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 18 }}><ClassIcon cls="hero" size={100} /></motion.div>
           <motion.span className="rv-vs" initial={{ scale: 4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.6, type: 'spring', stiffness: 600, damping: 16 }}>VS</motion.span>
           <motion.div initial={{ x: 140, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.15 }}><ClassIcon cls="hacker" size={100} /></motion.div>

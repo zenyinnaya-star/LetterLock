@@ -4,7 +4,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { announcer } from '@/lib/announcer';
 import { audio } from '@/lib/audio';
-import type { FeedItem, RoomState } from '@/lib/types';
+import { CHAOS_INFO, CLASSES } from '@/lib/classes';
+import type { FeedItem, PlayerClass, RoomState } from '@/lib/types';
 import { ClassIcon, Icon, type IconName } from './icons';
 
 const LOOK: Record<FeedItem['type'], { icon: IconName; tone: string; sfx: () => void }> = {
@@ -16,7 +17,21 @@ const LOOK: Record<FeedItem['type'], { icon: IconName; tone: string; sfx: () => 
   caught: { icon: 'alert', tone: 'caught', sfx: () => audio.caught() },
   trace_miss: { icon: 'miss', tone: 'miss', sfx: () => audio.denied() },
   chicken: { icon: 'feather', tone: 'chicken', sfx: () => audio.chicken() },
+  bet: { icon: 'coin', tone: 'gold', sfx: () => audio.coin() },
+  bet_win: { icon: 'coin', tone: 'gold', sfx: () => audio.cashout() },
+  bet_lose: { icon: 'coin', tone: 'hit', sfx: () => audio.bust() },
+  steal: { icon: 'hand', tone: 'thief', sfx: () => audio.swipe() },
+  drop: { icon: 'hand', tone: 'miss', sfx: () => audio.swipe() },
+  latch: { icon: 'link2', tone: 'parasite', sfx: () => audio.squelch() },
+  drain: { icon: 'drop', tone: 'parasite', sfx: () => audio.squelch() },
+  host_down: { icon: 'skull', tone: 'hit', sfx: () => audio.buzzer() },
+  mimic: { icon: 'mask', tone: 'mimic', sfx: () => audio.morph() },
+  oracle: { icon: 'orb', tone: 'oracle', sfx: () => audio.mystic() },
+  swap: { icon: 'swap', tone: 'jester', sfx: () => audio.whoosh() },
+  chaos: { icon: 'dice', tone: 'chaos', sfx: () => audio.wheel() },
 };
+
+const ARROW_TYPES = ['attack', 'hack', 'block', 'absorb', 'caught', 'trace_miss', 'steal', 'drop', 'latch', 'drain', 'host_down', 'mimic', 'swap'];
 
 /**
  * Big "who did what to whom" banners with a sound for every attack, hack, block, cleanse and rage quit.
@@ -52,7 +67,12 @@ export function ActionFeed({ state }: { state: RoomState }) {
     if (next.type === 'chicken') announcer.say(`${next.name ?? name(next.from) ?? 'Someone'} chickened out! Bawk bawk!`, { hype: true, delay: 900 });
     if (next.type === 'caught') announcer.say(`Hacker caught! It was ${name(next.to) ?? 'them'}!`, { hype: true, delay: 700 });
     if (next.type === 'hack' && next.to === meId) announcer.say("You've been hacked!", { urgent: true, delay: 500 });
-    const id = window.setTimeout(() => setCurrent(null), next.type === 'chicken' || next.type === 'caught' ? 2600 : 1900);
+    if (next.type === 'chaos' && next.what) announcer.say(`Wildcard! ${CHAOS_INFO[next.what]?.name ?? ''}! ${CHAOS_INFO[next.what]?.text ?? ''}`, { hype: true, delay: 1200 });
+    if (next.type === 'mimic' && next.what) announcer.say(`${name(next.from) ?? 'The Mimic'} became the ${CLASSES[next.what as PlayerClass]?.name ?? next.what}!`, { delay: 600 });
+    if (next.type === 'swap') announcer.say('Switcheroo!', { hype: true, delay: 400 });
+    if (next.type === 'bet_lose') announcer.say(`${name(next.from) ?? 'The Gambler'} busts!`, { delay: 500 });
+    const long = ['chicken', 'caught', 'chaos', 'mimic', 'swap'].includes(next.type);
+    const id = window.setTimeout(() => setCurrent(null), long ? 2800 : 1900);
     return () => window.clearTimeout(id);
   }, [queue, current, meId]);
 
@@ -82,8 +102,20 @@ function Banner({ item, state, meId }: { item: FeedItem; state: RoomState; meId:
     case 'caught': text = <><b>{nm(from, '?')}</b> caught the Hacker: <b>{nm(to, '?')}</b><em>exposed</em></>; break;
     case 'trace_miss': text = <><b>{nm(from, '?')}</b> traced <b>{nm(to, '?')}</b><em>wrong guess</em></>; break;
     case 'chicken': text = <><b>{item.name ?? nm(from, 'Someone')}</b> chickened out<em>rage quit</em></>; break;
+    case 'bet': text = <><b>{nm(from, '?')}</b> went <b>all in</b><em>double or bust</em></>; break;
+    case 'bet_win': text = <><b>{nm(from, '?')}</b> cashed out<em>+{item.amount} points</em></>; break;
+    case 'bet_lose': text = <><b>{nm(from, '?')}</b> busted<em>−{item.amount} points</em></>; break;
+    case 'steal': text = <><b>{nm(from, '?')}</b> stole a card from <b>{nm(to, '?')}</b></>; break;
+    case 'drop': text = <><b>{nm(from, '?')}</b> fumbled a card to <b>{nm(to, '?')}</b></>; break;
+    case 'latch': text = <><b>{nm(from, '?')}</b> latched onto <b>{nm(to, '?')}</b><em>parasite</em></>; break;
+    case 'drain': text = <><b>{nm(from, '?')}</b> fed on <b>{nm(to, '?')}</b><em>−{item.amount} lock{(item.amount ?? 1) > 1 ? 's' : ''}</em></>; break;
+    case 'host_down': text = <><b>{nm(from, '?')}</b> lost their host <b>{nm(to, '?')}</b><em>strike</em></>; break;
+    case 'mimic': text = <><b>{nm(from, '?')}</b> copied <b>{nm(to, '?')}</b><em>now a {CLASSES[item.what as PlayerClass]?.name ?? item.what}</em></>; break;
+    case 'oracle': text = <><b>{nm(from, '?')}</b> saw the future<em>their next word goes public</em></>; break;
+    case 'swap': text = <><b>{nm(from, '?')}</b> swapped locks with <b>{nm(to, '?')}</b><em>switcheroo</em></>; break;
+    case 'chaos': text = <><b>WILDCARD:</b> {CHAOS_INFO[item.what ?? '']?.name ?? 'chaos'}<em>{CHAOS_INFO[item.what ?? '']?.text}</em></>; break;
   }
-  const showArrow = ['attack', 'hack', 'block', 'absorb', 'caught', 'trace_miss'].includes(item.type);
+  const showArrow = ARROW_TYPES.includes(item.type);
   const hidden = item.type === 'hack' && !from;
 
   return (

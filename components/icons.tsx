@@ -8,7 +8,8 @@ import type { CardKind, PlayerClass } from '@/lib/types';
 export type IconName =
   | 'lock' | 'volume' | 'mute' | 'x' | 'check' | 'trophy' | 'bulb' | 'eye' | 'skull' | 'target'
   | 'crown' | 'bolt' | 'swords' | 'alert' | 'link' | 'miss' | 'burst' | 'shield' | 'sparkle' | 'horns'
-  | 'gear' | 'logout' | 'terminal' | 'glitch' | 'feather' | 'play' | 'pause' | 'replay' | 'users' | 'clock' | 'cards';
+  | 'gear' | 'logout' | 'terminal' | 'glitch' | 'feather' | 'play' | 'pause' | 'replay' | 'users' | 'clock' | 'cards'
+  | 'coin' | 'hand' | 'link2' | 'orb' | 'dice' | 'swap' | 'mask' | 'drop';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   lock: (<><rect x="5" y="11" width="14" height="10" rx="2.5" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /><path d="M12 15.2v2" /></>),
@@ -41,6 +42,14 @@ const PATHS: Record<IconName, React.ReactNode> = {
   users: (<><circle cx="9" cy="8.5" r="3.5" /><path d="M2.5 19.5c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5" /><path d="M15.5 5.3a3.5 3.5 0 0 1 0 6.4M17.5 14.8c2 .6 3.4 2.2 4 4.7" /></>),
   clock: (<><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>),
   cards: (<><rect x="3.5" y="6" width="11" height="15" rx="2" /><path d="M9 3.5h9.5a2 2 0 0 1 2 2V17" /></>),
+  coin: (<><circle cx="12" cy="12" r="8.5" /><path d="M14.5 9.2c-.6-.8-1.5-1.2-2.5-1.2-1.4 0-2.5.8-2.5 2s1.1 1.7 2.5 2 2.5.8 2.5 2-1.1 2-2.5 2c-1 0-2-.4-2.6-1.2M12 6.5v1.5M12 16v1.5" /></>),
+  hand: (<><path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12M11 11V5a1.5 1.5 0 0 1 3 0v6M14 11V6.5a1.5 1.5 0 0 1 3 0V14c0 4-2.5 6.5-6 6.5-2.6 0-4-1.2-5.2-3L4 14.5a1.5 1.5 0 0 1 2.4-1.8L8 14.5" /></>),
+  link2: (<><path d="M9 7.5C6.5 7.5 4 9 4 12s2.5 4.5 5 4.5" /><path d="M15 7.5c2.5 0 5 1.5 5 4.5s-2.5 4.5-5 4.5" /><path d="M8.5 12h7" /></>),
+  orb: (<><circle cx="12" cy="10.5" r="6.5" /><path d="M7 19.5h10M9 17l-1 2.5M15 17l1 2.5" /><path d="M9.5 9a3 3 0 0 1 2.5-1.8" /></>),
+  dice: (<><rect x="4" y="4" width="16" height="16" rx="3.5" /><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor" stroke="none" /><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor" stroke="none" /><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none" /><circle cx="15.5" cy="8.5" r="1.2" fill="currentColor" stroke="none" /><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor" stroke="none" /></>),
+  swap: (<><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5" /></>),
+  mask: (<><path d="M3.5 7c3 1.3 5.8 1.3 8.5 0 2.7 1.3 5.5 1.3 8.5 0 0 6-2.5 10-8.5 10S3.5 13 3.5 7z" /><path d="M7 11l2.2.8M17 11l-2.2.8" /></>),
+  drop: (<><path d="M12 3.5c3.5 4.2 6 7.5 6 10.5a6 6 0 0 1-12 0c0-3 2.5-6.3 6-10.5z" /></>),
   horns: (<><path d="M7 9.5L5 3.5l5.2 3.8M17 9.5l2-6-5.2 3.8" /><circle cx="12" cy="13.5" r="6.5" /><path d="M9 12.3l2 .9M15 12.3l-2 .9M9.8 16.3c1.4 1 3 1 4.4 0" /></>),
 };
 
@@ -65,11 +74,22 @@ export const CLASS_COLORS: Record<PlayerClass, [string, string]> = {
   hero: ['#ffd05a', '#d97a06'],
   villain: ['#ff7a90', '#b3123a'],
   hacker: ['#9dff6a', '#1f8a3b'],
+  mimic: ['#d6e3ff', '#6a7bb8'],
+  gambler: ['#ffe27a', '#1f7a4a'],
+  thief: ['#ffab5c', '#c2530e'],
+  parasite: ['#ff7ae0', '#8a1f7a'],
+  oracle: ['#9fd8ff', '#4b3fc2'],
+  wildcard: ['#ff9d5c', '#d4239c'],
+  jester: ['#ff6b6b', '#e0a800'],
+};
+
+const EXTRA_GLYPH: Partial<Record<PlayerClass, IconName>> = {
+  mimic: 'mask', gambler: 'coin', thief: 'hand', parasite: 'drop', oracle: 'orb', wildcard: 'dice', jester: 'swap',
 };
 
 const INK = '#141733';
 
-const GLYPHS: Record<PlayerClass, React.ReactNode> = {
+const GLYPHS: Partial<Record<PlayerClass, React.ReactNode>> = {
   // masked head with headband tails
   ninja: (
     <>
@@ -129,7 +149,11 @@ function ClassBadge({ cls, size, className }: { cls: PlayerClass; size: number; 
       </defs>
       <rect x="1.5" y="1.5" width="37" height="37" rx="10" fill={`url(#${id})`} />
       <rect x="1.5" y="1.5" width="37" height="37" rx="10" fill="none" stroke="#fff" strokeOpacity=".22" strokeWidth="1.5" />
-      <g style={{ filter: 'drop-shadow(0 1.5px 0 rgba(0,0,0,.25))' }}>{GLYPHS[cls]}</g>
+      <g style={{ filter: 'drop-shadow(0 1.5px 0 rgba(0,0,0,.25))' }}>
+        {GLYPHS[cls] ?? (EXTRA_GLYPH[cls] && (
+          <g transform="translate(8 8)" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">{PATHS[EXTRA_GLYPH[cls]!]}</g>
+        ))}
+      </g>
     </svg>
   );
 }

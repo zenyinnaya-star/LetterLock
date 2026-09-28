@@ -125,8 +125,17 @@ export const audio = {
   },
   /** Error buzz: trace missed. */
   denied() { tone(180, 0, 0.12, 'square', 0.25); tone(140, 0.14, 0.22, 'square', 0.25); },
-  /** Cartoon chicken: bawk bawk ba-GAWK. */
+  /** The real chicken (your recording); falls back to the synth cluck if it can't play. */
   chicken() {
+    if (!getPrefs().sfx || muted || typeof window === 'undefined') return;
+    try {
+      const a = new Audio('/audio/chicken.mp3');
+      a.volume = 0.9;
+      a.play().catch(() => this.chickenSynth());
+    } catch { this.chickenSynth(); }
+  },
+  /** Cartoon chicken: bawk bawk ba-GAWK. */
+  chickenSynth() {
     const cluck = (t: number, f: number, dur: number) => {
       tone(f, t, dur, 'sawtooth', 0.28, f * 0.62);
       tone(f * 2.02, t, dur * 0.8, 'square', 0.08, f * 1.1);
@@ -140,6 +149,27 @@ export const audio = {
     tone(760, 0.6, 0.34, 'sawtooth', 0.3, 430);
     tone(1520, 0.6, 0.28, 'square', 0.08, 900);
     noise(0.6, 0.3, 0.25, 1800, 3, 900);
+  },
+  /** Chip clink: the Gambler goes all in. */
+  coin() { tone(2637, 0, 0.12, 'triangle', 0.22); tone(3136, 0.06, 0.18, 'triangle', 0.18); noise(0, 0.05, 0.3, 6000, 3); },
+  /** Slot-machine payout. */
+  cashout() { [784, 988, 1175, 1568, 1976].forEach((f, i) => tone(f, i * 0.06, 0.14, 'square', 0.14)); this.coin(); },
+  /** Sad trombone: the Gambler busts. */
+  bust() { [392, 370, 349, 294].forEach((f, i) => tone(f, i * 0.32, i === 3 ? 0.7 : 0.3, 'sawtooth', 0.2, i === 3 ? 260 : undefined)); },
+  /** Quick swipe: the Thief pockets a card (or drops one). */
+  swipe() { noise(0, 0.22, 0.4, 500, 1.2, 5000); tone(900, 0.05, 0.12, 'triangle', 0.16, 1800); },
+  /** Wet squelch: the Parasite latches on / drains. */
+  squelch() { tone(160, 0, 0.25, 'sawtooth', 0.3, 60); noise(0, 0.25, 0.35, 400, 5, 150); tone(90, 0.12, 0.3, 'sine', 0.3, 200); },
+  /** Morph warble: the Mimic transforms. */
+  morph() { for (let i = 0; i < 6; i++) tone(300 + i * 90, i * 0.06, 0.18, 'sine', 0.18, 600 - i * 40); noise(0.1, 0.4, 0.15, 1200, 6, 300); },
+  /** Mystic shimmer: the Oracle sees ahead. */
+  mystic() { [523, 659, 831, 1047, 1319].forEach((f, i) => tone(f, i * 0.09, 0.8, 'sine', 0.14)); },
+  /** Whoosh-whoosh: the Jester swaps racks. */
+  whoosh() { noise(0, 0.3, 0.4, 300, 1, 3000); noise(0.3, 0.3, 0.4, 3000, 1, 300); },
+  /** Prize-wheel spin then a stinger: Wildcard chaos. */
+  wheel() {
+    for (let i = 0; i < 12; i++) tone(1200, i * (0.04 + i * 0.008), 0.03, 'square', 0.14);
+    [392, 523, 659, 1047].forEach((f, i) => tone(f, 0.95 + i * 0.07, 0.3, 'sawtooth', 0.2));
   },
   startLobby() {
     if (lobbyTimer !== null || muted) return;

@@ -57,7 +57,7 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
 
   return (
     <motion.div className="sheet-backdrop" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <motion.div className="sheet" role="dialog" aria-modal="true" aria-label="Settings" onClick={(e) => e.stopPropagation()}
+      <motion.div className="msheet" role="dialog" aria-modal="true" aria-label="Settings" onClick={(e) => e.stopPropagation()}
         initial={{ y: 40, opacity: 0, scale: 0.97 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 40, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 420, damping: 32 }}>
         <div className="sheet-head">
@@ -75,13 +75,25 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
             </div>
 
             <div className="set-row">
+              <span className="set-label"><Icon name="swords" size={16} /> Game mode</span>
+              <div className="seg" role="radiogroup" aria-label="Game mode">
+                <button role="radio" aria-checked={local.mode !== 'duel'} className={local.mode !== 'duel' ? 'on' : ''} disabled={!editable}
+                  onClick={() => change({ mode: 'classic' })}>Classic</button>
+                <button role="radio" aria-checked={local.mode === 'duel'} className={local.mode === 'duel' ? 'on duel' : ''}
+                  disabled={!editable || (state?.players.length ?? 0) > 2}
+                  title={(state?.players.length ?? 0) > 2 ? '1v1 needs exactly 2 players' : undefined}
+                  onClick={() => change({ mode: 'duel', max_players: 2 })}>1v1 Duel</button>
+              </div>
+            </div>
+
+            {local.mode !== 'duel' && <div className="set-row">
               <span className="set-label"><Icon name="users" size={16} /> Max players</span>
               <div className="stepper">
                 <button disabled={!editable || local.max_players <= minPlayers} onClick={() => change({ max_players: local.max_players - 1 })} aria-label="Fewer players">−</button>
                 <b>{local.max_players}</b>
                 <button disabled={!editable || local.max_players >= 12} onClick={() => change({ max_players: local.max_players + 1 })} aria-label="More players">+</button>
               </div>
-            </div>
+            </div>}
 
             {OPTIONS.map((o) => (
               <div className="set-row" key={o.key}>

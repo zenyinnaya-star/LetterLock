@@ -16,6 +16,7 @@ import { Icon } from './icons';
 import { Lobby } from './Lobby';
 import { Reactions } from './Reactions';
 import { ActionFeed } from './ActionFeed';
+import { DuelHud } from './DuelHud';
 import { SettingsButton } from './SettingsPanel';
 import { AnswerPhase, DuelIntro, Finished, GuessPhase, Rack, ReactPhase, RevealPhase, type Act } from './phases';
 import { Header, Hud, TimeBar, Toast } from './ui';
@@ -84,15 +85,16 @@ export function Game({ state, token, offset, refresh }: {
 
   // music: site theme in the lobby, quieter under gameplay, the duel track for a 1v1
   const duel = state.room.duel;
+  const duelMode = state.room.settings?.mode === 'duel';
   useEffect(() => {
-    if (phase === 'duel_intro' || (duel && phase !== 'lobby' && phase !== 'finished')) { music.play('duel'); return; }
+    if (phase === 'duel_intro' || (duel && phase !== 'lobby' && phase !== 'finished') || (phase === 'lobby' && duelMode)) { music.play('duel'); return; }
     if (phase === 'finished') {
       music.play('none'); // let the fanfare + announcer land, then bring the theme back
       const id = window.setTimeout(() => music.play('theme'), 4000);
       return () => window.clearTimeout(id);
     }
     music.play('theme', { quiet: phase !== 'lobby' });
-  }, [phase, duel]);
+  }, [phase, duel, duelMode]);
   useEffect(() => () => music.play('theme'), []);
 
   // announcer voice
@@ -203,7 +205,9 @@ export function Game({ state, token, offset, refresh }: {
                 : <button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> Leave</button>}
             </>
           } />
-        {phase !== 'lobby' && <Hud state={state} meId={me?.id ?? null} />}
+        {phase !== 'lobby' && (state.room.duel && phase !== 'finished' && state.players.filter((p) => !p.eliminated).length === 2
+          ? <DuelHud state={state} />
+          : <Hud state={state} meId={me?.id ?? null} />)}
         <AnimatePresence>
           {me?.eliminated && phase !== 'finished' && (
             <motion.div className="banner out" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
@@ -235,7 +239,7 @@ export function Game({ state, token, offset, refresh }: {
       <AnimatePresence>
         {confirmQuit && (
           <motion.div className="sheet-backdrop" onClick={() => setConfirmQuit(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div className="sheet quit-sheet" role="dialog" aria-modal="true" aria-label="Quit the game?" onClick={(e) => e.stopPropagation()}
+            <motion.div className="msheet quit-sheet" role="dialog" aria-modal="true" aria-label="Quit the game?" onClick={(e) => e.stopPropagation()}
               initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 460, damping: 28 }}>
               <motion.div className="quit-art" animate={{ rotate: [0, -12, 10, -6, 0] }} transition={{ repeat: Infinity, duration: 1.4 }}>
@@ -245,7 +249,7 @@ export function Game({ state, token, offset, refresh }: {
               <p className="muted">You&apos;re out for the rest of this game, and the whole room hears that you chickened out.</p>
               <div className="row" style={{ justifyContent: 'center', gap: 10 }}>
                 <button className="btn ghost" onClick={() => setConfirmQuit(false)}>Keep playing</button>
-                <button className="btn danger" onClick={() => { audio.chicken(); setConfirmQuit(false); void leave(1300); }}>Quit anyway</button>
+                <button className="btn danger" onClick={() => { audio.chicken(); setConfirmQuit(false); void leave(2400); }}>Quit anyway</button>
               </div>
             </motion.div>
           </motion.div>

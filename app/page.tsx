@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { Icon } from '@/components/icons';
 import { ClassPicker, Header, spring } from '@/components/ui';
 import { audio } from '@/lib/audio';
 import { friendlyError } from '@/lib/errors';
@@ -25,16 +26,17 @@ export default function Home() {
 
   const ready = name.trim().length > 0 && cls !== null;
 
-  async function go(kind: 'create' | 'join') {
+  async function go(kind: 'create' | 'join' | 'duel') {
     if (!cls) { setErr('Pick a class first.'); return; }
     if (!name.trim()) { setErr('Enter your name.'); return; }
     if (kind === 'join' && code.trim().length !== 4) { setErr('Room codes are 4 characters.'); return; }
     audio.unlock();
     setBusy(true); setErr(null);
     try {
-      const r = kind === 'create'
-        ? await rpc.createRoom(name.trim(), cls)
-        : await rpc.joinRoom(code.trim().toUpperCase(), name.trim(), cls);
+      const r = kind === 'join'
+        ? await rpc.joinRoom(code.trim().toUpperCase(), name.trim(), cls)
+        : await rpc.createRoom(name.trim(), cls);
+      if (kind === 'duel') await rpc.updateSettings(r.token, { mode: 'duel', max_players: 2 });
       saveName(name.trim());
       saveSession(r.code, { token: r.token, playerId: r.player_id });
       router.push(`/room/${r.code}`);
@@ -76,7 +78,13 @@ export default function Home() {
           <span className="label">Pick your class</span>
           <ClassPicker value={cls} onChange={setCls} />
         </div>
-        <button className="btn lg block" disabled={busy || !ready} onClick={() => go('create')}>Create a room</button>
+        <div className="create-row">
+          <button className="btn lg block" disabled={busy || !ready} onClick={() => go('create')}>Create a room</button>
+          <motion.button className="btn lg block duel-btn" disabled={busy || !ready} onClick={() => go('duel')}
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+            <Icon name="swords" size={20} /> 1v1 Duel
+          </motion.button>
+        </div>
         <div className="divider">OR JOIN</div>
         <div className="row" style={{ gap: 8, flexWrap: 'nowrap' }}>
           <input className="input code" maxLength={4} value={code} placeholder="CODE"

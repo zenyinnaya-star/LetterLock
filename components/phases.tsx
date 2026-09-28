@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CARD_INFO, CLASSES } from '@/lib/classes';
+import { CARD_INFO, CHAOS_INFO, CLASSES } from '@/lib/classes';
 import { REASONS } from '@/lib/errors';
 import { rpc } from '@/lib/rpc';
 import type { RoomState } from '@/lib/types';
@@ -26,8 +26,14 @@ function StageHead({ state, label, msLeft, showClock = true }: { state: RoomStat
     <div className="stage-head">
       <span className={`phase-tag${state.room.duel ? ' duel' : ''}`}>
         {state.room.duel && <Icon name="swords" size={14} />}
-        {state.room.duel ? 'Final duel · ' : ''}Round {state.room.round} · {label}
+        {state.room.duel ? (state.room.settings.mode === 'duel' ? '1v1 · ' : 'Final duel · ') : ''}Round {state.room.round} · {label}
       </span>
+      {state.room.chaos && (
+        <motion.span className="chaos-chip" title={CHAOS_INFO[state.room.chaos]?.text}
+          initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={spring}>
+          <Icon name="dice" size={14} /> {CHAOS_INFO[state.room.chaos]?.name}
+        </motion.span>
+      )}
       {showClock && <Clock msLeft={msLeft} />}
     </div>
   );
@@ -61,7 +67,8 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
   useEffect(() => { setWord(''); inputRef.current?.focus(); }, [state.room.round]);
 
   const clean = word.toLowerCase().replace(/[^a-z]/g, '');
-  const hasBanned = !me?.hacked && clean.toUpperCase().split('').some((c) => banned.has(c));
+  const noE = state.room.chaos === 'no_e';
+  const hasBanned = (!me?.hacked && clean.toUpperCase().split('').some((c) => banned.has(c))) || (noE && clean.includes('e'));
   const canPlay = !!me && !me.eliminated && !!token;
 
   async function submit() {
@@ -78,6 +85,17 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
       <motion.h1 className="prompt" initial={{ opacity: 0, scale: 0.85, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={softSpring}>
         {state.prompt}
       </motion.h1>
+      {state.room.chaos && ['no_e', 'double', 'speed'].includes(state.room.chaos) && (
+        <motion.div className="note chaos" style={{ maxWidth: 620, margin: '0 auto', width: '100%' }}
+          initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+          <Icon name="dice" size={16} /> <span><b>{CHAOS_INFO[state.room.chaos]?.name}:</b> {CHAOS_INFO[state.room.chaos]?.text}</span>
+        </motion.div>
+      )}
+      {state.players.filter((p) => p.oracle_word && p.id !== me?.id).map((p) => (
+        <div key={p.id} className="note oracle" style={{ maxWidth: 620, margin: '0 auto', width: '100%' }}>
+          <Icon name="orb" size={16} /> <span>The Oracle <b>{p.name}</b> locked in <b>{p.oracle_word!.toUpperCase()}</b></span>
+        </div>
+      ))}
       {canPlay && me.hacked && (
         <motion.div className="note hack" style={{ maxWidth: 620, margin: '0 auto', width: '100%' }}
           initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1, x: [0, -3, 3, 0] }} transition={{ x: { repeat: 3, duration: 0.2 } }}>
@@ -93,9 +111,9 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
             <div className="word-preview" aria-hidden>
               <AnimatePresence initial={false} mode="popLayout">
                 {clean.toUpperCase().split('').map((c, i) => (
-                  <motion.span key={`${i}-${c}`} layout className={`ch${!me?.hacked && banned.has(c) ? ' bad' : ''}`}
+                  <motion.span key={`${i}-${c}`} layout className={`ch${(!me?.hacked && banned.has(c)) || (noE && c === 'E') ? ' bad' : ''}`}
                     initial={{ y: -10, opacity: 0, scale: 0.6 }}
-                    animate={!me?.hacked && banned.has(c) ? { y: 0, opacity: 1, scale: 1, x: [0, -4, 4, -3, 0] } : { y: 0, opacity: 1, scale: 1 }}
+                    animate={(!me?.hacked && banned.has(c)) || (noE && c === 'E') ? { y: 0, opacity: 1, scale: 1, x: [0, -4, 4, -3, 0] } : { y: 0, opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.5 }} transition={{ duration: 0.22 }}>
                     {c}
                   </motion.span>
@@ -110,6 +128,13 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
               )}
             </AnimatePresence>
             <button className="btn lg block" disabled={!clean || busy}>{me.answer ? 'Change answer' : 'Lock it in'}</button>
+            {me.class === 'gambler' && state.room.settings.perks && (
+              <motion.button type="button" className={`btn block gamble${me.bet_active ? ' on' : ''}`} disabled={me.bet_active}
+                whileTap={{ scale: 0.96 }} animate={me.bet_active ? { rotate: [0, -2, 2, 0] } : {}}
+                onClick={() => token && void act(() => rpc.usePerk(token, null), 'All in! Double or bust')}>
+                <Icon name="coin" size={18} /> {me.bet_active ? 'ALL IN — double or bust' : 'Go all in (×2 points, −10 if you bust)'}
+              </motion.button>
+            )}
           </form>
           <AnimatePresence mode="wait">
             {me.answer && (
@@ -291,14 +316,25 @@ export function ReactPhase({ state, token, msLeft, act }: PhaseProps) {
 }
 
 /* ───────────── DUEL INTRO ───────────── */
-export function DuelIntro({ state }: PhaseProps) {
+export function DuelIntro({ state, msLeft }: PhaseProps) {
   const [a, b] = state.players.filter((p) => !p.eliminated);
   if (!a || !b) return null;
+  const oneVone = state.room.settings.mode === 'duel';
+  const count = Math.ceil(msLeft / 1000);
   return (
     <div className="duel-stage">
       <motion.div className="phase-tag duel" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <Icon name="swords" size={14} /> Final duel
+        <Icon name="swords" size={14} /> {oneVone ? '1v1 Duel' : 'Final duel'}
       </motion.div>
+      <AnimatePresence>
+        {count <= 3 && count >= 1 && (
+          <motion.div key={count} className="duel-count" initial={{ scale: 3, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 600, damping: 20 }}>{count}</motion.div>
+        )}
+        {count <= 0 && (
+          <motion.div key="fight" className="duel-count fight" initial={{ scale: 4, opacity: 0, rotate: -10 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}>FIGHT!</motion.div>
+        )}
+      </AnimatePresence>
       <div className="fighters">
         <motion.div className="fighter" initial={{ x: -160, opacity: 0, rotate: -12 }} animate={{ x: 0, opacity: 1, rotate: 0 }} transition={{ ...spring, delay: 0.1 }}>
           <ClassIcon cls={a.class} size={110} /><b>{a.name}</b><span className="muted">{a.points} pts</span>
@@ -380,9 +416,19 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
   const cfg = state.room.settings;
   const others = state.players.filter((p) => !p.eliminated && p.id !== me.id);
   const suspects = state.players.filter((p) => p.id !== me.id && !p.quit);
-  const perkUsable = cfg.perks && !me.perk_used && !me.eliminated && (
-    (me.class === 'ninja' && state.room.round >= 3) ||
-    (me.class === 'mastermind' && ['answer', 'reveal', 'guess'].includes(phase)));
+  const alive = !me.eliminated && cfg.perks;
+  const PERK: Partial<Record<string, { usable: boolean; label: string; target?: string; ok: string }>> = {
+    ninja: { usable: alive && !me.perk_used && state.room.round >= 3, label: me.perk_used ? 'Used' : state.room.round < 3 ? 'Unlocks round 3' : 'See all letters in play', ok: 'Ninja vision activated' },
+    mastermind: { usable: alive && !me.perk_used && ['answer', 'reveal', 'guess'].includes(phase), label: me.perk_used ? 'Used' : 'Peek at one player', target: 'Peek at who?', ok: 'Peeked — one letter leaked to the room' },
+    mimic: { usable: alive && !me.perk_used && phase !== 'duel_intro', label: me.perk_used ? 'Used' : 'Copy a class', target: 'Become who?', ok: 'Transformed!' },
+    gambler: { usable: alive && phase === 'answer' && !me.bet_active, label: me.bet_active ? 'All in this round' : phase === 'answer' ? 'Bet on your word (×2)' : 'Bet during answers', ok: 'All in! Double or bust' },
+    parasite: { usable: alive && ['answer', 'reveal', 'guess'].includes(phase) && !me.latched_to, label: me.latched_to ? `Latched to ${nameOf(state, me.latched_to)}` : 'Latch onto a player', target: 'Latch onto who?', ok: 'Latched on' },
+    oracle: { usable: alive && !me.perk_used && ['reveal', 'guess', 'react'].includes(phase), label: me.perk_used ? 'Used' : 'See next prompt', ok: 'The future is revealed' },
+    jester: { usable: alive && !me.perk_used && ['guess', 'react'].includes(phase), label: me.perk_used ? 'Used' : 'Swap lock racks', target: 'Swap racks with who?', ok: 'Switcheroo!' },
+  };
+  const perk = PERK[me.class];
+  const perkUsable = !!perk?.usable;
+  const perkTargets = me.class === 'mimic' ? others.filter((p) => p.class !== 'mimic') : others;
 
   function cardUsable(kind: string): boolean {
     if (me!.eliminated) return false;
@@ -393,12 +439,13 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
   }
 
   const perkLabel = !cfg.perks ? 'Perks are off'
+    : perk ? perk.label
     : me.class === 'villain' ? 'Passive: attacks hit ×2'
-    : me.class === 'hacker' ? (me.perk_used ? 'Used' : 'Passive: attacks hack')
+    : me.class === 'hacker' ? 'Passive: attacks hack'
+    : me.class === 'thief' ? 'Passive: steal cards'
+    : me.class === 'wildcard' ? 'Passive: chaos every round'
     : me.class === 'hero' ? (me.perk_used ? 'Used' : 'Absorb a hit in the cards phase')
-    : me.perk_used ? 'Used'
-    : me.class === 'ninja' ? (state.room.round < 3 ? 'Unlocks round 3' : 'See all letters in play')
-    : 'Peek at one player';
+    : '';
 
   return (
     <motion.div className="rack" initial={{ y: 120 }} animate={{ y: 0 }} transition={softSpring}>
@@ -473,8 +520,9 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
             animate={perkUsable ? { boxShadow: [`0 0 0 0 ${CLASS_COLORS[me.class][0]}00`, `0 0 0 4px ${CLASS_COLORS[me.class][0]}66`, `0 0 0 0 ${CLASS_COLORS[me.class][0]}00`] } : {}}
             transition={{ repeat: Infinity, duration: 1.8 }}
             onClick={() => {
-              if (me.class === 'mastermind') setOpen(open?.kind === 'perk' ? null : { kind: 'perk' });
-              else if (me.class === 'ninja') void act(() => rpc.usePerk(token, null), 'Ninja vision activated');
+              if (!perk) return;
+              if (perk.target) setOpen(open?.kind === 'perk' ? null : { kind: 'perk' });
+              else void act(() => rpc.usePerk(token, null), perk.ok);
             }}>
             <ClassIcon cls={me.class} size={32} />
             <span>{info.name}<small>{perkLabel}</small></span>
@@ -482,12 +530,12 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
           <AnimatePresence>
             {open?.kind === 'perk' && (
               <motion.div className="popover" initial={{ opacity: 0, y: 8, x: '-50%' }} animate={{ opacity: 1, y: 0, x: '-50%' }} exit={{ opacity: 0, y: 8, x: '-50%' }}>
-                <span className="label">Peek at who?</span>
-                {others.map((p) => (
+                <span className="label">{perk?.target}</span>
+                {perkTargets.map((p) => (
                   <button key={p.id} className="btn sm ghost" onClick={() => {
                     setOpen(null);
-                    void act(() => rpc.usePerk(token, p.id), 'Peeked — one letter leaked to the room');
-                  }}><ClassIcon cls={p.class} size={18} /> {p.name}</button>
+                    void act(() => rpc.usePerk(token, p.id), perk?.ok);
+                  }}><ClassIcon cls={p.class} size={18} /> {p.name}{me.class === 'mimic' && <span className="muted small"> · {CLASSES[p.class].name}</span>}</button>
                 ))}
               </motion.div>
             )}
@@ -500,10 +548,16 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
               <span className="sect-label">Intel</span>
               <div className="col" style={{ gap: 4 }}>
                 {me.intel.map((x, idx) => (
-                  <div key={idx} className="row small" style={{ gap: 6, color: '#fff4dc' }}>
-                    <Icon name="eye" size={14} /> {x.kind === 'ninja' ? 'In play' : x.target_name}
-                    <TileRow small letters={x.letters.map((l) => ({ letter: l }))} />
-                  </div>
+                  x.kind === 'oracle' ? (
+                    <div key={idx} className="row small" style={{ gap: 6, color: '#cfe9ff' }}>
+                      <Icon name="orb" size={14} /> Round {x.round}: <b>“{x.prompt}”</b>
+                    </div>
+                  ) : (
+                    <div key={idx} className="row small" style={{ gap: 6, color: '#fff4dc' }}>
+                      <Icon name="eye" size={14} /> {x.kind === 'ninja' ? 'In play' : x.target_name}
+                      <TileRow small letters={x.letters.map((l) => ({ letter: l }))} />
+                    </div>
+                  )
                 ))}
               </div>
             </div>

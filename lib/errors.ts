@@ -29,6 +29,10 @@ const MESSAGES: Record<string, string> = {
   NOT_HACKED: "You're not hacked right now.",
   ALREADY_TRACED: 'You already used your trace this round.',
   SLOW_DOWN: 'Easy — one at a time.',
+  TOO_MANY_FOR_DUEL: '1v1 needs exactly 2 players in the room.',
+  ALREADY_BET: "You're already all in this round.",
+  ALREADY_LATCHED: 'You already latched on this round.',
+  CANNOT_MIMIC_MIMIC: "You can't copy another Mimic.",
 };
 
 export const REASONS: Record<string, string> = {
@@ -38,6 +42,7 @@ export const REASONS: Record<string, string> = {
   NOT_A_WORD: 'Not in the dictionary',
   REPEAT: 'Already used that word',
   BANNED_LETTER: 'Used a banned letter',
+  CHAOS_NO_E: 'Used E in a no-E round',
 };
 
 export function friendlyError(err: unknown): string {

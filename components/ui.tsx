@@ -105,31 +105,36 @@ export function Clock({ msLeft }: { msLeft: number }) {
 
 /* ───────── class picker ───────── */
 export function ClassPicker({ value, onChange }: { value: PlayerClass | null; onChange: (c: PlayerClass) => void }) {
+  const info = value ? CLASSES[value] : null;
   return (
-    <div className="classes">
-      {CLASS_ORDER.map((c) => {
-        const info = CLASSES[c];
-        const sel = value === c;
-        return (
-          <motion.button key={c} type="button" layout className={`class-card${sel ? ' sel' : ''}`}
-            onClick={() => onChange(c)} aria-pressed={sel} whileTap={{ scale: 0.97 }} transition={softSpring}>
-            <motion.span animate={sel ? { rotate: [0, -10, 8, 0], scale: [1, 1.15, 1] } : {}} transition={{ duration: 0.45 }}>
-              <ClassIcon cls={c} size={40} />
-            </motion.span>
-            <span><b>{info.name}</b></span>
-            <span className="tag">{info.tagline}</span>
-            <AnimatePresence initial={false}>
-              {sel && (
-                <motion.span className="detail" key="d" initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
-                  <span className="plus">+</span> {info.perk}<br />
-                  <span className="minus">−</span> {info.cost}
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.button>
-        );
-      })}
+    <div className="picker">
+      <div className="classes-grid" role="radiogroup" aria-label="Class">
+        {CLASS_ORDER.map((c) => {
+          const sel = value === c;
+          return (
+            <motion.button key={c} type="button" role="radio" aria-checked={sel} className={`class-tile${sel ? ' sel' : ''}`}
+              onClick={() => onChange(c)} whileTap={{ scale: 0.94 }} whileHover={{ y: -3 }} transition={softSpring}>
+              <motion.span animate={sel ? { rotate: [0, -8, 6, 0], scale: [1, 1.12, 1] } : {}} transition={{ duration: 0.45 }}>
+                <ClassIcon cls={c} size={56} />
+              </motion.span>
+              <b>{CLASSES[c].name}</b>
+            </motion.button>
+          );
+        })}
+      </div>
+      <AnimatePresence mode="wait" initial={false}>
+        {info && value && (
+          <motion.div key={value} className="class-detail" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2 }}>
+            <ClassIcon cls={value} size={64} />
+            <div>
+              <div className="row" style={{ gap: 8 }}><b className="cd-name">{info.name}</b><span className="muted small">{info.tagline}</span></div>
+              <div className="cd-line"><span className="plus">+</span> {info.perk}</div>
+              <div className="cd-line"><span className="minus">−</span> {info.cost}</div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -153,13 +158,13 @@ export function Hud({ state, meId }: { state: RoomState; meId: string | null }) 
   return (
     <motion.div className="hud" layout role="list" aria-label="Scoreboard">
       <AnimatePresence initial={false}>
-        {sorted.map((p) => <HudChip key={p.id} p={p} me={p.id === meId} phase={phase} />)}
+        {sorted.map((p) => <HudChip key={p.id} p={p} me={p.id === meId} phase={phase} nameOfPlayer={(id) => state.players.find((x) => x.id === id)?.name ?? '?'} />)}
       </AnimatePresence>
     </motion.div>
   );
 }
 
-function HudChip({ p, me, phase }: { p: PublicPlayer; me: boolean; phase: RoomState['room']['phase'] }) {
+function HudChip({ p, me, phase, nameOfPlayer }: { p: PublicPlayer; me: boolean; phase: RoomState['room']['phase']; nameOfPlayer: (id: string) => string }) {
   const done = !p.eliminated && (phase === 'answer' ? p.answered : phase === 'guess' ? p.guessed : phase === 'react' ? p.react_ready : false);
   return (
     <motion.div layout role="listitem" className={`chip${me ? ' me' : ''}${p.eliminated ? ' out' : ''}${p.connected ? '' : ' offline'}`}
@@ -174,6 +179,9 @@ function HudChip({ p, me, phase }: { p: PublicPlayer; me: boolean; phase: RoomSt
           {p.quit && <span className="tagchip chicken" title="Rage quit">chicken</span>}
           {p.exposed && <span className="tagchip exposed" title="Caught hacking">exposed</span>}
           {p.hacked && <span className="tagchip hacked" title="Hacked — can't see their own locks"><Icon name="glitch" size={11} /> hacked</span>}
+          {p.orig_class && <span className="tagchip mimic" title="Mimic in disguise">mimic</span>}
+          {p.betting && <span className="tagchip bet" title="All in this round">all in</span>}
+          {p.latched_to && <span className="tagchip leech" title="Parasite latched on"><Icon name="link2" size={11} /> {nameOfPlayer(p.latched_to)}</span>}
         </span>
         <span className="stats">
           <span className="stat" title="Banned letters"><Icon name="lock" size={12} />{p.letter_count}</span>

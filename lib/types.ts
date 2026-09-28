@@ -1,5 +1,7 @@
 export type Phase = 'lobby' | 'answer' | 'reveal' | 'guess' | 'react' | 'duel_intro' | 'finished';
-export type PlayerClass = 'ninja' | 'mastermind' | 'hero' | 'villain' | 'hacker';
+export type PlayerClass = 'ninja' | 'mastermind' | 'hero' | 'villain' | 'hacker'
+  | 'mimic' | 'gambler' | 'thief' | 'parasite' | 'oracle' | 'wildcard' | 'jester';
+export type ChaosKind = 'swap' | 'no_e' | 'shuffle' | 'double' | 'amnesty' | 'speed';
 export type CardKind = 'attack' | 'shield' | 'cleanse';
 
 export interface PublicPlayer {
@@ -22,13 +24,18 @@ export interface PublicPlayer {
   quit: boolean;
   exposed: boolean;
   hacked: boolean;
+  orig_class: PlayerClass | null;
+  betting: boolean;
+  latched_to: string | null;
+  oracle_word: string | null;
 }
 
 export interface IntelNinja { kind: 'ninja'; round: number; letters: string[] }
 export interface IntelMastermind {
   kind: 'mastermind'; round: number; target_id: string; target_name: string; letters: string[]; leaked: string;
 }
-export type Intel = IntelNinja | IntelMastermind;
+export interface IntelOracle { kind: 'oracle'; round: number; prompt: string }
+export type Intel = IntelNinja | IntelMastermind | IntelOracle;
 
 export interface Me {
   id: string;
@@ -40,6 +47,8 @@ export interface Me {
   perk_used: boolean;
   hacked: boolean;
   can_trace: boolean;
+  bet_active: boolean;
+  latched_to: string | null;
   letters: { letter: string; revealed: boolean; hidden?: boolean }[];
   cards: { id: number; kind: CardKind }[];
   answer: { word: string; valid: boolean; reason: string | null; points: number } | null;
@@ -68,6 +77,7 @@ export interface RoomState {
     phase_ends_at: string | null;
     answer_seconds: number;
     settings: RoomSettings;
+    chaos: ChaosKind | null;
   };
   prompt: string | null;
   me: Me | null;
@@ -83,6 +93,7 @@ export interface RoomState {
 export interface Session { token: string; playerId: string }
 
 export interface RoomSettings {
+  mode: 'classic' | 'duel';
   max_players: number;
   answer_seconds: number;
   shrink: boolean;
@@ -94,7 +105,8 @@ export interface RoomSettings {
   strikes: number;
 }
 
-export type FeedType = 'attack' | 'hack' | 'block' | 'cleanse' | 'absorb' | 'caught' | 'trace_miss' | 'chicken';
+export type FeedType = 'attack' | 'hack' | 'block' | 'cleanse' | 'absorb' | 'caught' | 'trace_miss' | 'chicken'
+  | 'bet' | 'bet_win' | 'bet_lose' | 'steal' | 'drop' | 'latch' | 'drain' | 'host_down' | 'mimic' | 'oracle' | 'swap' | 'chaos';
 export interface FeedItem {
   id: number;
   round: number;

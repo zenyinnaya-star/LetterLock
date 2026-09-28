@@ -63,6 +63,10 @@ export default function HowToPlay() {
 
       <h2>The final duel</h2>
       <p>When two players remain: VS screen, <b>+1 letter each</b>, 20-second rounds (host setting), and <b>strikes never reset</b>. Last one standing wins.</p>
+      <h2>1v1 mode</h2>
+      <p>Hit <b>1v1 Duel</b> on the home page (or pick it in the lobby gear) for a two-player room that opens straight on the VS screen with a 3-2-1 countdown, the duel music and a fighting-game health bar for strikes. Duel rules from round one.</p>
+      <h2>Wildcard chaos</h2>
+      <p>While a Wildcard is alive, every round from round 2 opens with a random twist: <b>lock swap</b>, <b>no-E round</b>, <b>card shuffle</b>, <b>double points</b>, <b>amnesty</b> (everyone drops a lock) or a <b>speed round</b> (half time).</p>
 
       <h2>Titles</h2>
       <div className="line"><span style={{ color: '#ffcf4a' }}><Icon name="trophy" size={24} /></span><span><b>Champion</b> — last one standing.</span></div>
