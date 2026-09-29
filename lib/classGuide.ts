@@ -1,3 +1,10 @@
+import { getLang, type UiLang } from './i18n';
+import gDe from './i18n/guide/de';
+import gEs from './i18n/guide/es';
+import gFr from './i18n/guide/fr';
+import gHi from './i18n/guide/hi';
+import gJa from './i18n/guide/ja';
+import gZh from './i18n/guide/zh';
 import type { PlayerClass } from './types';
 
 export interface ClassGuide {
@@ -8,7 +15,9 @@ export interface ClassGuide {
   counter: string;             // how to beat it
 }
 
-export const CLASS_GUIDE: Record<PlayerClass, ClassGuide> = {
+export type GuideText = Omit<ClassGuide, 'difficulty'>;
+
+const EN_GUIDE: Record<PlayerClass, ClassGuide> = {
   ninja: {
     style: 'Scout', difficulty: 2,
     how: 'You play quiet for two rounds, then from round 3 you flip on Ninja vision once and see every banned letter on the table. You don\'t learn who owns which, so you have to piece it together from how people answer.',
@@ -142,3 +151,14 @@ export const CLASS_GUIDE: Record<PlayerClass, ClassGuide> = {
     counter: 'Keep your rack small until the Jester has used their swap.',
   },
 };
+
+const TR: Partial<Record<UiLang, Partial<Record<PlayerClass, GuideText>>>> = { es: gEs, fr: gFr, de: gDe, ja: gJa, zh: gZh, hi: gHi };
+
+/** Guide for a class in the player's current interface language (English fallback). */
+export const CLASS_GUIDE = new Proxy(EN_GUIDE, {
+  get(target, cls: string) {
+    const base = target[cls as PlayerClass];
+    const tr = TR[getLang()]?.[cls as PlayerClass];
+    return base && tr ? { ...base, ...tr } : base;
+  },
+}) as Record<PlayerClass, ClassGuide>;

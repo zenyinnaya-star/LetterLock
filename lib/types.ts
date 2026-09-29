@@ -96,6 +96,7 @@ export interface Session { token: string; playerId: string }
 
 export interface RoomSettings {
   mode: 'classic' | 'duel';
+  lang?: 'en' | 'es' | 'fr' | 'de' | 'ja' | 'zh';
   max_players: number;
   answer_seconds: number;
   shrink: boolean;

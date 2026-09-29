@@ -9,6 +9,8 @@ import { CLASSES } from '@/lib/classes';
 import { audio } from '@/lib/audio';
 import { music } from '@/lib/music';
 import { friendlyError } from '@/lib/errors';
+import { t as tr } from '@/lib/i18n';
+import { useT } from '@/lib/i18n/react';
 import { rpc } from '@/lib/rpc';
 import { clearSession } from '@/lib/session';
 import type { PublicPlayer, RoomState } from '@/lib/types';
@@ -27,13 +29,14 @@ const PHASE_TOTAL: Record<string, number> = { reveal: 6, guess: 20, react: 8, du
 function classCall(p: PublicPlayer, all: PublicPlayer[], capital = false): string {
   if (!p.class) return p.name;
   const cls = CLASSES[p.class].name;
-  if (all.filter((x) => x.class === p.class).length > 1) return `${cls} ${p.name}`;
-  return `${capital ? 'The' : 'the'} ${cls}`;
+  if (all.filter((x) => x.class === p.class).length > 1) return tr('an.cls_name', { cls, name: p.name });
+  return tr(capital ? 'an.The' : 'an.the', { cls });
 }
 
 export function Game({ state, token, offset, refresh }: {
   state: RoomState; token: string | null; offset: number; refresh: () => Promise<void>;
 }) {
+  const t = useT();
   const [toast, setToast] = useState<{ msg: string; good?: boolean } | null>(null);
   const [confirmQuit, setConfirmQuit] = useState(false);
   const msLeft = useCountdown(state.room.phase_ends_at, offset);
@@ -118,21 +121,21 @@ export function Game({ state, token, offset, refresh }: {
     const alive = state.players.filter((p) => !p.eliminated);
     switch (phase) {
       case 'answer':
-        if (state.room.duel) announcer.say(`Duel round! ${state.prompt ?? ''}`, { hype: true, delay: 150 });
-        else announcer.say(`Round ${round}! ${state.prompt ?? ''}`, { delay: 150 });
+        if (state.room.duel) announcer.say(tr('an.duel_round', { prompt: state.prompt ?? '' }), { hype: true, delay: 150 });
+        else announcer.say(tr('an.round', { n: round, prompt: state.prompt ?? '' }), { delay: 150 });
         break;
-      case 'reveal': announcer.say("Time's up! Let's see those words.", { urgent: true }); break;
-      case 'guess': announcer.say('Crack their locks!'); break;
-      case 'react': announcer.say('Play your cards!'); break;
+      case 'reveal': announcer.say(tr('an.times_up'), { urgent: true }); break;
+      case 'guess': announcer.say(tr('an.crack')); break;
+      case 'react': announcer.say(tr('an.cards')); break;
       case 'duel_intro':
-        if (alive.length === 2) announcer.say(`${classCall(alive[0], state.players, true)}, versus, ${classCall(alive[1], state.players)}! Fight!`, { hype: true, delay: 900, urgent: true });
+        if (alive.length === 2) announcer.say(tr('an.vs', { a: classCall(alive[0], state.players, true), b: classCall(alive[1], state.players) }), { hype: true, delay: 900, urgent: true });
         break;
       case 'finished': {
         const w = state.players.find((p) => p.id === state.room.winner_id);
-        announcer.say(w ? `${classCall(w, state.players, true)} wins! Your champion!` : 'Game over!', { hype: true, delay: 700, urgent: true });
+        announcer.say(w ? tr('an.wins', { name: classCall(w, state.players, true) }) : tr('an.over'), { hype: true, delay: 700, urgent: true });
         break;
       }
-      case 'lobby': announcer.say('Rematch! Back to the lobby.'); break;
+      case 'lobby': announcer.say(tr('an.rematch')); break;
     }
   }, [phase, round, state.players, state.prompt, state.room.duel, state.room.winner_id]);
 
@@ -144,8 +147,9 @@ export function Game({ state, token, offset, refresh }: {
     if (!before || phase === 'lobby' || phase === 'finished') return;
     const fresh = state.players.filter((p) => out.has(p.id) && !before.has(p.id) && !p.quit);
     if (fresh.length === 0) return;
-    const names = fresh.map((p, i) => (p.id === me?.id ? 'You' : classCall(p, state.players, i === 0)));
-    announcer.say(`${names.join(' and ')} ${names.length === 1 && names[0] !== 'You' ? 'is' : 'are'} out!`, { delay: 1600 });
+    if (fresh.length === 1 && fresh[0].id === me?.id) { announcer.say(tr('an.you_out'), { delay: 1600 }); return; }
+    const names = fresh.map((p, i) => (p.id === me?.id ? tr('fd.you') : classCall(p, state.players, i === 0)));
+    announcer.say(tr(names.length === 1 ? 'an.out_one' : 'an.out_many', { names: names.join(tr('an.and')) }), { delay: 1600 });
   }, [state.players, phase, me?.id]);
 
   // five-second warning in the answer phase
@@ -154,7 +158,7 @@ export function Game({ state, token, offset, refresh }: {
     const secsLeft = Math.ceil(msLeft / 1000);
     if (phase === 'answer' && secsLeft === 5 && warned.current !== `${round}`) {
       warned.current = `${round}`;
-      announcer.say('Five seconds!', { hype: true });
+      announcer.say(tr('an.five'), { hype: true });
     }
   }, [msLeft, phase, round]);
 
@@ -201,9 +205,9 @@ export function Game({ state, token, offset, refresh }: {
           right={
             <>
               <span className="room-chip">{state.room.code}</span>
-              {!me ? <Link className="textbtn" href="/">Home</Link>
-                : midGame ? <button className="textbtn danger" onClick={() => setConfirmQuit(true)}><Icon name="logout" size={15} /> Quit</button>
-                : <button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> Leave</button>}
+              {!me ? <Link className="textbtn" href="/">{t('gm.home')}</Link>
+                : midGame ? <button className="textbtn danger" onClick={() => setConfirmQuit(true)}><Icon name="logout" size={15} /> {t('gm.quit')}</button>
+                : <button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> {t('gm.leave')}</button>}
             </>
           } />
         {phase !== 'lobby' && (state.room.duel && phase !== 'finished' && state.players.filter((p) => !p.eliminated).length === 2
@@ -212,12 +216,12 @@ export function Game({ state, token, offset, refresh }: {
         <AnimatePresence>
           {me?.eliminated && phase !== 'finished' && (
             <motion.div className="banner out" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
-              <Icon name="skull" size={18} /> You&apos;re out — spectating. Everyone&apos;s letters are visible to you now.
+              <Icon name="skull" size={18} /> {t('gm.out')}
             </motion.div>
           )}
         </AnimatePresence>
         {!me && phase !== 'lobby' && (
-          <div className="banner info"><Icon name="eye" size={18} /> Game in progress — you&apos;re watching as a spectator.</div>
+          <div className="banner info"><Icon name="eye" size={18} /> {t('gm.spectator')}</div>
         )}
         <section className="stage" aria-live="polite">
           {timed ? <TimeBar msLeft={msLeft} total={total} /> : <div className="timebar" />}
@@ -240,17 +244,17 @@ export function Game({ state, token, offset, refresh }: {
       <AnimatePresence>
         {confirmQuit && (
           <motion.div className="sheet-backdrop" onClick={() => setConfirmQuit(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div className="msheet quit-sheet" role="dialog" aria-modal="true" aria-label="Quit the game?" onClick={(e) => e.stopPropagation()}
+            <motion.div className="msheet quit-sheet" role="dialog" aria-modal="true" aria-label={t('gm.quit_title')} onClick={(e) => e.stopPropagation()}
               initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 460, damping: 28 }}>
               <motion.div className="quit-art" animate={{ rotate: [0, -12, 10, -6, 0] }} transition={{ repeat: Infinity, duration: 1.4 }}>
                 <Icon name="feather" size={44} />
               </motion.div>
-              <h2>Rage quit?</h2>
-              <p className="muted">You&apos;re out for the rest of this game, and the whole room hears that you chickened out.</p>
+              <h2>{t('gm.quit_title')}</h2>
+              <p className="muted">{t('gm.quit_body')}</p>
               <div className="row" style={{ justifyContent: 'center', gap: 10 }}>
-                <button className="btn ghost" onClick={() => setConfirmQuit(false)}>Keep playing</button>
-                <button className="btn danger" onClick={() => { audio.chicken(); setConfirmQuit(false); void leave(2400); }}>Quit anyway</button>
+                <button className="btn ghost" onClick={() => setConfirmQuit(false)}>{t('gm.keep')}</button>
+                <button className="btn danger" onClick={() => { audio.chicken(); setConfirmQuit(false); void leave(2400); }}>{t('gm.quit_anyway')}</button>
               </div>
             </motion.div>
           </motion.div>

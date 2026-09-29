@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { audio } from '@/lib/audio';
 import { CLASSES, CLASS_ORDER } from '@/lib/classes';
 import { getPrefs, setPref } from '@/lib/prefs';
+import { useT } from '@/lib/i18n/react';
 import { ClassSheet } from './ClassSheet';
 import type { PlayerClass, PublicPlayer, RoomState } from '@/lib/types';
 import { ClassIcon, Icon } from './icons';
@@ -18,7 +19,7 @@ export const softSpring = { type: 'spring', stiffness: 260, damping: 24 } as con
 /* ───────── header ───────── */
 export function Wordmark() {
   return (
-    <Link href="/" className="wordmark" aria-label="Letterlock home">
+    <Link href="/" className="wordmark" aria-label="Letterlock">
       {'LETTER'.split('').map((c, i) => <span key={i}>{c}</span>)}
       {'LOCK'.split('').map((c, i) => <span key={`l${i}`} className="red">{c}</span>)}
     </Link>
@@ -26,6 +27,7 @@ export function Wordmark() {
 }
 
 export function Header({ right, settings }: { right?: React.ReactNode; settings?: React.ReactNode }) {
+  const t = useT();
   const [muted, setMuted] = useState(false);
   const [musicOn, setMusicOn] = useState(true);
   useEffect(() => {
@@ -40,13 +42,13 @@ export function Header({ right, settings }: { right?: React.ReactNode; settings?
       <Wordmark />
       <div className="tools">
         {right}
-        <Link href="/how-to-play" className="textbtn rules-link" target="_blank">Rules</Link>
-        <button className={`iconbtn${musicOn ? '' : ' off'}`} aria-label={musicOn ? 'Music off' : 'Music on'} title={musicOn ? 'Music off' : 'Music on'}
+        <Link href="/how-to-play" className="textbtn rules-link" target="_blank">{t('hd.rules')}</Link>
+        <button className={`iconbtn${musicOn ? '' : ' off'}`} aria-label={musicOn ? t('hd.music_off') : t('hd.music_on')} title={musicOn ? t('hd.music_off') : t('hd.music_on')}
           aria-pressed={musicOn} onClick={() => setPref('music', !getPrefs().music)}>
           <Icon name={musicOn ? 'music' : 'musicoff'} />
         </button>
         {settings ?? <SettingsButton state={null} token={null} />}
-        <button className="iconbtn" aria-label={muted ? 'Unmute' : 'Mute'} title={muted ? 'Unmute' : 'Mute'}
+        <button className="iconbtn" aria-label={muted ? t('hd.unmute') : t('hd.mute')} title={muted ? t('hd.unmute') : t('hd.mute')}
           onClick={() => { audio.setMuted(!muted); setMuted(!muted); }}>
           <Icon name={muted ? 'mute' : 'volume'} />
         </button>
@@ -119,6 +121,7 @@ export function Clock({ msLeft }: { msLeft: number }) {
 
 /* ───────── class picker ───────── */
 export function ClassPicker({ value, onChange }: { value: PlayerClass | null; onChange: (c: PlayerClass) => void }) {
+  const t = useT();
   const info = value ? CLASSES[value] : null;
   const [open, setOpen] = useState<PlayerClass | null>(null);
   return (
@@ -129,7 +132,7 @@ export function ClassPicker({ value, onChange }: { value: PlayerClass | null; on
             onPick={(c) => { onChange(c); setOpen(null); }} onNav={setOpen} />
         )}
       </AnimatePresence>
-      <div className="classes-grid" role="radiogroup" aria-label="Class">
+      <div className="classes-grid" role="radiogroup" aria-label={t('home.class')}>
         {CLASS_ORDER.map((c) => {
           const sel = value === c;
           return (
@@ -152,7 +155,7 @@ export function ClassPicker({ value, onChange }: { value: PlayerClass | null; on
               <div className="row" style={{ gap: 8 }}><b className="cd-name">{info.name}</b><span className="muted small">{info.tagline}</span></div>
               <div className="cd-line"><span className="plus">+</span> {info.perk}</div>
               <div className="cd-line"><span className="minus">−</span> {info.cost}</div>
-              <button type="button" className="textbtn cd-more" onClick={() => setOpen(value)}>Tips &amp; tricks →</button>
+              <button type="button" className="textbtn cd-more" onClick={() => setOpen(value)}>{t('cp.more')}</button>
             </div>
           </motion.div>
         )}
@@ -163,8 +166,9 @@ export function ClassPicker({ value, onChange }: { value: PlayerClass | null; on
 
 /* ───────── HUD ───────── */
 export function Pips({ n, of = 2 }: { n: number; of?: number }) {
+  const t = useT();
   return (
-    <span className="pips" title={`${n} of ${of} strikes`}>
+    <span className="pips" title={t('hu.strikes', { n, of })}>
       {Array.from({ length: of }, (_, i) => (
         <motion.span key={i} className={`pip${i < n ? ' on' : ''}`}
           animate={i < n ? { scale: [1, 1.8, 1] } : { scale: 1 }} transition={{ duration: 0.4 }} />
@@ -174,11 +178,12 @@ export function Pips({ n, of = 2 }: { n: number; of?: number }) {
 }
 
 export function Hud({ state, meId }: { state: RoomState; meId: string | null }) {
+  const t = useT();
   const phase = state.room.phase;
   const sorted = [...state.players].sort((a, b) =>
     Number(a.eliminated) - Number(b.eliminated) || b.points - a.points);
   return (
-    <motion.div className="hud" layout role="list" aria-label="Scoreboard">
+    <motion.div className="hud" layout role="list" aria-label={t('hu.scoreboard')}>
       <AnimatePresence initial={false}>
         {sorted.map((p) => <HudChip key={p.id} p={p} me={p.id === meId} phase={phase} nameOfPlayer={(id) => state.players.find((x) => x.id === id)?.name ?? '?'} />)}
       </AnimatePresence>
@@ -187,6 +192,7 @@ export function Hud({ state, meId }: { state: RoomState; meId: string | null }) 
 }
 
 function HudChip({ p, me, phase, nameOfPlayer }: { p: PublicPlayer; me: boolean; phase: RoomState['room']['phase']; nameOfPlayer: (id: string) => string }) {
+  const t = useT();
   const done = !p.eliminated && (phase === 'answer' ? p.answered : phase === 'guess' ? p.guessed : phase === 'react' ? p.react_ready : false);
   return (
     <motion.div layout role="listitem" className={`chip${me ? ' me' : ''}${p.eliminated ? ' out' : ''}${p.connected ? '' : ' offline'}`}
@@ -196,19 +202,19 @@ function HudChip({ p, me, phase, nameOfPlayer }: { p: PublicPlayer; me: boolean;
       <div className="who">
         <span className="nm">
           {p.name}
-          {p.is_host && <span className="host" title="Host"><Icon name="crown" size={13} /></span>}
-          {p.eliminated && !p.quit && <span title="Eliminated" style={{ color: 'var(--lock)' }}><Icon name="x" size={13} strokeWidth={3} /></span>}
-          {p.quit && <span className="tagchip chicken" title="Rage quit">chicken</span>}
-          {p.exposed && <span className="tagchip exposed" title="Caught hacking">exposed</span>}
-          {p.hacked && <span className="tagchip hacked" title="Hacked — can't see their own locks"><Icon name="glitch" size={11} /> hacked</span>}
-          {p.orig_class && <span className="tagchip mimic" title="Mimic in disguise">mimic</span>}
-          {p.betting && <span className="tagchip bet" title="All in this round">all in</span>}
-          {p.latched_to && <span className="tagchip leech" title="Parasite latched on"><Icon name="link2" size={11} /> {nameOfPlayer(p.latched_to)}</span>}
+          {p.is_host && <span className="host" title={t('hu.host')}><Icon name="crown" size={13} /></span>}
+          {p.eliminated && !p.quit && <span title={t('hu.out')} style={{ color: 'var(--lock)' }}><Icon name="x" size={13} strokeWidth={3} /></span>}
+          {p.quit && <span className="tagchip chicken" title={t('hu.chicken_t')}>{t('hu.chicken')}</span>}
+          {p.exposed && <span className="tagchip exposed" title={t('hu.exposed_t')}>{t('hu.exposed')}</span>}
+          {p.hacked && <span className="tagchip hacked" title={t('hu.hacked_t')}><Icon name="glitch" size={11} /> {t('hu.hacked')}</span>}
+          {p.orig_class && <span className="tagchip mimic" title={t('hu.mimic_t')}>{t('hu.mimic')}</span>}
+          {p.betting && <span className="tagchip bet" title={t('hu.allin_t')}>{t('hu.allin')}</span>}
+          {p.latched_to && <span className="tagchip leech" title={t('hu.latched_t')}><Icon name="link2" size={11} /> {nameOfPlayer(p.latched_to)}</span>}
         </span>
         <span className="stats">
-          <span className="stat" title="Banned letters"><Icon name="lock" size={12} />{p.letter_count}</span>
+          <span className="stat" title={t('hu.letters')}><Icon name="lock" size={12} />{p.letter_count}</span>
           <Pips n={p.strikes} />
-          {p.perk_used && <span className="stat" title="Perk used"><Icon name="bolt" size={12} /></span>}
+          {p.perk_used && <span className="stat" title={t('hu.perk_used')}><Icon name="bolt" size={12} /></span>}
         </span>
       </div>
       <motion.span className="pts" key={p.points} initial={{ scale: 1.5, color: '#ffcf4a' }}
@@ -217,7 +223,7 @@ function HudChip({ p, me, phase, nameOfPlayer }: { p: PublicPlayer; me: boolean;
       </motion.span>
       <AnimatePresence>
         {done && (
-          <motion.span className="done" title="Done" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} transition={spring}>
+          <motion.span className="done" title={t('hu.done')} initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} transition={spring}>
             <Icon name="check" size={12} strokeWidth={3} />
           </motion.span>
         )}

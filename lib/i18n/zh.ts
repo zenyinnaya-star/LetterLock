@@ -1,0 +1,232 @@
+import type { Key } from './en';
+
+// 简体中文。**x** 渲染为粗体；{name} 为变量。禁用字母始终为拉丁字母 A–Z（中文玩家用拼音作答）。
+const zh: Partial<Record<Key, string>> = {
+  // header / common
+  'hd.rules': '规则', 'hd.music_on': '音乐开', 'hd.music_off': '音乐关', 'hd.mute': '静音', 'hd.unmute': '取消静音',
+  'hd.settings': '设置', 'hd.home': 'Letterlock 首页',
+
+  // home
+  'home.tag1': '回答题目，躲开你的禁用字母。',
+  'home.tag2': '每撑过一轮，就会再锁住一个字母。',
+  'home.name': '你的名字', 'home.name_ph': '例如：Zab', 'home.avatar': '你的头像', 'home.class': '选择职业',
+  'home.create': '创建房间', 'home.duel': '1v1 对决', 'home.or_join': '或加入', 'home.code_ph': '房间码', 'home.code': '房间码',
+  'home.join': '加入', 'home.footer': '2–12 名玩家 · 每人一台设备 ·', 'home.rules': '查看规则',
+  'home.err_class': '先选一个职业。', 'home.err_name': '请输入名字。', 'home.err_code': '房间码是 4 位字符。',
+
+  // room page
+  'room.not_found': '房间不存在', 'room.conn': '连接出错', 'room.back': '返回首页', 'room.seat': '正在入座…',
+  'room.err': '请输入名字并选择职业。', 'room.joining': '正在加入房间', 'room.join': '加入游戏',
+
+  // avatar picker
+  'av.uploading': '上传中…', 'av.change': '更换照片', 'av.upload': '上传照片', 'av.default': '使用默认',
+  'av.hint_photo': '显示你的照片，而不是职业。', 'av.hint_default': '默认头像——你的职业保持隐藏。',
+  'av.failed': '上传失败',
+
+  // class picker / sheet
+  'cp.more': '技巧与窍门 →', 'cs.power': '能力', 'cs.price': '代价', 'cs.how': '玩法', 'cs.tips': '技巧与窍门',
+  'cs.counter': '如何克制', 'cs.easy': '简单', 'cs.medium': '中等', 'cs.hard': '困难', 'cs.difficulty': '难度',
+  'cs.choose': '选择{name}', 'cs.selected': '已选择{name}', 'cs.prev': '上一个职业', 'cs.next': '下一个职业', 'cs.close': '关闭',
+
+  // lobby
+  'lb.code': '房间码', 'lb.copied': '链接已复制', 'lb.share': '分享邀请链接', 'lb.share_title': '来玩我的 Letterlock 游戏',
+  'lb.share_text': '房间 {code}', 'lb.secret': '保密', 'lb.waiting_seat': '等待玩家…', 'lb.avatar': '你的头像',
+  'lb.class': '你的职业——游戏结束前保密', 'lb.duel_tag': '1v1 对决', 'lb.answers': '答题 {n} 秒',
+  'lb.shrinking': '，逐轮缩短', 'lb.guesses': '猜测 {n} 秒', 'lb.strike1': '失误 1 次出局', 'lb.strikes': '失误 {n} 次出局',
+  'lb.cards_on': '卡牌开', 'lb.cards_off': '卡牌关', 'lb.perks_on': '技能开', 'lb.perks_off': '技能关',
+  'lb.words_in': '答题语言：{lang}',
+  'lb.wait_challenger': '等待挑战者…', 'lb.wait_more': '至少还需 1 名玩家…', 'lb.fight': '开战！',
+  'lb.start': '开始游戏 · {n} 人', 'lb.host_hint': '你是房主。点齿轮调整规则，人齐了就开始。',
+  'lb.wait_host': '等待房主开始…（{n}/{max}）', 'lb.leave': '离开房间', 'lb.share_code': '分享房间码',
+  'lb.your_secret': '你的职业是秘密', 'lb.secret_class': '隐藏职业', 'lb.host': '房主',
+
+  // settings
+  'st.title': '设置', 'st.rules': '房间规则', 'st.host_note': '你是房主——修改对所有人生效。',
+  'st.only_host': '只有房主可以修改。', 'st.locked': '游戏进行中，无法修改。',
+  'st.mode': '游戏模式', 'st.classic': '经典', 'st.duel': '1v1 对决', 'st.duel_needs2': '1v1 需要正好 2 名玩家',
+  'st.max': '人数上限', 'st.fewer': '减少人数', 'st.more': '增加人数',
+  'st.answer': '答题时间', 'st.guess': '猜测时间', 'st.cards_phase': '出牌阶段', 'st.duel_rounds': '对决轮次',
+  'st.strikes': '出局失误次数', 'st.shrink': '答题时间逐轮缩短', 'st.cards': '卡牌（攻击 / 护盾 / 净化）',
+  'st.perks': '职业技能', 'st.device': '本设备', 'st.music': '音乐', 'st.sfx': '音效', 'st.voice': '播报语音',
+  'st.howto': '玩法教学（视频）', 'st.lang': '语言', 'st.ui_lang': '菜单与播报',
+  'st.word_lang': '答题语言', 'st.word_lang_hint': '所有人都用这种语言作答。字母仍为 A–Z：重音符号可省略，日语用罗马字输入，中文用拼音输入。',
+
+  // game shell
+  'gm.home': '首页', 'gm.quit': '退出', 'gm.leave': '离开',
+  'gm.out': '你出局了——观战中。现在你能看到所有人的字母。',
+  'gm.spectator': '游戏进行中——你正在观战。',
+  'gm.quit_title': '要怒退吗？', 'gm.quit_body': '本局剩下的时间你都会出局，而且全房间都会知道你当了逃兵。',
+  'gm.keep': '继续玩', 'gm.quit_anyway': '坚持退出',
+
+  // phases
+  'ph.round': '第 {n} 轮', 'ph.1v1': '1v1', 'ph.final_duel': '决战', 'ph.answer': '答题', 'ph.reveal': '揭晓',
+  'ph.guess': '猜测', 'ph.cards': '出牌', 'ph.prompt': '题目', 'ph.hint': '第 {n} 轮：{text}',
+  'ph.oracle_locked': '先知 **{name}** 锁定了 **{word}**',
+  'ph.hacked': '你被黑了——本轮你的锁被隐藏。小心作答。',
+  'ph.hacked_trace': '你被黑了——本轮你的锁被隐藏。小心作答，并在牌架上追踪黑客。',
+  'ph.type': '输入一个词', 'ph.your_answer': '你的答案',
+  'ph.banned': '这用到了你被锁的字母——会记一次失误。',
+  'ph.change': '修改答案', 'ph.lock': '锁定答案', 'ph.allin_on': '全押——翻倍或爆掉',
+  'ph.allin': '全押（得分 ×2，爆掉 −10）', 'ph.allin_ok': '全押！翻倍或爆掉',
+  'ph.locked_in': '已锁定 **{word}**，+{n} 分。时间结束前还能修改。',
+  'ph.rejected': '**{word}**——{reason}。换一个试试。', 'ph.that': '这个词', 'ph.used': '已用过：{list}',
+  'ph.spec_answer': '观战中——看大家答题。', 'ph.spec_guess': '观战中——玩家正在猜测。',
+  'ph.input_ja': '用罗马字（neko）或日文（猫）输入', 'ph.input_zh': '用拼音（mao）或中文（猫）输入',
+  'ph.input_accents': '重音符号可省略',
+  'ph.strike': '失误', 'ph.eliminated': '出局',
+  'ph.crack': '破解别人的锁', 'ph.crack_sub': '只能猜一次。猜中禁用字母就能抽一张牌。',
+  'ph.cracked': '破解成功！**{name}** 被锁住了“{l}”。手牌有空位的话你抽了一张牌。',
+  'ph.miss': '没猜中——{name} 可以用“{l}”。', 'ph.guess_btn': '猜 {name} 的“{l}”', 'ph.pick': '选一名玩家和一个字母',
+  'ph.play_cards': '出牌吧', 'ph.quiet': '平静的一轮——没人破解成功。',
+  'ph.feed_cracked': '**{a}** 破解了 **{b}** 的“{l}”', 'ph.feed_missed': '**{a}** 猜 {b} 没猜中',
+  'ph.ninja_pen': '忍者惩罚：**{name}** +{n} 个字母',
+  'ph.hacks': '**{a}** 黑了 **{b}**（+{n}，下轮锁被隐藏）', 'ph.attacks': '**{a}** 攻击了 **{b}**（+{n}）',
+  'ph.someone': '某人', 'ph.the_cls': '{cls}', 'ph.absorbed_by': '——被 {name} 挡下', 'ph.blocked': '——被格挡',
+  'ph.take_hit': '替他挨打（+5）', 'ph.absorbed_ok': '挡下了！+5 分',
+  'ph.under_attack': '你正遭受攻击——从下方牌架打出护盾。',
+  'ph.waiting': '等待其他人…', 'ph.skip': '我好了——跳过',
+  'ph.cards_note': '倒计时结束时攻击生效，本轮幸存的所有人都会多一把锁。',
+
+  // duel
+  'du.1v1': '1v1 对决', 'du.final': '决战', 'du.fight': '开战！', 'du.pts': '{n} 分',
+  'du.rules': '每人 +1 字母 · 每轮 {n} 秒 · 失误不清零。活到最后的人获胜。',
+  'du.hero': '英雄的逆袭：只剩一个字母上场。', 'du.you': '你', 'du.hidden': '职业隐藏',
+  'du.secret': '{cls} · 保密', 'du.ready': '准备', 'du.lives': '剩余 {n}/{max} 条命',
+
+  // finished
+  'fn.wins': '{name} 获胜！', 'fn.champ': '冠军', 'fn.champ_sub': '最后的幸存者', 'fn.ein': '爱因斯坦',
+  'fn.ein_sub': '用字母最多', 'fn.vil': '大反派', 'fn.vil_sub': '给别人加字母最多',
+  'fn.nobody': '无人', 'fn.locks': '所有人的锁', 'fn.was': '原来是{cls}', 'fn.again': '再来一局',
+  'fn.wait': '等待房主开始再战…',
+
+  // rack
+  'rk.locks': '锁', 'rk.cards': '卡牌', 'rk.intel': '情报', 'rk.points': '分数', 'rk.trace': '追踪黑客',
+  'rk.who_hacked': '谁黑了你？只能猜一次。', 'rk.hacked_title': '被黑了——本轮看不到你的锁',
+  'rk.draw': '破解一把锁即可抽牌', 'rk.cards_off': '卡牌已关闭', 'rk.attack2': '+2 字母', 'rk.anon': '匿名黑入',
+  'rk.hack_who': '黑谁？', 'rk.attack_who': '攻击谁？', 'rk.hack_q': '已准备黑入 {name}', 'rk.attack_q': '已准备攻击 {name}',
+  'rk.blocked': '格挡！', 'rk.cleansed': '净化了一个字母', 'rk.in_play': '场上', 'rk.round': '第 {n} 轮：',
+
+  // perks
+  'pk.used': '已使用', 'pk.unlock3': '第 3 轮解锁', 'pk.ninja': '查看场上所有字母', 'pk.ninja_ok': '忍者视野已开启',
+  'pk.mm': '偷看一名玩家', 'pk.mm_t': '偷看谁？', 'pk.mm_ok': '已偷看——一个字母泄露给全房间',
+  'pk.mimic': '复制一个职业', 'pk.mimic_t': '变成谁？', 'pk.mimic_ok': '变身！',
+  'pk.bet_on': '本轮全押', 'pk.bet': '押注你的词（×2）', 'pk.bet_later': '答题时押注',
+  'pk.latched': '已寄生于 {name}', 'pk.latch': '寄生一名玩家', 'pk.latch_t': '寄生谁？', 'pk.latch_ok': '寄生成功',
+  'pk.oracle': '预见下一题', 'pk.oracle_ok': '未来已揭晓',
+  'pk.jester': '交换锁架', 'pk.jester_t': '和谁交换？', 'pk.jester_ok': '偷天换日！',
+  'pk.off': '技能已关闭', 'pk.villain': '被动：攻击 ×2', 'pk.hacker': '被动：攻击变黑入',
+  'pk.thief': '被动：偷牌', 'pk.wildcard': '被动：每轮制造混乱', 'pk.hero': '出牌阶段替人挨一击',
+
+  // scoreboard chips
+  'hu.host': '房主', 'hu.out': '已出局', 'hu.chicken': '逃兵', 'hu.chicken_t': '怒退', 'hu.exposed': '暴露',
+  'hu.exposed_t': '黑客被抓', 'hu.hacked': '被黑', 'hu.hacked_t': '被黑——看不到自己的锁',
+  'hu.mimic': '模仿', 'hu.mimic_t': '伪装中的模仿者', 'hu.allin': '全押', 'hu.allin_t': '本轮全押',
+  'hu.latched_t': '被寄生', 'hu.letters': '禁用字母', 'hu.perk_used': '技能已用', 'hu.done': '完成',
+  'hu.strikes': '失误 {n}/{of}', 'hu.scoreboard': '计分板',
+
+  // action banners
+  'fd.you': '你', 'fd.someone': '某人', 'fd.the': '{cls}',
+  'fd.attacked': '**{a}** 攻击了 **{b}**', 'fd.lock1': '+1 锁', 'fd.locks': '+{n} 锁',
+  'fd.got': '**{b}**', 'fd.hacked_word': '被黑了', 'fd.by': '来自 {name}', 'fd.by_someone': '来自某人…',
+  'fd.blocked_ninja': '**{a}** 挡下了忍者惩罚', 'fd.blocked': '**{a}** 格挡了 **{b}**', 'fd.a_hack': '一次黑入',
+  'fd.cleansed': '**{a}** 净化了一把锁', 'fd.absorbed': '**{a}** 替 **{b}** 挨了一击',
+  'fd.caught': '**{a}** 抓到了黑客：**{b}**', 'fd.exposed': '暴露', 'fd.traced': '**{a}** 追踪了 **{b}**',
+  'fd.wrong': '猜错了', 'fd.chicken': '**{a}** 当了逃兵', 'fd.rage': '怒退',
+  'fd.bet': '**{a}** **全押**了', 'fd.bet_sub': '翻倍或爆掉', 'fd.cashout': '**{a}** 押中了', 'fd.plus_pts': '+{n} 分',
+  'fd.bust': '**{a}** 爆掉了', 'fd.minus_pts': '−{n} 分', 'fd.steal': '**{a}** 从 **{b}** 手里偷了一张牌',
+  'fd.drop': '**{a}** 手滑掉了一张牌给 **{b}**', 'fd.latch': '**{a}** 寄生了 **{b}**', 'fd.parasite': '寄生',
+  'fd.drain': '**{a}** 吸食了 **{b}**', 'fd.minus_lock1': '−1 锁', 'fd.minus_locks': '−{n} 锁',
+  'fd.host_down': '**{a}** 失去了宿主 **{b}**', 'fd.strike': '失误', 'fd.mimic': '**{a}** 复制了 **{b}**', 'fd.now_a': '变成了{cls}',
+  'fd.oracle': '**{a}** 预见了未来', 'fd.oracle_sub': '下一个词将公开',
+  'fd.swap': '**{a}** 和 **{b}** 交换了锁', 'fd.switcheroo': '偷天换日', 'fd.wildcard': '百搭：',
+
+  // announcer (spoken)
+  'an.chicken': '{name}当逃兵啦！咯咯哒！', 'an.caught': '抓到黑客了！原来是{name}！', 'an.hacked': '你被黑了！',
+  'an.wild': '百搭来袭！{name}！{text}', 'an.mimic': '{a}变成了{cls}！', 'an.swap': '偷天换日！', 'an.bust': '{name}爆掉了！',
+  'an.duel_round': '对决回合！{prompt}', 'an.round': '第{n}轮！{prompt}', 'an.times_up': '时间到！来看看大家的答案。',
+  'an.crack': '破解他们的锁！', 'an.cards': '出牌吧！', 'an.vs': '{a}，对决，{b}！开战！',
+  'an.wins': '{name}获胜！恭喜冠军！', 'an.over': '游戏结束！', 'an.rematch': '再来一局！回到大厅。',
+  'an.out_one': '{names}出局了！', 'an.out_many': '{names}出局了！', 'an.you_out': '你出局了！', 'an.and': '和',
+  'an.five': '还剩五秒！', 'an.the': '{cls}', 'an.The': '{cls}', 'an.cls_name': '{cls}{name}',
+  'an.the_mimic': '模仿者', 'an.the_gambler': '赌徒', 'an.them': '对方', 'an.someone': '某人',
+
+  // reactions
+  'rx.emoji': '表情', 'rx.memes': '梗图', 'rx.gifs': '动图', 'rx.powered': '由 GIPHY 提供', 'rx.close': '关闭表情',
+  'rx.send': '发送表情', 'rx.search': '搜索动图', 'rx.search_memes': '搜索梗图',
+
+  // errors (friendly)
+  'er.BAD_NAME': '名字长度需在 1 到 20 个字符之间。', 'er.CLASS_REQUIRED': '先选一个职业。',
+  'er.ROOM_NOT_FOUND': '房间不存在，请检查房间码。', 'er.GAME_IN_PROGRESS': '游戏已经开始——你可以观战。',
+  'er.ROOM_FULL': '房间已满。', 'er.NAME_TAKEN': '房间里已经有人叫这个名字了。',
+  'er.BAD_TOKEN': '你在这个房间的座位丢失了。请从首页重新加入。', 'er.NOT_HOST': '只有房主可以这么做。',
+  'er.NEED_TWO_PLAYERS': '至少需要 2 名玩家才能开始。', 'er.WRONG_PHASE': '现在不能这么做。',
+  'er.TIME_UP': '本轮时间已到。', 'er.ELIMINATED': '你出局了——现在是观战。', 'er.TARGET_NOT_FOUND': '请选择一名玩家。',
+  'er.CANNOT_TARGET_SELF': '不能以自己为目标。', 'er.TARGET_ELIMINATED': '该玩家已经出局。',
+  'er.BAD_LETTER': '请选择 A–Z 的字母。', 'er.ALREADY_GUESSED': '你本轮已经猜过了。',
+  'er.ALREADY_REVEALED': '这个字母已经被破解——换一个吧。', 'er.CARD_NOT_AVAILABLE': '这张牌不可用。',
+  'er.VILLAIN_NO_SHIELD': '反派不能使用护盾。', 'er.NOTHING_TO_BLOCK': '没有攻击对准你，无需格挡。',
+  'er.AT_MINIMUM': '你只剩 1 个字母了——无可净化。', 'er.PERK_USED': '你的技能已经用过了。',
+  'er.PERK_NOT_READY': '忍者视野从第 3 轮起解锁。', 'er.NOTHING_TO_ABSORB': '没有攻击对准该玩家。',
+  'er.NO_ACTIVE_PERK': '你的技能是被动的——打出攻击牌时自动生效。', 'er.PERKS_OFF': '本房间已关闭职业技能。',
+  'er.NOT_HACKED': '你现在没有被黑。', 'er.ALREADY_TRACED': '你本轮已经追踪过了。',
+  'er.SLOW_DOWN': '慢点——一次一个。', 'er.TOO_MANY_FOR_DUEL': '1v1 需要房间里正好 2 名玩家。',
+  'er.ALREADY_BET': '你本轮已经全押了。', 'er.ALREADY_LATCHED': '你本轮已经寄生过了。',
+  'er.CANNOT_MIMIC_MIMIC': '不能复制另一个模仿者。', 'er.network': '连接出错——正在重试…',
+  'er.generic': '出错了，请再试一次。', 'er.BAD_AVATAR': '这张图片无法使用。',
+
+  // answer rejection reasons
+  'rs.BLANK': '没有作答', 'rs.NOT_LETTERS': '只能用字母', 'rs.TOO_SHORT': '太短（至少 3 个字母）', 'rs.NOT_A_WORD': '词典里没有',
+  'rs.REPEAT': '这个词已经用过', 'rs.BANNED_LETTER': '用了禁用字母', 'rs.CHAOS_NO_E': '禁 E 轮用了 E',
+  'rs.OFF_TOPIC': '不符合题目',
+
+  // cards
+  'cd.attack': '攻击', 'cd.attack_t': '给某人加一个字母', 'cd.shield': '护盾', 'cd.shield_t': '挡下一个冲你来的字母',
+  'cd.cleanse': '净化', 'cd.cleanse_t': '移除你的一个字母',
+
+  // chaos twists
+  'cx.swap': '换锁', 'cx.swap_t': '每人把一把锁传给左边的玩家。',
+  'cx.no_e': '禁 E 轮', 'cx.no_e_t': '本轮所有人都不能用字母 E。',
+  'cx.shuffle': '洗牌', 'cx.shuffle_t': '场上所有卡牌重新发放。',
+  'cx.double': '双倍得分', 'cx.double_t': '本轮每个有效词得分翻倍。',
+  'cx.amnesty': '大赦', 'cx.amnesty_t': '每人减少一把锁。',
+  'cx.speed': '极速轮', 'cx.speed_t': '答题时间减半。冲！',
+
+  // classes
+  'cl.ninja': '忍者', 'cl.ninja.tag': '暗中窥视',
+  'cl.ninja.perk': '限一次，第 3 轮起：看到场上所有禁用字母（但不知道归谁）。',
+  'cl.ninja.cost': '只要有人破解你的字母，你就 +3 个字母（每轮最多一次）。',
+  'cl.mastermind': '智囊', 'cl.mastermind.tag': '知道得太多',
+  'cl.mastermind.perk': '限一次：偷看一名玩家的全部字母。',
+  'cl.mastermind.cost': '偷看到的一个字母会作为提示泄露给全房间。如果当轮没有其他人猜中，你记一次失误。',
+  'cl.hero': '英雄', 'cl.hero.tag': '替人挡刀',
+  'cl.hero.perk': '限一次：替别人挡下一个字母，获得 +5 分。',
+  'cl.hero.cost': '逆袭职业——如果你进入决战，只能带 1 个字母上场。',
+  'cl.villain': '反派', 'cl.villain.tag': '玻璃大炮',
+  'cl.villain.perk': '你的攻击牌加 2 个字母而不是 1 个。', 'cl.villain.cost': '你不能使用护盾牌。',
+  'cl.hacker': '黑客', 'cl.hacker.tag': '机器里的幽灵',
+  'cl.hacker.perk': '你的攻击牌变成匿名黑入：受害者下一轮看不到自己的锁。',
+  'cl.hacker.cost': '被黑的玩家有一次追踪机会。如果点中你，你就会暴露，自己的锁也会隐藏一轮。',
+  'cl.mimic': '模仿者', 'cl.mimic.tag': '换上你的脸',
+  'cl.mimic.perk': '限一次：永久变成另一名玩家的职业——并获得全新技能。',
+  'cl.mimic.cost': '你也会继承他们的缺点。无法反悔。',
+  'cl.gambler': '赌徒', 'cl.gambler.tag': '每轮都全押',
+  'cl.gambler.perk': '每个答题阶段都可以押注你的词：有效则得分翻倍。',
+  'cl.gambler.cost': '爆掉的话，除了失误还要扣 10 分——而且所有人都能看到你在押注。',
+  'cl.thief': '小偷', 'cl.thief.tag': '顺手牵羊',
+  'cl.thief.perk': '破解别人的锁时，从对方手里偷一张牌，而不是抽牌。',
+  'cl.thief.cost': '猜错时，你要掉一张牌到对方手里。',
+  'cl.parasite': '寄生虫', 'cl.parasite.tag': '以强者为食',
+  'cl.parasite.perk': '每轮寄生一名玩家：他每多一把锁，你就少一把。',
+  'cl.parasite.cost': '如果宿主当轮出局，你记一次失误。寄生是公开的。',
+  'cl.oracle': '先知', 'cl.oracle.tag': '早就看到了',
+  'cl.oracle.perk': '限一次：提前整整一轮看到下一轮的题目。',
+  'cl.oracle.cost': '下一轮，你的词一锁定就会公开给所有人。',
+  'cl.wildcard': '百搭', 'cl.wildcard.tag': '纯粹混乱',
+  'cl.wildcard.perk': '只要你还活着，每轮开始都有随机变数：换锁、禁 E 轮、洗牌、双倍得分、大赦或极速轮。',
+  'cl.wildcard.cost': '混乱对你的打击和对其他人一样狠。',
+  'cl.jester': '小丑', 'cl.jester.tag': '偷天换日',
+  'cl.jester.perk': '限一次：和另一名玩家交换整个锁架。',
+  'cl.jester.cost': '你收到的每把锁都会向全房间公开。',
+};
+
+export default zh;

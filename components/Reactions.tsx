@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useT } from '@/lib/i18n/react';
 import { rpc } from '@/lib/rpc';
 import { supabase } from '@/lib/supabase';
 import type { RoomState } from '@/lib/types';
@@ -18,6 +19,7 @@ const GIPHY_KEY = process.env.NEXT_PUBLIC_GIPHY_KEY || 'M9Z67AoDwWL8EsQcm1eaE39S
 interface GiphyItem { id: string; images: { fixed_height_small: { url: string }; fixed_width_small: { url: string } } }
 
 export function Reactions({ state, token }: { state: RoomState; token: string | null }) {
+  const tr = useT();
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<Kind>('emoji');
   const [floaters, setFloaters] = useState<Floater[]>([]);
@@ -113,9 +115,9 @@ export function Reactions({ state, token }: { state: RoomState; token: string | 
               <motion.div className="rx-panel" initial={{ opacity: 0, y: 12, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 12, scale: 0.95 }} transition={{ type: 'spring', stiffness: 420, damping: 30 }}>
                 <div className="rx-tabs" role="tablist">
-                  {(['emoji', 'sticker', ...(GIPHY_KEY ? ['gif'] as const : [])] as Kind[]).map((t) => (
-                    <button key={t} role="tab" aria-selected={tab === t} className={tab === t ? 'on' : ''} onClick={() => setTab(t)}>
-                      {t === 'emoji' ? 'Emoji' : t === 'sticker' ? 'Memes' : 'GIFs'}
+                  {(['emoji', 'sticker', ...(GIPHY_KEY ? ['gif'] as const : [])] as Kind[]).map((k) => (
+                    <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>
+                      {k === 'emoji' ? tr('rx.emoji') : k === 'sticker' ? tr('rx.memes') : tr('rx.gifs')}
                     </button>
                   ))}
                 </div>
@@ -135,7 +137,7 @@ export function Reactions({ state, token }: { state: RoomState; token: string | 
                 )}
                 {tab === 'gif' && (
                   <div className="col" style={{ gap: 8 }}>
-                    <input className="input" style={{ fontSize: 15, padding: '9px 12px' }} placeholder="Search GIPHY" value={q} onChange={(e) => setQ(e.target.value)} />
+                    <input className="input" style={{ fontSize: 15, padding: '9px 12px' }} placeholder={tr('rx.search')} value={q} onChange={(e) => setQ(e.target.value)} />
                     <div className="rx-grid gif">
                       {gifs.map((g) => (
                         <button key={g.id} onClick={() => void send('gif', g.images.fixed_height_small.url)}>
@@ -144,14 +146,14 @@ export function Reactions({ state, token }: { state: RoomState; token: string | 
                         </button>
                       ))}
                     </div>
-                    <span className="muted small" style={{ textAlign: 'right' }}>Powered by GIPHY</span>
+                    <span className="muted small" style={{ textAlign: 'right' }}>{tr('rx.powered')}</span>
                   </div>
                 )}
               </motion.div>
             )}
           </AnimatePresence>
           <motion.button className={`rx-fab${open ? ' on' : ''}`} onClick={() => setOpen((o) => !o)} whileTap={{ scale: 0.9 }}
-            aria-label={open ? 'Close reactions' : 'Send a reaction'} aria-expanded={open} disabled={cool && !open}>
+            aria-label={open ? tr('rx.close') : tr('rx.send')} aria-expanded={open} disabled={cool && !open}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <circle cx="12" cy="12" r="9" /><path d="M8.5 14.5c1.9 2 5.1 2 7 0" /><path d="M9 9.5h.01M15 9.5h.01" strokeWidth="3" />
             </svg>

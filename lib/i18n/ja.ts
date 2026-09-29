@@ -1,0 +1,231 @@
+import type { Key } from './en';
+
+const ja: Partial<Record<Key, string>> = {
+  // header / common
+  'hd.rules': 'ルール', 'hd.music_on': 'BGMオン', 'hd.music_off': 'BGMオフ', 'hd.mute': 'ミュート', 'hd.unmute': 'ミュート解除',
+  'hd.settings': '設定', 'hd.home': 'Letterlock ホーム',
+
+  // home
+  'home.tag1': 'お題に答えて、禁止文字をかわせ！',
+  'home.tag2': 'ラウンドを生き残るたびに、文字がひとつロックされる。',
+  'home.name': 'あなたの名前', 'home.name_ph': '例：ザブ', 'home.avatar': 'アバター', 'home.class': 'クラスを選ぼう',
+  'home.create': 'ルームを作る', 'home.duel': '1v1 デュエル', 'home.or_join': 'または参加', 'home.code_ph': 'コード', 'home.code': 'ルームコード',
+  'home.join': '参加', 'home.footer': '2〜12人 · 各自のスマホで ·', 'home.rules': 'ルールを読む',
+  'home.err_class': '先にクラスを選んでね。', 'home.err_name': '名前を入力してね。', 'home.err_code': 'ルームコードは4文字です。',
+
+  // room page
+  'room.not_found': 'ルームが見つかりません', 'room.conn': '接続エラー', 'room.back': 'ホームへ戻る', 'room.seat': '席を確保中…',
+  'room.err': '名前を入力してクラスを選んでね。', 'room.joining': 'ルームに参加', 'room.join': 'ゲームに参加',
+
+  // avatar picker
+  'av.uploading': 'アップロード中…', 'av.change': '写真を変更', 'av.upload': '写真をアップ', 'av.default': 'デフォルトにする',
+  'av.hint_photo': 'クラスの代わりにあなたの写真が表示されます。', 'av.hint_default': 'デフォルトアバター — クラスは秘密のまま。',
+  'av.failed': 'アップロード失敗',
+
+  // class picker / sheet
+  'cp.more': '攻略のコツ →', 'cs.power': '能力', 'cs.price': '代償', 'cs.how': '遊び方', 'cs.tips': '攻略のコツ',
+  'cs.counter': '対策', 'cs.easy': 'かんたん', 'cs.medium': 'ふつう', 'cs.hard': 'むずかしい', 'cs.difficulty': '難易度',
+  'cs.choose': '{name}を選ぶ', 'cs.selected': '{name}を選択中', 'cs.prev': '前のクラス', 'cs.next': '次のクラス', 'cs.close': '閉じる',
+
+  // lobby
+  'lb.code': 'ルームコード', 'lb.copied': 'リンクをコピーしました', 'lb.share': '招待リンクを共有', 'lb.share_title': 'Letterlockで一緒に遊ぼう',
+  'lb.share_text': 'ルーム {code}', 'lb.secret': '秘密', 'lb.waiting_seat': 'プレイヤー待ち…', 'lb.avatar': 'アバター',
+  'lb.class': 'あなたのクラス — ゲーム終了まで秘密', 'lb.duel_tag': '1v1 デュエル', 'lb.answers': '回答 {n}秒',
+  'lb.shrinking': '・短縮あり', 'lb.guesses': '推理 {n}秒', 'lb.strike1': '1ストライクで脱落', 'lb.strikes': '{n}ストライクで脱落',
+  'lb.cards_on': 'カードあり', 'lb.cards_off': 'カードなし', 'lb.perks_on': '特技あり', 'lb.perks_off': '特技なし',
+  'lb.words_in': '回答言語：{lang}',
+  'lb.wait_challenger': '挑戦者を待っています…', 'lb.wait_more': 'あと1人以上を待っています…', 'lb.fight': 'ファイト！',
+  'lb.start': 'ゲーム開始 · {n}人', 'lb.host_hint': 'あなたがホストです。歯車でルールを調整して、全員そろったらスタート！',
+  'lb.wait_host': 'ホストの開始待ち…（{n}/{max}）', 'lb.leave': 'ルームを出る', 'lb.share_code': 'コードを共有',
+  'lb.your_secret': 'あなたのクラスは秘密', 'lb.secret_class': '秘密のクラス', 'lb.host': 'ホスト',
+
+  // settings
+  'st.title': '設定', 'st.rules': 'ルームのルール', 'st.host_note': 'あなたがホストです — 変更は全員に反映されます。',
+  'st.only_host': 'ホストだけが変更できます。', 'st.locked': 'ゲーム中は変更できません。',
+  'st.mode': 'ゲームモード', 'st.classic': 'クラシック', 'st.duel': '1v1 デュエル', 'st.duel_needs2': '1v1はちょうど2人が必要です',
+  'st.max': '最大人数', 'st.fewer': '人数を減らす', 'st.more': '人数を増やす',
+  'st.answer': '回答時間', 'st.guess': '推理時間', 'st.cards_phase': 'カードフェーズ', 'st.duel_rounds': 'デュエルのラウンド',
+  'st.strikes': '脱落までのストライク', 'st.shrink': '回答時間が毎ラウンド短くなる', 'st.cards': 'カード（アタック／シールド／クレンズ）',
+  'st.perks': 'クラス特技', 'st.device': 'この端末', 'st.music': 'BGM', 'st.sfx': '効果音', 'st.voice': '実況ボイス',
+  'st.howto': '遊び方（動画）', 'st.lang': '言語', 'st.ui_lang': 'メニューと実況',
+  'st.word_lang': '回答の言語', 'st.word_lang_hint': '全員この言語で答えます。文字は A–Z のまま：アクセントは省略OK、日本語はローマ字、中国語はピンインで入力します。',
+
+  // game shell
+  'gm.home': 'ホーム', 'gm.quit': 'やめる', 'gm.leave': '退出',
+  'gm.out': '脱落 — 観戦中。全員の文字が見えるようになりました。',
+  'gm.spectator': 'ゲーム進行中 — 観戦モードで見ています。',
+  'gm.quit_title': 'ブチギレ退出？', 'gm.quit_body': 'このゲームの残りは脱落扱いになり、逃げ出したことがルーム全員に知れ渡ります。',
+  'gm.keep': '続ける', 'gm.quit_anyway': 'それでもやめる',
+
+  // phases
+  'ph.round': 'ラウンド {n}', 'ph.1v1': '1v1', 'ph.final_duel': '最終デュエル', 'ph.answer': '回答', 'ph.reveal': '発表',
+  'ph.guess': '推理', 'ph.cards': 'カード', 'ph.prompt': 'お題', 'ph.hint': 'ラウンド {n}：{text}',
+  'ph.oracle_locked': '預言者 **{name}** が **{word}** で確定',
+  'ph.hacked': 'ハッキングされた！このラウンドは自分のロックが見えない。慎重にいこう。',
+  'ph.hacked_trace': 'ハッキングされた！このラウンドは自分のロックが見えない。慎重にいこう。ラックからハッカーを逆探知できるよ。',
+  'ph.type': '単語を入力', 'ph.your_answer': 'あなたの回答',
+  'ph.banned': 'ロックされた文字が入っています — ストライクになります。',
+  'ph.change': '回答を変える', 'ph.lock': '確定する', 'ph.allin_on': 'オールイン — 倍か破滅か',
+  'ph.allin': 'オールイン（得点×2、失敗で−10）', 'ph.allin_ok': 'オールイン！倍か破滅か',
+  'ph.locked_in': '**{word}** で確定（+{n}）。時間切れまで変更できます。',
+  'ph.rejected': '**{word}** — {reason}。別の単語を試そう。', 'ph.that': 'それ', 'ph.used': '使用済み：{list}',
+  'ph.spec_answer': '観戦中 — みんなの回答を見ています。', 'ph.spec_guess': '観戦中 — プレイヤーが推理中です。',
+  'ph.input_ja': 'ローマ字（neko）か日本語（猫）で入力', 'ph.input_zh': 'ピンイン（mao）か中国語（猫）で入力',
+  'ph.input_accents': 'アクセントは省略OK',
+  'ph.strike': 'ストライク', 'ph.eliminated': '脱落',
+  'ph.crack': '誰かのロックを破れ', 'ph.crack_sub': 'チャンスは1回。禁止文字を当てたらカードを1枚引ける。',
+  'ph.cracked': '解読成功！**{name}** は「{l}」が使えなくなった。空きがあればカードを1枚引いたよ。',
+  'ph.miss': 'ハズレ — {name} は「{l}」を使える。', 'ph.guess_btn': '{name} に「{l}」で推理', 'ph.pick': 'プレイヤーと文字を選ぼう',
+  'ph.play_cards': 'カードを使おう', 'ph.quiet': '静かなラウンド — 誰も解読できなかった。',
+  'ph.feed_cracked': '**{a}** が **{b}** の「{l}」を解読', 'ph.feed_missed': '**{a}** が {b} への推理をハズした',
+  'ph.ninja_pen': '忍者ペナルティ：**{name}** に +{n}文字',
+  'ph.hacks': '**{a}** が **{b}** をハッキング（+{n}、次ラウンドはロック非表示）', 'ph.attacks': '**{a}** が **{b}** にアタック（+{n}）',
+  'ph.someone': '誰か', 'ph.the_cls': '{cls}', 'ph.absorbed_by': ' — {name} がかばった', 'ph.blocked': ' — ブロック',
+  'ph.take_hit': '身代わりになる（+5）', 'ph.absorbed_ok': 'かばった！+5点',
+  'ph.under_attack': '攻撃されています — 下のラックからシールドを使おう。',
+  'ph.waiting': '他のプレイヤーを待っています…', 'ph.skip': '完了 — 先へ進む',
+  'ph.cards_note': '時間切れで攻撃が命中し、このラウンドを生き残った全員に新しいロックが追加されます。',
+
+  // duel
+  'du.1v1': '1v1 デュエル', 'du.final': '最終デュエル', 'du.fight': 'ファイト！', 'du.pts': '{n}点',
+  'du.rules': '毎回お互い+1文字 · 1ラウンド{n}秒 · ストライクはリセットなし。最後まで残った方の勝ち。',
+  'du.hero': 'ヒーローの逆襲：文字が1つだけに。', 'du.you': 'あなた', 'du.hidden': 'クラス非公開',
+  'du.secret': '{cls} · 秘密', 'du.ready': '準備して', 'du.lives': '残りライフ {n}/{max}',
+
+  // finished
+  'fn.wins': '{name} の勝利！', 'fn.champ': 'チャンピオン', 'fn.champ_sub': '最後の生き残り', 'fn.ein': 'アインシュタイン',
+  'fn.ein_sub': '最も多くの文字を使った', 'fn.vil': '悪役', 'fn.vil_sub': '他人に最も多く文字を押しつけた',
+  'fn.nobody': 'なし', 'fn.locks': '全員のロック', 'fn.was': '正体は{cls}', 'fn.again': 'もう一度遊ぶ',
+  'fn.wait': 'ホストの再戦開始を待っています…',
+
+  // rack
+  'rk.locks': 'ロック', 'rk.cards': 'カード', 'rk.intel': '情報', 'rk.points': 'ポイント', 'rk.trace': 'ハッカーを逆探知',
+  'rk.who_hacked': '誰にハッキングされた？チャンスは1回。', 'rk.hacked_title': 'ハッキング中 — このラウンドは自分のロックが見えない',
+  'rk.draw': 'ロックを破るとカードを引ける', 'rk.cards_off': 'カードはオフ', 'rk.attack2': '+2文字', 'rk.anon': '匿名ハッキング',
+  'rk.hack_who': '誰をハッキング？', 'rk.attack_who': '誰にアタック？', 'rk.hack_q': '{name} へのハッキング予約済み', 'rk.attack_q': '{name} へのアタック予約済み',
+  'rk.blocked': 'ブロック！', 'rk.cleansed': '文字を1つクレンズ', 'rk.in_play': '場の文字', 'rk.round': 'ラウンド {n}：',
+
+  // perks
+  'pk.used': '使用済み', 'pk.unlock3': 'ラウンド3で解放', 'pk.ninja': '場の全文字を見る', 'pk.ninja_ok': '忍者の眼、発動',
+  'pk.mm': '1人をのぞき見', 'pk.mm_t': '誰をのぞく？', 'pk.mm_ok': 'のぞき見完了 — 1文字がルームに漏れた',
+  'pk.mimic': 'クラスをコピー', 'pk.mimic_t': '誰に化ける？', 'pk.mimic_ok': '変身！',
+  'pk.bet_on': 'このラウンドはオールイン', 'pk.bet': '単語に賭ける（×2）', 'pk.bet_later': '回答中に賭けられる',
+  'pk.latched': '{name} に寄生中', 'pk.latch': 'プレイヤーに寄生', 'pk.latch_t': '誰に寄生する？', 'pk.latch_ok': '寄生した',
+  'pk.oracle': '次のお題を見る', 'pk.oracle_ok': '未来が見えた',
+  'pk.jester': 'ロックを入れ替え', 'pk.jester_t': '誰と入れ替える？', 'pk.jester_ok': '入れ替え成功！',
+  'pk.off': '特技はオフ', 'pk.villain': 'パッシブ：アタック×2', 'pk.hacker': 'パッシブ：アタックがハッキングに',
+  'pk.thief': 'パッシブ：カードを盗む', 'pk.wildcard': 'パッシブ：毎ラウンド波乱', 'pk.hero': 'カードフェーズで攻撃をかばう',
+
+  // scoreboard chips
+  'hu.host': 'ホスト', 'hu.out': '脱落', 'hu.chicken': 'チキン', 'hu.chicken_t': 'ブチギレ退出', 'hu.exposed': '正体バレ',
+  'hu.exposed_t': 'ハッキングがバレた', 'hu.hacked': 'ハック中', 'hu.hacked_t': 'ハッキング中 — 自分のロックが見えない',
+  'hu.mimic': 'ものまね', 'hu.mimic_t': '変装中のものまね', 'hu.allin': 'オールイン', 'hu.allin_t': 'このラウンドはオールイン',
+  'hu.latched_t': '寄生虫が取りついている', 'hu.letters': '禁止文字', 'hu.perk_used': '特技使用済み', 'hu.done': '完了',
+  'hu.strikes': 'ストライク {n}/{of}', 'hu.scoreboard': 'スコアボード',
+
+  // action banners
+  'fd.you': 'あなた', 'fd.someone': '誰か', 'fd.the': '{cls}',
+  'fd.attacked': '**{a}** が **{b}** にアタック', 'fd.lock1': '+1ロック', 'fd.locks': '+{n}ロック',
+  'fd.got': '**{b}** が', 'fd.hacked_word': 'ハッキングされた', 'fd.by': '犯人：{name}', 'fd.by_someone': '犯人は誰か…',
+  'fd.blocked_ninja': '**{a}** が忍者ペナルティをブロック', 'fd.blocked': '**{a}** が **{b}** をブロック', 'fd.a_hack': 'ハッキング',
+  'fd.cleansed': '**{a}** がロックを1つクレンズ', 'fd.absorbed': '**{a}** が **{b}** をかばった',
+  'fd.caught': '**{a}** がハッカーを捕まえた：**{b}**', 'fd.exposed': '正体バレ', 'fd.traced': '**{a}** が **{b}** を逆探知',
+  'fd.wrong': 'ハズレ', 'fd.chicken': '**{a}** が逃げ出した', 'fd.rage': 'ブチギレ退出',
+  'fd.bet': '**{a}** が **オールイン**', 'fd.bet_sub': '倍か破滅か', 'fd.cashout': '**{a}** が大勝ち', 'fd.plus_pts': '+{n}点',
+  'fd.bust': '**{a}** が破滅', 'fd.minus_pts': '−{n}点', 'fd.steal': '**{a}** が **{b}** からカードを盗んだ',
+  'fd.drop': '**{a}** が **{b}** にカードを落とした', 'fd.latch': '**{a}** が **{b}** に寄生', 'fd.parasite': '寄生',
+  'fd.drain': '**{a}** が **{b}** から吸い取った', 'fd.minus_lock1': '−1ロック', 'fd.minus_locks': '−{n}ロック',
+  'fd.host_down': '**{a}** は宿主 **{b}** を失った', 'fd.strike': 'ストライク', 'fd.mimic': '**{a}** が **{b}** をコピー', 'fd.now_a': '{cls}に変身',
+  'fd.oracle': '**{a}** が未来を見た', 'fd.oracle_sub': '次の単語は全員に公開',
+  'fd.swap': '**{a}** が **{b}** とロックを入れ替えた', 'fd.switcheroo': '入れ替え', 'fd.wildcard': 'ワイルドカード：',
+
+  // announcer (spoken)
+  'an.chicken': '{name}、逃げ出した！コケコッコー！', 'an.caught': 'ハッカー確保！犯人は{name}だ！', 'an.hacked': 'ハッキングされたぞ！',
+  'an.wild': 'ワイルドカード！{name}！{text}', 'an.mimic': '{a}が{cls}に変身した！', 'an.swap': '入れ替えだ！', 'an.bust': '{name}、破滅！',
+  'an.duel_round': 'デュエルラウンド！{prompt}', 'an.round': 'ラウンド{n}！{prompt}', 'an.times_up': 'タイムアップ！答えを見てみよう。',
+  'an.crack': 'ロックを破れ！', 'an.cards': 'カードを使え！', 'an.vs': '{a}、たい、{b}！ファイト！',
+  'an.wins': '{name}の勝利！チャンピオンだ！', 'an.over': 'ゲームセット！', 'an.rematch': '再戦だ！ロビーへ戻ろう。',
+  'an.out_one': '{names}、脱落！', 'an.out_many': '{names}、脱落！', 'an.you_out': 'あなたは脱落！', 'an.and': 'と',
+  'an.five': 'あと5秒！', 'an.the': '{cls}', 'an.The': '{cls}', 'an.cls_name': '{cls}の{name}',
+  'an.the_mimic': 'ものまね', 'an.the_gambler': 'ギャンブラー', 'an.them': 'そのプレイヤー', 'an.someone': '誰か',
+
+  // reactions
+  'rx.emoji': '絵文字', 'rx.memes': 'ミーム', 'rx.gifs': 'GIF', 'rx.powered': 'Powered by GIPHY', 'rx.close': 'リアクションを閉じる',
+  'rx.send': 'リアクションを送る', 'rx.search': 'GIFを検索', 'rx.search_memes': 'ミームを検索',
+
+  // errors (friendly)
+  'er.BAD_NAME': '名前は1〜20文字で入力してね。', 'er.CLASS_REQUIRED': '先にクラスを選んでね。',
+  'er.ROOM_NOT_FOUND': 'そのルームは存在しません。コードを確認してね。', 'er.GAME_IN_PROGRESS': 'そのゲームはもう始まっています — 観戦はできるよ。',
+  'er.ROOM_FULL': 'そのルームは満員です。', 'er.NAME_TAKEN': 'その名前はルーム内の誰かが使っています。',
+  'er.BAD_TOKEN': 'このルームの席が失われました。ホームから参加し直してね。', 'er.NOT_HOST': 'ホストだけができる操作です。',
+  'er.NEED_TWO_PLAYERS': '開始には2人以上必要です。', 'er.WRONG_PHASE': '今はそれはできません。',
+  'er.TIME_UP': 'このラウンドは時間切れです。', 'er.ELIMINATED': '脱落しました — 観戦中です。', 'er.TARGET_NOT_FOUND': 'プレイヤーを選んでね。',
+  'er.CANNOT_TARGET_SELF': '自分は対象にできません。', 'er.TARGET_ELIMINATED': 'そのプレイヤーはもう脱落しています。',
+  'er.BAD_LETTER': 'A–Z から文字を選んでね。', 'er.ALREADY_GUESSED': 'このラウンドはもう推理しました。',
+  'er.ALREADY_REVEALED': 'その文字はもう解読済み — 別の文字を選んでね。', 'er.CARD_NOT_AVAILABLE': 'そのカードは使えません。',
+  'er.VILLAIN_NO_SHIELD': '悪役はシールドを使えません。', 'er.NOTHING_TO_BLOCK': 'ブロックする攻撃はありません。',
+  'er.AT_MINIMUM': '文字はもう1つだけ — クレンズできません。', 'er.PERK_USED': '特技はもう使いました。',
+  'er.PERK_NOT_READY': '忍者の眼はラウンド3から使えます。', 'er.NOTHING_TO_ABSORB': 'そのプレイヤーは狙われていません。',
+  'er.NO_ACTIVE_PERK': 'あなたの特技はパッシブ — アタックカードを使うと発動します。', 'er.PERKS_OFF': 'このルームではクラス特技がオフです。',
+  'er.NOT_HACKED': '今はハッキングされていません。', 'er.ALREADY_TRACED': 'このラウンドの逆探知はもう使いました。',
+  'er.SLOW_DOWN': '落ち着いて — 1つずつね。', 'er.TOO_MANY_FOR_DUEL': '1v1はルームにちょうど2人が必要です。',
+  'er.ALREADY_BET': 'このラウンドはもうオールイン済みです。', 'er.ALREADY_LATCHED': 'このラウンドはもう寄生済みです。',
+  'er.CANNOT_MIMIC_MIMIC': '別のものまねはコピーできません。', 'er.network': '接続エラー — 再試行中…',
+  'er.generic': 'エラーが発生しました。もう一度試してね。', 'er.BAD_AVATAR': 'その画像は使えませんでした。',
+
+  // answer rejection reasons
+  'rs.BLANK': '未回答', 'rs.NOT_LETTERS': '文字のみ', 'rs.TOO_SHORT': '短すぎ（3文字以上）', 'rs.NOT_A_WORD': '辞書にない',
+  'rs.REPEAT': '使用済みの単語', 'rs.BANNED_LETTER': '禁止文字を使用', 'rs.CHAOS_NO_E': 'E禁止ラウンドでEを使用',
+  'rs.OFF_TOPIC': 'お題に合わない',
+
+  // cards
+  'cd.attack': 'アタック', 'cd.attack_t': '誰かに文字を1つ追加', 'cd.shield': 'シールド', 'cd.shield_t': '自分への文字をブロック',
+  'cd.cleanse': 'クレンズ', 'cd.cleanse_t': '自分の文字を1つ消す',
+
+  // chaos twists
+  'cx.swap': 'ロック交換', 'cx.swap_t': '全員が左隣のプレイヤーにロックを1つ渡した。',
+  'cx.no_e': 'E禁止ラウンド', 'cx.no_e_t': 'このラウンドは誰も E を使えない。',
+  'cx.shuffle': 'カードシャッフル', 'cx.shuffle_t': '場のカードがすべて配り直された。',
+  'cx.double': 'ポイント2倍', 'cx.double_t': 'このラウンドは有効な単語の得点が2倍。',
+  'cx.amnesty': '恩赦', 'cx.amnesty_t': '全員のロックが1つ減った。',
+  'cx.speed': 'スピードラウンド', 'cx.speed_t': '回答時間が半分。急げ！',
+
+  // classes
+  'cl.ninja': '忍者', 'cl.ninja.tag': '闇を見通す',
+  'cl.ninja.perk': '1回だけ、ラウンド3から：場のすべての禁止文字を見る（持ち主は分からない）。',
+  'cl.ninja.cost': '誰かにあなたの文字を解読されると +3文字（1ラウンド最大1回）。',
+  'cl.mastermind': '黒幕', 'cl.mastermind.tag': '知りすぎた男',
+  'cl.mastermind.perk': '1回だけ：1人の禁止文字リストを全部のぞき見る。',
+  'cl.mastermind.cost': 'のぞいた文字の1つがヒントとしてルームに漏れる。そのラウンド誰も推理を当てなければ、あなたにストライク。',
+  'cl.hero': 'ヒーロー', 'cl.hero.tag': '身代わりになる',
+  'cl.hero.perk': '1回だけ：他人を狙った文字を代わりに受けて +5点。',
+  'cl.hero.cost': '逆襲クラス — 最終デュエルに進むと、文字1つだけで戦う。',
+  'cl.villain': '悪役', 'cl.villain.tag': '攻撃特化',
+  'cl.villain.perk': 'アタックカードで追加する文字が1つではなく2つに。', 'cl.villain.cost': 'シールドカードを使えない。',
+  'cl.hacker': 'ハッカー', 'cl.hacker.tag': 'システムの亡霊',
+  'cl.hacker.perk': 'アタックカードが匿名ハッキングに：被害者は次のラウンド、自分のロックが見えない。',
+  'cl.hacker.cost': 'ハッキングされた人は逆探知を1回できる。当てられたら正体バレ、1ラウンドあなたのロックが見えなくなる。',
+  'cl.mimic': 'ものまね', 'cl.mimic.tag': 'あなたの顔をまとう',
+  'cl.mimic.perk': '1回だけ：残りのゲーム中、他プレイヤーのクラスになる — 特技は新品で。',
+  'cl.mimic.cost': '相手の代償も引き継ぐ。後戻りはできない。',
+  'cl.gambler': 'ギャンブラー', 'cl.gambler.tag': '毎回オールイン',
+  'cl.gambler.perk': '毎回の回答フェーズで単語に賭けられる：有効なら得点2倍。',
+  'cl.gambler.cost': '失敗するとストライクに加えて−10点 — しかも賭けたことは全員にバレる。',
+  'cl.thief': '盗賊', 'cl.thief.tag': '手癖が悪い',
+  'cl.thief.perk': 'ロックを破ると、カードを引く代わりに相手の手札から1枚盗む。',
+  'cl.thief.cost': '推理をハズすと、自分のカードを1枚相手の手札に落とす。',
+  'cl.parasite': '寄生虫', 'cl.parasite.tag': '強者に寄生する',
+  'cl.parasite.perk': '毎ラウンド1人に寄生：その人がロックを1つ得るたび、あなたのロックが1つ減る。',
+  'cl.parasite.cost': 'そのラウンドに宿主が脱落すると、あなたにストライク。寄生先は全員に公開。',
+  'cl.oracle': '預言者', 'cl.oracle.tag': 'すべてお見通し',
+  'cl.oracle.perk': '1回だけ：次のラウンドのお題を1ラウンド早く見る。',
+  'cl.oracle.cost': '次のラウンド、あなたの単語は確定した瞬間に全員に公開される。',
+  'cl.wildcard': 'ワイルドカード', 'cl.wildcard.tag': '純度100%の混沌',
+  'cl.wildcard.perk': '生きている間、毎ラウンドがランダムな波乱で始まる：ロック交換、E禁止、カードシャッフル、ポイント2倍、恩赦、スピードラウンドのどれか。',
+  'cl.wildcard.cost': '波乱はあなたにも他のみんなと同じだけ降りかかる。',
+  'cl.jester': '道化師', 'cl.jester.tag': '入れ替えの達人',
+  'cl.jester.perk': '1回だけ：自分のロックを丸ごと他プレイヤーと入れ替える。',
+  'cl.jester.cost': 'あなたが受け取るロックはすべてルーム全員に公開される。',
+};
+
+export default ja;

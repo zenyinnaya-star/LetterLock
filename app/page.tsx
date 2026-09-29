@@ -10,6 +10,7 @@ import { loadAvatar, saveAvatar } from '@/lib/avatar';
 import { ClassPicker, Header, spring } from '@/components/ui';
 import { audio } from '@/lib/audio';
 import { friendlyError } from '@/lib/errors';
+import { useT } from '@/lib/i18n/react';
 import { rpc } from '@/lib/rpc';
 import { loadName, saveName, saveSession } from '@/lib/session';
 import type { PlayerClass } from '@/lib/types';
@@ -18,6 +19,7 @@ const TITLE = 'LETTERLOCK';
 
 export default function Home() {
   const router = useRouter();
+  const t = useT();
   const [name, setName] = useState('');
   const [cls, setCls] = useState<PlayerClass | null>(null);
   const [code, setCode] = useState('');
@@ -30,9 +32,9 @@ export default function Home() {
   const ready = name.trim().length > 0 && cls !== null;
 
   async function go(kind: 'create' | 'join' | 'duel') {
-    if (!cls) { setErr('Pick a class first.'); return; }
-    if (!name.trim()) { setErr('Enter your name.'); return; }
-    if (kind === 'join' && code.trim().length !== 4) { setErr('Room codes are 4 characters.'); return; }
+    if (!cls) { setErr(t('home.err_class')); return; }
+    if (!name.trim()) { setErr(t('home.err_name')); return; }
+    if (kind === 'join' && code.trim().length !== 4) { setErr(t('home.err_code')); return; }
     audio.unlock();
     setBusy(true); setErr(null);
     try {
@@ -69,42 +71,42 @@ export default function Home() {
       </h1>
       </div>
       <motion.p className="tagline" style={{ marginTop: 34 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
-        Answer the prompt. Dodge your banned letters.<br />Every round you survive, another letter gets locked.
+        {t('home.tag1')}<br />{t('home.tag2')}
       </motion.p>
 
       <motion.div className="sheet" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.9 }}>
         <label className="col" style={{ gap: 8 }}>
-          <span className="label">Your name</span>
+          <span className="label">{t('home.name')}</span>
           <input className="input" maxLength={20} value={name} onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Zab" autoComplete="nickname" />
+            placeholder={t('home.name_ph')} autoComplete="nickname" />
         </label>
         <div className="col" style={{ gap: 8 }}>
-          <span className="label">Your avatar</span>
+          <span className="label">{t('home.avatar')}</span>
           <AvatarPicker name={name} url={avatar} onChange={(u) => { setAvatar(u); saveAvatar(u); }} />
         </div>
         <div className="col" style={{ gap: 8 }}>
-          <span className="label">Pick your class</span>
+          <span className="label">{t('home.class')}</span>
           <ClassPicker value={cls} onChange={setCls} />
         </div>
         <div className="create-row">
-          <button className="btn lg block" disabled={busy || !ready} onClick={() => go('create')}>Create a room</button>
+          <button className="btn lg block" disabled={busy || !ready} onClick={() => go('create')}>{t('home.create')}</button>
           <motion.button className="btn lg block duel-btn" disabled={busy || !ready} onClick={() => go('duel')}
             whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-            <Icon name="swords" size={20} /> 1v1 Duel
+            <Icon name="swords" size={20} /> {t('home.duel')}
           </motion.button>
         </div>
-        <div className="divider">OR JOIN</div>
+        <div className="divider">{t('home.or_join')}</div>
         <div className="row" style={{ gap: 8, flexWrap: 'nowrap' }}>
-          <input className="input code" maxLength={4} value={code} placeholder="CODE"
+          <input className="input code" maxLength={4} value={code} placeholder={t('home.code_ph')}
             onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
-            onKeyDown={(e) => { if (e.key === 'Enter') void go('join'); }} aria-label="Room code" style={{ flex: 1, minWidth: 0 }} />
-          <button className="btn ghost lg" disabled={busy || !ready || code.length !== 4} onClick={() => go('join')}>Join</button>
+            onKeyDown={(e) => { if (e.key === 'Enter') void go('join'); }} aria-label={t('home.code')} style={{ flex: 1, minWidth: 0 }} />
+          <button className="btn ghost lg" disabled={busy || !ready || code.length !== 4} onClick={() => go('join')}>{t('home.join')}</button>
         </div>
         {err && <motion.div className="note bad" initial={{ x: -8 }} animate={{ x: [8, -6, 4, 0] }}>{err}</motion.div>}
       </motion.div>
 
       <p className="center muted small" style={{ marginTop: 6 }}>
-        2–12 players · each on their own device · <Link href="/how-to-play">Read the rules</Link>
+        {t('home.footer')} <Link href="/how-to-play">{t('home.rules')}</Link>
       </p>
     </main>
   );

@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import { announcer } from '@/lib/announcer';
 import { audio } from '@/lib/audio';
 import { CHAOS_INFO, CLASSES } from '@/lib/classes';
+import { t as tr } from '@/lib/i18n';
+import { Rich, useT } from '@/lib/i18n/react';
 import type { FeedItem, PlayerClass, RoomState } from '@/lib/types';
 import { ClassIcon, Icon, type IconName } from './icons';
 import { PlayerAvatar } from './PlayerAvatar';
@@ -65,14 +67,14 @@ export function ActionFeed({ state }: { state: RoomState }) {
     setCurrent(next);
     LOOK[next.type].sfx();
     const name = (id?: string | null) => playersRef.current.find((p) => p.id === id)?.name
-      ?? (id === next.from && next.from_class ? `The ${CLASSES[next.from_class].name}` : undefined);
-    if (next.type === 'chicken') announcer.say(`${next.name ?? name(next.from) ?? 'Someone'} chickened out! Bawk bawk!`, { hype: true, delay: 900 });
-    if (next.type === 'caught') announcer.say(`Hacker caught! It was ${name(next.to) ?? 'them'}!`, { hype: true, delay: 700 });
-    if (next.type === 'hack' && next.to === meId) announcer.say("You've been hacked!", { urgent: true, delay: 500 });
-    if (next.type === 'chaos' && next.what) announcer.say(`Wildcard! ${CHAOS_INFO[next.what]?.name ?? ''}! ${CHAOS_INFO[next.what]?.text ?? ''}`, { hype: true, delay: 1200 });
-    if (next.type === 'mimic' && next.what) announcer.say(`${name(next.from) ?? 'The Mimic'} became the ${CLASSES[next.what as PlayerClass]?.name ?? next.what}!`, { delay: 600 });
-    if (next.type === 'swap') announcer.say('Switcheroo!', { hype: true, delay: 400 });
-    if (next.type === 'bet_lose') announcer.say(`${name(next.from) ?? 'The Gambler'} busts!`, { delay: 500 });
+      ?? (id === next.from && next.from_class ? tr('an.The', { cls: CLASSES[next.from_class].name }) : undefined);
+    if (next.type === 'chicken') announcer.say(tr('an.chicken', { name: next.name ?? name(next.from) ?? tr('an.someone') }), { hype: true, delay: 900 });
+    if (next.type === 'caught') announcer.say(tr('an.caught', { name: name(next.to) ?? tr('an.them') }), { hype: true, delay: 700 });
+    if (next.type === 'hack' && next.to === meId) announcer.say(tr('an.hacked'), { urgent: true, delay: 500 });
+    if (next.type === 'chaos' && next.what) announcer.say(tr('an.wild', { name: CHAOS_INFO[next.what]?.name ?? '', text: CHAOS_INFO[next.what]?.text ?? '' }), { hype: true, delay: 1200 });
+    if (next.type === 'mimic' && next.what) announcer.say(tr('an.mimic', { a: name(next.from) ?? tr('an.the_mimic'), cls: CLASSES[next.what as PlayerClass]?.name ?? next.what }), { delay: 600 });
+    if (next.type === 'swap') announcer.say(tr('an.swap'), { hype: true, delay: 400 });
+    if (next.type === 'bet_lose') announcer.say(tr('an.bust', { name: name(next.from) ?? tr('an.the_gambler') }), { delay: 500 });
     const long = ['chicken', 'caught', 'chaos', 'mimic', 'swap'].includes(next.type);
     const id = window.setTimeout(() => setCurrent(null), long ? 2800 : 1900);
     return () => window.clearTimeout(id);
@@ -88,36 +90,40 @@ export function ActionFeed({ state }: { state: RoomState }) {
 }
 
 function Banner({ item, state, meId }: { item: FeedItem; state: RoomState; meId: string | null }) {
+  const t = useT();
   const p = (id?: string | null) => state.players.find((x) => x.id === id);
   const from = p(item.from);
   const to = p(item.to);
   const look = LOOK[item.type];
-  const nm = (x: ReturnType<typeof p>, fallback: string) => (x ? (x.id === meId ? 'You' : x.name) : fallback);
+  const nm = (x: ReturnType<typeof p>, fallback: string) => (x ? (x.id === meId ? t('fd.you') : x.name) : fallback);
   // classic mode hides who did it — you only learn the class ("The Ninja attacked Ava")
-  const actor: string = from ? nm(from, '?') : item.from_class ? `The ${CLASSES[item.from_class].name}` : 'Someone';
+  const actor: string = from ? nm(from, '?') : item.from_class ? t('fd.the', { cls: CLASSES[item.from_class].name }) : t('fd.someone');
 
   let text: React.ReactNode;
+  const b = nm(to, '?');
+  const n = item.amount ?? 1;
+  const R = (k: Parameters<typeof Rich>[0]['k'], extra?: React.ReactNode) => <><Rich k={k} vars={{ a: actor, b }} />{extra}</>;
   switch (item.type) {
-    case 'attack': text = <><b>{actor}</b> attacked <b>{nm(to, '?')}</b><em>+{item.amount ?? 1} lock{(item.amount ?? 1) > 1 ? 's' : ''}</em></>; break;
-    case 'hack': text = <><b>{nm(to, '?')}</b> got <span className="glitch-word">HACKED</span><em>{from ? `by ${from.name}` : 'by someone…'}</em></>; break;
-    case 'block': text = <><b>{actor}</b> blocked {item.what === 'ninja' ? 'the Ninja penalty' : <b>{to ? to.name : 'a hack'}</b>}</>; break;
-    case 'cleanse': text = <><b>{actor}</b> cleansed a lock</>; break;
-    case 'absorb': text = <><b>{actor}</b> took the hit for <b>{nm(to, '?')}</b><em>+5</em></>; break;
-    case 'caught': text = <><b>{actor}</b> caught the Hacker: <b>{nm(to, '?')}</b><em>exposed</em></>; break;
-    case 'trace_miss': text = <><b>{actor}</b> traced <b>{nm(to, '?')}</b><em>wrong guess</em></>; break;
-    case 'chicken': text = <><b>{item.name ?? nm(from, 'Someone')}</b> chickened out<em>rage quit</em></>; break;
-    case 'bet': text = <><b>{actor}</b> went <b>all in</b><em>double or bust</em></>; break;
-    case 'bet_win': text = <><b>{actor}</b> cashed out<em>+{item.amount} points</em></>; break;
-    case 'bet_lose': text = <><b>{actor}</b> busted<em>−{item.amount} points</em></>; break;
-    case 'steal': text = <><b>{actor}</b> stole a card from <b>{nm(to, '?')}</b></>; break;
-    case 'drop': text = <><b>{actor}</b> fumbled a card to <b>{nm(to, '?')}</b></>; break;
-    case 'latch': text = <><b>{actor}</b> latched onto <b>{nm(to, '?')}</b><em>parasite</em></>; break;
-    case 'drain': text = <><b>{actor}</b> fed on <b>{nm(to, '?')}</b><em>−{item.amount} lock{(item.amount ?? 1) > 1 ? 's' : ''}</em></>; break;
-    case 'host_down': text = <><b>{actor}</b> lost their host <b>{nm(to, '?')}</b><em>strike</em></>; break;
-    case 'mimic': text = <><b>{actor}</b> copied <b>{nm(to, '?')}</b><em>now a {CLASSES[item.what as PlayerClass]?.name ?? item.what}</em></>; break;
-    case 'oracle': text = <><b>{actor}</b> saw the future<em>their next word goes public</em></>; break;
-    case 'swap': text = <><b>{actor}</b> swapped locks with <b>{nm(to, '?')}</b><em>switcheroo</em></>; break;
-    case 'chaos': text = <><b>WILDCARD:</b> {CHAOS_INFO[item.what ?? '']?.name ?? 'chaos'}<em>{CHAOS_INFO[item.what ?? '']?.text}</em></>; break;
+    case 'attack': text = R('fd.attacked', <em>{n > 1 ? t('fd.locks', { n }) : t('fd.lock1')}</em>); break;
+    case 'hack': text = <><Rich k="fd.got" vars={{ b }} /> <span className="glitch-word">{t('fd.hacked_word')}</span><em>{from ? t('fd.by', { name: from.name }) : t('fd.by_someone')}</em></>; break;
+    case 'block': text = item.what === 'ninja' ? R('fd.blocked_ninja') : <Rich k="fd.blocked" vars={{ a: actor, b: to ? to.name : t('fd.a_hack') }} />; break;
+    case 'cleanse': text = R('fd.cleansed'); break;
+    case 'absorb': text = R('fd.absorbed', <em>+5</em>); break;
+    case 'caught': text = R('fd.caught', <em>{t('fd.exposed')}</em>); break;
+    case 'trace_miss': text = R('fd.traced', <em>{t('fd.wrong')}</em>); break;
+    case 'chicken': text = <><Rich k="fd.chicken" vars={{ a: item.name ?? nm(from, t('fd.someone')) }} /><em>{t('fd.rage')}</em></>; break;
+    case 'bet': text = R('fd.bet', <em>{t('fd.bet_sub')}</em>); break;
+    case 'bet_win': text = R('fd.cashout', <em>{t('fd.plus_pts', { n: item.amount ?? 0 })}</em>); break;
+    case 'bet_lose': text = R('fd.bust', <em>{t('fd.minus_pts', { n: item.amount ?? 0 })}</em>); break;
+    case 'steal': text = R('fd.steal'); break;
+    case 'drop': text = R('fd.drop'); break;
+    case 'latch': text = R('fd.latch', <em>{t('fd.parasite')}</em>); break;
+    case 'drain': text = R('fd.drain', <em>{n > 1 ? t('fd.minus_locks', { n }) : t('fd.minus_lock1')}</em>); break;
+    case 'host_down': text = R('fd.host_down', <em>{t('fd.strike')}</em>); break;
+    case 'mimic': text = R('fd.mimic', <em>{t('fd.now_a', { cls: CLASSES[item.what as PlayerClass]?.name ?? item.what ?? '' })}</em>); break;
+    case 'oracle': text = R('fd.oracle', <em>{t('fd.oracle_sub')}</em>); break;
+    case 'swap': text = R('fd.swap', <em>{t('fd.switcheroo')}</em>); break;
+    case 'chaos': text = <><b>{t('fd.wildcard')}</b> {CHAOS_INFO[item.what ?? '']?.name ?? 'chaos'}<em>{CHAOS_INFO[item.what ?? '']?.text}</em></>; break;
   }
   const showArrow = ARROW_TYPES.includes(item.type);
   const hidden = item.type === 'hack' && !from;

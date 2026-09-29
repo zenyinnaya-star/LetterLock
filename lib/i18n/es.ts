@@ -1,0 +1,232 @@
+import type { Key } from './en';
+
+// Spanish (neutral, casual). **x** renders bold; {name} is a variable.
+const es: Partial<Record<Key, string>> = {
+  // header / common
+  'hd.rules': 'Reglas', 'hd.music_on': 'Música activada', 'hd.music_off': 'Música desactivada', 'hd.mute': 'Silenciar', 'hd.unmute': 'Activar sonido',
+  'hd.settings': 'Ajustes', 'hd.home': 'Inicio de Letterlock',
+
+  // home
+  'home.tag1': 'Responde a la consigna. Esquiva tus letras prohibidas.',
+  'home.tag2': 'Cada ronda que sobrevives, se bloquea otra letra.',
+  'home.name': 'Tu nombre', 'home.name_ph': 'p. ej. Zab', 'home.avatar': 'Tu avatar', 'home.class': 'Elige tu clase',
+  'home.create': 'Crear sala', 'home.duel': 'Duelo 1v1', 'home.or_join': 'O ÚNETE', 'home.code_ph': 'CÓDIGO', 'home.code': 'Código de sala',
+  'home.join': 'Unirse', 'home.footer': '2–12 jugadores · cada uno en su dispositivo ·', 'home.rules': 'Lee las reglas',
+  'home.err_class': 'Primero elige una clase.', 'home.err_name': 'Escribe tu nombre.', 'home.err_code': 'Los códigos de sala tienen 4 caracteres.',
+
+  // room page
+  'room.not_found': 'Sala no encontrada', 'room.conn': 'Problema de conexión', 'room.back': 'Volver al inicio', 'room.seat': 'Tomando asiento…',
+  'room.err': 'Escribe un nombre y elige una clase.', 'room.joining': 'Uniéndote a la sala', 'room.join': 'Unirse a la partida',
+
+  // avatar picker
+  'av.uploading': 'Subiendo…', 'av.change': 'Cambiar foto', 'av.upload': 'Subir foto', 'av.default': 'Usar predeterminado',
+  'av.hint_photo': 'Tu foto se muestra en lugar de tu clase.', 'av.hint_default': 'Avatar predeterminado: tu clase sigue en secreto.',
+  'av.failed': 'Error al subir',
+
+  // class picker / sheet
+  'cp.more': 'Trucos y consejos →', 'cs.power': 'Poder', 'cs.price': 'Precio', 'cs.how': 'Cómo se juega', 'cs.tips': 'Trucos y consejos',
+  'cs.counter': 'Cómo vencerla', 'cs.easy': 'Fácil', 'cs.medium': 'Media', 'cs.hard': 'Difícil', 'cs.difficulty': 'Dificultad',
+  'cs.choose': 'Elegir {name}', 'cs.selected': 'Elegiste {name}', 'cs.prev': 'Clase anterior', 'cs.next': 'Clase siguiente', 'cs.close': 'Cerrar',
+
+  // lobby
+  'lb.code': 'Código de sala', 'lb.copied': 'Enlace copiado', 'lb.share': 'Compartir invitación', 'lb.share_title': 'Únete a mi partida de Letterlock',
+  'lb.share_text': 'Sala {code}', 'lb.secret': 'secreta', 'lb.waiting_seat': 'Esperando jugador…', 'lb.avatar': 'Tu avatar',
+  'lb.class': 'Tu clase: secreta hasta que acabe la partida', 'lb.duel_tag': 'duelo 1v1', 'lb.answers': 'respuestas de {n}s',
+  'lb.shrinking': ', cada vez menos', 'lb.guesses': 'adivinanzas de {n}s', 'lb.strike1': '1 fallo y fuera', 'lb.strikes': '{n} fallos y fuera',
+  'lb.cards_on': 'Cartas sí', 'lb.cards_off': 'Cartas no', 'lb.perks_on': 'Poderes sí', 'lb.perks_off': 'Poderes no',
+  'lb.words_in': 'Palabras en {lang}',
+  'lb.wait_challenger': 'Esperando un rival…', 'lb.wait_more': 'Esperando al menos 1 jugador más…', 'lb.fight': '¡A PELEAR!',
+  'lb.start': 'Empezar · {n} jugadores', 'lb.host_hint': 'Eres el anfitrión. Ajusta las reglas con el engranaje y empieza cuando estén todos.',
+  'lb.wait_host': 'Esperando a que el anfitrión empiece… ({n}/{max})', 'lb.leave': 'Salir de la sala', 'lb.share_code': 'Comparte el código',
+  'lb.your_secret': 'Tu clase es secreta', 'lb.secret_class': 'Clase secreta', 'lb.host': 'Anfitrión',
+
+  // settings
+  'st.title': 'Ajustes', 'st.rules': 'Reglas de la sala', 'st.host_note': 'Eres el anfitrión: los cambios aplican a todos.',
+  'st.only_host': 'Solo el anfitrión puede cambiar esto.', 'st.locked': 'Bloqueado durante la partida.',
+  'st.mode': 'Modo de juego', 'st.classic': 'Clásico', 'st.duel': 'Duelo 1v1', 'st.duel_needs2': 'El 1v1 necesita exactamente 2 jugadores',
+  'st.max': 'Máx. de jugadores', 'st.fewer': 'Menos jugadores', 'st.more': 'Más jugadores',
+  'st.answer': 'Tiempo para responder', 'st.guess': 'Tiempo para adivinar', 'st.cards_phase': 'Fase de cartas', 'st.duel_rounds': 'Rondas del duelo',
+  'st.strikes': 'Fallos para quedar fuera', 'st.shrink': 'El tiempo de respuesta baja cada ronda', 'st.cards': 'Cartas (Ataque / Escudo / Limpieza)',
+  'st.perks': 'Poderes de clase', 'st.device': 'Este dispositivo', 'st.music': 'Música', 'st.sfx': 'Efectos de sonido', 'st.voice': 'Voz del presentador',
+  'st.howto': 'Cómo jugar (video)', 'st.lang': 'Idioma', 'st.ui_lang': 'Menús y presentador',
+  'st.word_lang': 'Idioma de las palabras', 'st.word_lang_hint': 'Todos responden en este idioma. Las letras siguen siendo A–Z: los acentos son opcionales, el japonés se escribe en romaji y el chino en pinyin.',
+
+  // game shell
+  'gm.home': 'Inicio', 'gm.quit': 'Rendirse', 'gm.leave': 'Salir',
+  'gm.out': 'Estás fuera: ahora eres espectador. Puedes ver las letras de todos.',
+  'gm.spectator': 'Partida en curso: la estás viendo como espectador.',
+  'gm.quit_title': '¿Abandonar?', 'gm.quit_body': 'Quedarás fuera el resto de la partida y toda la sala sabrá que te acobardaste.',
+  'gm.keep': 'Seguir jugando', 'gm.quit_anyway': 'Abandonar igual',
+
+  // phases
+  'ph.round': 'Ronda {n}', 'ph.1v1': '1v1', 'ph.final_duel': 'Duelo final', 'ph.answer': 'Responder', 'ph.reveal': 'Revelación',
+  'ph.guess': 'Adivinar', 'ph.cards': 'Cartas', 'ph.prompt': 'La consigna', 'ph.hint': 'Ronda {n}: {text}',
+  'ph.oracle_locked': 'El Oráculo **{name}** fijó **{word}**',
+  'ph.hacked': 'Te hackearon: tus bloqueos están ocultos esta ronda. Juega con cuidado.',
+  'ph.hacked_trace': 'Te hackearon: tus bloqueos están ocultos esta ronda. Juega con cuidado y rastrea al hacker desde tu panel.',
+  'ph.type': 'escribe una palabra', 'ph.your_answer': 'Tu respuesta',
+  'ph.banned': 'Usa una de tus letras bloqueadas: te costará un fallo.',
+  'ph.change': 'Cambiar respuesta', 'ph.lock': 'Fijar', 'ph.allin_on': 'TODO O NADA: doble o quiebra',
+  'ph.allin': 'Ir con todo (×2 puntos, −10 si fallas)', 'ph.allin_ok': '¡Con todo! Doble o quiebra',
+  'ph.locked_in': 'Fijaste **{word}** por +{n}. Puedes cambiarla hasta que se acabe el tiempo.',
+  'ph.rejected': '**{word}**: {reason}. Prueba otra.', 'ph.that': 'Esa', 'ph.used': 'Ya usadas: {list}',
+  'ph.spec_answer': 'Espectador: mirando cómo responden todos.', 'ph.spec_guess': 'Espectador: los jugadores están adivinando.',
+  'ph.input_ja': 'Escribe en romaji (neko) o japonés (猫)', 'ph.input_zh': 'Escribe en pinyin (mao) o chino (猫)',
+  'ph.input_accents': 'Los acentos son opcionales',
+  'ph.strike': 'fallo', 'ph.eliminated': 'eliminado',
+  'ph.crack': 'Rompe el bloqueo de alguien', 'ph.crack_sub': 'Un intento. Si aciertas una letra prohibida, robas una carta.',
+  'ph.cracked': '¡Roto! **{name}** ya no puede usar la “{l}”. Robaste una carta si tenías espacio.',
+  'ph.miss': 'Fallaste: {name} puede usar la “{l}”.', 'ph.guess_btn': 'Probar “{l}” con {name}', 'ph.pick': 'Elige un jugador y una letra',
+  'ph.play_cards': 'Juega tus cartas', 'ph.quiet': 'Ronda tranquila: nadie rompió nada.',
+  'ph.feed_cracked': '**{a}** rompió la “{l}” de **{b}**', 'ph.feed_missed': '**{a}** falló con {b}',
+  'ph.ninja_pen': 'Castigo Ninja: **{name}** recibe +{n} letras',
+  'ph.hacks': '**{a}** hackea a **{b}** (+{n}, bloqueos ocultos la próxima ronda)', 'ph.attacks': '**{a}** ataca a **{b}** (+{n})',
+  'ph.someone': 'Alguien', 'ph.the_cls': 'El {cls}', 'ph.absorbed_by': ' — absorbido por {name}', 'ph.blocked': ' — bloqueado',
+  'ph.take_hit': 'Recibir el golpe (+5)', 'ph.absorbed_ok': '¡Absorbido! +5 puntos',
+  'ph.under_attack': 'Te están atacando: juega tu Escudo desde el panel de abajo.',
+  'ph.waiting': 'Esperando a los demás…', 'ph.skip': 'Ya terminé, adelante',
+  'ph.cards_note': 'Cuando acabe el tiempo, caen los ataques y cada superviviente de la ronda gana un nuevo bloqueo.',
+
+  // duel
+  'du.1v1': 'Duelo 1v1', 'du.final': 'Duelo final', 'du.fight': '¡A PELEAR!', 'du.pts': '{n} pts',
+  'du.rules': '+1 letra cada uno · rondas de {n} segundos · los fallos no se reinician. Gana el último en pie.',
+  'du.hero': 'La remontada del Héroe: reducido a una sola letra.', 'du.you': 'Tú', 'du.hidden': 'Clase oculta',
+  'du.secret': '{cls} · secreto', 'du.ready': 'Prepárate', 'du.lives': 'Quedan {n} de {max} vidas',
+
+  // finished
+  'fn.wins': '¡{name} gana!', 'fn.champ': 'Campeón', 'fn.champ_sub': 'El último en pie', 'fn.ein': 'Albert Einstein',
+  'fn.ein_sub': 'Más letras jugadas', 'fn.vil': 'El Villano', 'fn.vil_sub': 'Le cargó más letras a los demás',
+  'fn.nobody': 'Nadie', 'fn.locks': 'Bloqueos de todos', 'fn.was': 'era {cls}', 'fn.again': 'Jugar otra vez',
+  'fn.wait': 'Esperando a que el anfitrión inicie la revancha…',
+
+  // rack
+  'rk.locks': 'Bloqueos', 'rk.cards': 'Cartas', 'rk.intel': 'Info', 'rk.points': 'PUNTOS', 'rk.trace': 'Rastrear hacker',
+  'rk.who_hacked': '¿Quién te hackeó? Un intento.', 'rk.hacked_title': 'Hackeado: no puedes ver tus bloqueos esta ronda',
+  'rk.draw': 'Rompe un bloqueo para robar una', 'rk.cards_off': 'Cartas desactivadas', 'rk.attack2': '+2 letras', 'rk.anon': 'Hackeo anónimo',
+  'rk.hack_who': '¿A quién hackear?', 'rk.attack_who': '¿A quién atacar?', 'rk.hack_q': 'Hackeo preparado contra {name}', 'rk.attack_q': 'Ataque preparado contra {name}',
+  'rk.blocked': '¡Bloqueado!', 'rk.cleansed': 'Limpiaste una letra', 'rk.in_play': 'En juego', 'rk.round': 'Ronda {n}:',
+
+  // perks
+  'pk.used': 'Usado', 'pk.unlock3': 'Se desbloquea en la ronda 3', 'pk.ninja': 'Ver todas las letras en juego', 'pk.ninja_ok': 'Visión ninja activada',
+  'pk.mm': 'Espiar a un jugador', 'pk.mm_t': '¿A quién espiar?', 'pk.mm_ok': 'Espiado: una letra se filtró a la sala',
+  'pk.mimic': 'Copiar una clase', 'pk.mimic_t': '¿En quién convertirte?', 'pk.mimic_ok': '¡Transformado!',
+  'pk.bet_on': 'Con todo esta ronda', 'pk.bet': 'Apuesta por tu palabra (×2)', 'pk.bet_later': 'Apuesta durante las respuestas',
+  'pk.latched': 'Pegado a {name}', 'pk.latch': 'Pegarte a un jugador', 'pk.latch_t': '¿A quién pegarte?', 'pk.latch_ok': 'Pegado',
+  'pk.oracle': 'Ver la próxima consigna', 'pk.oracle_ok': 'El futuro se revela',
+  'pk.jester': 'Cambiar bloqueos', 'pk.jester_t': '¿Con quién cambiar?', 'pk.jester_ok': '¡Cambiazo!',
+  'pk.off': 'Poderes desactivados', 'pk.villain': 'Pasivo: ataques ×2', 'pk.hacker': 'Pasivo: los ataques hackean',
+  'pk.thief': 'Pasivo: roba cartas', 'pk.wildcard': 'Pasivo: caos cada ronda', 'pk.hero': 'Absorbe un golpe en la fase de cartas',
+
+  // scoreboard chips
+  'hu.host': 'Anfitrión', 'hu.out': 'Eliminado', 'hu.chicken': 'gallina', 'hu.chicken_t': 'Abandonó', 'hu.exposed': 'expuesto',
+  'hu.exposed_t': 'Pillado hackeando', 'hu.hacked': 'hackeado', 'hu.hacked_t': 'Hackeado: no ve sus propios bloqueos',
+  'hu.mimic': 'imitador', 'hu.mimic_t': 'Imitador disfrazado', 'hu.allin': 'con todo', 'hu.allin_t': 'Con todo esta ronda',
+  'hu.latched_t': 'Parásito pegado', 'hu.letters': 'Letras prohibidas', 'hu.perk_used': 'Poder usado', 'hu.done': 'Listo',
+  'hu.strikes': '{n} de {of} fallos', 'hu.scoreboard': 'Marcador',
+
+  // action banners
+  'fd.you': 'Tú', 'fd.someone': 'Alguien', 'fd.the': 'El {cls}',
+  'fd.attacked': '**{a}** atacó a **{b}**', 'fd.lock1': '+1 bloqueo', 'fd.locks': '+{n} bloqueos',
+  'fd.got': '**{b}** fue', 'fd.hacked_word': 'HACKEADO', 'fd.by': 'por {name}', 'fd.by_someone': 'por alguien…',
+  'fd.blocked_ninja': '**{a}** bloqueó el castigo Ninja', 'fd.blocked': '**{a}** bloqueó a **{b}**', 'fd.a_hack': 'un hackeo',
+  'fd.cleansed': '**{a}** limpió un bloqueo', 'fd.absorbed': '**{a}** recibió el golpe por **{b}**',
+  'fd.caught': '**{a}** pilló al Hacker: **{b}**', 'fd.exposed': 'expuesto', 'fd.traced': '**{a}** rastreó a **{b}**',
+  'fd.wrong': 'se equivocó', 'fd.chicken': '**{a}** se acobardó', 'fd.rage': 'abandonó',
+  'fd.bet': '**{a}** fue **con todo**', 'fd.bet_sub': 'doble o quiebra', 'fd.cashout': '**{a}** cobró', 'fd.plus_pts': '+{n} puntos',
+  'fd.bust': '**{a}** quebró', 'fd.minus_pts': '−{n} puntos', 'fd.steal': '**{a}** le robó una carta a **{b}**',
+  'fd.drop': '**{a}** le soltó una carta a **{b}**', 'fd.latch': '**{a}** se pegó a **{b}**', 'fd.parasite': 'parásito',
+  'fd.drain': '**{a}** se alimentó de **{b}**', 'fd.minus_lock1': '−1 bloqueo', 'fd.minus_locks': '−{n} bloqueos',
+  'fd.host_down': '**{a}** perdió a su huésped **{b}**', 'fd.strike': 'fallo', 'fd.mimic': '**{a}** copió a **{b}**', 'fd.now_a': 'ahora es {cls}',
+  'fd.oracle': '**{a}** vio el futuro', 'fd.oracle_sub': 'su próxima palabra será pública',
+  'fd.swap': '**{a}** cambió bloqueos con **{b}**', 'fd.switcheroo': 'cambiazo', 'fd.wildcard': 'COMODÍN:',
+
+  // announcer (spoken)
+  'an.chicken': '¡{name} se acobardó! ¡Cocorocó!', 'an.caught': '¡Hacker atrapado! ¡Era {name}!', 'an.hacked': '¡Te hackearon!',
+  'an.wild': '¡Comodín! ¡{name}! {text}', 'an.mimic': '¡{a} se convirtió en {cls}!', 'an.swap': '¡Cambiazo!', 'an.bust': '¡{name} quiebra!',
+  'an.duel_round': '¡Ronda de duelo! {prompt}', 'an.round': '¡Ronda {n}! {prompt}', 'an.times_up': '¡Se acabó el tiempo! Veamos esas palabras.',
+  'an.crack': '¡Rompan sus bloqueos!', 'an.cards': '¡Jueguen sus cartas!', 'an.vs': '¡{a}, contra, {b}! ¡A pelear!',
+  'an.wins': '¡{name} gana! ¡Tenemos campeón!', 'an.over': '¡Fin del juego!', 'an.rematch': '¡Revancha! De vuelta a la sala.',
+  'an.out_one': '¡{names} queda fuera!', 'an.out_many': '¡{names} quedan fuera!', 'an.you_out': '¡Estás fuera!', 'an.and': ' y ',
+  'an.five': '¡Cinco segundos!', 'an.the': 'el {cls}', 'an.The': 'El {cls}', 'an.cls_name': '{cls} {name}',
+  'an.the_mimic': 'El Imitador', 'an.the_gambler': 'El Apostador', 'an.them': 'esa persona', 'an.someone': 'Alguien',
+
+  // reactions
+  'rx.emoji': 'Emoji', 'rx.memes': 'Memes', 'rx.gifs': 'GIFs', 'rx.powered': 'Con tecnología de GIPHY', 'rx.close': 'Cerrar reacciones',
+  'rx.send': 'Enviar una reacción', 'rx.search': 'Buscar GIFs', 'rx.search_memes': 'Buscar memes',
+
+  // errors (friendly)
+  'er.BAD_NAME': 'Elige un nombre de 1 a 20 caracteres.', 'er.CLASS_REQUIRED': 'Primero elige una clase.',
+  'er.ROOM_NOT_FOUND': 'Esa sala no existe. Revisa el código.', 'er.GAME_IN_PROGRESS': 'Esa partida ya empezó: puedes verla como espectador.',
+  'er.ROOM_FULL': 'Esa sala está llena.', 'er.NAME_TAKEN': 'Alguien en la sala ya tiene ese nombre.',
+  'er.BAD_TOKEN': 'Perdiste tu lugar en esta sala. Vuelve a unirte desde el inicio.', 'er.NOT_HOST': 'Solo el anfitrión puede hacer eso.',
+  'er.NEED_TWO_PLAYERS': 'Necesitas al menos 2 jugadores para empezar.', 'er.WRONG_PHASE': 'No puedes hacer eso ahora.',
+  'er.TIME_UP': 'Se acabó el tiempo de esta ronda.', 'er.ELIMINATED': 'Estás fuera: ahora eres espectador.', 'er.TARGET_NOT_FOUND': 'Elige un jugador.',
+  'er.CANNOT_TARGET_SELF': 'No puedes elegirte a ti mismo.', 'er.TARGET_ELIMINATED': 'Ese jugador ya está fuera.',
+  'er.BAD_LETTER': 'Elige una letra A–Z.', 'er.ALREADY_GUESSED': 'Ya adivinaste esta ronda.',
+  'er.ALREADY_REVEALED': 'Esa letra ya fue descubierta: elige otra.', 'er.CARD_NOT_AVAILABLE': 'Esa carta no está disponible.',
+  'er.VILLAIN_NO_SHIELD': 'Los Villanos no pueden usar Escudos.', 'er.NOTHING_TO_BLOCK': 'Nadie te está apuntando.',
+  'er.AT_MINIMUM': 'Ya tienes solo 1 letra: no hay nada que limpiar.', 'er.PERK_USED': 'Ya usaste tu poder.',
+  'er.PERK_NOT_READY': 'La visión ninja se desbloquea en la ronda 3.', 'er.NOTHING_TO_ABSORB': 'Nadie está apuntando a ese jugador.',
+  'er.NO_ACTIVE_PERK': 'Tu poder es pasivo: se activa cuando juegas una carta de Ataque.', 'er.PERKS_OFF': 'Los poderes de clase están desactivados en esta sala.',
+  'er.NOT_HACKED': 'Ahora mismo no estás hackeado.', 'er.ALREADY_TRACED': 'Ya usaste tu rastreo esta ronda.',
+  'er.SLOW_DOWN': 'Tranquilo, de uno en uno.', 'er.TOO_MANY_FOR_DUEL': 'El 1v1 necesita exactamente 2 jugadores en la sala.',
+  'er.ALREADY_BET': 'Ya vas con todo esta ronda.', 'er.ALREADY_LATCHED': 'Ya te pegaste a alguien esta ronda.',
+  'er.CANNOT_MIMIC_MIMIC': 'No puedes copiar a otro Imitador.', 'er.network': 'Problema de conexión: reintentando…',
+  'er.generic': 'Algo salió mal. Inténtalo de nuevo.', 'er.BAD_AVATAR': 'No se pudo usar esa imagen.',
+
+  // answer rejection reasons
+  'rs.BLANK': 'Sin respuesta', 'rs.NOT_LETTERS': 'Solo letras', 'rs.TOO_SHORT': 'Muy corta (3+ letras)', 'rs.NOT_A_WORD': 'No está en el diccionario',
+  'rs.REPEAT': 'Palabra ya usada', 'rs.BANNED_LETTER': 'Usó una letra prohibida', 'rs.CHAOS_NO_E': 'Usó E en una ronda sin E',
+  'rs.OFF_TOPIC': 'No encaja con la consigna',
+
+  // cards
+  'cd.attack': 'Ataque', 'cd.attack_t': 'Añade una letra a alguien', 'cd.shield': 'Escudo', 'cd.shield_t': 'Bloquea una letra dirigida a ti',
+  'cd.cleanse': 'Limpieza', 'cd.cleanse_t': 'Quita una de tus letras',
+
+  // chaos twists
+  'cx.swap': 'Cambio de bloqueos', 'cx.swap_t': 'Todos pasaron un bloqueo al jugador de su izquierda.',
+  'cx.no_e': 'Ronda sin E', 'cx.no_e_t': 'Nadie puede usar la letra E esta ronda.',
+  'cx.shuffle': 'Barajar cartas', 'cx.shuffle_t': 'Todas las cartas en juego se repartieron de nuevo.',
+  'cx.double': 'Puntos dobles', 'cx.double_t': 'Cada palabra válida puntúa doble esta ronda.',
+  'cx.amnesty': 'Amnistía', 'cx.amnesty_t': 'Todos perdieron un bloqueo.',
+  'cx.speed': 'Ronda rápida', 'cx.speed_t': 'La mitad del tiempo para responder. ¡Ya!',
+
+  // classes
+  'cl.ninja': 'Ninja', 'cl.ninja.tag': 'Ve en la oscuridad',
+  'cl.ninja.perk': 'Una vez, desde la ronda 3: ve todas las letras prohibidas en juego (no de quién son).',
+  'cl.ninja.cost': 'Si alguien rompe una de tus letras, recibes +3 letras (máx. una vez por ronda).',
+  'cl.mastermind': 'Mente maestra', 'cl.mastermind.tag': 'Sabe demasiado',
+  'cl.mastermind.perk': 'Una vez: espía la lista completa de letras de un jugador.',
+  'cl.mastermind.cost': 'Una letra espiada se filtra a la sala como pista. Si nadie más acierta esa ronda, recibes un fallo.',
+  'cl.hero': 'Héroe', 'cl.hero.tag': 'Recibe el golpe',
+  'cl.hero.perk': 'Una vez: absorbe una letra dirigida a otro por +5 puntos.',
+  'cl.hero.cost': 'Clase de remontada: si llegas al duelo final, llegas con solo 1 letra.',
+  'cl.villain': 'Villano', 'cl.villain.tag': 'Cañón de cristal',
+  'cl.villain.perk': 'Tus cartas de Ataque añaden 2 letras en vez de 1.', 'cl.villain.cost': 'No puedes usar cartas de Escudo.',
+  'cl.hacker': 'Hacker', 'cl.hacker.tag': 'Fantasma en la máquina',
+  'cl.hacker.perk': 'Tus cartas de Ataque son hackeos anónimos: la víctima juega la próxima ronda sin ver sus propios bloqueos.',
+  'cl.hacker.cost': 'El jugador hackeado tiene un rastreo. Si te nombra, quedas expuesto y tus propios bloqueos se ocultan una ronda.',
+  'cl.mimic': 'Imitador', 'cl.mimic.tag': 'Lleva tu cara',
+  'cl.mimic.perk': 'Una vez: adopta la clase de otro jugador el resto de la partida, con un poder nuevo.',
+  'cl.mimic.cost': 'También heredas su desventaja. No hay vuelta atrás.',
+  'cl.gambler': 'Apostador', 'cl.gambler.tag': 'Con todo, cada ronda',
+  'cl.gambler.perk': 'En cada fase de respuesta puedes apostar por tu palabra: si es válida, puntos dobles.',
+  'cl.gambler.cost': 'Si fallas, pierdes 10 puntos además del fallo, y todos ven que apuestas.',
+  'cl.thief': 'Ladrón', 'cl.thief.tag': 'Manos largas',
+  'cl.thief.perk': 'Rompe el bloqueo de alguien y le robas una carta de la mano en vez de robar del mazo.',
+  'cl.thief.cost': 'Si fallas una adivinanza, sueltas una de tus cartas en su mano.',
+  'cl.parasite': 'Parásito', 'cl.parasite.tag': 'Se alimenta del fuerte',
+  'cl.parasite.perk': 'Cada ronda, pégate a un jugador: por cada bloqueo que gane, tú sueltas uno de los tuyos.',
+  'cl.parasite.cost': 'Si tu huésped queda eliminado esa ronda, recibes un fallo. El enganche es público.',
+  'cl.oracle': 'Oráculo', 'cl.oracle.tag': 'Lo vio venir',
+  'cl.oracle.perk': 'Una vez: ve la consigna de la próxima ronda con una ronda de antelación.',
+  'cl.oracle.cost': 'La próxima ronda, tu palabra se muestra a todos en cuanto la fijas.',
+  'cl.wildcard': 'Comodín', 'cl.wildcard.tag': 'Caos puro',
+  'cl.wildcard.perk': 'Mientras sigas vivo, cada ronda empieza con un giro al azar: cambio de bloqueos, ronda sin E, barajar cartas, puntos dobles, amnistía o ronda rápida.',
+  'cl.wildcard.cost': 'El caos te golpea exactamente igual que a los demás.',
+  'cl.jester': 'Bufón', 'cl.jester.tag': 'Cambiazo',
+  'cl.jester.perk': 'Una vez: intercambia todos tus bloqueos con otro jugador.',
+  'cl.jester.cost': 'Cada bloqueo que recibes se revela a toda la sala.',
+};
+
+export default es;

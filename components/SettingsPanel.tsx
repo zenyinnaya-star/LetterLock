@@ -3,25 +3,28 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { getPrefs, setPref, type Prefs } from '@/lib/prefs';
+import { getLang, setLang, UI_LANGS, WORD_LANGS, type Key, type UiLang, type WordLang } from '@/lib/i18n';
+import { useT } from '@/lib/i18n/react';
 import { rpc } from '@/lib/rpc';
 import type { RoomSettings, RoomState } from '@/lib/types';
 import { Icon, type IconName } from './icons';
 import type { Act } from './phases';
 
 type NumKey = 'answer_seconds' | 'guess_seconds' | 'react_seconds' | 'duel_seconds' | 'strikes';
-const OPTIONS: { key: NumKey; label: string; icon: IconName; values: number[]; unit: string; hint?: string }[] = [
-  { key: 'answer_seconds', label: 'Answer time', icon: 'clock', values: [30, 45, 60, 90, 120], unit: 's' },
-  { key: 'guess_seconds', label: 'Guess time', icon: 'target', values: [10, 15, 20, 30, 45], unit: 's' },
-  { key: 'react_seconds', label: 'Cards phase', icon: 'cards', values: [5, 8, 12, 20], unit: 's' },
-  { key: 'duel_seconds', label: 'Duel rounds', icon: 'swords', values: [15, 20, 30, 45], unit: 's' },
-  { key: 'strikes', label: 'Strikes to go out', icon: 'x', values: [1, 2, 3], unit: '' },
+const OPTIONS: { key: NumKey; label: Key; icon: IconName; values: number[]; unit: string; hint?: string }[] = [
+  { key: 'answer_seconds', label: 'st.answer', icon: 'clock', values: [30, 45, 60, 90, 120], unit: 's' },
+  { key: 'guess_seconds', label: 'st.guess', icon: 'target', values: [10, 15, 20, 30, 45], unit: 's' },
+  { key: 'react_seconds', label: 'st.cards_phase', icon: 'cards', values: [5, 8, 12, 20], unit: 's' },
+  { key: 'duel_seconds', label: 'st.duel_rounds', icon: 'swords', values: [15, 20, 30, 45], unit: 's' },
+  { key: 'strikes', label: 'st.strikes', icon: 'x', values: [1, 2, 3], unit: '' },
 ];
 
 export function SettingsButton({ state, token, act }: { state: RoomState | null; token: string | null; act?: Act }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button className="iconbtn" aria-label="Settings" title="Settings" onClick={() => setOpen(true)}>
+      <button className="iconbtn" aria-label={t('hd.settings')} title={t('hd.settings')} onClick={() => setOpen(true)}>
         <Icon name="gear" />
       </button>
       <AnimatePresence>
@@ -32,6 +35,7 @@ export function SettingsButton({ state, token, act }: { state: RoomState | null;
 }
 
 function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null; token: string | null; act?: Act; onClose: () => void }) {
+  const t = useT();
   const s = state?.room.settings;
   const isHost = !!state?.me && state.me.id === state.room.host_id;
   const editable = isHost && state?.room.phase === 'lobby' && !!token && !!act;
@@ -57,48 +61,48 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
 
   return (
     <motion.div className="sheet-backdrop" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <motion.div className="msheet" role="dialog" aria-modal="true" aria-label="Settings" onClick={(e) => e.stopPropagation()}
+      <motion.div className="msheet" role="dialog" aria-modal="true" aria-label={t('st.title')} onClick={(e) => e.stopPropagation()}
         initial={{ y: 40, opacity: 0, scale: 0.97 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 40, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 420, damping: 32 }}>
         <div className="sheet-head">
-          <h2><Icon name="gear" size={20} /> Settings</h2>
-          <button className="iconbtn" aria-label="Close" onClick={onClose}><Icon name="x" /></button>
+          <h2><Icon name="gear" size={20} /> {t('st.title')}</h2>
+          <button className="iconbtn" aria-label={t('cs.close')} onClick={onClose}><Icon name="x" /></button>
         </div>
 
         {local && (
           <section>
             <div className="sheet-sub">
-              <span className="label">Room rules</span>
+              <span className="label">{t('st.rules')}</span>
               <span className="muted small">
-                {editable ? 'You’re the host — changes apply to everyone.' : state?.room.phase === 'lobby' ? 'Only the host can change these.' : 'Locked while a game is running.'}
+                {editable ? t('st.host_note') : state?.room.phase === 'lobby' ? t('st.only_host') : t('st.locked')}
               </span>
             </div>
 
             <div className="set-row">
-              <span className="set-label"><Icon name="swords" size={16} /> Game mode</span>
-              <div className="seg" role="radiogroup" aria-label="Game mode">
+              <span className="set-label"><Icon name="swords" size={16} /> {t('st.mode')}</span>
+              <div className="seg" role="radiogroup" aria-label={t('st.mode')}>
                 <button role="radio" aria-checked={local.mode !== 'duel'} className={local.mode !== 'duel' ? 'on' : ''} disabled={!editable}
-                  onClick={() => change({ mode: 'classic' })}>Classic</button>
+                  onClick={() => change({ mode: 'classic' })}>{t('st.classic')}</button>
                 <button role="radio" aria-checked={local.mode === 'duel'} className={local.mode === 'duel' ? 'on duel' : ''}
                   disabled={!editable || (state?.players.length ?? 0) > 2}
-                  title={(state?.players.length ?? 0) > 2 ? '1v1 needs exactly 2 players' : undefined}
-                  onClick={() => change({ mode: 'duel', max_players: 2 })}>1v1 Duel</button>
+                  title={(state?.players.length ?? 0) > 2 ? t('st.duel_needs2') : undefined}
+                  onClick={() => change({ mode: 'duel', max_players: 2 })}>{t('st.duel')}</button>
               </div>
             </div>
 
             {local.mode !== 'duel' && <div className="set-row">
-              <span className="set-label"><Icon name="users" size={16} /> Max players</span>
+              <span className="set-label"><Icon name="users" size={16} /> {t('st.max')}</span>
               <div className="stepper">
-                <button disabled={!editable || local.max_players <= minPlayers} onClick={() => change({ max_players: local.max_players - 1 })} aria-label="Fewer players">−</button>
+                <button disabled={!editable || local.max_players <= minPlayers} onClick={() => change({ max_players: local.max_players - 1 })} aria-label={t('st.fewer')}>−</button>
                 <b>{local.max_players}</b>
-                <button disabled={!editable || local.max_players >= 12} onClick={() => change({ max_players: local.max_players + 1 })} aria-label="More players">+</button>
+                <button disabled={!editable || local.max_players >= 12} onClick={() => change({ max_players: local.max_players + 1 })} aria-label={t('st.more')}>+</button>
               </div>
             </div>}
 
             {OPTIONS.map((o) => (
               <div className="set-row" key={o.key}>
-                <span className="set-label"><Icon name={o.icon} size={16} /> {o.label}</span>
-                <div className="seg" role="radiogroup" aria-label={o.label}>
+                <span className="set-label"><Icon name={o.icon} size={16} /> {t(o.label)}</span>
+                <div className="seg" role="radiogroup" aria-label={t(o.label)}>
                   {o.values.map((v) => (
                     <button key={v} role="radio" aria-checked={local[o.key] === v} className={local[o.key] === v ? 'on' : ''}
                       disabled={!editable} onClick={() => change({ [o.key]: v } as Partial<RoomSettings>)}>
@@ -109,19 +113,43 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
               </div>
             ))}
 
-            <Toggle label="Answer time shrinks each round" icon="clock" on={local.shrink} disabled={!editable} onClick={() => change({ shrink: !local.shrink })} />
-            <Toggle label="Cards (Attack / Shield / Cleanse)" icon="cards" on={local.cards} disabled={!editable} onClick={() => change({ cards: !local.cards })} />
-            <Toggle label="Class perks" icon="bolt" on={local.perks} disabled={!editable} onClick={() => change({ perks: !local.perks })} />
+            <Toggle label={t('st.shrink')} icon="clock" on={local.shrink} disabled={!editable} onClick={() => change({ shrink: !local.shrink })} />
+            <Toggle label={t('st.cards')} icon="cards" on={local.cards} disabled={!editable} onClick={() => change({ cards: !local.cards })} />
+            <Toggle label={t('st.perks')} icon="bolt" on={local.perks} disabled={!editable} onClick={() => change({ perks: !local.perks })} />
           </section>
         )}
 
         <section>
-          <div className="sheet-sub"><span className="label">This device</span></div>
-          <Toggle label="Music" icon="volume" on={prefs.music} onClick={() => pref('music')} />
-          <Toggle label="Sound effects" icon="burst" on={prefs.sfx} onClick={() => pref('sfx')} />
-          <Toggle label="Announcer voice" icon="bulb" on={prefs.voice} onClick={() => pref('voice')} />
+          <div className="sheet-sub"><span className="label">{t('st.lang')}</span></div>
+          <div className="set-row">
+            <span className="set-label"><Icon name="globe" size={16} /> {t('st.ui_lang')}</span>
+            <select className="lang-select" value={getLang()} aria-label={t('st.ui_lang')}
+              onChange={(e) => setLang(e.target.value as UiLang)}>
+              {UI_LANGS.map((l) => <option key={l.code} value={l.code}>{l.name}</option>)}
+            </select>
+          </div>
+          {local && (
+            <div className="set-row col-row">
+              <span className="set-label"><Icon name="lock" size={16} /> {t('st.word_lang')}</span>
+              <div className="seg wrap" role="radiogroup" aria-label={t('st.word_lang')}>
+                {WORD_LANGS.map((l) => (
+                  <button key={l.code} role="radio" aria-checked={(local.lang ?? 'en') === l.code}
+                    className={(local.lang ?? 'en') === l.code ? 'on' : ''} disabled={!editable}
+                    onClick={() => change({ lang: l.code as WordLang })}>{l.name}</button>
+                ))}
+              </div>
+              <span className="muted small">{t('st.word_lang_hint')}</span>
+            </div>
+          )}
         </section>
-        <a className="btn ghost block" href="/how-to-play" target="_blank" rel="noreferrer"><Icon name="play" size={16} /> How to play (video)</a>
+
+        <section>
+          <div className="sheet-sub"><span className="label">{t('st.device')}</span></div>
+          <Toggle label={t('st.music')} icon="volume" on={prefs.music} onClick={() => pref('music')} />
+          <Toggle label={t('st.sfx')} icon="burst" on={prefs.sfx} onClick={() => pref('sfx')} />
+          <Toggle label={t('st.voice')} icon="bulb" on={prefs.voice} onClick={() => pref('voice')} />
+        </section>
+        <a className="btn ghost block" href="/how-to-play" target="_blank" rel="noreferrer"><Icon name="play" size={16} /> {t('st.howto')}</a>
       </motion.div>
     </motion.div>
   );
