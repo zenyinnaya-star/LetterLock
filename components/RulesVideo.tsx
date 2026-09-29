@@ -3,6 +3,8 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CHAOS_INFO, CLASSES, CLASS_ORDER } from '@/lib/classes';
+import { getLang, localeOf, t, type Key } from '@/lib/i18n';
+import { Rich, useT } from '@/lib/i18n/react';
 import { getPrefs } from '@/lib/prefs';
 import { CardIcon, ClassIcon, Icon } from './icons';
 
@@ -11,7 +13,7 @@ import { CardIcon, ClassIcon, Icon } from './icons';
  * Each scene waits for its narration to finish (or its own timer when the voice is off).
  */
 
-interface Scene { say: string; caption: string; min: number; render: () => React.ReactNode }
+interface Scene { say: Key; caption: Key; min: number; render: () => React.ReactNode }
 
 const pop = (delay = 0) => ({ initial: { scale: 0, opacity: 0 }, animate: { scale: 1, opacity: 1 }, transition: { type: 'spring' as const, stiffness: 420, damping: 20, delay } });
 const drop = (delay = 0) => ({ initial: { y: -90, rotate: -16, opacity: 0 }, animate: { y: 0, rotate: 0, opacity: 1 }, transition: { type: 'spring' as const, stiffness: 520, damping: 22, delay } });
@@ -38,64 +40,64 @@ function Typed({ word, bad = '', delay = 0 }: { word: string; bad?: string; dela
 
 const SCENES: Scene[] = [
   {
-    say: 'Welcome to Letterlock. The word game that fights back.',
-    caption: 'Welcome to Letterlock — the word game that fights back.',
+    say: 'rv.s1.say',
+    caption: 'rv.s1.cap',
     min: 4200,
     render: () => (
       <div className="rv-center">
         <div className="rv-row">{'LETTER'.split('').map((c, i) => <T key={i} c={c} delay={i * 0.08} />)}</div>
         <div className="rv-row">{'LOCK'.split('').map((c, i) => <T key={i} c={c} state="bad" delay={0.5 + i * 0.08} lock />)}</div>
-        <motion.p className="rv-sub" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}>2 to 12 players · one phone each</motion.p>
+        <motion.p className="rv-sub" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}>{t('rv.s1.sub')}</motion.p>
       </div>
     ),
   },
   {
-    say: 'You start with one secret banned letter. Only you can see it.',
-    caption: 'You start with 1 secret banned letter. Only you can see it.',
+    say: 'rv.s2.say',
+    caption: 'rv.s2.cap',
     min: 4500,
     render: () => (
       <div className="rv-center">
         <motion.div className="rv-rack" {...pop(0.1)}>
-          <span className="rv-rack-label">Your locks</span>
+          <span className="rv-rack-label">{t('rv.locks')}</span>
           <T c="R" lock delay={0.4} />
         </motion.div>
         <motion.div className="rv-peek" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.2 }}>
-          <Icon name="eye" size={20} /> Everyone else sees <b>?</b>
+          <Icon name="eye" size={20} /> <Rich k="rv.s2.peek" />
         </motion.div>
       </div>
     ),
   },
   {
-    say: 'Each round has a prompt. Type a real word that fits, without using your banned letters. Use one, and you take a strike.',
-    caption: 'Answer the prompt with a real word — no banned letters, or you take a strike.',
+    say: 'rv.s3.say',
+    caption: 'rv.s3.cap',
     min: 7000,
     render: () => (
       <div className="rv-center">
-        <motion.div className="rv-prompt" {...pop(0)}>Something cold</motion.div>
+        <motion.div className="rv-prompt" {...pop(0)}>{t('rv.s3.prompt')}</motion.div>
         <div className="rv-two">
-          <div className="rv-col"><Typed word="SNOW" delay={0.6} /><motion.span className="rv-verdict good" {...pop(1.6)}><Icon name="check" size={16} /> +4</motion.span></div>
-          <div className="rv-col"><Typed word="FROST" bad="R" delay={2.2} /><motion.span className="rv-verdict bad" {...pop(3.4)}><Icon name="x" size={16} /> strike</motion.span></div>
+          <div className="rv-col"><Typed word={t('rv.s3.good')} delay={0.6} /><motion.span className="rv-verdict good" {...pop(1.6)}><Icon name="check" size={16} /> +{t('rv.s3.good').length}</motion.span></div>
+          <div className="rv-col"><Typed word={t('rv.s3.bad')} bad="R" delay={2.2} /><motion.span className="rv-verdict bad" {...pop(3.4)}><Icon name="x" size={16} /> {t('rv.strike')}</motion.span></div>
         </div>
       </div>
     ),
   },
   {
-    say: 'Survive a round cleanly, and you earn another banned letter. The better you do, the harder it gets.',
-    caption: 'Clean answer? You survive — and gain another lock.',
+    say: 'rv.s4.say',
+    caption: 'rv.s4.cap',
     min: 5500,
     render: () => (
       <div className="rv-center">
         <div className="rv-rack">
-          <span className="rv-rack-label">Your locks</span>
+          <span className="rv-rack-label">{t('rv.locks')}</span>
           <T c="R" lock /><T c="T" lock delay={0.9} /><T c="M" lock delay={1.6} />
         </div>
-        <motion.p className="rv-sub" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>Two strikes in a row and you&apos;re out.</motion.p>
+        <motion.p className="rv-sub" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}>{t('rv.s4.out')}</motion.p>
       </div>
     ),
   },
   {
-    say: 'Then everyone guesses one letter someone else can\'t use. Crack a lock, and you draw a card.',
-    caption: 'Guess a rival’s banned letter. Crack it → draw a card.',
+    say: 'rv.s5.say',
+    caption: 'rv.s5.cap',
     min: 5800,
     render: () => (
       <div className="rv-center">
@@ -104,16 +106,16 @@ const SCENES: Scene[] = [
           <motion.div className="rv-guess" initial={{ scale: 0 }} animate={{ scale: [0, 1.3, 1] }} transition={{ delay: 0.8 }}>“K”</motion.div>
           <motion.div className="rv-col" {...pop(0.2)}><ClassIcon cls="ninja" size={84} /><span>Ben</span></motion.div>
         </div>
-        <motion.div className="rv-crack" {...pop(1.8)}><Icon name="target" size={18} /> Cracked! Ben can&apos;t use K</motion.div>
+        <motion.div className="rv-crack" {...pop(1.8)}><Icon name="target" size={18} /> {t('rv.s5.cracked', { name: 'Ben', l: 'K' })}</motion.div>
         <motion.div className="minicard attack rv-card" initial={{ rotateY: 180, opacity: 0, y: 30 }} animate={{ rotateY: 0, opacity: 1, y: 0 }} transition={{ delay: 2.6 }}>
-          <span className="art"><CardIcon kind="attack" size={22} /></span><span>Attack<small>Add a letter to someone</small></span>
+          <span className="art"><CardIcon kind="attack" size={22} /></span><span>{t('cd.attack')}<small>{t('cd.attack_t')}</small></span>
         </motion.div>
       </div>
     ),
   },
   {
-    say: 'Cards change everything. Attack adds a letter to a rival. Shield blocks a hit aimed at you. Cleanse removes one of your own.',
-    caption: 'Attack · Shield · Cleanse — you can hold two.',
+    say: 'rv.s6.say',
+    caption: 'rv.s6.cap',
     min: 7200,
     render: () => (
       <div className="rv-center">
@@ -123,8 +125,8 @@ const SCENES: Scene[] = [
               animate={{ y: 0, rotate: (i - 1) * 6, opacity: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.3 + i * 0.9 }}>
               <CardIcon kind={k} size={40} />
               <div>
-                <b>{k === 'attack' ? 'Attack' : k === 'shield' ? 'Shield' : 'Cleanse'}</b>
-                <small>{k === 'attack' ? '+1 lock on a rival' : k === 'shield' ? 'Block a hit on you' : 'Remove one of yours'}</small>
+                <b>{t(`cd.${k}`)}</b>
+                <small>{t(`rv.s6.${k}`)}</small>
               </div>
             </motion.div>
           ))}
@@ -133,8 +135,8 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    say: 'Pick one of twelve classes. From the Ninja and the Hacker, to the Mimic, the Gambler, the Thief, the Parasite, the Oracle, the Wildcard and the Jester. Every power comes with a price.',
-    caption: 'Twelve classes. Every power comes with a price.',
+    say: 'rv.s7.say',
+    caption: 'rv.s7.cap',
     min: 8500,
     render: () => (
       <div className="rv-center">
@@ -151,28 +153,28 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    say: 'The Hacker\'s attacks are anonymous. The victim plays the next round blind, without seeing their own locks. But they get one trace. Name the Hacker, and the Hacker is exposed.',
-    caption: 'Hacked? Your locks go dark for a round. Trace the Hacker to expose them.',
+    say: 'rv.s8.say',
+    caption: 'rv.s8.cap',
     min: 9000,
     render: () => (
       <div className="rv-center">
         <div className="rv-rack hacked">
-          <span className="rv-rack-label">Your locks</span>
+          <span className="rv-rack-label">{t('rv.locks')}</span>
           {[0, 1, 2].map((i) => (
             <motion.span key={i} className="tile rv-tile glitch" initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.4, 1], x: [0, -3, 3, 0] }}
               transition={{ delay: 0.4 + i * 0.2, duration: 0.6, repeat: 3 }}>?</motion.span>
           ))}
         </div>
         <motion.div className="rv-trace" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 3.2 }}>
-          <Icon name="terminal" size={18} /> Trace… <ClassIcon cls="hacker" size={40} />
-          <motion.span className="rv-verdict good" {...pop(4.6)}>Caught! Exposed</motion.span>
+          <Icon name="terminal" size={18} /> {t('rv.s8.trace')} <ClassIcon cls="hacker" size={40} />
+          <motion.span className="rv-verdict good" {...pop(4.6)}>{t('rv.s8.caught')}</motion.span>
         </motion.div>
       </div>
     ),
   },
   {
-    say: 'The Wildcard brings chaos. Every round opens with a random twist, like a lock swap, a round with no letter E, a card shuffle, or double points.',
-    caption: 'Wildcard: every round starts with a random twist.',
+    say: 'rv.s9.say',
+    caption: 'rv.s9.cap',
     min: 8000,
     render: () => (
       <div className="rv-center">
@@ -189,8 +191,8 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    say: 'When two players remain, it\'s the final duel. Shorter rounds, and strikes never reset. Or skip straight to it with one versus one mode.',
-    caption: 'Final duel — or pick 1v1 mode and fight from round one.',
+    say: 'rv.s10.say',
+    caption: 'rv.s10.cap',
     min: 5500,
     render: () => (
       <div className="rv-center rv-duel">
@@ -203,15 +205,15 @@ const SCENES: Scene[] = [
     ),
   },
   {
-    say: 'Last one standing wins. And if you rage quit, everyone hears about it. Bawk bawk!',
-    caption: 'Last one standing wins. Rage quit and you’re the chicken.',
+    say: 'rv.s11.say',
+    caption: 'rv.s11.cap',
     min: 5500,
     render: () => (
       <div className="rv-center">
         <motion.div className="rv-trophy" {...pop(0.1)}><Icon name="trophy" size={64} /></motion.div>
         <motion.div className="action-banner chicken" style={{ position: 'relative' }} initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 2.2 }}>
           <div className="who"><motion.span className="chicken" animate={{ rotate: [0, -18, 14, 0] }} transition={{ repeat: Infinity, duration: 0.7 }}><Icon name="feather" size={28} /></motion.span></div>
-          <div className="txt"><b>Dave</b> chickened out<em>rage quit</em></div>
+          <div className="txt"><Rich k="rv.s11.chicken" vars={{ name: 'Dave' }} /><em>{t('rv.s11.rage')}</em></div>
         </motion.div>
       </div>
     ),
@@ -232,16 +234,22 @@ export function RulesVideo() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel();
   }, []);
 
+  const tr = useT();
+  const lang = getLang();
+
+  // pick a narrator voice in the current interface language (re-picked when the language changes)
   useEffect(() => {
     if (!('speechSynthesis' in window)) return;
     const pick = () => {
-      const vs = window.speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith('en'));
-      voice.current = vs.find((v) => /Google UK English Male|Daniel|Guy|Ryan|Alex|Male/i.test(v.name)) ?? vs[0] ?? null;
+      const vs = window.speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith(lang));
+      voice.current = (lang === 'en' ? vs.find((v) => /Google UK English Male|Daniel|Guy|Ryan|Alex|Male/i.test(v.name)) : undefined) ?? vs[0] ?? null;
     };
     pick();
     window.speechSynthesis.addEventListener?.('voiceschanged', pick);
-    return () => { window.speechSynthesis.removeEventListener?.('voiceschanged', pick); clear(); };
-  }, [clear]);
+    return () => { window.speechSynthesis.removeEventListener?.('voiceschanged', pick); };
+  }, [lang]);
+
+  useEffect(() => clear, [clear]);
 
   // run the current scene: narrate + wait for both the narration and the scene's minimum length
   useEffect(() => {
@@ -256,7 +264,8 @@ export function RulesVideo() {
       else { setPlaying(false); setProgress(1); }
     };
     if (!spoke) {
-      const u = new SpeechSynthesisUtterance(scene.say);
+      const u = new SpeechSynthesisUtterance(t(scene.say));
+      u.lang = localeOf();
       if (voice.current) u.voice = voice.current;
       u.rate = 1.0; u.pitch = 0.8;
       u.onend = () => { spoke = true; next(); };
@@ -288,23 +297,23 @@ export function RulesVideo() {
             {started ? scene.render() : SCENES[0].render()}
           </motion.div>
         </AnimatePresence>
-        {started && <div className="rv-caption">{scene.caption}</div>}
+        {started && <div className="rv-caption">{tr(scene.caption)}</div>}
         {(!playing) && (
-          <motion.button className="rv-bigplay" aria-label={done ? 'Replay' : 'Play'} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          <motion.button className="rv-bigplay" aria-label={done ? tr('rv.replay') : tr('rv.play')} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
             onClick={(e) => { e.stopPropagation(); play(); }}>
             <Icon name={done ? 'replay' : 'play'} size={34} />
           </motion.button>
         )}
       </div>
       <div className="rv-controls">
-        <button className="iconbtn" aria-label={playing ? 'Pause' : 'Play'} onClick={() => (playing ? pause() : play())}>
+        <button className="iconbtn" aria-label={playing ? tr('rv.pause') : tr('rv.play')} onClick={() => (playing ? pause() : play())}>
           <Icon name={playing ? 'pause' : 'play'} />
         </button>
-        <div className="rv-bar" role="slider" aria-label="Video progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)}>
+        <div className="rv-bar" role="slider" aria-label={tr('rv.progress')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)}>
           <div className="rv-fill" style={{ width: `${progress * 100}%` }} />
           {SCENES.map((_, i) => (
             <button key={i} className={`rv-tick${i <= idx && started ? ' on' : ''}`} style={{ left: `${(i / SCENES.length) * 100}%` }}
-              aria-label={`Chapter ${i + 1}`} onClick={() => jump(i)} />
+              aria-label={tr('rv.chapter', { n: i + 1 })} onClick={() => jump(i)} />
           ))}
         </div>
         <span className="muted small">{idx + 1}/{SCENES.length}</span>
