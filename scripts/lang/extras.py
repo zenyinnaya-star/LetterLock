@@ -1,0 +1,45 @@
+# hand-picked everyday words per language/prompt (native spelling; normalized by build.py)
+X = {
+ 'de': {
+  'A color': 'rot blau grün gelb schwarz weiß orange lila violett rosa braun grau türkis beige golden silber',
+  'A word meaning fast': 'schnell rasch flink zügig eilig flott geschwind hurtig blitzschnell rasant fix',
+  'A word meaning cold': 'kalt eisig kühl frostig eiskalt bitterkalt frisch winterlich',
+  'A word meaning happy': 'glücklich froh fröhlich heiter vergnügt lustig zufrieden selig munter',
+  'A word meaning angry': 'wütend böse zornig sauer verärgert ärgerlich rasend empört',
+  'A word meaning big': 'groß riesig gewaltig enorm mächtig immens gigantisch',
+  'A word meaning small': 'klein winzig gering kurz knapp mini zierlich',
+  'A word meaning difficult': 'schwer schwierig mühsam hart knifflig kompliziert anstrengend',
+  'A reptile or amphibian': 'frosch kröte schlange eidechse krokodil alligator schildkröte salamander molch leguan gecko chamäleon viper kobra',
+  'A type of dance': 'walzer tango salsa ballett polka samba rumba foxtrott swing breakdance hiphop flamenco',
+  'A sport': 'fußball tennis golf boxen schwimmen rudern reiten laufen radfahren skifahren handball basketball volleyball hockey ringen turnen segeln',
+ },
+ 'fr': {
+  'A word meaning happy': 'heureux heureuse content contente joyeux joyeuse gai gaie ravi ravie enchanté radieux comblé',
+  'A word meaning cold': 'froid froide glacé glacial gelé frais fraîche frisquet',
+  'A word meaning fast': 'rapide vite prompt véloce leste agile pressé',
+  'A word meaning small': 'petit petite minuscule menu mini court courte',
+  'A word meaning angry': 'fâché fâchée furieux furieuse énervé irrité colérique enragé',
+  'A word meaning big': 'grand grande gros grosse énorme immense géant vaste',
+ },
+ 'es': {
+  'A word meaning cold': 'frío fría helado helada gélido congelado fresco glacial',
+  'A word meaning fast': 'rápido rápida veloz ligero pronto ágil',
+  'A word meaning small': 'pequeño pequeña chico chica diminuto minúsculo corto',
+  'A word meaning happy': 'feliz contento contenta alegre dichoso dichosa',
+ },
+ 'zh': {
+  'A word meaning happy': '开心 高兴 快乐 幸福 愉快 喜悦 欢乐 欢喜 满意 兴奋',
+  'A word meaning big': '巨大 庞大 宏大 广大 很大 高大 伟大 硕大',
+  'A word meaning small': '小小 微小 细小 矮小 渺小 很小',
+  'A word meaning angry': '生气 愤怒 恼火 气愤 发火 暴怒',
+  'A word meaning cold': '寒冷 冰冷 冰凉 凉快 严寒',
+  'A word meaning fast': '快速 迅速 飞快 急速 赶快 高速',
+  'A word meaning difficult': '困难 艰难 难题 艰苦 复杂 麻烦',
+  'A type of food': '米饭 面条 饺子 包子 馒头 豆腐 炒饭 火锅 汤圆 面包 鸡蛋 鸡肉 牛肉 猪肉',
+  'A type of dance': '芭蕾 探戈 华尔兹 街舞 民族舞 扭秧歌',
+ },
+ 'ja': {
+  'A word meaning cold': 'つめたい さむい ひえびえ れいこく かんれい',
+  'A word meaning angry': 'おこる いかり ぷんぷん かんかん げきど',
+ },
+}
