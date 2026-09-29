@@ -11,6 +11,7 @@ import { CLASSES } from '@/lib/classes';
 import { Icon } from './icons';
 import { AvatarPicker } from './AvatarPicker';
 import { PlayerAvatar } from './PlayerAvatar';
+import { TeamLobby } from './team';
 import type { Act } from './phases';
 import { SettingsButton } from './SettingsPanel';
 import { ClassPicker, softSpring, spring } from './ui';
@@ -24,6 +25,10 @@ export function Lobby({ state, token, act, onLeave }: { state: RoomState; token:
   const cfg = state.room.settings;
   const max = cfg?.max_players ?? 8;
   const duelMode = cfg?.mode === 'duel';
+  const teamMode = cfg?.mode === 'team';
+  const teamSize = cfg?.team_size ?? 2;
+  const teamsReady = teamMode && (state.teams ?? []).length === 2 && state.players.every((p) => p.team_id)
+    && (state.teams ?? []).every((tm) => state.players.filter((p) => p.team_id === tm.id).length >= 2);
   const url = typeof window !== 'undefined' ? `${window.location.origin}/room/${state.room.code}` : '';
 
   async function copy() {
@@ -53,7 +58,9 @@ export function Lobby({ state, token, act, onLeave }: { state: RoomState; token:
         </button>
       </div>
 
-      {duelMode ? (
+      {teamMode ? (
+        <TeamLobby state={state} token={token} act={act} />
+      ) : duelMode ? (
         <div className="duel-lobby">
           <DuelSeat p={state.players[0]} meId={me?.id} side="left" />
           <motion.span className="dl-vs" initial={{ scale: 3, opacity: 0, rotate: -20 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}
@@ -100,11 +107,12 @@ export function Lobby({ state, token, act, onLeave }: { state: RoomState; token:
 
       {cfg && (
         <div className="rules-strip">
+          {teamMode && <span className="duel-tag"><Icon name="users" size={14} /> {t('tm.rules_strip', { size: teamSize, n: cfg.rounds ?? 5 })}</span>}
           {duelMode && <span className="duel-tag"><Icon name="swords" size={14} /> {t('lb.duel_tag')}</span>}
           <span><Icon name="users" size={14} /> {count}/{max}</span>
           <span><Icon name="clock" size={14} /> {t('lb.answers', { n: cfg.answer_seconds })}{cfg.shrink ? t('lb.shrinking') : ''}</span>
           <span><Icon name="target" size={14} /> {t('lb.guesses', { n: cfg.guess_seconds })}</span>
-          <span><Icon name="x" size={14} /> {cfg.strikes > 1 ? t('lb.strikes', { n: cfg.strikes }) : t('lb.strike1')}</span>
+          <span><Icon name="x" size={14} /> {teamMode ? t('tm.no_strikes') : cfg.strikes > 1 ? t('lb.strikes', { n: cfg.strikes }) : t('lb.strike1')}</span>
           <span className={cfg.cards ? '' : 'off'}><Icon name="cards" size={14} /> {cfg.cards ? t('lb.cards_on') : t('lb.cards_off')}</span>
           <span className={cfg.perks ? '' : 'off'}><Icon name="bolt" size={14} /> {cfg.perks ? t('lb.perks_on') : t('lb.perks_off')}</span>
           <span className="lang-chip"><Icon name="globe" size={14} /> {t('lb.words_in', { lang: WORD_LANGS.find((l) => l.code === (cfg.lang ?? 'en'))?.name ?? 'English' })}</span>
@@ -115,8 +123,8 @@ export function Lobby({ state, token, act, onLeave }: { state: RoomState; token:
       <div className="narrow-col">
         {isHost ? (
           <>
-            <button className="btn lg block" disabled={count < 2} onClick={() => token && void act(() => rpc.start(token))}>
-              {count < 2 ? (duelMode ? t('lb.wait_challenger') : t('lb.wait_more')) : duelMode ? t('lb.fight') : t('lb.start', { n: count })}
+            <button className="btn lg block" disabled={teamMode ? !teamsReady : count < 2} onClick={() => token && void act(() => rpc.start(token))}>
+              {teamMode ? (teamsReady ? t('tm.start', { n: count }) : t('tm.need_full')) : count < 2 ? (duelMode ? t('lb.wait_challenger') : t('lb.wait_more')) : duelMode ? t('lb.fight') : t('lb.start', { n: count })}
             </button>
             <div className="muted small center">{t('lb.host_hint')}</div>
           </>

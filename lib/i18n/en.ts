@@ -296,6 +296,28 @@ const en = {
   'rv.s11.say': 'Last one standing wins. And if you rage quit, everyone hears about it. Bawk bawk!',
   'rv.s11.cap': 'Last one standing wins. Rage quit and you’re the chicken.',
   'rv.s11.chicken': '**{name}** chickened out', 'rv.s11.rage': 'rage quit',
+  // team mode
+  'home.team': 'Team battle',
+  'st.team': 'Teams', 'st.team_size': 'Team size', 'st.rounds': 'Rounds', 'st.team_hint': 'Two teams, shared locks, no strikes. Highest score after the last round wins.',
+  'st.2v2': '2 v 2', 'st.3v3': '3 v 3',
+  'tm.team_a': 'Team A', 'tm.team_b': 'Team B', 'tm.vs': 'VS',
+  'tm.tag': 'Team battle', 'tm.round_of': 'Round {n} of {m}', 'tm.pts': 'pts', 'tm.locks': '{n} locks',
+  'tm.name_ph': 'Team name', 'tm.rename': 'Save name', 'tm.upload': 'Upload team image', 'tm.change_img': 'Change image', 'tm.remove_img': 'Remove',
+  'tm.leader': 'Leader', 'tm.make_leader': 'Make leader', 'tm.join': 'Join this team', 'tm.you': 'You', 'tm.open_slot': 'Open slot',
+  'tm.your_team': 'Your team', 'tm.only_leader': 'Only the team leader can edit the name and image.',
+  'tm.need_full': 'Both teams need at least 2 players to start.', 'tm.team_full': 'This team is full.',
+  'tm.start': 'Start team battle · {n} players', 'tm.wait_host': 'Waiting for the host to start… ({n}/{max})',
+  'tm.rules_strip': '{size}v{size} · {n} rounds', 'tm.no_strikes': 'No strikes',
+  'tm.attack_team': 'Hits the whole team', 'tm.win': '{team} win!', 'tm.draw': 'It’s a draw!', 'tm.final': 'Final score',
+  'tm.tiebreak': 'Fewer locks broke the tie.', 'tm.forfeit': 'The other team left the game.',
+  'tm.teammates': 'Teammates share every lock and banned letter.', 'tm.mine': 'Your team',
+  'tm.hero_take': 'Take the hit for the team', 'tm.spec_team': 'Watching the team battle.',
+  'tm.rules_title': 'Team battle', 'tm.rules_p': '**2v2 or 3v3.** Each team picks a name, an image and a leader. Everyone answers every round: valid words add to the **team score**. Banned letters are shared by the whole team, so a word using one scores 0 — but there are **no strikes**. Every round both teams get **+1 lock**. Cards and class powers hit the **entire enemy team**. After the last round (the host sets 1–8) the higher score wins; a tie goes to the team with fewer locks.',
+  'er.TEAM_FULL': 'That team is full.', 'er.NOT_LEADER': 'Only the team leader can do that.',
+  'er.TEAMS_NOT_READY': 'Both teams need at least 2 players, and everyone must have a team.',
+  'er.TOO_MANY_FOR_TEAM': 'There are too many players in the room for that team size.',
+  'er.CANNOT_TARGET_TEAMMATE': 'Pick a player from the other team.', 'er.NO_TEAM': 'Join a team first.',
+  'er.NOT_TEAM_MODE': 'This room isn’t in team mode.', 'er.TEAM_NOT_FOUND': 'That team doesn’t exist.',
 } as const;
 
 export type Key = keyof typeof en;

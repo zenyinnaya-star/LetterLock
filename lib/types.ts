@@ -30,6 +30,7 @@ export interface PublicPlayer {
   betting: boolean;
   latched_to: string | null;
   oracle_word: string | null;
+  team_id?: string | null;
 }
 
 export interface IntelNinja { kind: 'ninja'; round: number; letters: string[] }
@@ -57,6 +58,7 @@ export interface Me {
   guess: { target_id: string; letter: string; correct: boolean } | null;
   intel: Intel[];
   used_words: string[];
+  team_id?: string | null;
 }
 
 export interface RevealRow { player_id: string; word: string; valid: boolean; reason: string | null; points: number }
@@ -76,6 +78,7 @@ export interface RoomState {
     state_version: number;
     host_id: string | null;
     winner_id: string | null;
+    winner_team?: number | null;
     phase_ends_at: string | null;
     answer_seconds: number;
     settings: RoomSettings;
@@ -84,6 +87,7 @@ export interface RoomState {
   prompt: string | null;
   me: Me | null;
   players: PublicPlayer[];
+  teams?: Team[];
   hints: { round: number; text: string }[];
   reveal: RevealRow[];
   guess_results: GuessResult[];
@@ -92,10 +96,22 @@ export interface RoomState {
   titles: { champion: string | null; einstein: string | null; villain: string | null } | null;
 }
 
+export interface Team {
+  id: string;
+  idx: 0 | 1;
+  name: string;
+  image_url: string | null;
+  leader_id: string | null;
+  points: number;
+  letter_count: number;
+}
+
 export interface Session { token: string; playerId: string }
 
 export interface RoomSettings {
-  mode: 'classic' | 'duel';
+  mode: 'classic' | 'duel' | 'team';
+  team_size?: 2 | 3;
+  rounds?: number;
   lang?: 'en' | 'es' | 'fr' | 'de' | 'ja' | 'zh';
   max_players: number;
   answer_seconds: number;

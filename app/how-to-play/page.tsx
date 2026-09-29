@@ -67,6 +67,8 @@ export default function HowToPlay() {
 
       <h2>{t('rl.duel')}</h2>
       <p><Rich k="rl.duel_p" /></p>
+      <h2>{t('tm.rules_title')}</h2>
+      <p><Rich k="tm.rules_p" /></p>
       <h2>{t('rl.1v1')}</h2>
       <p><Rich k="rl.1v1_p" /></p>
       <h2>{t('rl.chaos')}</h2>

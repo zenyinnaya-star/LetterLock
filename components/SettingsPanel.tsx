@@ -81,16 +81,44 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
             <div className="set-row">
               <span className="set-label"><Icon name="swords" size={16} /> {t('st.mode')}</span>
               <div className="seg" role="radiogroup" aria-label={t('st.mode')}>
-                <button role="radio" aria-checked={local.mode !== 'duel'} className={local.mode !== 'duel' ? 'on' : ''} disabled={!editable}
+                <button role="radio" aria-checked={local.mode === 'classic'} className={local.mode === 'classic' ? 'on' : ''} disabled={!editable}
                   onClick={() => change({ mode: 'classic' })}>{t('st.classic')}</button>
                 <button role="radio" aria-checked={local.mode === 'duel'} className={local.mode === 'duel' ? 'on duel' : ''}
                   disabled={!editable || (state?.players.length ?? 0) > 2}
                   title={(state?.players.length ?? 0) > 2 ? t('st.duel_needs2') : undefined}
                   onClick={() => change({ mode: 'duel', max_players: 2 })}>{t('st.duel')}</button>
+                <button role="radio" aria-checked={local.mode === 'team'} className={local.mode === 'team' ? 'on' : ''}
+                  disabled={!editable || (state?.players.length ?? 0) > 6}
+                  onClick={() => change({ mode: 'team' })}>{t('st.team')}</button>
               </div>
             </div>
 
-            {local.mode !== 'duel' && <div className="set-row">
+            {local.mode === 'team' && (
+              <>
+                <div className="set-row">
+                  <span className="set-label"><Icon name="users" size={16} /> {t('st.team_size')}</span>
+                  <div className="seg" role="radiogroup" aria-label={t('st.team_size')}>
+                    {([2, 3] as const).map((n) => (
+                      <button key={n} role="radio" aria-checked={(local.team_size ?? 2) === n} className={(local.team_size ?? 2) === n ? 'on' : ''}
+                        disabled={!editable || (state?.players.length ?? 0) > n * 2} onClick={() => change({ team_size: n })}>
+                        {n === 2 ? t('st.2v2') : t('st.3v3')}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="set-row">
+                  <span className="set-label"><Icon name="target" size={16} /> {t('st.rounds')}</span>
+                  <div className="stepper">
+                    <button disabled={!editable || (local.rounds ?? 5) <= 1} onClick={() => change({ rounds: (local.rounds ?? 5) - 1 })} aria-label={t('st.fewer')}>−</button>
+                    <b>{local.rounds ?? 5}</b>
+                    <button disabled={!editable || (local.rounds ?? 5) >= 8} onClick={() => change({ rounds: (local.rounds ?? 5) + 1 })} aria-label={t('st.more')}>+</button>
+                  </div>
+                </div>
+                <span className="muted small">{t('st.team_hint')}</span>
+              </>
+            )}
+
+            {local.mode === 'classic' && <div className="set-row">
               <span className="set-label"><Icon name="users" size={16} /> {t('st.max')}</span>
               <div className="stepper">
                 <button disabled={!editable || local.max_players <= minPlayers} onClick={() => change({ max_players: local.max_players - 1 })} aria-label={t('st.fewer')}>−</button>
@@ -99,7 +127,7 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
               </div>
             </div>}
 
-            {OPTIONS.map((o) => (
+            {OPTIONS.filter((o) => !(local.mode === 'team' && (o.key === 'strikes' || o.key === 'duel_seconds'))).map((o) => (
               <div className="set-row" key={o.key}>
                 <span className="set-label"><Icon name={o.icon} size={16} /> {t(o.label)}</span>
                 <div className="seg" role="radiogroup" aria-label={t(o.label)}>

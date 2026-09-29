@@ -31,7 +31,7 @@ export default function Home() {
 
   const ready = name.trim().length > 0 && cls !== null;
 
-  async function go(kind: 'create' | 'join' | 'duel') {
+  async function go(kind: 'create' | 'join' | 'duel' | 'team') {
     if (!cls) { setErr(t('home.err_class')); return; }
     if (!name.trim()) { setErr(t('home.err_name')); return; }
     if (kind === 'join' && code.trim().length !== 4) { setErr(t('home.err_code')); return; }
@@ -42,6 +42,7 @@ export default function Home() {
         ? await rpc.joinRoom(code.trim().toUpperCase(), name.trim(), cls)
         : await rpc.createRoom(name.trim(), cls);
       if (kind === 'duel') await rpc.updateSettings(r.token, { mode: 'duel', max_players: 2 });
+      if (kind === 'team') await rpc.updateSettings(r.token, { mode: 'team' });
       if (avatar) await rpc.setAvatar(r.token, avatar).catch(() => undefined);
       saveName(name.trim());
       saveSession(r.code, { token: r.token, playerId: r.player_id });
@@ -93,6 +94,10 @@ export default function Home() {
           <motion.button className="btn lg block duel-btn" disabled={busy || !ready} onClick={() => go('duel')}
             whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <Icon name="swords" size={20} /> {t('home.duel')}
+          </motion.button>
+          <motion.button className="btn lg block team-btn" disabled={busy || !ready} onClick={() => go('team')}
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+            <Icon name="users" size={20} /> {t('home.team')}
           </motion.button>
         </div>
         <div className="divider">{t('home.or_join')}</div>

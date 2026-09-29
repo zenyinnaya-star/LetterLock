@@ -19,6 +19,7 @@ import { Lobby } from './Lobby';
 import { Reactions } from './Reactions';
 import { ActionFeed } from './ActionFeed';
 import { DuelHud } from './DuelHud';
+import { TeamHud, teamLabel } from './team';
 import { SettingsButton } from './SettingsPanel';
 import { AnswerPhase, DuelIntro, Finished, GuessPhase, Rack, ReactPhase, RevealPhase, type Act } from './phases';
 import { Header, Hud, TimeBar, Toast } from './ui';
@@ -131,6 +132,11 @@ export function Game({ state, token, offset, refresh }: {
         if (alive.length === 2) announcer.say(tr('an.vs', { a: classCall(alive[0], state.players, true), b: classCall(alive[1], state.players) }), { hype: true, delay: 900, urgent: true });
         break;
       case 'finished': {
+        if (state.room.settings?.mode === 'team') {
+          const wt = state.teams?.find((x) => x.idx === state.room.winner_team);
+          announcer.say(wt ? tr('tm.win', { team: teamLabel(tr as never, wt) }) : tr('tm.draw'), { hype: true, delay: 700, urgent: true });
+          break;
+        }
         const w = state.players.find((p) => p.id === state.room.winner_id);
         announcer.say(w ? tr('an.wins', { name: classCall(w, state.players, true) }) : tr('an.over'), { hype: true, delay: 700, urgent: true });
         break;
@@ -210,7 +216,7 @@ export function Game({ state, token, offset, refresh }: {
                 : <button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> {t('gm.leave')}</button>}
             </>
           } />
-        {phase !== 'lobby' && (state.room.duel && phase !== 'finished' && state.players.filter((p) => !p.eliminated).length === 2
+        {phase !== 'lobby' && (state.room.settings?.mode === 'team' ? <TeamHud state={state} /> : state.room.duel && phase !== 'finished' && state.players.filter((p) => !p.eliminated).length === 2
           ? <DuelHud state={state} />
           : <Hud state={state} meId={me?.id ?? null} />)}
         <AnimatePresence>

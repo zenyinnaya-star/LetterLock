@@ -37,6 +37,11 @@ export const rpc = {
   updateSettings: (token: string, settings: Partial<RoomSettings>) =>
     call<RoomSettings>('update_settings', { p_token: token, p_settings: settings }),
   setAvatar: (token: string, url: string | null) => call<void>('set_avatar', { p_token: token, p_url: url }),
+  teamJoin: (token: string, idx: number | null) => call<void>('team_join', { p_token: token, p_idx: idx }),
+  teamUpdate: (token: string, name: string | null, imageUrl: string | null, clearImage = false) =>
+    call<void>('team_update', { p_token: token, p_name: name, p_image_url: imageUrl, p_clear_image: clearImage }),
+  teamLeader: (token: string, playerId: string) =>
+    call<void>('team_set_leader', { p_token: token, p_player_id: playerId }),
   trace: (token: string, suspectId: string) =>
     call<{ caught: boolean }>('trace_hacker', { p_token: token, p_suspect_id: suspectId }),
 };

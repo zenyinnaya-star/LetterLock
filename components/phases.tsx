@@ -10,6 +10,7 @@ import { rpc } from '@/lib/rpc';
 import type { RoomState } from '@/lib/types';
 import { CLASS_COLORS, CardIcon, ClassIcon, Icon } from './icons';
 import { PlayerAvatar } from './PlayerAvatar';
+import { TeamImage, teamLabel, teamOf } from './team';
 import { Avatar, Clock, nameOf, softSpring, spring, TileRow } from './ui';
 
 export type Act = <T>(fn: () => Promise<T>, okMsg?: string) => Promise<T | undefined>;
@@ -21,6 +22,12 @@ export interface PhaseProps {
   act: Act;
 }
 
+/** Target label: the team's name in team mode (attacks and guesses land on the whole team), else the player's name. */
+function tn(state: RoomState, t: ReturnType<typeof useT>, id: string | null | undefined): string {
+  if (state.room.settings.mode === 'team') { const tm = teamOf(state, id); if (tm) return teamLabel(t, tm); }
+  return nameOf(state, id);
+}
+
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const stagger = (i: number, step = 0.08) => ({ ...softSpring, delay: i * step });
 
@@ -30,7 +37,7 @@ function StageHead({ state, label, msLeft, showClock = true }: { state: RoomStat
     <div className="stage-head">
       <span className={`phase-tag${state.room.duel ? ' duel' : ''}`}>
         {state.room.duel && <Icon name="swords" size={14} />}
-        {state.room.duel ? `${state.room.settings.mode === 'duel' ? t('ph.1v1') : t('ph.final_duel')} · ` : ''}{t('ph.round', { n: state.room.round })} · {label}
+        {state.room.duel ? `${state.room.settings.mode === 'duel' ? t('ph.1v1') : t('ph.final_duel')} · ` : ''}{state.room.settings.mode === 'team' ? t('tm.round_of', { n: state.room.round, m: state.room.settings.rounds ?? 5 }) : t('ph.round', { n: state.room.round })} · {label}
       </span>
       {state.room.chaos && (
         <motion.span className="chaos-chip" title={CHAOS_INFO[state.room.chaos]?.text}
@@ -209,7 +216,7 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
   const me = state.me;
   const [target, setTarget] = useState<string | null>(null);
   const [letter, setLetter] = useState<string | null>(null);
-  const targets = state.players.filter((p) => !p.eliminated && p.id !== me?.id);
+  const targets = state.players.filter((p) => !p.eliminated && p.id !== me?.id && !(state.room.settings.mode === 'team' && p.team_id === me?.team_id));
   const tp = targets.find((p) => p.id === target);
   const canPlay = !!me && !me.eliminated && !!token;
 
@@ -228,8 +235,8 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
           initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={spring}>
           <Icon name={me.guess.correct ? 'target' : 'miss'} size={18} />
           <span>{me.guess.correct
-            ? <Rich k="ph.cracked" vars={{ name: nameOf(state, me.guess.target_id), l: me.guess.letter }} />
-            : t('ph.miss', { name: nameOf(state, me.guess.target_id), l: me.guess.letter })}</span>
+            ? <Rich k="ph.cracked" vars={{ name: tn(state, t, me.guess.target_id), l: me.guess.letter }} />
+            : t('ph.miss', { name: tn(state, t, me.guess.target_id), l: me.guess.letter })}</span>
         </motion.div>
       ) : (
         <div className="narrow-col">
@@ -265,7 +272,8 @@ export function ReactPhase({ state, token, msLeft, act }: PhaseProps) {
   const me = state.me;
   const canPlay = !!me && !me.eliminated && !!token;
   const myReady = state.players.find((p) => p.id === me?.id)?.react_ready;
-  const aimedAtMe = state.pending.some((p) => p.target_id === me?.id && p.status === 'pending');
+  const teamMode = state.room.settings.mode === 'team';
+  const aimedAtMe = state.pending.some((p) => p.status === 'pending' && (teamMode ? state.players.find((x) => x.id === p.target_id)?.team_id === me?.team_id : p.target_id === me?.id));
   let i = 0;
 
   return (
@@ -280,8 +288,8 @@ export function ReactPhase({ state, token, msLeft, act }: PhaseProps) {
           <motion.div key={`g-${g.guesser_id}`} className="feed-item" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={stagger(i++)}>
             <span className={`glyph ${g.correct ? 'good' : 'miss'}`}><Icon name={g.correct ? 'target' : 'miss'} size={16} /></span>
             <span className="txt">{g.correct
-              ? <Rich k="ph.feed_cracked" vars={{ a: nameOf(state, g.guesser_id), b: nameOf(state, g.target_id), l: g.letter ?? '' }} />
-              : <Rich k="ph.feed_missed" vars={{ a: nameOf(state, g.guesser_id), b: nameOf(state, g.target_id) }} />}</span>
+              ? <Rich k="ph.feed_cracked" vars={{ a: nameOf(state, g.guesser_id), b: tn(state, t, g.target_id), l: g.letter ?? '' }} />
+              : <Rich k="ph.feed_missed" vars={{ a: nameOf(state, g.guesser_id), b: tn(state, t, g.target_id) }} />}</span>
           </motion.div>
         ))}
         <AnimatePresence initial={false}>
@@ -293,14 +301,14 @@ export function ReactPhase({ state, token, msLeft, act }: PhaseProps) {
               </span>
               <span className="txt">
                 {p.kind === 'ninja'
-                  ? <Rich k="ph.ninja_pen" vars={{ name: nameOf(state, p.target_id), n: p.amount }} />
+                  ? <Rich k="ph.ninja_pen" vars={{ name: tn(state, t, p.target_id), n: p.amount }} />
                   : p.kind === 'hack'
-                  ? <Rich k="ph.hacks" vars={{ a: p.source_id ? nameOf(state, p.source_id) : t('ph.someone'), b: nameOf(state, p.target_id), n: p.amount }} />
-                  : <Rich k="ph.attacks" vars={{ a: p.source_id ? nameOf(state, p.source_id) : p.source_class ? t('ph.the_cls', { cls: CLASSES[p.source_class].name }) : t('ph.someone'), b: nameOf(state, p.target_id), n: p.amount }} />}
+                  ? <Rich k="ph.hacks" vars={{ a: p.source_id ? nameOf(state, p.source_id) : t('ph.someone'), b: tn(state, t, p.target_id), n: p.amount }} />
+                  : <Rich k="ph.attacks" vars={{ a: p.source_id ? nameOf(state, p.source_id) : p.source_class ? t('ph.the_cls', { cls: CLASSES[p.source_class].name }) : t('ph.someone'), b: tn(state, t, p.target_id), n: p.amount }} />}
                 {p.absorbed_by && t('ph.absorbed_by', { name: nameOf(state, p.absorbed_by) })}
                 {p.status === 'blocked' && t('ph.blocked')}
               </span>
-              {canPlay && me.class === 'hero' && !me.perk_used && state.room.settings.perks && p.status === 'pending' && p.target_id !== me.id && (
+              {canPlay && me.class === 'hero' && !me.perk_used && state.room.settings.perks && p.status === 'pending' && (state.room.settings.mode === 'team' ? state.players.find((x) => x.id === p.target_id)?.team_id === me.team_id : p.target_id !== me.id) && (
                 <button className="btn sm ok" onClick={() => token && void act(() => rpc.usePerk(token, p.target_id), t('ph.absorbed_ok'))}>
                   {t('ph.take_hit')}
                 </button>
@@ -375,6 +383,9 @@ export function Finished({ state, token, act }: PhaseProps) {
   const t = useT();
   const isHost = state.me?.id === state.room.host_id;
   const winner = state.players.find((p) => p.id === state.room.winner_id);
+  const teamMode = state.room.settings.mode === 'team' && (state.teams?.length ?? 0) === 2;
+  const wt = teamMode ? state.teams!.find((x) => x.idx === state.room.winner_team) : undefined;
+  const tie = teamMode && !wt;
   const awards = [
     { key: 'champ', icon: 'trophy' as const, color: '#ffcf4a', title: t('fn.champ'), who: tt?.champion, sub: t('fn.champ_sub') },
     { key: 'ein', icon: 'bulb' as const, color: '#b69cff', title: t('fn.ein'), who: tt?.einstein, sub: t('fn.ein_sub') },
@@ -383,14 +394,30 @@ export function Finished({ state, token, act }: PhaseProps) {
   return (
     <>
       <div className="winner victory-stage">
-        {winner && (
+        {teamMode && wt && (
+          <motion.div initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 14 }}>
+            <TeamImage team={wt} size={120} />
+          </motion.div>
+        )}
+        {!teamMode && winner && (
           <motion.div initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 14 }}>
             <PlayerAvatar p={winner} size={120} badge />
           </motion.div>
         )}
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...softSpring, delay: 0.2 }}>
-          {t('fn.wins', { name: nameOf(state, state.room.winner_id) })}
+          {teamMode ? (tie ? t('tm.draw') : t('tm.win', { team: teamLabel(t, wt) })) : t('fn.wins', { name: nameOf(state, state.room.winner_id) })}
         </motion.h1>
+        {teamMode && (
+          <div className="team-final">
+            <span className="label">{t('tm.final')}</span>
+            <div className="tf-row">
+              {state.teams!.map((tm) => (
+                <span key={tm.id} className={`tf-team${wt?.id === tm.id ? ' win' : ''}`}><TeamImage team={tm} size={28} /> {teamLabel(t, tm)} <b>{tm.points}</b> <span className="muted small">· {t('tm.locks', { n: tm.letter_count })}</span></span>
+              ))}
+            </div>
+            {!tie && state.teams![0].points === state.teams![1].points && <span className="muted small">{t('tm.tiebreak')}</span>}
+          </div>
+        )}
       </div>
       <div className="podium">
         {awards.map((a, i) => (
@@ -432,7 +459,9 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
 
   const info = CLASSES[me.class];
   const cfg = state.room.settings;
-  const others = state.players.filter((p) => !p.eliminated && p.id !== me.id);
+  const teamMode = cfg.mode === 'team';
+  const others = state.players.filter((p) => !p.eliminated && p.id !== me.id && !(teamMode && p.team_id === me.team_id));
+  const anyOthers = state.players.filter((p) => !p.eliminated && p.id !== me.id);
   const suspects = state.players.filter((p) => p.id !== me.id && !p.quit);
   const alive = !me.eliminated && cfg.perks;
   const PERK: Partial<Record<string, { usable: boolean; label: string; target?: string; ok: string }>> = {
@@ -446,7 +475,7 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
   };
   const perk = PERK[me.class];
   const perkUsable = !!perk?.usable;
-  const perkTargets = me.class === 'mimic' ? others.filter((p) => p.class !== 'mimic') : others;
+  const perkTargets = me.class === 'mimic' ? anyOthers.filter((p) => p.class !== 'mimic') : others;
 
   function cardUsable(kind: string): boolean {
     if (me!.eliminated) return false;
