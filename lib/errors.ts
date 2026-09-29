@@ -43,6 +43,7 @@ export const REASONS: Record<string, string> = {
   REPEAT: 'Already used that word',
   BANNED_LETTER: 'Used a banned letter',
   CHAOS_NO_E: 'Used E in a no-E round',
+  OFF_TOPIC: "Doesn't fit the prompt",
 };
 
 export function friendlyError(err: unknown): string {

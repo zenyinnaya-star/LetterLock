@@ -338,12 +338,12 @@ export function DuelIntro({ state, msLeft }: PhaseProps) {
       </AnimatePresence>
       <div className="fighters">
         <motion.div className="fighter" initial={{ x: -160, opacity: 0, rotate: -12 }} animate={{ x: 0, opacity: 1, rotate: 0 }} transition={{ ...spring, delay: 0.1 }}>
-          <PlayerAvatar p={a} size={110} badge /><b>{a.name}</b><span className="muted">{a.points} pts</span>
+          <PlayerAvatar p={a} size={110} /><b>{a.name}</b><span className="muted">{a.points} pts</span>
         </motion.div>
         <motion.div className="vs" initial={{ scale: 4, opacity: 0, rotate: -20 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}
           transition={{ type: 'spring', stiffness: 700, damping: 18, delay: 0.55 }}>VS</motion.div>
         <motion.div className="fighter" initial={{ x: 160, opacity: 0, rotate: 12 }} animate={{ x: 0, opacity: 1, rotate: 0 }} transition={{ ...spring, delay: 0.25 }}>
-          <PlayerAvatar p={b} size={110} badge /><b>{b.name}</b><span className="muted">{b.points} pts</span>
+          <PlayerAvatar p={b} size={110} /><b>{b.name}</b><span className="muted">{b.points} pts</span>
         </motion.div>
       </div>
       <motion.div className="center muted" style={{ maxWidth: 440 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>

@@ -5,6 +5,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { audio } from '@/lib/audio';
 import { CLASSES, CLASS_ORDER } from '@/lib/classes';
+import { getPrefs, setPref } from '@/lib/prefs';
+import { ClassSheet } from './ClassSheet';
 import type { PlayerClass, PublicPlayer, RoomState } from '@/lib/types';
 import { ClassIcon, Icon } from './icons';
 import { PlayerAvatar } from './PlayerAvatar';
@@ -25,13 +27,24 @@ export function Wordmark() {
 
 export function Header({ right, settings }: { right?: React.ReactNode; settings?: React.ReactNode }) {
   const [muted, setMuted] = useState(false);
-  useEffect(() => setMuted(audio.isMuted()), []);
+  const [musicOn, setMusicOn] = useState(true);
+  useEffect(() => {
+    setMuted(audio.isMuted());
+    const sync = () => setMusicOn(getPrefs().music);
+    sync();
+    window.addEventListener('letterlock:mute', sync);
+    return () => window.removeEventListener('letterlock:mute', sync);
+  }, []);
   return (
     <header className="topbar">
       <Wordmark />
       <div className="tools">
         {right}
         <Link href="/how-to-play" className="textbtn rules-link" target="_blank">Rules</Link>
+        <button className={`iconbtn${musicOn ? '' : ' off'}`} aria-label={musicOn ? 'Music off' : 'Music on'} title={musicOn ? 'Music off' : 'Music on'}
+          aria-pressed={musicOn} onClick={() => setPref('music', !getPrefs().music)}>
+          <Icon name={musicOn ? 'music' : 'musicoff'} />
+        </button>
         {settings ?? <SettingsButton state={null} token={null} />}
         <button className="iconbtn" aria-label={muted ? 'Unmute' : 'Mute'} title={muted ? 'Unmute' : 'Mute'}
           onClick={() => { audio.setMuted(!muted); setMuted(!muted); }}>
@@ -107,14 +120,21 @@ export function Clock({ msLeft }: { msLeft: number }) {
 /* ───────── class picker ───────── */
 export function ClassPicker({ value, onChange }: { value: PlayerClass | null; onChange: (c: PlayerClass) => void }) {
   const info = value ? CLASSES[value] : null;
+  const [open, setOpen] = useState<PlayerClass | null>(null);
   return (
     <div className="picker">
+      <AnimatePresence>
+        {open && (
+          <ClassSheet key="cs" cls={open} selected={value === open} onClose={() => setOpen(null)}
+            onPick={(c) => { onChange(c); setOpen(null); }} onNav={setOpen} />
+        )}
+      </AnimatePresence>
       <div className="classes-grid" role="radiogroup" aria-label="Class">
         {CLASS_ORDER.map((c) => {
           const sel = value === c;
           return (
             <motion.button key={c} type="button" role="radio" aria-checked={sel} className={`class-tile${sel ? ' sel' : ''}`}
-              onClick={() => onChange(c)} whileTap={{ scale: 0.94 }} whileHover={{ y: -3 }} transition={softSpring}>
+              onClick={() => setOpen(c)} whileTap={{ scale: 0.94 }} whileHover={{ y: -3 }} transition={softSpring}>
               <motion.span animate={sel ? { rotate: [0, -8, 6, 0], scale: [1, 1.12, 1] } : {}} transition={{ duration: 0.45 }}>
                 <ClassIcon cls={c} size={56} />
               </motion.span>
@@ -132,6 +152,7 @@ export function ClassPicker({ value, onChange }: { value: PlayerClass | null; on
               <div className="row" style={{ gap: 8 }}><b className="cd-name">{info.name}</b><span className="muted small">{info.tagline}</span></div>
               <div className="cd-line"><span className="plus">+</span> {info.perk}</div>
               <div className="cd-line"><span className="minus">−</span> {info.cost}</div>
+              <button type="button" className="textbtn cd-more" onClick={() => setOpen(value)}>Tips &amp; tricks →</button>
             </div>
           </motion.div>
         )}
@@ -171,7 +192,7 @@ function HudChip({ p, me, phase, nameOfPlayer }: { p: PublicPlayer; me: boolean;
     <motion.div layout role="listitem" className={`chip${me ? ' me' : ''}${p.eliminated ? ' out' : ''}${p.connected ? '' : ' offline'}`}
       initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
       transition={softSpring}>
-      <PlayerAvatar p={p} size={34} badge={!!p.class} />
+      <PlayerAvatar p={p} size={34} />
       <div className="who">
         <span className="nm">
           {p.name}

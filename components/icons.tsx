@@ -9,7 +9,7 @@ export type IconName =
   | 'lock' | 'volume' | 'mute' | 'x' | 'check' | 'trophy' | 'bulb' | 'eye' | 'skull' | 'target'
   | 'crown' | 'bolt' | 'swords' | 'alert' | 'link' | 'miss' | 'burst' | 'shield' | 'sparkle' | 'horns'
   | 'gear' | 'logout' | 'terminal' | 'glitch' | 'feather' | 'play' | 'pause' | 'replay' | 'users' | 'clock' | 'cards'
-  | 'coin' | 'hand' | 'link2' | 'orb' | 'dice' | 'swap' | 'mask' | 'drop';
+  | 'coin' | 'hand' | 'link2' | 'orb' | 'dice' | 'swap' | 'mask' | 'drop' | 'music' | 'musicoff';
 
 const PATHS: Record<IconName, React.ReactNode> = {
   lock: (<><rect x="5" y="11" width="14" height="10" rx="2.5" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /><path d="M12 15.2v2" /></>),
@@ -49,6 +49,8 @@ const PATHS: Record<IconName, React.ReactNode> = {
   dice: (<><rect x="4" y="4" width="16" height="16" rx="3.5" /><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor" stroke="none" /><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor" stroke="none" /><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none" /><circle cx="15.5" cy="8.5" r="1.2" fill="currentColor" stroke="none" /><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor" stroke="none" /></>),
   swap: (<><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5" /></>),
   mask: (<><path d="M3.5 7c3 1.3 5.8 1.3 8.5 0 2.7 1.3 5.5 1.3 8.5 0 0 6-2.5 10-8.5 10S3.5 13 3.5 7z" /><path d="M7 11l2.2.8M17 11l-2.2.8" /></>),
+  music: (<><path d="M9 17.5V5.5l10-2v12" /><circle cx="6.5" cy="17.5" r="2.5" /><circle cx="16.5" cy="15.5" r="2.5" /></>),
+  musicoff: (<><path d="M9 17.5V5.5l10-2v12" /><circle cx="6.5" cy="17.5" r="2.5" /><circle cx="16.5" cy="15.5" r="2.5" /><path d="M3.5 3.5l17 17" /></>),
   drop: (<><path d="M12 3.5c3.5 4.2 6 7.5 6 10.5a6 6 0 0 1-12 0c0-3 2.5-6.3 6-10.5z" /></>),
   horns: (<><path d="M7 9.5L5 3.5l5.2 3.8M17 9.5l2-6-5.2 3.8" /><circle cx="12" cy="13.5" r="6.5" /><path d="M9 12.3l2 .9M15 12.3l-2 .9M9.8 16.3c1.4 1 3 1 4.4 0" /></>),
 };

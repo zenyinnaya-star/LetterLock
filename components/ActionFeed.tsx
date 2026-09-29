@@ -130,7 +130,7 @@ function Banner({ item, state, meId }: { item: FeedItem; state: RoomState; meId:
       transition={{ type: 'spring', stiffness: 520, damping: 24 }}>
       <div className="who">
         {hidden ? <span className="anon"><Icon name="terminal" size={22} /></span>
-          : from && item.type !== 'chicken' ? <PlayerAvatar p={from} size={40} badge />
+          : from && item.type !== 'chicken' ? <PlayerAvatar p={from} size={40} />
           : item.from_class ? <ClassIcon cls={item.from_class} size={40} /> : null}
         {item.type === 'chicken' && <motion.span className="chicken" animate={{ rotate: [0, -18, 14, -10, 0], y: [0, -6, 0] }} transition={{ repeat: 2, duration: 0.5 }}><Icon name="feather" size={30} /></motion.span>}
         {showArrow && (

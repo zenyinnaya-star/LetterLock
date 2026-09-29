@@ -30,9 +30,9 @@ function Fighter({ p, max, side, me }: { p: PublicPlayer; max: number; side: 'le
   const pct = (left / max) * 100;
   return (
     <div className={`dh-fighter ${side}${me ? ' me' : ''}`}>
-      <PlayerAvatar p={p} size={52} badge />
+      <PlayerAvatar p={p} size={52} />
       <div className="dh-info">
-        <div className="dh-name"><b>{me ? 'You' : p.name}</b><span>{p.class ? CLASSES[p.class].name : 'Class hidden'}</span></div>
+        <div className="dh-name"><b>{me ? 'You' : p.name}</b><span>{me && p.class ? `${CLASSES[p.class].name} · secret` : 'Class hidden'}</span></div>
         <div className="dh-bar" aria-label={`${left} of ${max} lives left`}>
           <motion.div className={`dh-fill${left <= 1 ? ' low' : ''}`} initial={false} animate={{ width: `${pct}%` }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }} />

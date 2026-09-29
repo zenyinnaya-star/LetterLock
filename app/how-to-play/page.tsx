@@ -23,6 +23,7 @@ export default function HowToPlay() {
         <li>2–12 players, each on their own device. One person creates a room and shares the 4-letter code. The host can tune timers, strikes, cards and perks with the gear in the lobby.</li>
         <li>Everyone starts with <b>1 secret banned letter</b> (always a consonant). Only you can see yours.</li>
         <li>Each round shows a prompt, like “Something cold”. Type a word that fits and doesn&apos;t contain any of your banned letters.</li>
+        <li>Your word has to <b>fit the prompt</b> — &ldquo;A type of food&rdquo; takes <i>pizza</i>, not <i>car</i>. Off-topic words count as a strike.</li>
         <li>Words must be real (dictionary-checked), <b>3+ letters</b>, and you can&apos;t reuse your own earlier words. Other players can use the same word.</li>
         <li>The clock always runs to zero — you can change your answer until then. Answers reveal together.</li>
       </ul>

@@ -63,7 +63,7 @@ export function Lobby({ state, token, act, onLeave }: { state: RoomState; token:
               <motion.div key={p.id} layout className={`seat${p.id === me?.id ? ' me' : ''}`}
                 initial={{ opacity: 0, scale: 0.6, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.6 }} transition={spring}>
                 <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }} transition={softSpring}>
-                  <PlayerAvatar p={p} size={56} badge={!!p.class} />
+                  <PlayerAvatar p={p} size={56} />
                 </motion.div>
                 <b>{p.name}{p.is_host && <span style={{ color: 'var(--accent)' }} title="Host"><Icon name="crown" size={14} /></span>}</b>
                 {p.class ? <span className="muted small" style={{ textTransform: 'capitalize' }}>{p.class}</span>
@@ -89,7 +89,7 @@ export function Lobby({ state, token, act, onLeave }: { state: RoomState; token:
 
       {me && (
         <div className="narrow-col">
-          <span className="label">Your class{cfg?.mode !== 'duel' ? ' — secret until the game ends' : ''}</span>
+          <span className="label">Your class — secret until the game ends</span>
           <ClassPicker value={me.class} onChange={(c) => token && void act(() => rpc.setClass(token, c))} />
         </div>
       )}
@@ -142,9 +142,9 @@ function DuelSeat({ p, meId, side }: { p: RoomState['players'][number] | undefin
     <motion.div className={`dl-seat ${side}${p.id === meId ? ' me' : ''}`}
       initial={{ x: side === 'left' ? -120 : 120, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 260, damping: 18 }}>
-      <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }}><PlayerAvatar p={p} size={120} badge className="dl-av" /></motion.div>
+      <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }}><PlayerAvatar p={p} size={120} className="dl-av" /></motion.div>
       <b>{p.name}{p.is_host && <span style={{ color: 'var(--accent)' }}><Icon name="crown" size={14} /></span>}</b>
-      <span className="muted small" style={{ textTransform: 'capitalize' }}>{p.class ?? 'secret class'}</span>
+      <span className="muted small">{p.id === meId ? 'Your class is secret' : 'Secret class'}</span>
     </motion.div>
   );
 }
