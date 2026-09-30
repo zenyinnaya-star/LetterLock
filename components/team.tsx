@@ -29,12 +29,15 @@ export function teamOf(state: RoomState, playerId: string | null | undefined): T
 
 export function TeamImage({ team, size = 56 }: { team: Team; size?: number }) {
   const [broken, setBroken] = useState(false);
+  const [noCrest, setNoCrest] = useState(false);
   const hue = team.idx === 0 ? 'a' : 'b';
+  const src = team.image_url && !broken ? team.image_url : !noCrest ? `/art/crest-${hue}.webp` : null;
   return (
     <span className={`team-img ${hue}`} style={{ width: size, height: size, borderRadius: size * 0.28 }}>
-      {team.image_url && !broken ? (
+      {src ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={team.image_url} alt="" width={size} height={size} onError={() => setBroken(true)} draggable={false} />
+        <img src={src} alt="" width={size} height={size} draggable={false}
+          onError={() => (src === team.image_url ? setBroken(true) : setNoCrest(true))} />
       ) : (
         <Icon name="users" size={Math.round(size * 0.5)} />
       )}
