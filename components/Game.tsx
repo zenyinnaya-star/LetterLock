@@ -74,14 +74,21 @@ export function Game({ state, token, offset, refresh }: {
     if (p) {
       if (cur.phase !== p.phase) {
         if (cur.phase === 'duel_intro') audio.fight();
-        if (cur.phase === 'finished') audio.fanfare();
+        if (cur.phase === 'finished') {
+          const teamWin = state.room.settings?.mode === 'team'
+            ? (me && state.room.winner_team != null ? (state.teams?.find((x) => x.idx === state.room.winner_team)?.id === me.team_id ? 'won' : 'lost') : null)
+            : (me && state.room.winner_id ? (state.room.winner_id === me.id ? 'won' : 'lost') : null);
+          if (teamWin === 'won') audio.file('victory');
+          else if (teamWin === 'lost') audio.file('defeat');
+          else audio.fanfare();
+        }
       }
       if (cur.strikes > p.strikes || (cur.eliminated && !p.eliminated)) audio.buzzer();
       else if (cur.answerKey && cur.answerKey !== p.answerKey) {
         if (me?.answer?.valid) audio.success(); else audio.buzzer();
       }
       if (cur.guessKey && cur.guessKey !== p.guessKey) {
-        if (me?.guess?.correct) audio.chime(); else audio.tick(false);
+        if (me?.guess?.correct) { if (!audio.file('correct')) audio.chime(); } else audio.tick(false);
       }
       if (cur.phase === 'answer' && p.phase !== 'answer' && cur.letters > p.letters) audio.attack();
     }
