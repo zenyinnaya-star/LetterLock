@@ -57,7 +57,9 @@ export default function Home() {
     <main className="shell narrow">
       <Header />
       <div className="hero-stack">
-      <motion.div className="hero-art" aria-hidden initial={{ opacity: 0, scale: 1.08 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }} />
+      <motion.div className="hero-art" aria-hidden initial={{ opacity: 0, scale: 1.08 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}>
+        <video className="hero-vid" src="/art/hero-loop.mp4" autoPlay loop muted playsInline preload="metadata" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+      </motion.div>
       <h1 className="hero-tiles" aria-label="Letterlock">
         {TITLE.split('').map((c, i) => (
           <motion.span key={i} className="tile" aria-hidden
