@@ -67,6 +67,7 @@ export function ActionFeed({ state }: { state: RoomState }) {
     if (current || queue.length === 0) return;
     const [next, ...rest] = queue;
     setQueue(rest);
+    if (next.round < stateRef.current.room.round) return; // stale: its round is over
     setCurrent(next);
     // recorded effects: hit by a character's attack / hack, and the Gambler's bet
     const cur = stateRef.current;
@@ -98,10 +99,26 @@ export function ActionFeed({ state }: { state: RoomState }) {
     if (next.type === 'mimic' && next.what) announcer.say(tr('an.mimic', { a: name(next.from) ?? tr('an.the_mimic'), cls: CLASSES[next.what as PlayerClass]?.name ?? next.what }), { delay: 600 });
     if (next.type === 'swap') announcer.say(tr('an.swap'), { hype: true, delay: 400 });
     if (next.type === 'bet_lose') announcer.say(tr('an.bust', { name: name(next.from) ?? tr('an.the_gambler') }), { delay: 500 });
-    const long = ['chicken', 'caught', 'chaos', 'mimic', 'swap'].includes(next.type);
+  }, [queue, current, meId]);
+
+  // The banner's own clock. Kept in a separate effect: when it lived in the effect above, the re-render caused by
+  // setQueue/setCurrent ran that effect's cleanup and cancelled the timer, so the banner never left.
+  useEffect(() => {
+    if (!current) return;
+    const long = ['chicken', 'caught', 'chaos', 'mimic', 'swap'].includes(current.type);
     const id = window.setTimeout(() => setCurrent(null), long ? 2800 : 1900);
     return () => window.clearTimeout(id);
-  }, [queue, current, meId]);
+  }, [current]);
+
+  // a new round starts: nothing from the last one lingers
+  const round = state.room.round;
+  const lastRound = useRef(round);
+  useEffect(() => {
+    if (lastRound.current === round) return;
+    lastRound.current = round;
+    setQueue([]);
+    setCurrent(null);
+  }, [round]);
 
   return (
     <div className="action-feed" aria-live="polite">
