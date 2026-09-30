@@ -300,6 +300,7 @@ const zh: Partial<Record<Key, string>> = {
   'rv.s11.chicken': '**{name}** 当了逃兵', 'rv.s11.rage': '怒退',
   // team mode
   'home.team': '团队对战',
+  'solo.btn': "单人对战机器人", 'solo.easy': "简单", 'solo.medium': "中等", 'solo.hard': "困难", 'solo.add': "添加机器人", 'solo.tag': "机器人", 'solo.note': "机器人遵守同样的规则。简单会犯错，困难会追击。", 'solo.remove': "移除机器人",
   'st.team': '团队',
   'st.team_size': '队伍人数',
   'st.rounds': '轮数',

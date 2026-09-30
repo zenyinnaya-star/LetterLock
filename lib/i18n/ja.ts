@@ -299,6 +299,7 @@ const ja: Partial<Record<Key, string>> = {
   'rv.s11.chicken': '**{name}** が逃げ出した', 'rv.s11.rage': 'ブチギレ退出',
   // team mode
   'home.team': 'チームバトル',
+  'solo.btn': "ボットとソロプレイ", 'solo.easy': "かんたん", 'solo.medium': "ふつう", 'solo.hard': "むずかしい", 'solo.add': "ボットを追加", 'solo.tag': "BOT", 'solo.note': "ボットも同じルールで遊びます。かんたんはうっかり、むずかしいは容赦なし。", 'solo.remove': "ボットを削除",
   'st.team': 'チーム',
   'st.team_size': 'チーム人数',
   'st.rounds': 'ラウンド数',

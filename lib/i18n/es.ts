@@ -300,6 +300,7 @@ const es: Partial<Record<Key, string>> = {
   'rv.s11.chicken': '**{name}** se rajó', 'rv.s11.rage': 'abandonó',
   // team mode
   'home.team': 'Duelo de equipos',
+  'solo.btn': "Jugar solo contra bots", 'solo.easy': "Fácil", 'solo.medium': "Medio", 'solo.hard': "Difícil", 'solo.add': "Añadir bot", 'solo.tag': "BOT", 'solo.note': "Los bots siguen las mismas reglas. Fácil olvida, Difícil caza.", 'solo.remove': "Quitar bot",
   'st.team': 'Equipos',
   'st.team_size': 'Tamaño del equipo',
   'st.rounds': 'Rondas',

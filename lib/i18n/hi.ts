@@ -299,6 +299,7 @@ const hi: Partial<Record<Key, string>> = {
   'rv.s11.chicken': '**{name}** डरकर भाग गया', 'rv.s11.rage': 'गुस्से में छोड़ा',
   // team mode
   'home.team': 'टीम बैटल',
+  'solo.btn': "बॉट्स के खिलाफ अकेले खेलें", 'solo.easy': "आसान", 'solo.medium': "मध्यम", 'solo.hard': "कठिन", 'solo.add': "बॉट जोड़ें", 'solo.tag': "बॉट", 'solo.note': "बॉट्स वही नियम मानते हैं। आसान भूलता है, कठिन शिकार करता है।", 'solo.remove': "बॉट हटाएँ",
   'st.team': 'टीमें',
   'st.team_size': 'टीम का साइज़',
   'st.rounds': 'राउंड',

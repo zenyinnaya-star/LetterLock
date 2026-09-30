@@ -300,6 +300,7 @@ const de: Partial<Record<Key, string>> = {
   'rv.s11.chicken': '**{name}** hat gekniffen', 'rv.s11.rage': 'Rage-Quit',
   // team mode
   'home.team': 'Team-Battle',
+  'solo.btn': "Solo gegen Bots spielen", 'solo.easy': "Leicht", 'solo.medium': "Mittel", 'solo.hard': "Schwer", 'solo.add': "Bot hinzufügen", 'solo.tag': "BOT", 'solo.note': "Bots spielen nach denselben Regeln. Leicht vergisst, Schwer jagt.", 'solo.remove': "Bot entfernen",
   'st.team': 'Teams',
   'st.team_size': 'Teamgröße',
   'st.rounds': 'Runden',

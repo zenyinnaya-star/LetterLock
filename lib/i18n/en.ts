@@ -298,6 +298,7 @@ const en = {
   'rv.s11.chicken': '**{name}** chickened out', 'rv.s11.rage': 'rage quit',
   // team mode
   'home.team': 'Team battle',
+  'solo.btn': "Play solo vs bots", 'solo.easy': "Easy", 'solo.medium': "Medium", 'solo.hard': "Hard", 'solo.add': "Add bot", 'solo.tag': "BOT", 'solo.note': "Bots play by the same rules. Easy forgets, Hard hunts.", 'solo.remove': "Remove bot",
   'st.team': 'Teams', 'st.team_size': 'Team size', 'st.rounds': 'Rounds', 'st.team_hint': 'Two teams, shared locks, no strikes. Highest score after the last round wins.',
   'st.2v2': '2 v 2', 'st.3v3': '3 v 3',
   'tm.team_a': 'Team A', 'tm.team_b': 'Team B', 'tm.vs': 'VS',

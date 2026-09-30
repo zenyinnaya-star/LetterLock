@@ -31,7 +31,9 @@ export default function Home() {
 
   const ready = name.trim().length > 0 && cls !== null;
 
-  async function go(kind: 'create' | 'join' | 'duel' | 'team') {
+  const [lvl, setLvl] = useState(2);
+
+  async function go(kind: 'create' | 'join' | 'duel' | 'team' | 'solo') {
     if (!cls) { setErr(t('home.err_class')); return; }
     if (!name.trim()) { setErr(t('home.err_name')); return; }
     if (kind === 'join' && code.trim().length !== 4) { setErr(t('home.err_code')); return; }
@@ -43,6 +45,7 @@ export default function Home() {
         : await rpc.createRoom(name.trim(), cls);
       if (kind === 'duel') await rpc.updateSettings(r.token, { mode: 'duel', max_players: 2 });
       if (kind === 'team') await rpc.updateSettings(r.token, { mode: 'team' });
+      if (kind === 'solo') for (let i = 0; i < 3; i++) await rpc.addBot(r.token, lvl);
       if (avatar) await rpc.setAvatar(r.token, avatar).catch(() => undefined);
       saveName(name.trim());
       saveSession(r.code, { token: r.token, playerId: r.player_id });
@@ -101,6 +104,17 @@ export default function Home() {
             whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <Icon name="users" size={20} /> {t('home.team')}
           </motion.button>
+        </div>
+        <div className="solo-row">
+          <button className="btn lg block solo-btn" disabled={busy || !ready} onClick={() => go('solo')}>{t('solo.btn')}</button>
+          <div className="solo-lvl" role="group" aria-label={t('solo.btn')}>
+            {([1, 2, 3] as const).map((l) => (
+              <button key={l} className={`chip${lvl === l ? ' on' : ''}`} aria-pressed={lvl === l} onClick={() => setLvl(l)}>
+                {t(l === 1 ? 'solo.easy' : l === 2 ? 'solo.medium' : 'solo.hard')}
+              </button>
+            ))}
+          </div>
+          <div className="muted small center">{t('solo.note')}</div>
         </div>
         <div className="divider">{t('home.or_join')}</div>
         <div className="row" style={{ gap: 8, flexWrap: 'nowrap' }}>

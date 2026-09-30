@@ -42,6 +42,9 @@ export const rpc = {
     call<void>('team_update', { p_token: token, p_name: name, p_image_url: imageUrl, p_clear_image: clearImage }),
   teamLeader: (token: string, playerId: string) =>
     call<void>('team_set_leader', { p_token: token, p_player_id: playerId }),
+  addBot: (token: string, level: number) => call<{ player_id: string; name: string }>('add_bot', { p_token: token, p_level: level }),
+  removeBot: (token: string, botId: string) => call<void>('remove_bot', { p_token: token, p_bot_id: botId }),
+  botTick: (token: string) => call<{ bots: string[] }>('bot_tick', { p_token: token }),
   trace: (token: string, suspectId: string) =>
     call<{ caught: boolean }>('trace_hacker', { p_token: token, p_suspect_id: suspectId }),
 };

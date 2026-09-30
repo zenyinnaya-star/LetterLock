@@ -34,8 +34,9 @@ function classCall(p: PublicPlayer, all: PublicPlayer[], capital = false): strin
   return tr(capital ? 'an.The' : 'an.the', { cls });
 }
 
-export function Game({ state, token, offset, refresh }: {
+export function Game({ state, token, offset, refresh, bots = [], pingBots }: {
   state: RoomState; token: string | null; offset: number; refresh: () => Promise<void>;
+  bots?: string[]; pingBots?: () => Promise<void>;
 }) {
   const t = useT();
   const [toast, setToast] = useState<{ msg: string; good?: boolean } | null>(null);
@@ -199,7 +200,7 @@ export function Game({ state, token, offset, refresh }: {
   const props = { state, token, msLeft, act };
   let main: React.ReactNode;
   switch (phase) {
-    case 'lobby': main = <Lobby state={state} token={token} act={act} onLeave={() => void leave()} />; break;
+    case 'lobby': main = <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} pingBots={pingBots} />; break;
     case 'answer': main = <AnswerPhase {...props} />; break;
     case 'reveal': main = <RevealPhase {...props} />; break;
     case 'guess': main = <GuessPhase {...props} />; break;

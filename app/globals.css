@@ -749,3 +749,14 @@ input { font: inherit; }
 .tf-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 .tf-team { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
 .tf-team.win { border-color: var(--accent); box-shadow: 0 0 18px #ffcf4a44; }
+
+/* ───────── solo play / bots ───────── */
+.solo-row { display: flex; flex-direction: column; gap: 8px; }
+.btn.solo-btn { background: linear-gradient(135deg, #22d3a6, #2f7cf6); color: #06101c; }
+.solo-lvl { display: flex; gap: 8px; justify-content: center; }
+.solo-lvl .chip { padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,.18); background: transparent; color: var(--muted); font-weight: 700; cursor: pointer; }
+.solo-lvl .chip.on { background: rgba(47,124,246,.22); border-color: #2f7cf6; color: #fff; }
+.bot-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.bot-tag { margin-left: 6px; font-size: 10px; font-weight: 800; letter-spacing: 1px; padding: 1px 6px; border-radius: 6px; background: rgba(47,124,246,.25); color: #9cc4ff; vertical-align: middle; }
+.seat { position: relative; }
+.bot-x { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; border: 0; background: rgba(0,0,0,.45); color: #fff; display: grid; place-items: center; cursor: pointer; }

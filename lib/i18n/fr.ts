@@ -300,6 +300,7 @@ const fr: Partial<Record<Key, string>> = {
   'rv.s11.chicken': '**{name}** s’est dégonflé', 'rv.s11.rage': 'rage quit',
   // team mode
   'home.team': 'Bataille d’équipes',
+  'solo.btn': "Jouer solo contre des bots", 'solo.easy': "Facile", 'solo.medium': "Moyen", 'solo.hard': "Difficile", 'solo.add': "Ajouter un bot", 'solo.tag': "BOT", 'solo.note': "Les bots suivent les mêmes règles. Facile oublie, Difficile chasse.", 'solo.remove': "Retirer le bot",
   'st.team': 'Équipes',
   'st.team_size': 'Taille d’équipe',
   'st.rounds': 'Manches',

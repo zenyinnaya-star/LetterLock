@@ -16,7 +16,9 @@ import type { Act } from './phases';
 import { SettingsButton } from './SettingsPanel';
 import { ClassPicker, softSpring, spring } from './ui';
 
-export function Lobby({ state, token, act, onLeave }: { state: RoomState; token: string | null; act: Act; onLeave: () => void }) {
+export function Lobby({ state, token, act, onLeave, bots = [], pingBots }: {
+  state: RoomState; token: string | null; act: Act; onLeave: () => void; bots?: string[]; pingBots?: () => Promise<void>;
+}) {
   const t = useT();
   const [copied, setCopied] = useState(false);
   const me = state.me;
@@ -76,7 +78,9 @@ export function Lobby({ state, token, act, onLeave }: { state: RoomState; token:
                 <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }} transition={softSpring}>
                   <PlayerAvatar p={p} size={56} />
                 </motion.div>
-                <b>{p.name}{p.is_host && <span style={{ color: 'var(--accent)' }} title={t('lb.host')}><Icon name="crown" size={14} /></span>}</b>
+                <b>{p.name}{bots.includes(p.id) && <span className="bot-tag">{t('solo.tag')}</span>}{p.is_host && <span style={{ color: 'var(--accent)' }} title={t('lb.host')}><Icon name="crown" size={14} /></span>}</b>
+                {isHost && bots.includes(p.id) && <button className="bot-x" aria-label={t('solo.remove')} title={t('solo.remove')}
+                  onClick={() => token && void act(() => rpc.removeBot(token, p.id).then(() => pingBots?.()))}><Icon name="x" size={12} /></button>}
                 {p.class ? <span className="muted small">{CLASSES[p.class].name}</span>
                   : <span className="class-hidden"><Icon name="mask" size={12} /> {t('lb.secret')}</span>}
               </motion.div>
@@ -102,6 +106,18 @@ export function Lobby({ state, token, act, onLeave }: { state: RoomState; token:
         <div className="narrow-col">
           <span className="label">{t('lb.class')}</span>
           <ClassPicker value={me.class} onChange={(c) => token && void act(() => rpc.setClass(token, c))} />
+        </div>
+      )}
+
+      {isHost && !teamMode && (
+        <div className="bot-row">
+          <span className="label">{t('solo.add')}</span>
+          {([1, 2, 3] as const).map((lv) => (
+            <button key={lv} className="btn sm ghost" disabled={count >= max || (duelMode && count >= 2)}
+              onClick={() => token && void act(() => rpc.addBot(token, lv).then(() => pingBots?.()))}>
+              + {t(lv === 1 ? 'solo.easy' : lv === 2 ? 'solo.medium' : 'solo.hard')}
+            </button>
+          ))}
         </div>
       )}
 

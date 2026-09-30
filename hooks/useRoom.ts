@@ -16,6 +16,8 @@ export function useRoom(code: string, token: string | null) {
   const [error, setError] = useState<string | null>(null);
   const [offset, setOffset] = useState(0); // serverNow - clientNow (ms)
   const [stateToken, setStateToken] = useState<string | null>(null); // the token the current snapshot was fetched with
+  const [botIds, setBotIds] = useState<string[]>([]);
+  const botsRef = useRef<string[]>([]);
   const versionRef = useRef(-1);
   const inflight = useRef(false);
   const queued = useRef(false);
@@ -76,6 +78,20 @@ export function useRoom(code: string, token: string | null) {
     };
   }, [code, refresh]);
 
+  // solo play: the host's client nudges the bots (server-side players) while a round is running
+  const isHost = !!state?.me && state.me.id === state.room.host_id;
+  const pingBots = useCallback(async () => {
+    const tk = tokenRef.current;
+    if (!tk) return;
+    try { const r = await rpc.botTick(tk); botsRef.current = r.bots; setBotIds(r.bots); } catch { /* not host / not in room */ }
+  }, []);
+  useEffect(() => {
+    if (!token || !isHost) return;
+    void pingBots();
+    const id = window.setInterval(() => { if (botsRef.current.length) void pingBots(); }, 2000);
+    return () => window.clearInterval(id);
+  }, [token, isHost, pingBots]);
+
   // heartbeat
   useEffect(() => {
     if (!token) return;
@@ -107,5 +123,5 @@ export function useRoom(code: string, token: string | null) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phaseKey, offset, code]);
 
-  return { state, error, refresh, offset, stateToken };
+  return { state, error, refresh, offset, stateToken, botIds, pingBots };
 }
