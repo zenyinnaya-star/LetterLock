@@ -52,5 +52,7 @@ begin
   raise notice 'winner_team=% teams=%', st->'room'->>'winner_team', st->'teams';
   perform play_again(t1);
   perform t_assert((select phase from rooms where id=rid) = 'lobby', 'play again');
+  perform t_assert((select count(*) from teams where room_id=rid and name='Rockets') = 1, 'rematch keeps team name');
+  perform t_assert((select count(*) from players where room_id=rid and team_id is not null) = 4, 'rematch keeps seats');
   raise notice 'TEAM TESTS OK';
 end $$;

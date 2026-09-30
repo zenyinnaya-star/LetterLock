@@ -350,6 +350,8 @@ const ja: Partial<Record<Key, string>> = {
   'er.NO_TEAM': '先にチームに参加してください。',
   'er.NOT_TEAM_MODE': 'この部屋はチームモードではありません。',
   'er.TEAM_NOT_FOUND': 'そのチームは存在しません。',
+  'an.team_hit': '{team}に攻撃！',
+  'tm.hint': 'チームで禁止文字を共有します。ストライクはなし。得点を稼ぎ、相手チームの文字を見破り、カードで攻撃しよう。',
 };
 
 export default ja;

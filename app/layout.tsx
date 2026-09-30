@@ -1,3 +1,4 @@
+import { ErrorReporter } from '@/components/ErrorReporter';
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { ThemeMusic } from '@/components/ThemeMusic';
@@ -21,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff4d6d'/%3E%3Crect x='8' y='14' width='16' height='12' rx='3' fill='%23fff'/%3E%3Cpath d='M11 14v-3a5 5 0 0 1 10 0v3' fill='none' stroke='%23fff' stroke-width='3'/%3E%3C/svg%3E" />
       </head>
-      <body><ThemeMusic />{children}</body>
+      <body><ThemeMusic /><ErrorReporter />{children}</body>
     </html>
   );
 }

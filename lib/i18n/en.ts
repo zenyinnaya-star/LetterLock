@@ -318,6 +318,8 @@ const en = {
   'er.TOO_MANY_FOR_TEAM': 'There are too many players in the room for that team size.',
   'er.CANNOT_TARGET_TEAMMATE': 'Pick a player from the other team.', 'er.NO_TEAM': 'Join a team first.',
   'er.NOT_TEAM_MODE': 'This room isn’t in team mode.', 'er.TEAM_NOT_FOUND': 'That team doesn’t exist.',
+  'an.team_hit': 'Attack on {team}!',
+  'tm.hint': 'Your team shares its banned letters. Score points, no strikes — crack the other team’s letters and hit them with cards.',
 } as const;
 
 export type Key = keyof typeof en;

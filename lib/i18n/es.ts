@@ -351,6 +351,8 @@ const es: Partial<Record<Key, string>> = {
   'er.NO_TEAM': 'Únete primero a un equipo.',
   'er.NOT_TEAM_MODE': 'Esta sala no está en modo equipos.',
   'er.TEAM_NOT_FOUND': 'Ese equipo no existe.',
+  'an.team_hit': '¡Ataque contra {team}!',
+  'tm.hint': 'Tu equipo comparte las letras prohibidas. Suma puntos, sin faltas: descubre las letras del otro equipo y atácalos con cartas.',
 };
 
 export default es;

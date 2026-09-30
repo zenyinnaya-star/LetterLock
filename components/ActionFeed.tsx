@@ -9,6 +9,7 @@ import { t as tr } from '@/lib/i18n';
 import { Rich, useT } from '@/lib/i18n/react';
 import type { FeedItem, PlayerClass, RoomState } from '@/lib/types';
 import { ClassIcon, Icon, type IconName } from './icons';
+import { TeamImage, teamLabel } from './team';
 import { PlayerAvatar } from './PlayerAvatar';
 
 const LOOK: Record<FeedItem['type'], { icon: IconName; tone: string; sfx: () => void }> = {
@@ -46,6 +47,8 @@ export function ActionFeed({ state }: { state: RoomState }) {
   const [current, setCurrent] = useState<FeedItem | null>(null);
   const playersRef = useRef(state.players);
   playersRef.current = state.players;
+  const stateRef = useRef(state);
+  stateRef.current = state;
   const meId = state.me?.id ?? null;
 
   // collect new items (skip everything already there on first load / reconnect)
@@ -70,6 +73,11 @@ export function ActionFeed({ state }: { state: RoomState }) {
       ?? (id === next.from && next.from_class ? tr('an.The', { cls: CLASSES[next.from_class].name }) : undefined);
     if (next.type === 'chicken') announcer.say(tr('an.chicken', { name: next.name ?? name(next.from) ?? tr('an.someone') }), { hype: true, delay: 900 });
     if (next.type === 'caught') announcer.say(tr('an.caught', { name: name(next.to) ?? tr('an.them') }), { hype: true, delay: 700 });
+    const tmSt = stateRef.current;
+    if (tmSt.room.settings?.mode === 'team' && next.type === 'attack') {
+      const tt = tmSt.teams?.find((x) => x.id === tmSt.players.find((p) => p.id === next.to)?.team_id);
+      if (tt) announcer.say(tr('an.team_hit', { team: teamLabel(tr as never, tt) }), { hype: true, delay: 300 });
+    }
     if (next.type === 'hack' && next.to === meId) announcer.say(tr('an.hacked'), { urgent: true, delay: 500 });
     if (next.type === 'chaos' && next.what) announcer.say(tr('an.wild', { name: CHAOS_INFO[next.what]?.name ?? '', text: CHAOS_INFO[next.what]?.text ?? '' }), { hype: true, delay: 1200 });
     if (next.type === 'mimic' && next.what) announcer.say(tr('an.mimic', { a: name(next.from) ?? tr('an.the_mimic'), cls: CLASSES[next.what as PlayerClass]?.name ?? next.what }), { delay: 600 });
@@ -100,13 +108,15 @@ function Banner({ item, state, meId }: { item: FeedItem; state: RoomState; meId:
   const actor: string = from ? nm(from, '?') : item.from_class ? t('fd.the', { cls: CLASSES[item.from_class].name }) : t('fd.someone');
 
   let text: React.ReactNode;
-  const b = nm(to, '?');
+  const teamMode = state.room.settings?.mode === 'team';
+  const toTeam = teamMode && to?.team_id ? state.teams?.find((x) => x.id === to.team_id) : undefined;
+  const b = toTeam ? teamLabel(t, toTeam) : nm(to, '?');
   const n = item.amount ?? 1;
   const R = (k: Parameters<typeof Rich>[0]['k'], extra?: React.ReactNode) => <><Rich k={k} vars={{ a: actor, b }} />{extra}</>;
   switch (item.type) {
     case 'attack': text = R('fd.attacked', <em>{n > 1 ? t('fd.locks', { n }) : t('fd.lock1')}</em>); break;
     case 'hack': text = <><Rich k="fd.got" vars={{ b }} /> <span className="glitch-word">{t('fd.hacked_word')}</span><em>{from ? t('fd.by', { name: from.name }) : t('fd.by_someone')}</em></>; break;
-    case 'block': text = item.what === 'ninja' ? R('fd.blocked_ninja') : <Rich k="fd.blocked" vars={{ a: actor, b: to ? to.name : t('fd.a_hack') }} />; break;
+    case 'block': text = item.what === 'ninja' ? R('fd.blocked_ninja') : <Rich k="fd.blocked" vars={{ a: actor, b: toTeam ? b : to ? to.name : t('fd.a_hack') }} />; break;
     case 'cleanse': text = R('fd.cleansed'); break;
     case 'absorb': text = R('fd.absorbed', <em>+5</em>); break;
     case 'caught': text = R('fd.caught', <em>{t('fd.exposed')}</em>); break;
@@ -145,7 +155,7 @@ function Banner({ item, state, meId }: { item: FeedItem; state: RoomState; meId:
           </motion.span>
         )}
         {!showArrow && item.type !== 'chicken' && <span className="arrow solo"><Icon name={look.icon} size={22} /></span>}
-        {showArrow && to && <motion.span initial={{ scale: 1 }} animate={{ scale: [1, 1.25, 1] }} transition={{ delay: 0.3 }}><PlayerAvatar p={to} size={40} /></motion.span>}
+        {showArrow && to && <motion.span initial={{ scale: 1 }} animate={{ scale: [1, 1.25, 1] }} transition={{ delay: 0.3 }}>{toTeam ? <TeamImage team={toTeam} size={40} /> : <PlayerAvatar p={to} size={40} />}</motion.span>}
       </div>
       <div className="txt">{text}</div>
     </motion.div>

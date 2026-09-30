@@ -60,7 +60,7 @@ export function TeamHud({ state }: { state: RoomState }) {
               <span className="th-vs">{t('tm.vs')}</span>
             </div>
           )}
-          <motion.div role="listitem" layout className={`th-team ${tm.idx === 0 ? 'a' : 'b'}${tm.id === myTeam ? ' mine' : ''}${lead === i ? ' lead' : ''}`}
+          <motion.div role="listitem" layout aria-label={`${teamLabel(t, tm)}: ${tm.points} ${t('tm.pts')}, ${t('tm.locks', { n: tm.letter_count })}`} className={`th-team ${tm.idx === 0 ? 'a' : 'b'}${tm.id === myTeam ? ' mine' : ''}${lead === i ? ' lead' : ''}`}
             transition={softSpring}>
             <TeamImage team={tm} size={44} />
             <div className="th-who">

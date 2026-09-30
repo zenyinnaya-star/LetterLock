@@ -351,6 +351,8 @@ const zh: Partial<Record<Key, string>> = {
   'er.NO_TEAM': '请先加入一支队伍。',
   'er.NOT_TEAM_MODE': '这个房间不是团队模式。',
   'er.TEAM_NOT_FOUND': '该队伍不存在。',
+  'an.team_hit': '攻击{team}！',
+  'tm.hint': '全队共用禁用字母，没有罚分。多拿分，猜出对方队伍的字母，并用卡牌攻击他们。',
 };
 
 export default zh;

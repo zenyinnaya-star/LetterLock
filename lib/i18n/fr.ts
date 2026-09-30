@@ -351,6 +351,8 @@ const fr: Partial<Record<Key, string>> = {
   'er.NO_TEAM': 'Rejoignez d’abord une équipe.',
   'er.NOT_TEAM_MODE': 'Ce salon n’est pas en mode équipes.',
   'er.TEAM_NOT_FOUND': 'Cette équipe n’existe pas.',
+  'an.team_hit': 'Attaque sur {team} !',
+  'tm.hint': 'Ton équipe partage ses lettres interdites. Marque des points, sans pénalité : perce les lettres de l’autre équipe et attaque-la avec des cartes.',
 };
 
 export default fr;

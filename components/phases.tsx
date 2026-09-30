@@ -96,6 +96,9 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
   return (
     <>
       <StageHead state={state} label={t('ph.answer')} msLeft={msLeft} />
+      {state.room.settings.mode === 'team' && state.room.round === 1 && (
+        <div className="note info" style={{ justifyContent: 'center' }}><Icon name="users" size={16} /> {t('tm.hint')}</div>
+      )}
       <div className="prompt-kicker label">{t('ph.prompt')}</div>
       <motion.h1 className="prompt" initial={{ opacity: 0, scale: 0.85, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={softSpring}>
         {state.prompt}

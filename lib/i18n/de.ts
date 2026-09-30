@@ -351,6 +351,8 @@ const de: Partial<Record<Key, string>> = {
   'er.NO_TEAM': 'Tritt zuerst einem Team bei.',
   'er.NOT_TEAM_MODE': 'Dieser Raum ist nicht im Team-Modus.',
   'er.TEAM_NOT_FOUND': 'Dieses Team gibt es nicht.',
+  'an.team_hit': 'Angriff auf {team}!',
+  'tm.hint': 'Dein Team teilt sich die gesperrten Buchstaben. Punkte sammeln, keine Strikes – knacke die Buchstaben des Gegners und greif mit Karten an.',
 };
 
 export default de;
