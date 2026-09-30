@@ -73,7 +73,7 @@ export function ActionFeed({ state }: { state: RoomState }) {
     const target = cur.players.find((p) => p.id === next.to);
     const aimedAtMe = !!meId && (next.to === meId || (cur.room.settings?.mode === 'team' && !!target?.team_id && target.team_id === cur.me?.team_id));
     if (next.type === 'attack' && aimedAtMe) {
-      audio.file('sword-slash');
+      audio.file((next.amount ?? 1) >= 2 ? 'cannon' : 'sword-slash');
       if (next.from_class === 'villain') audio.file('villain-laugh', 0.35);
     } else if (next.type === 'hack' && aimedAtMe) audio.file('access-denied');
     else if (next.type === 'bet') audio.file('money');
