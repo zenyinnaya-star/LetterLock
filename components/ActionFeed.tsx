@@ -68,7 +68,16 @@ export function ActionFeed({ state }: { state: RoomState }) {
     const [next, ...rest] = queue;
     setQueue(rest);
     setCurrent(next);
-    LOOK[next.type].sfx();
+    // recorded effects: hit by a character's attack / hack, and the Gambler's bet
+    const cur = stateRef.current;
+    const target = cur.players.find((p) => p.id === next.to);
+    const aimedAtMe = !!meId && (next.to === meId || (cur.room.settings?.mode === 'team' && !!target?.team_id && target.team_id === cur.me?.team_id));
+    if (next.type === 'attack' && aimedAtMe) {
+      audio.file('sword-slash');
+      if (next.from_class === 'villain') audio.file('villain-laugh', 0.35);
+    } else if (next.type === 'hack' && aimedAtMe) audio.file('access-denied');
+    else if (next.type === 'bet') audio.file('money');
+    else LOOK[next.type].sfx();
     const name = (id?: string | null) => playersRef.current.find((p) => p.id === id)?.name
       ?? (id === next.from && next.from_class ? tr('an.The', { cls: CLASSES[next.from_class].name }) : undefined);
     if (next.type === 'chicken') announcer.say(tr('an.chicken', { name: next.name ?? name(next.from) ?? tr('an.someone') }), { hype: true, delay: 900 });

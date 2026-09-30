@@ -125,6 +125,13 @@ export const audio = {
   },
   /** Error buzz: trace missed. */
   denied() { tone(180, 0, 0.12, 'square', 0.25); tone(140, 0.14, 0.22, 'square', 0.25); },
+  /** Play one of the recorded effects in /public/audio (after `delay` seconds); returns false if it can't. */
+  file(name: 'sword-slash' | 'access-denied' | 'money' | 'villain-laugh', delay = 0, volume = 0.9) {
+    if (!getPrefs().sfx || muted || typeof window === 'undefined') return false;
+    const go = () => { try { const a = new Audio(`/audio/${name}.mp3`); a.volume = volume; void a.play().catch(() => undefined); } catch { /* ignore */ } };
+    if (delay > 0) window.setTimeout(go, delay * 1000); else go();
+    return true;
+  },
   /** The real chicken (your recording); falls back to the synth cluck if it can't play. */
   chicken() {
     if (!getPrefs().sfx || muted || typeof window === 'undefined') return;
