@@ -85,7 +85,7 @@ export function Game({ state, token, offset, refresh }: {
       }
       if (cur.strikes > p.strikes || (cur.eliminated && !p.eliminated)) audio.buzzer();
       else if (cur.answerKey && cur.answerKey !== p.answerKey) {
-        if (me?.answer?.valid) audio.success(); else audio.buzzer();
+        if (me?.answer?.valid) audio.success(); else if (!audio.file('nope')) audio.buzzer();
       }
       if (cur.guessKey && cur.guessKey !== p.guessKey) {
         if (me?.guess?.correct) { if (!audio.file('correct')) audio.chime(); } else audio.tick(false);

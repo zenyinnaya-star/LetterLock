@@ -80,6 +80,9 @@ export function ActionFeed({ state }: { state: RoomState }) {
     else if (next.type === 'block') audio.file('metal-clang');
     else if (next.type === 'steal') audio.file('coin-swipe');
     else if (next.type === 'oracle') audio.file('mystical-harp');
+    else if (next.type === 'swap') audio.file('boing');
+    else if (next.type === 'chaos') audio.file('siren');
+    else if (next.type === 'latch' || next.type === 'drain') audio.file('squelch');
     else LOOK[next.type].sfx();
     const name = (id?: string | null) => playersRef.current.find((p) => p.id === id)?.name
       ?? (id === next.from && next.from_class ? tr('an.The', { cls: CLASSES[next.from_class].name }) : undefined);
