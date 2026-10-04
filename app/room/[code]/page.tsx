@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { linkProfile } from '@/lib/profile';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AvatarPicker } from '@/components/AvatarPicker';
@@ -81,6 +82,7 @@ function JoinHere({ code, onJoined }: { code: string; onJoined: (token: string) 
       saveName(name.trim());
       saveSession(r.code, { token: r.token, playerId: r.player_id });
       if (avatar) await rpc.setAvatar(r.token, avatar).catch(() => undefined);
+      await linkProfile(r.token, name.trim());
       onJoined(r.token);
     } catch (e) {
       setErr(friendlyError(e));

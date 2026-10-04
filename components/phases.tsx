@@ -11,6 +11,7 @@ import type { RoomState } from '@/lib/types';
 import { CLASS_COLORS, CardIcon, ClassIcon, Icon } from './icons';
 import { PlayerAvatar } from './PlayerAvatar';
 import { TeamImage, teamLabel, teamOf } from './team';
+import { GameSummary } from './GameSummary';
 import { Avatar, Clock, nameOf, softSpring, spring, TileRow } from './ui';
 
 export type Act = <T>(fn: () => Promise<T>, okMsg?: string) => Promise<T | undefined>;
@@ -75,6 +76,7 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
   const [word, setWord] = useState('');
   const lang = state.room.settings.lang ?? 'en';
   const [busy, setBusy] = useState(false);
+  const [bonus, setBonus] = useState<{ word: string; speed: number; streak: number; run: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const banned = useMemo(() => new Set(me?.letters.map((l) => l.letter) ?? []), [me?.letters]);
 
@@ -89,7 +91,8 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
   async function submit() {
     if (!token || !prepared.send || busy) return;
     setBusy(true);
-    await act(() => rpc.answer(token, prepared.send));
+    const r = await act(() => rpc.answer(token, prepared.send));
+    setBonus(r?.valid ? { word: r.word, speed: r.speed_bonus ?? 0, streak: r.streak_bonus ?? 0, run: r.streak ?? 0 } : null);
     setBusy(false);
   }
 
@@ -169,6 +172,12 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
               </motion.div>
             )}
           </AnimatePresence>
+          {me.answer?.valid && bonus && bonus.word === me.answer.word && (bonus.speed > 0 || bonus.streak > 0) && (
+            <div className="bonus-chips">
+              {bonus.speed > 0 && <span className="bchip speed"><Icon name="bolt" size={13} /> {t('ph.bonus_speed', { n: bonus.speed })}</span>}
+              {bonus.streak > 0 && <span className="bchip streak"><Icon name="burst" size={13} /> {t('ph.bonus_streak', { s: bonus.run, n: bonus.streak })}</span>}
+            </div>
+          )}
           {me.used_words.length > 0 && <div className="muted small center">{t('ph.used', { list: me.used_words.join(', ') })}</div>}
         </div>
       ) : (
@@ -432,6 +441,7 @@ export function Finished({ state, token, act }: PhaseProps) {
           </motion.div>
         ))}
       </div>
+      <GameSummary state={state} />
       <div className="locks-table">
         <div className="label">{t('fn.locks')}</div>
         {state.players.map((p) => (

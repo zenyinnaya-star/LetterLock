@@ -1,5 +1,6 @@
 'use client';
 
+import { ProfileChip } from './ProfileChip';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
@@ -42,6 +43,7 @@ export function Header({ right, settings }: { right?: React.ReactNode; settings?
       <Wordmark />
       <div className="tools">
         {right}
+        <ProfileChip />
         <Link href="/how-to-play" className="textbtn rules-link" target="_blank">{t('hd.rules')}</Link>
         <button className={`iconbtn${musicOn ? '' : ' off'}`} aria-label={musicOn ? t('hd.music_off') : t('hd.music_on')} title={musicOn ? t('hd.music_off') : t('hd.music_on')}
           aria-pressed={musicOn} onClick={() => setPref('music', !getPrefs().music)}>

@@ -7,6 +7,11 @@ async function call<T>(fn: string, args: Record<string, unknown>): Promise<T> {
   return data as T;
 }
 
+export interface GameStat {
+  player_id: string; name: string; points: number; correct: number; wrong: number;
+  best_streak: number; fastest_ms: number | null; bonus: number; hits: number; shots: number;
+  xp_gained: number; xp_after: number | null; new_ach: string[]; bot: boolean; linked: boolean;
+}
 export interface JoinResult { code: string; player_id: string; token: string }
 
 export const rpc = {
@@ -21,7 +26,8 @@ export const rpc = {
   heartbeat: (token: string) => call<void>('heartbeat', { p_token: token }),
   start: (token: string) => call<void>('start_game', { p_token: token }),
   answer: (token: string, word: string) =>
-    call<{ word: string; valid: boolean; reason: string | null; points: number; letter: string | null }>(
+    call<{ word: string; valid: boolean; reason: string | null; points: number; letter: string | null;
+      bonus?: number; speed_bonus?: number; streak_bonus?: number; streak?: number; elapsed_ms?: number | null }>(
       'submit_answer', { p_token: token, p_word: word }),
   guess: (token: string, targetId: string, letter: string) =>
     call<{ correct: boolean; card: CardKind | null; letter: string }>(
@@ -45,6 +51,7 @@ export const rpc = {
   addBot: (token: string, level: number) => call<{ player_id: string; name: string }>('add_bot', { p_token: token, p_level: level }),
   removeBot: (token: string, botId: string) => call<void>('remove_bot', { p_token: token, p_bot_id: botId }),
   botTick: (token: string) => call<{ bots: string[] }>('bot_tick', { p_token: token }),
+  gameStats: (code: string) => call<GameStat[]>('get_game_stats', { p_code: code }),
   trace: (token: string, suspectId: string) =>
     call<{ caught: boolean }>('trace_hacker', { p_token: token, p_suspect_id: suspectId }),
 };

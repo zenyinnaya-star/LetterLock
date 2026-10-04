@@ -8,7 +8,7 @@ begin
   r := create_room('Host', 'hero'); rc := r->>'code'; th := (r->>'token')::uuid; idh := (r->>'player_id')::uuid;
   s := update_settings(th, '{"max_players": 99, "answer_seconds": 45, "guess_seconds": 3, "cards": true, "strikes": 3, "shrink": false}');
   perform t_assert((s->>'max_players')::int = 12, 'max players clamped to 12');
-  perform t_assert((s->>'guess_seconds')::int = 10, 'guess seconds clamped to 10');
+  perform t_assert((s->>'guess_seconds')::int = 8, 'guess seconds clamped to 8');
   perform t_assert((s->>'strikes')::int = 3, 'strikes setting stored');
   for i in 1..11 loop perform join_room(rc, 'P' || i, 'ninja'); end loop;
   perform t_expect_error(format('select join_room(%L, %L, %L)', rc, 'P12', 'hero'), 'ROOM_FULL');

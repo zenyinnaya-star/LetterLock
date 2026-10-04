@@ -12,12 +12,20 @@ import type { Act } from './phases';
 
 type NumKey = 'answer_seconds' | 'guess_seconds' | 'react_seconds' | 'duel_seconds' | 'strikes';
 const OPTIONS: { key: NumKey; label: Key; icon: IconName; values: number[]; unit: string; hint?: string }[] = [
-  { key: 'answer_seconds', label: 'st.answer', icon: 'clock', values: [30, 45, 60, 90, 120], unit: 's' },
+  { key: 'answer_seconds', label: 'st.answer', icon: 'clock', values: [15, 30, 45, 60, 90, 120], unit: 's' },
   { key: 'guess_seconds', label: 'st.guess', icon: 'target', values: [10, 15, 20, 30, 45], unit: 's' },
   { key: 'react_seconds', label: 'st.cards_phase', icon: 'cards', values: [5, 8, 12, 20], unit: 's' },
   { key: 'duel_seconds', label: 'st.duel_rounds', icon: 'swords', values: [15, 20, 30, 45], unit: 's' },
   { key: 'strikes', label: 'st.strikes', icon: 'x', values: [1, 2, 3], unit: '' },
 ];
+
+const PRESETS: { id: string; label: Key; patch: Partial<RoomSettings> }[] = [
+  { id: 'classic', label: 'st.p_classic', patch: { answer_seconds: 60, guess_seconds: 20, react_seconds: 8, strikes: 2, shrink: true } },
+  { id: 'blitz', label: 'st.p_blitz', patch: { answer_seconds: 15, guess_seconds: 10, react_seconds: 5, strikes: 2, shrink: false } },
+  { id: 'sudden', label: 'st.p_sudden', patch: { answer_seconds: 45, guess_seconds: 15, react_seconds: 6, strikes: 1, shrink: true } },
+];
+const PRESETS_ON = (cur: RoomSettings, patch: Partial<RoomSettings>) =>
+  (Object.keys(patch) as (keyof RoomSettings)[]).every((k) => cur[k] === patch[k]);
 
 export function SettingsButton({ state, token, act }: { state: RoomState | null; token: string | null; act?: Act }) {
   const t = useT();
@@ -116,6 +124,18 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
                 </div>
                 <span className="muted small">{t('st.team_hint')}</span>
               </>
+            )}
+
+            {local.mode !== 'team' && (
+              <div className="set-row col-row">
+                <span className="set-label"><Icon name="bolt" size={16} /> {t('st.presets')}</span>
+                <div className="seg wrap" role="group" aria-label={t('st.presets')}>
+                  {PRESETS.map((p) => (
+                    <button key={p.id} className={PRESETS_ON(local, p.patch) ? 'on' : ''} disabled={!editable} onClick={() => change(p.patch)}>{t(p.label)}</button>
+                  ))}
+                </div>
+                <span className="muted small">{t('st.p_hint')}</span>
+              </div>
             )}
 
             {local.mode === 'classic' && <div className="set-row">

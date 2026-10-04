@@ -26,7 +26,7 @@ begin
   perform submit_answer(tj, t_word(tj));
   perform t_force(rc);  -- answer -> reveal
   select points into pts from players where id = ig;
-  perform t_assert(pts > 0 and pts = (select 2 * (char_length(word) + 2 * greatest(0, char_length(word) - 6)) from answers where player_id = ig and round = 1), 'gambler bet doubles points');
+  perform t_assert(pts > 0 and pts = (select 2 * (char_length(word) + 2 * greatest(0, char_length(word) - 6) + bonus) from answers where player_id = ig and round = 1), 'gambler bet doubles points');
   perform t_assert(exists (select 1 from events e join rooms r2 on r2.id = e.room_id where r2.code = rc and e.payload->>'type' = 'bet_win'), 'bet_win in feed');
 
   -- Mimic copies the Thief

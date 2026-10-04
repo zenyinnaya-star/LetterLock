@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { linkProfile } from '@/lib/profile';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -47,6 +48,7 @@ export default function Home() {
       if (kind === 'team') await rpc.updateSettings(r.token, { mode: 'team' });
       if (kind === 'solo') for (let i = 0; i < 3; i++) await rpc.addBot(r.token, lvl);
       if (avatar) await rpc.setAvatar(r.token, avatar).catch(() => undefined);
+      await linkProfile(r.token, name.trim());
       saveName(name.trim());
       saveSession(r.code, { token: r.token, playerId: r.player_id });
       router.push(`/room/${r.code}`);
