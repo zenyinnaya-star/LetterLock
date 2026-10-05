@@ -32,7 +32,7 @@ export default function Home() {
 
   const ready = name.trim().length > 0 && cls !== null;
 
-  const [lvl, setLvl] = useState(2);
+  const lvl = 2; // bots start on Medium; level and personality are set in the lobby
 
   async function go(kind: 'create' | 'join' | 'duel' | 'team' | 'solo') {
     if (!cls) { setErr(t('home.err_class')); return; }
@@ -109,13 +109,6 @@ export default function Home() {
         </div>
         <div className="solo-row">
           <button className="btn lg block solo-btn" disabled={busy || !ready} onClick={() => go('solo')}>{t('solo.btn')}</button>
-          <div className="solo-lvl" role="group" aria-label={t('solo.btn')}>
-            {([1, 2, 3] as const).map((l) => (
-              <button key={l} className={`chip${lvl === l ? ' on' : ''}`} aria-pressed={lvl === l} onClick={() => setLvl(l)}>
-                {t(l === 1 ? 'solo.easy' : l === 2 ? 'solo.medium' : 'solo.hard')}
-              </button>
-            ))}
-          </div>
           <div className="muted small center">{t('solo.note')}</div>
           <Link href="/daily" className="btn block ghost daily-link"><Icon name="trophy" size={18} /> {t('home.daily')}</Link>
         </div>
