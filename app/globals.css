@@ -825,3 +825,29 @@ input { font: inherit; }
 .bot-chip { font: inherit; font-size: 10px; font-weight: 800; letter-spacing: .4px; padding: 2px 7px; border-radius: 999px; border: 1px solid rgba(156,196,255,.4); background: rgba(47,124,246,.18); color: #cfe0ff; cursor: pointer; }
 .bot-chip.sty { border-color: rgba(255,207,74,.45); background: rgba(255,207,74,.14); color: #ffe39a; }
 .bot-chip:disabled { cursor: default; opacity: .85; }
+
+/* ───────── daily challenge ───────── */
+.daily-link { margin-top: 6px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+.daily-page { display: flex; flex-direction: column; gap: 14px; }
+.dc-puzzle { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px; border-radius: 16px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
+.dc-prompt { font-family: var(--display); font-size: clamp(20px, 5.5vw, 28px); text-align: center; }
+.dc-banned { display: flex; align-items: center; gap: 10px; }
+.dc-hud { display: flex; justify-content: space-between; align-items: center; font-size: 20px; }
+.dc-clock { font-family: var(--display); font-size: 28px; }
+.dc-clock.urgent { color: var(--lock); animation: pulse .6s infinite alternate; }
+.dc-msg { min-height: 20px; text-align: center; font-weight: 700; }
+.dc-words { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.dc-word { padding: 3px 10px; border-radius: 999px; background: rgba(61,220,151,.14); border: 1px solid rgba(61,220,151,.4); font-size: 14px; }
+.dc-word b { color: var(--ok); margin-left: 4px; }
+.dc-result { display: flex; align-items: baseline; justify-content: center; gap: 8px; }
+.dc-result b { font-family: var(--display); font-size: 56px; }
+.dc-rank { font-family: var(--display); font-size: 24px; color: #ffcf4a; }
+.dc-board { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.dc-board li { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 10px; background: rgba(255,255,255,.04); }
+.dc-board li.me { background: rgba(255,207,74,.16); outline: 1px solid rgba(255,207,74,.5); }
+.dc-pos { width: 22px; text-align: center; font-weight: 800; opacity: .7; }
+.dc-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@keyframes pulse { from { opacity: 1; } to { opacity: .45; } }
+
+.st-row.st-team { background: rgba(255,207,74,.1); border-radius: 10px; font-weight: 700; }
+.st-row.st-team .st-name { display: inline-flex; align-items: center; gap: 6px; }

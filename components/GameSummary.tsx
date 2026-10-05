@@ -8,6 +8,7 @@ import { levelFloor, levelOf, titleKey } from '@/lib/profile';
 import { rpc, type GameStat } from '@/lib/rpc';
 import type { RoomState } from '@/lib/types';
 import { Icon } from './icons';
+import { teamLabel, TeamImage } from './team';
 import { softSpring, spring } from './ui';
 
 /** Finish screen: per-player stats, then my XP result (bar, level-ups, new achievements). */
@@ -23,7 +24,7 @@ export function GameSummary({ state }: { state: RoomState }) {
   if (!stats || stats.length === 0) return null;
   const me = state.me ? stats.find((s) => s.player_id === state.me!.id) : undefined;
   const fastest = (ms: number | null) => (ms == null ? '—' : `${(ms / 1000).toFixed(1)}s`);
-  const solo = state.players.some((p) => (stats.find((s) => s.player_id === p.id) as (GameStat & { bot?: boolean }) | undefined)?.bot);
+  const solo = state.players.some((p) => stats.find((s) => s.player_id === p.id)?.bot);
 
   return (
     <>
@@ -34,6 +35,18 @@ export function GameSummary({ state }: { state: RoomState }) {
           <span />
           <span>{t('pf.s_correct')}</span><span>{t('pf.s_wrong')}</span><span>{t('pf.s_streak')}</span><span>{t('pf.s_fast')}</span><span>{t('pf.s_hits')}</span>
         </div>
+        {state.teams && state.teams.length === 2 && state.teams.map((tm) => {
+          const mem = stats.filter((s) => state.players.find((p) => p.id === s.player_id)?.team_id === tm.id);
+          const sum = (f: (x: GameStat) => number) => mem.reduce((a, x) => a + f(x), 0);
+          const fast = mem.map((x) => x.fastest_ms).filter((x): x is number => x != null);
+          return (
+            <div key={tm.id} className="st-row st-team" role="row">
+              <b className="st-name"><TeamImage team={tm} size={20} /> {teamLabel(t, tm)}</b>
+              <span>{sum((x) => x.correct)}</span><span>{sum((x) => x.wrong)}</span><span>{Math.max(0, ...mem.map((x) => x.best_streak))}</span>
+              <span>{fastest(fast.length ? Math.min(...fast) : null)}</span><span>{sum((x) => x.hits)}/{sum((x) => x.shots)}</span>
+            </div>
+          );
+        })}
         {stats.map((s, i) => (
           <motion.div key={s.player_id} className={`st-row${s.player_id === state.me?.id ? ' me' : ''}`} role="row"
             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.1 + i * 0.07 }}>

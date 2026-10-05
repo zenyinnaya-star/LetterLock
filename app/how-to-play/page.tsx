@@ -47,6 +47,11 @@ export default function HowToPlay() {
         <li><Rich k="rl.s4" /></li>
       </ul>
 
+      <h2>{t('rl.bonus_h')}</h2>
+      <ul>
+        {(['rl.x1', 'rl.x2', 'rl.x3', 'rl.x4', 'rl.x5', 'rl.x6', 'rl.x7'] as const).map((k) => <li key={k}>{t(k)}</li>)}
+      </ul>
+
       <h2>{t('rl.cards')}</h2>
       {(Object.keys(CARD_INFO) as CardKind[]).map((k) => (
         <div key={k} className="line">

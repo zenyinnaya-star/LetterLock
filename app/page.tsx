@@ -117,6 +117,7 @@ export default function Home() {
             ))}
           </div>
           <div className="muted small center">{t('solo.note')}</div>
+          <Link href="/daily" className="btn block ghost daily-link"><Icon name="trophy" size={18} /> {t('home.daily')}</Link>
         </div>
         <div className="divider">{t('home.or_join')}</div>
         <div className="row" style={{ gap: 8, flexWrap: 'nowrap' }}>
