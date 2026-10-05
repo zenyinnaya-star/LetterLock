@@ -4,7 +4,7 @@ declare
   rc text; rid uuid; r jsonb; ht uuid; hid uuid; ot uuid; oid uuid; res jsonb; ph text; i int; ok boolean; n int; pts int;
   cls text; w text;
 begin
-  foreach cls in array array['ninja','oracle','mastermind','hero','jester','villain','hacker','gambler','thief'] loop
+  foreach cls in array array['ninja','oracle','mastermind','hero','jester','villain','hacker','gambler'] loop
     r := create_room('Hu', cls::player_class); rc := r->>'code'; ht := (r->>'token')::uuid; hid := (r->>'player_id')::uuid;
     select id into rid from rooms where code = rc;
     r := join_room(rc, 'Op', 'hero'); ot := (r->>'token')::uuid; oid := (r->>'player_id')::uuid;

@@ -125,6 +125,7 @@ export interface RoomSettings {
   strikes: number;
   twist?: 'none' | 'reverse' | 'chaos' | 'memory';
   ultimates?: boolean;
+  pack?: 'all' | 'classic' | 'meme' | 'fantasy' | 'cyber' | 'comedy';
 }
 
 export type FeedType = 'attack' | 'hack' | 'block' | 'cleanse' | 'absorb' | 'caught' | 'trace_miss' | 'chicken'

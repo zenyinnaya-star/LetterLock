@@ -20,6 +20,7 @@ const OPTIONS: { key: NumKey; label: Key; icon: IconName; values: number[]; unit
 ];
 
 const TWISTS = ['none', 'reverse', 'chaos', 'memory'] as const;
+const PACKS = ['all', 'classic', 'meme', 'fantasy', 'cyber', 'comedy'] as const;
 const PRESETS: { id: string; label: Key; patch: Partial<RoomSettings> }[] = [
   { id: 'classic', label: 'st.p_classic', patch: { answer_seconds: 60, guess_seconds: 20, react_seconds: 8, strikes: 2, shrink: true } },
   { id: 'blitz', label: 'st.p_blitz', patch: { answer_seconds: 15, guess_seconds: 10, react_seconds: 5, strikes: 2, shrink: false } },
@@ -148,6 +149,17 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
                   ))}
                 </div>
                 <span className="muted small">{t(`st.twh_${local.twist ?? 'none'}` as Key)}</span>
+              </div>
+            )}
+
+            {(local.lang ?? 'en') === 'en' && (
+              <div className="set-row col-row">
+                <span className="set-label"><Icon name="dice" size={16} /> {t('st.pack')}</span>
+                <div className="seg wrap" role="group" aria-label={t('st.pack')}>
+                  {PACKS.map((k) => (
+                    <button key={k} className={(local.pack ?? 'all') === k ? 'on' : ''} disabled={!editable} onClick={() => change({ pack: k })}>{t(`st.pk_${k}` as Key)}</button>
+                  ))}
+                </div>
               </div>
             )}
 

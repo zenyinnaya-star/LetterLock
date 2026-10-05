@@ -523,7 +523,7 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
     return false;
   }
 
-  const ULTS: Record<string, { cost: number; phases: string[]; target?: boolean; buy?: boolean; needsUsed?: boolean }> = {
+  const ULTS: Record<string, { cost: number; phases: string[]; target?: boolean; buy?: boolean; needsUsed?: boolean; two?: boolean }> = {
     ninja: { cost: 16, phases: ['answer', 'reveal', 'guess', 'react'] },
     oracle: { cost: 12, phases: ['answer', 'reveal', 'guess', 'react'] },
     mastermind: { cost: 12, phases: ['answer', 'reveal', 'guess', 'react'], target: true },
@@ -532,11 +532,18 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
     villain: { cost: 18, phases: ['answer', 'reveal', 'guess', 'react'], target: true },
     hacker: { cost: 20, phases: ['answer', 'reveal', 'guess', 'react'] },
     gambler: { cost: 8, phases: ['answer', 'reveal', 'guess', 'react'], buy: true },
+    mimic: { cost: 18, phases: ['answer', 'reveal', 'guess', 'react'], target: true },
+    parasite: { cost: 20, phases: ['answer', 'reveal', 'guess', 'react'], target: true, two: true },
+    thief: { cost: 16, phases: ['answer', 'reveal', 'guess', 'react'], target: true },
+    wildcard: { cost: 16, phases: ['answer', 'reveal', 'guess', 'react'] },
   };
   const ult = cfg.ultimates && !teamMode && !me.eliminated ? ULTS[me.class] : undefined;
   const charge = me.charge ?? 0;
   const ultUsable = !!ult && charge >= ult.cost && ult.phases.includes(phase) && ultRound !== state.room.round && (!ult.needsUsed || me.perk_used);
-  const ultClass = me.class as 'ninja' | 'oracle' | 'mastermind' | 'hero' | 'jester' | 'villain' | 'hacker' | 'gambler';
+  const ultClass = me.class as 'ninja' | 'oracle' | 'mastermind' | 'hero' | 'jester' | 'villain' | 'hacker' | 'gambler' | 'mimic' | 'parasite' | 'thief' | 'wildcard';
+  const [ultFirst, setUltFirst] = useState<string | null>(null);
+  useEffect(() => { if (open?.kind !== 'ult') setUltFirst(null); }, [open]);
+  const ultTargets = me.class === 'mimic' ? anyOthers.filter((p) => p.class !== 'mimic') : others;
   const fireUlt = (targetId: string | null, kind: string | null = null) => {
     setOpen(null);
     void act(async () => { const r = await rpc.useUltimate(token, targetId, kind); setUltRound(state.room.round); return r; }, t('ult.ok'));
@@ -667,13 +674,23 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
               <AnimatePresence>
                 {open?.kind === 'ult' && (
                   <motion.div className="popover" initial={{ opacity: 0, y: 8, x: '-50%' }} animate={{ opacity: 1, y: 0, x: '-50%' }} exit={{ opacity: 0, y: 8, x: '-50%' }}>
-                    <span className="label">{ult.buy ? t('ult.buy') : t('ult.pick')}</span>
+                    {!(ult.two && ultFirst) && <span className="label">{ult.buy ? t('ult.buy') : t('ult.pick')}</span>}
                     {ult.buy
                       ? (['attack', 'shield', 'cleanse'] as const).map((k) => (
                           <button key={k} className="btn sm ghost" onClick={() => fireUlt(null, k)}><CardIcon kind={k} size={16} /> {CARD_INFO[k].name}</button>
                         ))
-                      : others.map((p) => (
-                          <button key={p.id} className="btn sm danger" onClick={() => fireUlt(p.id)}><PlayerAvatar p={p} size={18} /> {p.name}</button>
+                      : ult.two && ultFirst
+                        ? (
+                          <>
+                            <span className="label">{t('ult.second')}</span>
+                            {ultTargets.filter((p) => p.id !== ultFirst).map((p) => (
+                              <button key={p.id} className="btn sm danger" onClick={() => fireUlt(ultFirst, p.id)}><PlayerAvatar p={p} size={18} /> {p.name}</button>
+                            ))}
+                            <button className="btn sm ghost" onClick={() => fireUlt(ultFirst)}>{t('ult.one')}</button>
+                          </>
+                        )
+                        : ultTargets.map((p) => (
+                          <button key={p.id} className="btn sm danger" onClick={() => (ult.two ? setUltFirst(p.id) : fireUlt(p.id))}><PlayerAvatar p={p} size={18} /> {p.name}{me.class === 'mimic' && p.class && <span className="muted small"> · {CLASSES[p.class].name}</span>}</button>
                         ))}
                   </motion.div>
                 )}
