@@ -12,6 +12,13 @@ import type { Key } from '@/lib/i18n';
 
 type Kind = 'create' | 'duel' | 'team' | 'solo' | 'reverse' | 'chaos' | 'memory';
 interface Mode { kind: Kind; icon: IconName; k: string; tone: string }
+// Scene art per mode (local file wins once self-hosted; CDN copy until then). Solo stays plain on purpose.
+const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_';
+const BG: Partial<Record<Kind, string>> = {
+  create: `url(/art/mode-classic.webp), url(${CDN}20261005_051536_b7f898c0-9f76-41a2-a8b3-f74fdabe184d.png)`,
+  duel: `url(/art/mode-duel.webp), url(${CDN}20261005_051536_53b2e5b2-a949-4a03-80f6-a27be7013203.png)`,
+  team: `url(/art/mode-team.webp), url(${CDN}20261005_051536_697b7012-abd7-48ad-ab89-6a5a4171375d.png)`,
+};
 
 const MODES: Mode[] = [
   { kind: 'create', icon: 'users', k: 'classic', tone: 'amber' },
@@ -36,7 +43,7 @@ export default function Play() {
   }
 
   const card = (m: Mode, i: number) => (
-    <motion.button key={m.kind} className={`mode-card tone-${m.tone}`} 
+    <motion.button key={m.kind} className={`mode-card tone-${m.tone}${BG[m.kind] ? ' has-bg' : ''}`} style={BG[m.kind] ? ({ ['--bg' as string]: BG[m.kind] } as React.CSSProperties) : undefined} 
       initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.05 + i * 0.05 }}
       whileHover={{ y: -3 }} whileTap={{ scale: 0.97 }} onClick={() => go(m.kind)}>
       <span className="mc-ico"><Icon name={m.icon} size={22} /></span>

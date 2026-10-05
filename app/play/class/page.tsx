@@ -45,6 +45,7 @@ function Art({ cls }: { cls: PlayerClass }) {
             : <div className="sel-bg-fallback"><ClassIcon cls={cls} size={260} /></div>}
         </motion.div>
       </AnimatePresence>
+      <div key={`f${cls}`} className="sel-flash" />
       <div className="sel-shade" />
     </div>
   );
@@ -143,8 +144,7 @@ function Select() {
         <div className="sel-spacer" />
 
         <section className="sel-right">
-          <AnimatePresence mode="wait">
-            <motion.div key={cls} className="sel-info" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
+                      <div key={cls} className="sel-info">
               <span className="sel-role">{guide.style}</span>
               <h2 className="sel-name">{info.name}</h2>
               <div className="sel-diff">
@@ -162,8 +162,7 @@ function Select() {
                 <ol className="cs-tips">{guide.tips.slice(0, 3).map((x) => <li key={x}>{x}</li>)}</ol>
               </div>
               <div className="sel-box counter"><b><Icon name="target" size={14} /> {t('cs.counter')}</b><p>{guide.counter}</p></div>
-            </motion.div>
-          </AnimatePresence>
+            </div>
         </section>
       </div>
 

@@ -1013,3 +1013,33 @@ input { font: inherit; }
   .sel-left { order: 1 !important; } .sel-right { order: 2 !important; }
   .sel-bg-img img { object-position: 50% 10%; }
 }
+
+/* ───────── transitions ───────── */
+:root { --ease-out: cubic-bezier(.16, 1, .3, 1); --ease-io: cubic-bezier(.76, 0, .24, 1); }
+.page-curtain { position: fixed; inset: 0; z-index: 9999; pointer-events: none; background: linear-gradient(105deg, #070816 0%, #10142e 60%, #1a1f48 100%);
+  box-shadow: -6px 0 60px rgba(255,207,74,.35); transform: translateX(0); animation: curtain .62s var(--ease-io) .04s both; }
+@keyframes curtain { 0% { transform: translateX(0); visibility: visible; } 99% { visibility: visible; } 100% { transform: translateX(104%); visibility: hidden; } }
+.page-in { animation: pagein .7s var(--ease-out) .12s both; }
+@keyframes pagein { from { opacity: 0; transform: translateY(16px) scale(.992); } to { opacity: 1; transform: none; } }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.sel-info > * { animation: rise .5s var(--ease-out) both; }
+.sel-info > :nth-child(1) { animation-delay: .02s; } .sel-info > :nth-child(2) { animation-delay: .06s; } .sel-info > :nth-child(3) { animation-delay: .1s; }
+.sel-info > :nth-child(4) { animation-delay: .14s; } .sel-info > :nth-child(5) { animation-delay: .18s; } .sel-info > :nth-child(6) { animation-delay: .22s; } .sel-info > :nth-child(7) { animation-delay: .26s; }
+.sel-name { animation-name: nameIn !important; }
+@keyframes nameIn { from { opacity: 0; transform: translateX(-26px) skewX(-8deg); letter-spacing: 6px; } to { opacity: 1; transform: none; letter-spacing: 1px; } }
+.sel-flash { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 55% at 50% 45%, color-mix(in srgb, var(--ca) 55%, transparent), transparent 70%); animation: flash .7s var(--ease-out) both; mix-blend-mode: screen; }
+@keyframes flash { from { opacity: .9; } to { opacity: 0; } }
+.sel-card, .mode-card, .btn, .sel-lock { transition-timing-function: var(--ease-out); }
+.sel-card.on { animation: pop .38s var(--ease-out); }
+@keyframes pop { 0% { transform: translateY(0) scale(.94); } 60% { transform: translateY(-6px) scale(1.04); } 100% { transform: translateY(-4px) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .page-curtain { display: none; } .page-in, .sel-info > *, .sel-flash, .sel-card.on { animation: none !important; } }
+
+/* mode cards with scene backgrounds */
+.mode-card.has-bg { overflow: hidden; isolation: isolate; border-color: color-mix(in srgb, var(--tone) 55%, transparent); }
+.mode-card.has-bg::before { content: ''; position: absolute; inset: 0; z-index: -2; background: var(--bg) center / cover no-repeat; transform: scale(1.04); transition: transform .8s var(--ease-out), filter .4s; filter: saturate(1.1) brightness(.9); }
+.mode-card.has-bg::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, rgba(8,10,26,.92) 6%, rgba(8,10,26,.45) 55%, rgba(8,10,26,.2)); }
+.mode-card.has-bg:hover::before { transform: scale(1.12); filter: saturate(1.25) brightness(1.05); }
+.mode-card.has-bg .mc-ico { background: rgba(8,10,26,.55); backdrop-filter: blur(4px); }
+.mode-card.has-bg .mc-desc { color: #dbe1ff; }
+.mode-card.has-bg { min-height: 150px; }
+@media (min-width: 880px) { .mode-card.has-bg { min-height: 170px; } }
