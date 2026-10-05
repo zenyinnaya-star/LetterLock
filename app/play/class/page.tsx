@@ -115,7 +115,7 @@ function Select() {
   });
 
   return (
-    <main className="sel" style={{ ['--ca' as string]: ca, ['--cb' as string]: cb }}>
+    <main className="selpage" style={{ ['--ca' as string]: ca, ['--cb' as string]: cb }}>
       <Art cls={cls} />
       <header className="sel-top">
         <Link href="/play" className="play-back" aria-label={t('pl.back')}><Icon name="logout" size={18} /> {t('pl.back')}</Link>

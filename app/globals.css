@@ -921,7 +921,7 @@ input { font: inherit; }
 .play-grid { grid-template-columns: 1fr !important; }
 
 /* ───────── class select ───────── */
-.sel { min-height: 100dvh; display: flex; flex-direction: column; padding: 12px 14px 0; gap: 10px; position: relative; overflow: hidden;
+.selpage { min-height: 100dvh; display: flex; flex-direction: column; padding: 12px 14px 0; gap: 10px; position: relative; overflow: hidden;
   background: radial-gradient(ellipse 70% 60% at 50% 30%, color-mix(in srgb, var(--ca) 16%, #0a0c1c), #070816 75%); transition: background .4s; }
 .sel-top { display: flex; align-items: center; gap: 14px; position: relative; z-index: 3; }
 .sel-top h1 { font-family: var(--display); font-weight: 400; font-size: clamp(18px, 4.6vw, 26px); margin: 0; letter-spacing: .5px; }
@@ -960,7 +960,7 @@ input { font: inherit; }
 .sel-lock:active { transform: translateY(3px); box-shadow: 0 3px 0 #8f1424; }
 .sel-lock:disabled { opacity: .6; }
 @media (min-width: 880px) {
-  .sel { padding: 18px 28px 0; }
+  .selpage { padding: 18px 28px 0; }
   .sel-main { grid-template-columns: 270px 1fr 360px; align-items: stretch; gap: 20px; }
   .sel-art { height: auto; min-height: 380px; }
   .sel-fig { height: min(62vh, 520px); }
