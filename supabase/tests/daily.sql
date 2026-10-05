@@ -1,4 +1,5 @@
 \set ON_ERROR_STOP 1
+delete from daily_words; delete from daily_runs;
 do $$
 declare k uuid := gen_random_uuid(); k2 uuid := gen_random_uuid(); i jsonb; r jsonb; w text; n int := 0; d date := (now() at time zone 'utc')::date; banned text; pid bigint;
 begin
