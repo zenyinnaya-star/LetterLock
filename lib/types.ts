@@ -49,6 +49,7 @@ export interface Me {
   eliminated: boolean;
   perk_used: boolean;
   charge?: number;
+  objective?: { key: 'long7' | 'fast' | 'rare' | 'vowel' | 'crack'; done: boolean } | null;
   hacked: boolean;
   can_trace: boolean;
   bet_active: boolean;
@@ -62,7 +63,7 @@ export interface Me {
   team_id?: string | null;
 }
 
-export interface RevealRow { player_id: string; word: string; valid: boolean; reason: string | null; points: number }
+export interface RevealRow { player_id: string; word: string; valid: boolean; reason: string | null; points: number; legend?: boolean }
 export interface GuessResult { guesser_id: string; target_id: string; correct: boolean; letter: string | null }
 export interface Pending {
   id: number; target_id: string; source_id: string | null; source_class: PlayerClass | null; kind: 'attack' | 'ninja' | 'hack';
@@ -84,6 +85,7 @@ export interface RoomState {
     answer_seconds: number;
     settings: RoomSettings;
     chaos: ChaosKind | null;
+    mutation?: 'bigwords' | 'speedrun' | 'charged' | 'chaos' | null;
   };
   prompt: string | null;
   me: Me | null;
@@ -125,11 +127,13 @@ export interface RoomSettings {
   strikes: number;
   twist?: 'none' | 'reverse' | 'chaos' | 'memory';
   ultimates?: boolean;
+  mindgames?: boolean;
+  weekly?: boolean;
   pack?: 'all' | 'classic' | 'meme' | 'fantasy' | 'cyber' | 'comedy';
 }
 
 export type FeedType = 'attack' | 'hack' | 'block' | 'cleanse' | 'absorb' | 'caught' | 'trace_miss' | 'chicken'
-  | 'bet' | 'bet_win' | 'bet_lose' | 'steal' | 'drop' | 'latch' | 'drain' | 'host_down' | 'mimic' | 'oracle' | 'swap' | 'chaos' | 'ult';
+  | 'bet' | 'bet_win' | 'bet_lose' | 'steal' | 'drop' | 'latch' | 'drain' | 'host_down' | 'mimic' | 'oracle' | 'swap' | 'chaos' | 'ult' | 'legend';
 export interface FeedItem {
   id: number;
   round: number;

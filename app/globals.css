@@ -1050,3 +1050,12 @@ input { font: inherit; }
 .ultbtn:disabled { opacity: .55; filter: grayscale(.4); }
 .ultbar { display: block; height: 5px; margin-top: 4px; border-radius: 3px; background: rgba(255,255,255,.18); overflow: hidden; }
 .ultbar b { display: block; height: 100%; background: linear-gradient(90deg, #ff4d6d, #ffcf4a); transition: width .5s var(--ease-out); }
+
+.mindgame { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; padding: 8px 12px; border-radius: 12px; font-size: 13px; background: rgba(120, 100, 255, .12); border: 1px solid rgba(120, 100, 255, .35); }
+.mindgame b { text-transform: uppercase; letter-spacing: .5px; font-size: 11px; margin-right: 4px; }
+.mindgame em { margin-left: auto; font-style: normal; font-weight: 800; white-space: nowrap; color: var(--gold, #ffcf5c); }
+.mindgame.done { background: rgba(60, 200, 120, .14); border-color: rgba(60, 200, 120, .45); }
+.legend-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 900; letter-spacing: .6px; color: #1a1200; background: linear-gradient(90deg, #ffd86b, #ff9d5c); padding: 2px 8px; border-radius: 99px; margin-top: 2px; }
+
+.recap { margin: 16px 0; display: grid; gap: 10px; }
+.recap-body { overflow: hidden; display: grid; gap: 10px; padding: 12px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); }

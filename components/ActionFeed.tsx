@@ -33,6 +33,7 @@ const LOOK: Record<FeedItem['type'], { icon: IconName; tone: string; sfx: () => 
   mimic: { icon: 'mask', tone: 'mimic', sfx: () => audio.morph() },
   oracle: { icon: 'orb', tone: 'oracle', sfx: () => audio.mystic() },
   swap: { icon: 'swap', tone: 'jester', sfx: () => audio.whoosh() },
+  legend: { icon: 'sparkle', tone: 'gold', sfx: () => audio.cashout() },
   chaos: { icon: 'dice', tone: 'chaos', sfx: () => audio.wheel() },
   ult: { icon: 'bolt', tone: 'gold', sfx: () => audio.whoosh() },
 };
@@ -107,7 +108,7 @@ export function ActionFeed({ state }: { state: RoomState }) {
   // setQueue/setCurrent ran that effect's cleanup and cancelled the timer, so the banner never left.
   useEffect(() => {
     if (!current) return;
-    const long = ['chicken', 'caught', 'chaos', 'mimic', 'swap'].includes(current.type);
+    const long = ['chicken', 'caught', 'chaos', 'mimic', 'swap', 'legend'].includes(current.type);
     const id = window.setTimeout(() => setCurrent(null), long ? 2800 : 1900);
     return () => window.clearTimeout(id);
   }, [current]);
@@ -167,6 +168,7 @@ function Banner({ item, state, meId }: { item: FeedItem; state: RoomState; meId:
     case 'mimic': text = R('fd.mimic', <em>{t('fd.now_a', { cls: CLASSES[item.what as PlayerClass]?.name ?? item.what ?? '' })}</em>); break;
     case 'oracle': text = R('fd.oracle', <em>{t('fd.oracle_sub')}</em>); break;
     case 'swap': text = R('fd.swap', <em>{t('fd.switcheroo')}</em>); break;
+    case 'legend': text = <><b>{item.name ?? t('fd.someone')}</b> <Rich k="fd.legend" vars={{}} /></>; break;
     case 'ult': text = R('fd.ult', <em>{CLASSES[item.what as PlayerClass]?.name ?? ''}</em>); break;
     case 'chaos': text = <><b>{t('fd.wildcard')}</b> {CHAOS_INFO[item.what ?? '']?.name ?? 'chaos'}<em>{CHAOS_INFO[item.what ?? '']?.text}</em></>; break;
   }

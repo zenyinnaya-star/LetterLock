@@ -13,6 +13,7 @@ import { CLASS_COLORS, CardIcon, ClassIcon, Icon } from './icons';
 import { PlayerAvatar } from './PlayerAvatar';
 import { TeamImage, teamLabel, teamOf } from './team';
 import { GameSummary } from './GameSummary';
+import { Recap } from './Recap';
 import { Avatar, Clock, nameOf, softSpring, spring, TileRow } from './ui';
 
 export type Act = <T>(fn: () => Promise<T>, okMsg?: string) => Promise<T | undefined>;
@@ -36,6 +37,7 @@ const stagger = (i: number, step = 0.08) => ({ ...softSpring, delay: i * step })
 function StageHead({ state, label, msLeft, showClock = true }: { state: RoomState; label: string; msLeft: number; showClock?: boolean }) {
   const t = useT();
   return (
+    <>
     <div className="stage-head">
       <span className={`phase-tag${state.room.duel ? ' duel' : ''}`}>
         {state.room.duel && <Icon name="swords" size={14} />}
@@ -47,8 +49,21 @@ function StageHead({ state, label, msLeft, showClock = true }: { state: RoomStat
           <Icon name="dice" size={14} /> {CHAOS_INFO[state.room.chaos]?.name}
         </motion.span>
       )}
+      {state.room.mutation && (
+        <span className="chaos-chip" title={t(`mut.d.${state.room.mutation}`)}>
+          <Icon name="sparkle" size={14} /> {t(`mut.n.${state.room.mutation}`)}
+        </span>
+      )}
       {showClock && <Clock msLeft={msLeft} />}
     </div>
+    {state.me?.objective && !state.me.eliminated && (
+      <div className={`mindgame${state.me.objective.done ? ' done' : ''}`}>
+        <Icon name={state.me.objective.done ? 'check' : 'eye'} size={15} />
+        <span><b>{t('mg.title')}</b> {t(`mg.${state.me.objective.key}`)}</span>
+        <em>{state.me.objective.done ? t('mg.done') : t('mg.reward')}</em>
+      </div>
+    )}
+    </>
   );
 }
 
@@ -218,6 +233,7 @@ export function RevealPhase({ state, msLeft }: PhaseProps) {
               <div>
                 <div className="small muted">{p?.name}</div>
                 <div className="word">{r.word ? r.word.toUpperCase() : '— — —'}</div>
+                {r.legend && <div className="legend-tag"><Icon name="sparkle" size={13} /> {t('ph.legend')}</div>}
                 {!r.valid && (
                   <div className="why"><Icon name="x" size={13} strokeWidth={3} /> {REASONS[r.reason ?? ''] ?? r.reason} · {t('ph.strike')}{p?.eliminated ? ` · ${t('ph.eliminated')}` : ''}</div>
                 )}
@@ -457,6 +473,7 @@ export function Finished({ state, token, act }: PhaseProps) {
         ))}
       </div>
       <GameSummary state={state} />
+      <Recap state={state} />
       <div className="locks-table">
         <div className="label">{t('fn.locks')}</div>
         {state.players.map((p) => (

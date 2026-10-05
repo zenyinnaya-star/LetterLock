@@ -14,7 +14,15 @@ export interface GameStat {
 }
 export interface JoinResult { code: string; player_id: string; token: string }
 
+export interface Recap {
+  best: { name: string; word: string; points: number; round: number } | null;
+  rounds: { round: number; prompt: string | null;
+    answers: { player_id: string; name: string; word: string; valid: boolean; points: number; legend: boolean }[];
+    events: { id: number; type: string; name?: string; from?: string | null; to?: string | null; what?: string; amount?: number }[] }[];
+}
+
 export const rpc = {
+  getRecap: (code: string) => call<Recap>('get_recap', { p_code: code }),
   createRoom: (name: string, cls: PlayerClass) => call<JoinResult>('create_room', { p_name: name, p_class: cls }),
   joinRoom: (code: string, name: string, cls: PlayerClass) =>
     call<JoinResult>('join_room', { p_code: code, p_name: name, p_class: cls }),
