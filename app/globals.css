@@ -1020,7 +1020,7 @@ input { font: inherit; }
   box-shadow: -6px 0 60px rgba(255,207,74,.35); transform: translateX(0); animation: curtain .62s var(--ease-io) .04s both; }
 @keyframes curtain { 0% { transform: translateX(0); visibility: visible; } 99% { visibility: visible; } 100% { transform: translateX(104%); visibility: hidden; } }
 .page-in { animation: pagein .7s var(--ease-out) .12s both; }
-@keyframes pagein { from { opacity: 0; transform: translateY(16px) scale(.992); } to { opacity: 1; transform: none; } }
+@keyframes pagein { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 .sel-info > * { animation: rise .5s var(--ease-out) both; }
 .sel-info > :nth-child(1) { animation-delay: .02s; } .sel-info > :nth-child(2) { animation-delay: .06s; } .sel-info > :nth-child(3) { animation-delay: .1s; }
