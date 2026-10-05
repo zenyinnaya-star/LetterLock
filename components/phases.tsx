@@ -85,7 +85,13 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
   const prepared = prepareAnswer(word, lang);
   const clean = prepared.letters;
   const noE = state.room.chaos === 'no_e';
-  const hasBanned = (!me?.hacked && clean.toUpperCase().split('').some((c) => banned.has(c))) || (noE && clean.includes('e'));
+  const twist = state.room.settings.twist ?? 'none';
+  const reverse = twist === 'reverse';
+  const memory = twist === 'memory';
+  const letters = clean.toUpperCase().split('');
+  const isBad = (c: string) => (!me?.hacked && !reverse && !memory && banned.has(c)) || (noE && c === 'E');
+  const needLock = reverse && !me?.hacked && banned.size > 0 && letters.length > 0 && !letters.some((c) => banned.has(c));
+  const hasBanned = letters.some(isBad);
   const canPlay = !!me && !me.eliminated && !!token;
 
   async function submit() {
@@ -106,6 +112,11 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
       <motion.h1 className="prompt" initial={{ opacity: 0, scale: 0.85, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={softSpring}>
         {state.prompt}
       </motion.h1>
+      {(reverse || memory) && state.room.round >= 1 && (
+        <div className="note info" style={{ maxWidth: 620, margin: '0 auto', width: '100%', justifyContent: 'center' }}>
+          <Icon name={reverse ? 'lock' : 'eye'} size={16} /> {reverse ? t('tw.reverse_note') : t('tw.memory_note')}
+        </div>
+      )}
       {state.room.chaos && ['no_e', 'double', 'speed'].includes(state.room.chaos) && (
         <motion.div className="note chaos" style={{ maxWidth: 620, margin: '0 auto', width: '100%' }}
           initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
@@ -135,9 +146,9 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
             <div className="word-preview" aria-hidden>
               <AnimatePresence initial={false} mode="popLayout">
                 {clean.toUpperCase().split('').map((c, i) => (
-                  <motion.span key={`${i}-${c}`} layout className={`ch${(!me?.hacked && banned.has(c)) || (noE && c === 'E') ? ' bad' : ''}`}
+                  <motion.span key={`${i}-${c}`} layout className={`ch${isBad(c) ? ' bad' : reverse && banned.has(c) ? ' must' : ''}`}
                     initial={{ y: -10, opacity: 0, scale: 0.6 }}
-                    animate={(!me?.hacked && banned.has(c)) || (noE && c === 'E') ? { y: 0, opacity: 1, scale: 1, x: [0, -4, 4, -3, 0] } : { y: 0, opacity: 1, scale: 1 }}
+                    animate={isBad(c) ? { y: 0, opacity: 1, scale: 1, x: [0, -4, 4, -3, 0] } : { y: 0, opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.5 }} transition={{ duration: 0.22 }}>
                     {c}
                   </motion.span>
@@ -145,9 +156,9 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
               </AnimatePresence>
             </div>
             <AnimatePresence>
-              {hasBanned && (
+              {(hasBanned || needLock) && (
                 <motion.div className="note bad" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
-                  <Icon name="alert" size={16} /> {t('ph.banned')}
+                  <Icon name="alert" size={16} /> {needLock ? t('ph.need_lock') : t('ph.banned')}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -468,6 +479,15 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
   const [open, setOpen] = useState<null | { kind: 'card'; id: number } | { kind: 'perk' } | { kind: 'trace' }>(null);
   const phase = state.room.phase;
   useEffect(() => setOpen(null), [phase]);
+  // Memory twist: my locks fade out a few seconds into each answer phase, so I have to remember them
+  const memoryTwist = state.room.settings.twist === 'memory';
+  const [memHidden, setMemHidden] = useState(false);
+  useEffect(() => {
+    setMemHidden(false);
+    if (!memoryTwist || phase !== 'answer') return;
+    const id = window.setTimeout(() => setMemHidden(true), 3500);
+    return () => window.clearTimeout(id);
+  }, [memoryTwist, phase, state.room.round]);
   if (!me || !token || phase === 'lobby' || phase === 'finished') return null;
 
   const info = CLASSES[me.class];
@@ -518,6 +538,10 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
                 <motion.span key={i} className="tile glitch" animate={{ opacity: [1, 0.4, 1, 0.7, 1], x: [0, -2, 2, 0] }}
                   transition={{ repeat: Infinity, duration: 0.9 + i * 0.13 }}>?</motion.span>
               ))}
+            </div>
+          ) : memHidden ? (
+            <div className="tiles hacked-tiles" title={t('tw.memory_note')}>
+              {me.letters.map((_, i) => <span key={i} className="tile mem">?</span>)}
             </div>
           ) : <TileRow letters={me.letters} />}
           {me.can_trace && (

@@ -122,6 +122,7 @@ export interface RoomSettings {
   cards: boolean;
   perks: boolean;
   strikes: number;
+  twist?: 'none' | 'reverse' | 'chaos' | 'memory';
 }
 
 export type FeedType = 'attack' | 'hack' | 'block' | 'cleanse' | 'absorb' | 'caught' | 'trace_miss' | 'chicken'

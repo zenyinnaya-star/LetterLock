@@ -172,6 +172,7 @@ export function ClassIcon({ cls, size = 32, className }: { cls: PlayerClass; siz
       aria-hidden>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={`/art/class-${cls}.webp`} alt="" width={size} height={size} draggable={false}
+        ref={(el) => { if (el && el.complete && el.naturalWidth === 0) queueMicrotask(() => { failedArt.add(cls); setBroken(true); }); }}
         onError={() => { failedArt.add(cls); setBroken(true); }} />
     </span>
   );

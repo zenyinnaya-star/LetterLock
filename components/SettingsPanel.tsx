@@ -19,6 +19,7 @@ const OPTIONS: { key: NumKey; label: Key; icon: IconName; values: number[]; unit
   { key: 'strikes', label: 'st.strikes', icon: 'x', values: [1, 2, 3], unit: '' },
 ];
 
+const TWISTS = ['none', 'reverse', 'chaos', 'memory'] as const;
 const PRESETS: { id: string; label: Key; patch: Partial<RoomSettings> }[] = [
   { id: 'classic', label: 'st.p_classic', patch: { answer_seconds: 60, guess_seconds: 20, react_seconds: 8, strikes: 2, shrink: true } },
   { id: 'blitz', label: 'st.p_blitz', patch: { answer_seconds: 15, guess_seconds: 10, react_seconds: 5, strikes: 2, shrink: false } },
@@ -135,6 +136,18 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
                   ))}
                 </div>
                 <span className="muted small">{t('st.p_hint')}</span>
+              </div>
+            )}
+
+            {local.mode !== 'team' && (
+              <div className="set-row col-row">
+                <span className="set-label"><Icon name="dice" size={16} /> {t('st.twist')}</span>
+                <div className="seg wrap" role="group" aria-label={t('st.twist')}>
+                  {TWISTS.map((w) => (
+                    <button key={w} className={(local.twist ?? 'none') === w ? 'on' : ''} disabled={!editable} onClick={() => change({ twist: w })}>{t(`st.tw_${w}` as Key)}</button>
+                  ))}
+                </div>
+                <span className="muted small">{t(`st.twh_${local.twist ?? 'none'}` as Key)}</span>
               </div>
             )}
 
