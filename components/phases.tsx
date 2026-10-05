@@ -382,12 +382,12 @@ export function ReactPhase({ state, token, msLeft, act }: PhaseProps) {
 export function DuelIntro({ state, msLeft }: PhaseProps) {
   const t = useT();
   const [a, b] = state.players.filter((p) => !p.eliminated);
-  if (!a || !b) return null;
   const oneVone = state.room.settings.mode === 'duel';
   const count = Math.ceil(msLeft / 1000);
   useEffect(() => {
     if (count === 3) narrator.say('three'); else if (count === 2) narrator.say('two'); else if (count === 1) narrator.say('one'); else if (count <= 0) narrator.say('fight');
   }, [count]);
+  if (!a || !b) return null;
   return (
     <div className="duel-stage">
       <motion.div className="phase-tag duel" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
