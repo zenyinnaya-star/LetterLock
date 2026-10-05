@@ -7,6 +7,7 @@ import { REASONS } from '@/lib/errors';
 import { prepareAnswer } from '@/lib/answer';
 import { Rich, useT } from '@/lib/i18n/react';
 import { rpc } from '@/lib/rpc';
+import { narrator } from '@/lib/narrator';
 import type { RoomState } from '@/lib/types';
 import { CLASS_COLORS, CardIcon, ClassIcon, Icon } from './icons';
 import { PlayerAvatar } from './PlayerAvatar';
@@ -368,6 +369,9 @@ export function DuelIntro({ state, msLeft }: PhaseProps) {
   if (!a || !b) return null;
   const oneVone = state.room.settings.mode === 'duel';
   const count = Math.ceil(msLeft / 1000);
+  useEffect(() => {
+    if (count === 3) narrator.say('three'); else if (count === 2) narrator.say('two'); else if (count === 1) narrator.say('one'); else if (count <= 0) narrator.say('fight');
+  }, [count]);
   return (
     <div className="duel-stage">
       <motion.div className="phase-tag duel" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>

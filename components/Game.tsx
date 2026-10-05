@@ -5,6 +5,7 @@ import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useCountdown } from '@/hooks/useCountdown';
 import { announcer } from '@/lib/announcer';
+import { narrator } from '@/lib/narrator';
 import { CLASSES } from '@/lib/classes';
 import { audio } from '@/lib/audio';
 import { music } from '@/lib/music';
@@ -75,17 +76,24 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
     if (p) {
       if (cur.phase !== p.phase) {
         if (cur.phase === 'duel_intro') audio.fight();
-        else if (cur.phase === 'answer') audio.gong();
+        else if (cur.phase === 'answer') {
+          audio.gong();
+          const tw = state.room.settings?.twist;
+          const last = state.room.round >= (state.room.settings?.rounds ?? 99) && state.room.settings?.mode !== 'classic';
+          if (state.room.round === 1) narrator.say(tw === 'reverse' ? 'reverse' : tw === 'memory' ? 'memory' : 'round', { delay: 500 });
+          else if (last) narrator.say('final', { delay: 500 });
+          else narrator.say('round', { delay: 500 });
+        }
         if (cur.phase === 'finished') {
           const teamWin = state.room.settings?.mode === 'team'
             ? (me && state.room.winner_team != null ? (state.teams?.find((x) => x.idx === state.room.winner_team)?.id === me.team_id ? 'won' : 'lost') : null)
             : (me && state.room.winner_id ? (state.room.winner_id === me.id ? 'won' : 'lost') : null);
-          if (teamWin === 'won') audio.file('victory');
-          else if (teamWin === 'lost') audio.file('defeat');
+          if (teamWin === 'won') { audio.file('victory'); narrator.say('victory', { delay: 700 }); }
+          else if (teamWin === 'lost') { audio.file('defeat'); narrator.say('defeat', { delay: 700 }); }
           else audio.fanfare();
         }
       }
-      if (cur.eliminated && !p.eliminated) audio.elimination();
+      if (cur.eliminated && !p.eliminated) { audio.elimination(); narrator.say('eliminated', { delay: 400 }); }
       else if (cur.strikes > p.strikes) audio.buzzer();
       else if (cur.answerKey && cur.answerKey !== p.answerKey) {
         if (me?.answer?.valid) audio.success(); else if (!audio.file('nope')) audio.buzzer();

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion, useAnimationControls } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { audio } from '@/lib/audio';
+import { narrator } from '@/lib/narrator';
 import { CLASSES, CLASS_ORDER } from '@/lib/classes';
 import { getPrefs, setPref } from '@/lib/prefs';
 import { useT } from '@/lib/i18n/react';
@@ -150,6 +151,7 @@ export function ClassPicker({ value, onChange }: { value: PlayerClass | null; on
   const t = useT();
   const info = value ? CLASSES[value] : null;
   const [open, setOpen] = useState<PlayerClass | null>(null);
+  useEffect(() => { if (open) narrator.say(`cl_${open}` as never); }, [open]);
   return (
     <div className="picker">
       <AnimatePresence>
