@@ -1,0 +1,14 @@
+insert into prompts (lang, key, text, active, pack) select 'en', 'pack-comedy-22', 'A funny noise for an animal', true, 'comedy' where not exists (select 1 from prompts where lang = 'en' and key = 'pack-comedy-22');
+insert into prompt_words (prompt_id, word) select p.id, w from prompts p, unnest(string_to_array('baa bark buzz chirp cluck hiss honk howl meow moo neigh oink purr quack ribbit roar squeal tweet woof', ' ')) w where p.lang = 'en' and p.key = 'pack-comedy-22' on conflict do nothing;
+insert into words (lang, word) select 'en', w from unnest(string_to_array('baa bark buzz chirp cluck hiss honk howl meow moo neigh oink purr quack ribbit roar squeal tweet woof', ' ')) w on conflict do nothing;
+insert into prompts (lang, key, text, active, pack) select 'en', 'pack-comedy-23', 'Something you''d see in a cartoon', true, 'comedy' where not exists (select 1 from prompts where lang = 'en' and key = 'pack-comedy-23');
+insert into prompt_words (prompt_id, word) select p.id, w from prompts p, unnest(string_to_array('anvil bomb cat cloud dog duck gag hole mallet mouse pie rabbit rainbow rocket spring wink', ' ')) w where p.lang = 'en' and p.key = 'pack-comedy-23' on conflict do nothing;
+insert into words (lang, word) select 'en', w from unnest(string_to_array('anvil bomb cat cloud dog duck gag hole mallet mouse pie rabbit rainbow rocket spring wink', ' ')) w on conflict do nothing;
+insert into prompts (lang, key, text, active, pack) select 'en', 'pack-comedy-24', 'A silly reason to celebrate', true, 'comedy' where not exists (select 1 from prompts where lang = 'en' and key = 'pack-comedy-24');
+insert into prompt_words (prompt_id, word) select p.id, w from prompts p, unnest(string_to_array('cheese cookie donut friday holiday lunch nap pajama pancake pizza recess sandwich socks taco weekend', ' ')) w where p.lang = 'en' and p.key = 'pack-comedy-24' on conflict do nothing;
+insert into words (lang, word) select 'en', w from unnest(string_to_array('cheese cookie donut friday holiday lunch nap pajama pancake pizza recess sandwich socks taco weekend', ' ')) w on conflict do nothing;
+insert into prompts (lang, key, text, active, pack) select 'en', 'pack-comedy-25', 'A thing you''d find in a clown car', true, 'comedy' where not exists (select 1 from prompts where lang = 'en' and key = 'pack-comedy-25');
+insert into prompt_words (prompt_id, word) select p.id, w from prompts p, unnest(string_to_array('ball balloon banana bucket clown flower hat horn juggler nose pie seltzer shoe trick wig', ' ')) w where p.lang = 'en' and p.key = 'pack-comedy-25' on conflict do nothing;
+insert into words (lang, word) select 'en', w from unnest(string_to_array('ball balloon banana bucket clown flower hat horn juggler nose pie seltzer shoe trick wig', ' ')) w on conflict do nothing;
+
+
