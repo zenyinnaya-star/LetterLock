@@ -362,6 +362,7 @@ const ja: Partial<Record<Key, string>> = {
   'pf.back': "戻る",
   'ph.bonus_speed': "スピード +{n}", 'ph.bonus_streak': "連続 x{s} +{n}", 'st.presets': "クイックモード", 'st.p_classic': "クラシック", 'st.p_blitz': "ブリッツ", 'st.p_sudden': "サドンデス", 'st.p_hint': "ブリッツ：短い制限時間。サドンデス：1回ミスで脱落。",
   'solo.btn': "ボットとソロプレイ", 'solo.easy': "かんたん", 'solo.medium': "ふつう", 'solo.hard': "むずかしい", 'solo.add': "ボットを追加", 'solo.tag': "BOT", 'solo.note': "ボットも同じルールで遊びます。かんたんはうっかり、むずかしいは容赦なし。", 'solo.remove': "ボットを削除",
+  'solo.s0': "バランス", 'solo.s1': "攻撃的", 'solo.s2': "守備的", 'solo.s3': "スピードの鬼", 'solo.style': "ボットの性格", 'solo.tap_level': "タップでレベル変更", 'solo.tap_style': "タップで性格変更",
   'st.team': 'チーム',
   'st.team_size': 'チーム人数',
   'st.rounds': 'ラウンド数',

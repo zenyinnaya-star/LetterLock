@@ -2,8 +2,8 @@
 
 import { ProfileChip } from './ProfileChip';
 import Link from 'next/link';
-import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useAnimationControls } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 import { audio } from '@/lib/audio';
 import { CLASSES, CLASS_ORDER } from '@/lib/classes';
 import { getPrefs, setPref } from '@/lib/prefs';
@@ -60,37 +60,61 @@ export function Header({ right, settings }: { right?: React.ReactNode; settings?
 }
 
 /* ───────── tiles ───────── */
-export function Tile({ letter, revealed, small, locked = true, delay = 0 }: {
-  letter: string; revealed?: boolean; small?: boolean; locked?: boolean; delay?: number;
+export function Tile({ letter, revealed, small, locked = true, delay = 0, fresh = false }: {
+  letter: string; revealed?: boolean; small?: boolean; locked?: boolean; delay?: number; fresh?: boolean;
 }) {
+  const big = fresh && !small;
   return (
     <motion.span
       layout
-      className={`tile${revealed ? ' revealed' : ''}${small ? ' sm' : ''}`}
+      className={`tile${revealed ? ' revealed' : ''}${small ? ' sm' : ''}${big ? ' fresh' : ''}`}
       title={revealed ? 'Cracked — everyone knows this one' : 'Banned letter'}
-      initial={{ y: -46, rotate: -14, scale: 1.35, opacity: 0 }}
-      animate={{ y: 0, rotate: 0, scale: 1, opacity: 1 }}
+      initial={big ? { y: -130, rotate: -22, scale: 1.9, opacity: 0 } : { y: -46, rotate: -14, scale: 1.35, opacity: 0 }}
+      animate={big
+        ? { y: [-130, 0, -9, 0], rotate: [-22, 0, 2, 0], scale: [1.9, 1, 1.14, 1], opacity: [0, 1, 1, 1] }
+        : { y: 0, rotate: 0, scale: 1, opacity: 1 }}
       exit={{ scale: 0.2, rotate: 25, opacity: 0, transition: { duration: 0.25 } }}
-      transition={{ ...spring, delay }}
+      transition={big ? { duration: 0.75, times: [0, 0.45, 0.7, 1], ease: 'easeOut', delay } : { ...spring, delay }}
     >
       {letter}
+      {big && (
+        <svg className="tile-crack" viewBox="0 0 48 52" aria-hidden>
+          <path d="M26 0 L21 14 L29 22 L19 33 L27 43 L23 52" />
+          <path d="M21 14 L9 19 M29 22 L41 27 M19 33 L8 41" />
+        </svg>
+      )}
       {locked && !small && (
-        <motion.span className="tile-lock" initial={{ scale: 0 }} animate={{ scale: 1 }}
-          transition={{ ...spring, delay: delay + 0.18 }}>
+        <motion.span className="tile-lock" initial={{ scale: 0 }} animate={big ? { scale: [0, 1.7, 1] } : { scale: 1 }}
+          transition={big ? { duration: 0.35, delay: delay + 0.55 } : { ...spring, delay: delay + 0.18 }}>
           <Icon name="lock" size={12} strokeWidth={2.6} />
         </motion.span>
       )}
+      {big && <span className="tile-ring" aria-hidden />}
     </motion.span>
   );
 }
 
 export function TileRow({ letters, small }: { letters: { letter: string; revealed?: boolean }[]; small?: boolean }) {
+  // letters that show up after the row has first rendered get the full crack-fall-lock entrance
+  const seen = useRef<Set<string> | null>(null);
+  const controls = useAnimationControls();
+  const fresh = new Set<string>();
+  if (seen.current) for (const l of letters) if (!seen.current.has(l.letter)) fresh.add(l.letter);
+  const freshKey = [...fresh].join('');
+  useEffect(() => {
+    seen.current = new Set(letters.map((l) => l.letter));
+    if (!small && freshKey) {
+      audio.lockSlam(0.3);
+      const id = window.setTimeout(() => { void controls.start({ x: [0, -7, 6, -4, 2, 0], transition: { duration: 0.4 } }); }, 330);
+      return () => window.clearTimeout(id);
+    }
+  }, [letters, small, freshKey, controls]);
   return (
-    <div className="tiles">
+    <motion.div className="tiles" animate={controls}>
       <AnimatePresence mode="popLayout" initial={false}>
-        {letters.map((l, i) => <Tile key={l.letter} letter={l.letter} revealed={l.revealed} small={small} delay={i * 0.03} />)}
+        {letters.map((l, i) => <Tile key={l.letter} letter={l.letter} revealed={l.revealed} small={small} fresh={fresh.has(l.letter)} delay={fresh.has(l.letter) ? 0 : i * 0.03} />)}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
 

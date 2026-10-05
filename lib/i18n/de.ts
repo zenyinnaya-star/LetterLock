@@ -363,6 +363,7 @@ const de: Partial<Record<Key, string>> = {
   'pf.back': "Zurück",
   'ph.bonus_speed': "Tempo +{n}", 'ph.bonus_streak': "Serie x{s} +{n}", 'st.presets': "Schnellmodus", 'st.p_classic': "Klassisch", 'st.p_blitz': "Blitz", 'st.p_sudden': "Sudden Death", 'st.p_hint': "Blitz: kurze Uhren. Sudden Death: ein Fehler und du bist raus.",
   'solo.btn': "Solo gegen Bots spielen", 'solo.easy': "Leicht", 'solo.medium': "Mittel", 'solo.hard': "Schwer", 'solo.add': "Bot hinzufügen", 'solo.tag': "BOT", 'solo.note': "Bots spielen nach denselben Regeln. Leicht vergisst, Schwer jagt.", 'solo.remove': "Bot entfernen",
+  'solo.s0': "Ausgewogen", 'solo.s1': "Aggressiv", 'solo.s2': "Defensiv", 'solo.s3': "Tempo-Teufel", 'solo.style': "Bot-Persönlichkeit", 'solo.tap_level': "Tippen, um die Stufe zu ändern", 'solo.tap_style': "Tippen, um die Persönlichkeit zu ändern",
   'st.team': 'Teams',
   'st.team_size': 'Teamgröße',
   'st.rounds': 'Runden',

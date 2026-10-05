@@ -16,11 +16,14 @@ import type { Act } from './phases';
 import { SettingsButton } from './SettingsPanel';
 import { ClassPicker, softSpring, spring } from './ui';
 
-export function Lobby({ state, token, act, onLeave, bots = [], pingBots }: {
-  state: RoomState; token: string | null; act: Act; onLeave: () => void; bots?: string[]; pingBots?: () => Promise<void>;
+const STYLE_KEYS = ['solo.s0', 'solo.s1', 'solo.s2', 'solo.s3'] as const;
+
+export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots }: {
+  state: RoomState; token: string | null; act: Act; onLeave: () => void; bots?: string[]; botInfo?: Record<string, { l: number; s: number }>; pingBots?: () => Promise<void>;
 }) {
   const t = useT();
   const [copied, setCopied] = useState(false);
+  const [botStyle, setBotStyle] = useState(0);
   const me = state.me;
   const isHost = !!me && me.id === state.room.host_id;
   const count = state.players.length;
@@ -79,6 +82,18 @@ export function Lobby({ state, token, act, onLeave, bots = [], pingBots }: {
                   <PlayerAvatar p={p} size={56} />
                 </motion.div>
                 <b>{p.name}{bots.includes(p.id) && <span className="bot-tag">{t('solo.tag')}</span>}{p.is_host && <span style={{ color: 'var(--accent)' }} title={t('lb.host')}><Icon name="crown" size={14} /></span>}</b>
+                {bots.includes(p.id) && botInfo?.[p.id] && (() => {
+                  const bi = botInfo[p.id];
+                  const cycle = (l: number, s: number) => token && void act(() => rpc.setBot(token, p.id, l, s).then(() => pingBots?.()));
+                  return (
+                    <span className="bot-chips">
+                      <button className="bot-chip" disabled={!isHost} title={t('solo.tap_level')}
+                        onClick={() => cycle(bi.l % 3 + 1, bi.s)}>{t(bi.l === 1 ? 'solo.easy' : bi.l === 2 ? 'solo.medium' : 'solo.hard')}</button>
+                      <button className="bot-chip sty" disabled={!isHost} title={t('solo.tap_style')}
+                        onClick={() => cycle(bi.l, (bi.s + 1) % 4)}>{t(STYLE_KEYS[bi.s])}</button>
+                    </span>
+                  );
+                })()}
                 {isHost && bots.includes(p.id) && <button className="bot-x" aria-label={t('solo.remove')} title={t('solo.remove')}
                   onClick={() => token && void act(() => rpc.removeBot(token, p.id).then(() => pingBots?.()))}><Icon name="x" size={12} /></button>}
                 {p.class ? <span className="muted small">{CLASSES[p.class].name}</span>
@@ -112,9 +127,14 @@ export function Lobby({ state, token, act, onLeave, bots = [], pingBots }: {
       {isHost && !teamMode && (
         <div className="bot-row">
           <span className="label">{t('solo.add')}</span>
+          <span className="bot-styles" role="group" aria-label={t('solo.style')}>
+            {[0, 1, 2, 3].map((s) => (
+              <button key={s} className={`chip${botStyle === s ? ' on' : ''}`} aria-pressed={botStyle === s} onClick={() => setBotStyle(s)}>{t(STYLE_KEYS[s])}</button>
+            ))}
+          </span>
           {([1, 2, 3] as const).map((lv) => (
             <button key={lv} className="btn sm ghost" disabled={count >= max || (duelMode && count >= 2)}
-              onClick={() => token && void act(() => rpc.addBot(token, lv).then(() => pingBots?.()))}>
+              onClick={() => token && void act(() => rpc.addBot(token, lv, botStyle).then(() => pingBots?.()))}>
               + {t(lv === 1 ? 'solo.easy' : lv === 2 ? 'solo.medium' : 'solo.hard')}
             </button>
           ))}

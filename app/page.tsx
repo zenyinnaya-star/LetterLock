@@ -46,7 +46,7 @@ export default function Home() {
         : await rpc.createRoom(name.trim(), cls);
       if (kind === 'duel') await rpc.updateSettings(r.token, { mode: 'duel', max_players: 2 });
       if (kind === 'team') await rpc.updateSettings(r.token, { mode: 'team' });
-      if (kind === 'solo') for (let i = 0; i < 3; i++) await rpc.addBot(r.token, lvl);
+      if (kind === 'solo') for (let i = 0; i < 3; i++) await rpc.addBot(r.token, lvl, [1, 2, 3][i]);
       if (avatar) await rpc.setAvatar(r.token, avatar).catch(() => undefined);
       await linkProfile(r.token, name.trim());
       saveName(name.trim());

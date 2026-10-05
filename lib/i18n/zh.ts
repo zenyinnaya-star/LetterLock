@@ -363,6 +363,7 @@ const zh: Partial<Record<Key, string>> = {
   'pf.back': "返回",
   'ph.bonus_speed': "速度 +{n}", 'ph.bonus_streak': "连击 x{s} +{n}", 'st.presets': "快速模式", 'st.p_classic': "经典", 'st.p_blitz': "闪电战", 'st.p_sudden': "猝死", 'st.p_hint': "闪电战：倒计时更短。猝死：错一次就出局。",
   'solo.btn': "单人对战机器人", 'solo.easy': "简单", 'solo.medium': "中等", 'solo.hard': "困难", 'solo.add': "添加机器人", 'solo.tag': "机器人", 'solo.note': "机器人遵守同样的规则。简单会犯错，困难会追击。", 'solo.remove': "移除机器人",
+  'solo.s0': "均衡", 'solo.s1': "激进", 'solo.s2': "防守", 'solo.s3': "极速狂魔", 'solo.style': "机器人性格", 'solo.tap_level': "点按更改等级", 'solo.tap_style': "点按更改性格",
   'st.team': '团队',
   'st.team_size': '队伍人数',
   'st.rounds': '轮数',

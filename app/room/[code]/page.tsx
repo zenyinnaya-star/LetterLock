@@ -28,7 +28,7 @@ export default function RoomPage() {
     setLoaded(true);
   }, [code]);
 
-  const { state, error, refresh, offset, stateToken, botIds, pingBots } = useRoom(code, loaded ? token : null);
+  const { state, error, refresh, offset, stateToken, botIds, botInfo, pingBots } = useRoom(code, loaded ? token : null);
 
   // our saved seat no longer exists (e.g. removed after a rematch) → forget it.
   // Only judge a snapshot fetched WITH this token — right after joining, the old token-less snapshot is still on screen.
@@ -61,7 +61,7 @@ export default function RoomPage() {
     return <JoinHere code={code} onJoined={(tk) => { setToken(tk); void refresh(); }} />;
   }
 
-  return <Game state={state} token={state.me ? token : null} offset={offset} refresh={refresh} bots={botIds} pingBots={pingBots} />;
+  return <Game state={state} token={state.me ? token : null} offset={offset} refresh={refresh} bots={botIds} botInfo={botInfo} pingBots={pingBots} />;
 }
 
 function JoinHere({ code, onJoined }: { code: string; onJoined: (token: string) => void }) {

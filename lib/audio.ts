@@ -178,6 +178,26 @@ export const audio = {
     for (let i = 0; i < 12; i++) tone(1200, i * (0.04 + i * 0.008), 0.03, 'square', 0.14);
     [392, 523, 659, 1047].forEach((f, i) => tone(f, 0.95 + i * 0.07, 0.3, 'sawtooth', 0.2));
   },
+  /** Vault slam: heavy thud, chain rattle, lock click. Used when a letter gets locked. */
+  lockSlam(delay = 0) {
+    tone(70, delay, 0.35, 'sine', 0.6, 38);
+    noise(delay, 0.12, 0.6, 500, 0.8, 120);
+    for (let i = 0; i < 4; i++) tone(2400 + i * 300, delay + 0.08 + i * 0.045, 0.05, 'square', 0.1);
+    tone(1800, delay + 0.3, 0.05, 'square', 0.22); tone(900, delay + 0.34, 0.08, 'square', 0.18);
+  },
+  /** Low double thump: last seconds on the clock. */
+  heartbeat() { tone(60, 0, 0.14, 'sine', 0.7, 42); tone(54, 0.2, 0.18, 'sine', 0.55, 38); },
+  /** Doom stinger: a player is eliminated. */
+  elimination() {
+    [196, 185, 165, 147].forEach((f, i) => tone(f, i * 0.16, 0.5, 'sawtooth', 0.22, f * 0.8));
+    tone(55, 0.1, 1.1, 'sine', 0.55, 35);
+    noise(0, 0.5, 0.3, 300, 1, 80);
+  },
+  /** Round-start gong. */
+  gong() {
+    [110, 164.8, 221, 330, 441].forEach((f, i) => tone(f, 0, 2.0 - i * 0.2, 'sine', 0.3 - i * 0.04, f * 0.985));
+    noise(0, 0.1, 0.35, 1500, 0.7);
+  },
   startLobby() {
     if (lobbyTimer !== null || muted) return;
     const notes = [262, 330, 392, 494, 440, 392, 330, 294];

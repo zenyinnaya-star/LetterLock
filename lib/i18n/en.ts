@@ -361,6 +361,7 @@ const en = {
   'pf.back': "Back",
   'ph.bonus_speed': "Speed +{n}", 'ph.bonus_streak': "Streak x{s} +{n}", 'st.presets': "Quick mode", 'st.p_classic': "Classic", 'st.p_blitz': "Blitz", 'st.p_sudden': "Sudden death", 'st.p_hint': "Blitz: short clocks. Sudden death: one strike and you're out.",
   'solo.btn': "Play solo vs bots", 'solo.easy': "Easy", 'solo.medium': "Medium", 'solo.hard': "Hard", 'solo.add': "Add bot", 'solo.tag': "BOT", 'solo.note': "Bots play by the same rules. Easy forgets, Hard hunts.", 'solo.remove': "Remove bot",
+  'solo.s0': "Balanced", 'solo.s1': "Aggressive", 'solo.s2': "Defensive", 'solo.s3': "Speed Demon", 'solo.style': "Bot personality", 'solo.tap_level': "Tap to change level", 'solo.tap_style': "Tap to change personality",
   'st.team': 'Teams', 'st.team_size': 'Team size', 'st.rounds': 'Rounds', 'st.team_hint': 'Two teams, shared locks, no strikes. Highest score after the last round wins.',
   'st.2v2': '2 v 2', 'st.3v3': '3 v 3',
   'tm.team_a': 'Team A', 'tm.team_b': 'Team B', 'tm.vs': 'VS',

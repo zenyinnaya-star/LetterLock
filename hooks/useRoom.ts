@@ -17,6 +17,7 @@ export function useRoom(code: string, token: string | null) {
   const [offset, setOffset] = useState(0); // serverNow - clientNow (ms)
   const [stateToken, setStateToken] = useState<string | null>(null); // the token the current snapshot was fetched with
   const [botIds, setBotIds] = useState<string[]>([]);
+  const [botInfo, setBotInfo] = useState<Record<string, { l: number; s: number }>>({});
   const botsRef = useRef<string[]>([]);
   const versionRef = useRef(-1);
   const inflight = useRef(false);
@@ -83,7 +84,7 @@ export function useRoom(code: string, token: string | null) {
   const pingBots = useCallback(async () => {
     const tk = tokenRef.current;
     if (!tk) return;
-    try { const r = await rpc.botTick(tk); botsRef.current = r.bots; setBotIds(r.bots); } catch { /* not host / not in room */ }
+    try { const r = await rpc.botTick(tk); botsRef.current = r.bots; setBotIds(r.bots); setBotInfo(r.info ?? {}); } catch { /* not host / not in room */ }
   }, []);
   useEffect(() => {
     if (!token || !isHost) return;
@@ -123,5 +124,5 @@ export function useRoom(code: string, token: string | null) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phaseKey, offset, code]);
 
-  return { state, error, refresh, offset, stateToken, botIds, pingBots };
+  return { state, error, refresh, offset, stateToken, botIds, botInfo, pingBots };
 }

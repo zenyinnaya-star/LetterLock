@@ -34,9 +34,9 @@ function classCall(p: PublicPlayer, all: PublicPlayer[], capital = false): strin
   return tr(capital ? 'an.The' : 'an.the', { cls });
 }
 
-export function Game({ state, token, offset, refresh, bots = [], pingBots }: {
+export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBots }: {
   state: RoomState; token: string | null; offset: number; refresh: () => Promise<void>;
-  bots?: string[]; pingBots?: () => Promise<void>;
+  bots?: string[]; botInfo?: Record<string, { l: number; s: number }>; pingBots?: () => Promise<void>;
 }) {
   const t = useT();
   const [toast, setToast] = useState<{ msg: string; good?: boolean } | null>(null);
@@ -75,6 +75,7 @@ export function Game({ state, token, offset, refresh, bots = [], pingBots }: {
     if (p) {
       if (cur.phase !== p.phase) {
         if (cur.phase === 'duel_intro') audio.fight();
+        else if (cur.phase === 'answer') audio.gong();
         if (cur.phase === 'finished') {
           const teamWin = state.room.settings?.mode === 'team'
             ? (me && state.room.winner_team != null ? (state.teams?.find((x) => x.idx === state.room.winner_team)?.id === me.team_id ? 'won' : 'lost') : null)
@@ -84,7 +85,8 @@ export function Game({ state, token, offset, refresh, bots = [], pingBots }: {
           else audio.fanfare();
         }
       }
-      if (cur.strikes > p.strikes || (cur.eliminated && !p.eliminated)) audio.buzzer();
+      if (cur.eliminated && !p.eliminated) audio.elimination();
+      else if (cur.strikes > p.strikes) audio.buzzer();
       else if (cur.answerKey && cur.answerKey !== p.answerKey) {
         if (me?.answer?.valid) audio.success(); else if (!audio.file('nope')) audio.buzzer();
       }
@@ -182,6 +184,7 @@ export function Game({ state, token, offset, refresh, bots = [], pingBots }: {
     if (!(phase === 'answer' || phase === 'guess') || msLeft <= 0) return;
     if (secs === lastTick.current) return;
     lastTick.current = secs;
+    if (secs <= 5) audio.heartbeat();
     if (secs <= 10) {
       audio.tick(true);
       const id = window.setTimeout(() => audio.tick(true), 500);
@@ -200,7 +203,7 @@ export function Game({ state, token, offset, refresh, bots = [], pingBots }: {
   const props = { state, token, msLeft, act };
   let main: React.ReactNode;
   switch (phase) {
-    case 'lobby': main = <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} pingBots={pingBots} />; break;
+    case 'lobby': main = <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} />; break;
     case 'answer': main = <AnswerPhase {...props} />; break;
     case 'reveal': main = <RevealPhase {...props} />; break;
     case 'guess': main = <GuessPhase {...props} />; break;

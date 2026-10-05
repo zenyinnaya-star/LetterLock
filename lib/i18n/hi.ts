@@ -362,6 +362,7 @@ const hi: Partial<Record<Key, string>> = {
   'pf.back': "वापस",
   'ph.bonus_speed': "गति +{n}", 'ph.bonus_streak': "लगातार x{s} +{n}", 'st.presets': "क्विक मोड", 'st.p_classic': "क्लासिक", 'st.p_blitz': "ब्लिट्ज़", 'st.p_sudden': "सडन डेथ", 'st.p_hint': "ब्लिट्ज़: छोटी घड़ी। सडन डेथ: एक गलती और बाहर।",
   'solo.btn': "बॉट्स के खिलाफ अकेले खेलें", 'solo.easy': "आसान", 'solo.medium': "मध्यम", 'solo.hard': "कठिन", 'solo.add': "बॉट जोड़ें", 'solo.tag': "बॉट", 'solo.note': "बॉट्स वही नियम मानते हैं। आसान भूलता है, कठिन शिकार करता है।", 'solo.remove': "बॉट हटाएँ",
+  'solo.s0': "संतुलित", 'solo.s1': "आक्रामक", 'solo.s2': "रक्षात्मक", 'solo.s3': "स्पीड डेमन", 'solo.style': "बॉट का स्वभाव", 'solo.tap_level': "स्तर बदलने के लिए टैप करें", 'solo.tap_style': "स्वभाव बदलने के लिए टैप करें",
   'st.team': 'टीमें',
   'st.team_size': 'टीम का साइज़',
   'st.rounds': 'राउंड',
