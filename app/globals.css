@@ -980,3 +980,36 @@ input { font: inherit; }
   .sel-lock { min-width: 230px; font-size: 16px; }
 }
 .class-chosen.locked { cursor: default; border-color: var(--line); } .class-chosen.locked:hover { border-color: var(--line); }
+
+/* ───────── class select: full-bleed action background ───────── */
+.sel-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.sel-bg-img { position: absolute; inset: 0; }
+.sel-bg-img img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; display: block; }
+.sel-bg-fallback { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(closest-side, color-mix(in srgb, var(--ca) 40%, transparent), transparent); }
+.sel-shade { position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(7,8,22,.55) 0%, rgba(7,8,22,0) 22%, rgba(7,8,22,0) 48%, rgba(7,8,22,.92) 100%),
+    linear-gradient(90deg, rgba(7,8,22,.72) 0%, rgba(7,8,22,0) 30%, rgba(7,8,22,0) 62%, rgba(7,8,22,.78) 100%); }
+.sel-spacer { display: none; }
+.sel-main, .sel-top, .sel-strip { position: relative; z-index: 2; }
+.sel-top { z-index: 3; }
+.sel-strip { position: sticky; z-index: 5; background: linear-gradient(transparent, rgba(7,8,22,.85) 40%); }
+.sel-mode, .sel-you, .sel-right { background: rgba(8,10,26,.62); backdrop-filter: blur(10px) saturate(1.2); border-color: color-mix(in srgb, var(--ca) 35%, var(--line)); }
+@media (max-width: 879px) {
+  .sel-bg-img img { object-position: 50% 22%; }
+  .sel-bg { bottom: auto; height: 78dvh; -webkit-mask-image: linear-gradient(#000 62%, transparent); mask-image: linear-gradient(#000 62%, transparent); }
+  .sel-main { gap: 10px; }
+  .sel-spacer { display: block; height: clamp(120px, 24vh, 220px); }
+  .sel-left { order: 0; } .sel-spacer { order: 1; } .sel-right { order: 2; }
+}
+@media (min-width: 880px) {
+  .sel-main { grid-template-columns: 270px 1fr 360px; }
+  .sel-spacer { display: block; }
+}
+.sel-bg-img img { object-position: 50% 14%; }
+@media (max-width: 879px) {
+  .sel-bg { height: 66dvh; }
+  .sel-spacer { height: clamp(190px, 36vh, 330px); order: 0 !important; }
+  .sel-left { order: 1 !important; } .sel-right { order: 2 !important; }
+  .sel-bg-img img { object-position: 50% 10%; }
+}

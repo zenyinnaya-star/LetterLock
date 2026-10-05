@@ -35,17 +35,17 @@ function Art({ cls }: { cls: PlayerClass }) {
   useEffect(() => setI(0), [cls]);
   const ok = i < srcs.length;
   return (
-    <div className="sel-art" style={{ ['--ca' as string]: a, ['--cb' as string]: b }}>
-      <div className="sel-glow" />
-      <AnimatePresence mode="wait">
-        <motion.div key={cls} className="sel-fig" initial={{ opacity: 0, x: -40, scale: 0.94 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: 30 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 26 }}>
+    <div className="sel-bg" style={{ ['--ca' as string]: a, ['--cb' as string]: b }} aria-hidden>
+      <AnimatePresence>
+        <motion.div key={cls} className="sel-bg-img" initial={{ opacity: 0, scale: 1.08 }} animate={{ opacity: 1, scale: 1.0 }} exit={{ opacity: 0 }}
+          transition={{ opacity: { duration: 0.5 }, scale: { duration: 7, ease: 'easeOut' } }}>
           {ok
             // eslint-disable-next-line @next/next/no-img-element
             ? <img src={srcs[i]} alt="" draggable={false} onError={() => setI((n) => n + 1)} />
-            : <ClassIcon cls={cls} size={300} />}
+            : <div className="sel-bg-fallback"><ClassIcon cls={cls} size={260} /></div>}
         </motion.div>
       </AnimatePresence>
+      <div className="sel-shade" />
     </div>
   );
 }
@@ -115,6 +115,7 @@ function Select() {
 
   return (
     <main className="sel" style={{ ['--ca' as string]: ca, ['--cb' as string]: cb }}>
+      <Art cls={cls} />
       <header className="sel-top">
         <Link href="/play" className="play-back" aria-label={t('pl.back')}><Icon name="logout" size={18} /> {t('pl.back')}</Link>
         <h1>{t('sel.title')}</h1>
@@ -139,7 +140,7 @@ function Select() {
           {err && <motion.div className="note bad" initial={{ x: -8 }} animate={{ x: [8, -6, 4, 0] }}>{err}</motion.div>}
         </aside>
 
-        <Art cls={cls} />
+        <div className="sel-spacer" />
 
         <section className="sel-right">
           <AnimatePresence mode="wait">
