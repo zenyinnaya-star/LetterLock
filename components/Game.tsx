@@ -132,6 +132,8 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   const lastCall = useRef<string | null>(null);
   const knownOut = useRef<Set<string> | null>(null);
   useEffect(() => {
+    // every new phase starts at the top (lobby scroll position used to carry into the game)
+    if (typeof window !== 'undefined' && lastCall.current !== null && lastCall.current !== `${phase}-${round}`) window.scrollTo({ top: 0 });
     const key = `${phase}-${round}`;
     const first = lastCall.current === null;
     if (key === lastCall.current) return;

@@ -150,7 +150,8 @@ input { font: inherit; }
 .tile.sm.revealed { box-shadow: 0 2px 0 #c56a7e; }
 
 /* ───────── HUD scoreboard ───────── */
-.hud { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: thin; }
+.hud { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.hud::-webkit-scrollbar { display: none; }
 .chip {
   flex: 0 0 auto; display: flex; align-items: center; gap: 9px; padding: 7px 12px 7px 7px; min-width: 150px;
   background: var(--surface); border: 1px solid var(--line); border-radius: 14px; position: relative;
