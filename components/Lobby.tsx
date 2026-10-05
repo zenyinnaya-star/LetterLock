@@ -8,13 +8,13 @@ import { WORD_LANGS } from '@/lib/i18n';
 import { useT } from '@/lib/i18n/react';
 import type { RoomState } from '@/lib/types';
 import { CLASSES } from '@/lib/classes';
-import { Icon } from './icons';
+import { ClassIcon, Icon } from './icons';
 import { AvatarPicker } from './AvatarPicker';
 import { PlayerAvatar } from './PlayerAvatar';
 import { TeamLobby } from './team';
 import type { Act } from './phases';
 import { SettingsButton } from './SettingsPanel';
-import { ClassPicker, softSpring, spring } from './ui';
+import { softSpring, spring } from './ui';
 
 const STYLE_KEYS = ['solo.s0', 'solo.s1', 'solo.s2', 'solo.s3'] as const;
 
@@ -120,7 +120,13 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
       {me && (
         <div className="narrow-col">
           <span className="label">{t('lb.class')}</span>
-          <ClassPicker value={me.class} onChange={(c) => token && void act(() => rpc.setClass(token, c))} />
+          {me.class && (
+            <div className="class-chosen locked" aria-label={CLASSES[me.class].name}>
+              <ClassIcon cls={me.class} size={44} />
+              <span className="col" style={{ gap: 0, textAlign: 'left' }}><b>{CLASSES[me.class].name}</b><span className="muted small">{CLASSES[me.class].tagline}</span></span>
+              <Icon name="lock" size={16} />
+            </div>
+          )}
         </div>
       )}
 

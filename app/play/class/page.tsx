@@ -8,6 +8,7 @@ import { AvatarPicker } from '@/components/AvatarPicker';
 import { CLASS_COLORS, ClassIcon, Icon, type IconName } from '@/components/icons';
 import { audio } from '@/lib/audio';
 import { loadAvatar, saveAvatar } from '@/lib/avatar';
+import { actionSources } from '@/lib/classAction';
 import { CLASSES, CLASS_ORDER } from '@/lib/classes';
 import { CLASS_GUIDE } from '@/lib/classGuide';
 import { friendlyError } from '@/lib/errors';
@@ -29,8 +30,10 @@ const LAST = 'letterlock:lastclass';
 
 function Art({ cls }: { cls: PlayerClass }) {
   const [a, b] = CLASS_COLORS[cls];
-  const [ok, setOk] = useState(true);
-  useEffect(() => setOk(true), [cls]);
+  const srcs = actionSources(cls);
+  const [i, setI] = useState(0);
+  useEffect(() => setI(0), [cls]);
+  const ok = i < srcs.length;
   return (
     <div className="sel-art" style={{ ['--ca' as string]: a, ['--cb' as string]: b }}>
       <div className="sel-glow" />
@@ -39,7 +42,7 @@ function Art({ cls }: { cls: PlayerClass }) {
           transition={{ type: 'spring', stiffness: 260, damping: 26 }}>
           {ok
             // eslint-disable-next-line @next/next/no-img-element
-            ? <img src={`/art/class-${cls}.webp`} alt="" draggable={false} onError={() => setOk(false)} />
+            ? <img src={srcs[i]} alt="" draggable={false} onError={() => setI((n) => n + 1)} />
             : <ClassIcon cls={cls} size={300} />}
         </motion.div>
       </AnimatePresence>

@@ -979,3 +979,4 @@ input { font: inherit; }
   .sel-card .class-ico { width: 48px !important; height: 48px !important; }
   .sel-lock { min-width: 230px; font-size: 16px; }
 }
+.class-chosen.locked { cursor: default; border-color: var(--line); } .class-chosen.locked:hover { border-color: var(--line); }
