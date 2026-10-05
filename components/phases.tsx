@@ -499,8 +499,10 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
   const me = state.me;
   const [open, setOpen] = useState<null | { kind: 'card'; id: number } | { kind: 'perk' } | { kind: 'trace' } | { kind: 'ult' }>(null);
   const [ultRound, setUltRound] = useState(-1);
+  const [ultFirst, setUltFirst] = useState<string | null>(null);
   const phase = state.room.phase;
   useEffect(() => setOpen(null), [phase]);
+  useEffect(() => { if (open?.kind !== 'ult') setUltFirst(null); }, [open]);
   // Memory twist: my locks fade out a few seconds into each answer phase, so I have to remember them
   const memoryTwist = state.room.settings.twist === 'memory';
   const [memHidden, setMemHidden] = useState(false);
@@ -558,8 +560,6 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
   const charge = me.charge ?? 0;
   const ultUsable = !!ult && charge >= ult.cost && ult.phases.includes(phase) && ultRound !== state.room.round && (!ult.needsUsed || me.perk_used);
   const ultClass = me.class as 'ninja' | 'oracle' | 'mastermind' | 'hero' | 'jester' | 'villain' | 'hacker' | 'gambler' | 'mimic' | 'parasite' | 'thief' | 'wildcard';
-  const [ultFirst, setUltFirst] = useState<string | null>(null);
-  useEffect(() => { if (open?.kind !== 'ult') setUltFirst(null); }, [open]);
   const ultTargets = me.class === 'mimic' ? anyOthers.filter((p) => p.class !== 'mimic') : others;
   const fireUlt = (targetId: string | null, kind: string | null = null) => {
     setOpen(null);
