@@ -524,17 +524,18 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
   }
 
   const ULTS: Record<string, { cost: number; phases: string[]; target?: boolean; buy?: boolean; needsUsed?: boolean }> = {
-    ninja: { cost: 8, phases: ['answer', 'reveal', 'guess', 'react'] },
-    oracle: { cost: 8, phases: ['reveal', 'guess', 'react'] },
-    mastermind: { cost: 8, phases: ['answer', 'reveal', 'guess'], target: true },
-    hero: { cost: 10, phases: ['answer', 'reveal', 'guess', 'react'], needsUsed: true },
-    jester: { cost: 10, phases: ['answer'] },
-    villain: { cost: 12, phases: ['guess', 'react'], target: true },
-    hacker: { cost: 14, phases: ['guess', 'react'] },
-    gambler: { cost: 6, phases: ['answer', 'reveal', 'guess', 'react'], buy: true },
+    ninja: { cost: 16, phases: ['answer', 'reveal', 'guess', 'react'] },
+    oracle: { cost: 12, phases: ['reveal', 'guess', 'react'] },
+    mastermind: { cost: 12, phases: ['answer', 'reveal', 'guess'], target: true },
+    hero: { cost: 14, phases: ['answer', 'reveal', 'guess', 'react'], needsUsed: true },
+    jester: { cost: 14, phases: ['answer'] },
+    villain: { cost: 18, phases: ['guess', 'react'], target: true },
+    hacker: { cost: 20, phases: ['guess', 'react'] },
+    gambler: { cost: 8, phases: ['answer', 'reveal', 'guess', 'react'], buy: true },
   };
   const ult = cfg.ultimates && !teamMode && !me.eliminated ? ULTS[me.class] : undefined;
-  const ultUsable = !!ult && me.points >= ult.cost && ult.phases.includes(phase) && ultRound !== state.room.round && (!ult.needsUsed || me.perk_used);
+  const charge = me.charge ?? 0;
+  const ultUsable = !!ult && charge >= ult.cost && (me.class !== 'ninja' || state.room.round >= 3) && ult.phases.includes(phase) && ultRound !== state.room.round && (!ult.needsUsed || me.perk_used);
   const ultClass = me.class as 'ninja' | 'oracle' | 'mastermind' | 'hero' | 'jester' | 'villain' | 'hacker' | 'gambler';
   const fireUlt = (targetId: string | null, kind: string | null = null) => {
     setOpen(null);
@@ -660,7 +661,8 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
                   else fireUlt(null);
                 }}>
                 <Icon name="bolt" size={26} />
-                <span>{t(`ult.n.${ultClass}` as never)}<small>{me.points >= ult.cost ? t(`ult.d.${ultClass}` as never) : t('ult.need', { n: ult.cost })} · {t('ult.cost', { n: ult.cost })}</small></span>
+                <span>{t(`ult.n.${ultClass}` as never)}<small>{charge >= ult.cost ? t(`ult.d.${ultClass}` as never) : t('ult.need', { n: ult.cost - charge })} · {charge}/{ult.cost}</small>
+                <i className="ultbar"><b style={{ width: `${Math.min(100, (charge / ult.cost) * 100)}%` }} /></i></span>
               </motion.button>
               <AnimatePresence>
                 {open?.kind === 'ult' && (

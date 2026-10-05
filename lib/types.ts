@@ -48,6 +48,7 @@ export interface Me {
   points: number;
   eliminated: boolean;
   perk_used: boolean;
+  charge?: number;
   hacked: boolean;
   can_trace: boolean;
   bet_active: boolean;
