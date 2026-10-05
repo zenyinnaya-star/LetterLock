@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { announcer } from '@/lib/announcer';
+import { narrator } from '@/lib/narrator';
 import { audio } from '@/lib/audio';
 import { CHAOS_INFO, CLASSES } from '@/lib/classes';
 import { t as tr } from '@/lib/i18n';
@@ -82,7 +83,7 @@ export function ActionFeed({ state }: { state: RoomState }) {
     else if (next.type === 'steal') audio.file('coin-swipe');
     else if (next.type === 'oracle') audio.file('mystical-harp');
     else if (next.type === 'swap') audio.file('boing');
-    else if (next.type === 'chaos') audio.file('siren');
+    else if (next.type === 'chaos') { audio.file('siren'); narrator.say('chaos', { delay: 500 }); }
     else if (next.type === 'latch' || next.type === 'drain') audio.file('squelch');
     else LOOK[next.type].sfx();
     const name = (id?: string | null) => playersRef.current.find((p) => p.id === id)?.name

@@ -7,6 +7,7 @@ import { Icon } from '@/components/icons';
 import { daily, readStreak, recordStreak, type DailyInfo } from '@/lib/daily';
 import { friendlyError, REASONS } from '@/lib/errors';
 import { useT } from '@/lib/i18n/react';
+import { narrator } from '@/lib/narrator';
 import { audio } from '@/lib/audio';
 import { loadName, saveName } from '@/lib/session';
 
@@ -45,7 +46,7 @@ export default function DailyPage() {
 
   async function start() {
     setBusy(true); setErr(null);
-    try { saveName(name.trim()); audio.unlock(); apply(await daily.start(name.trim() || 'Player')); } catch (e) { setErr(friendlyError(e)); }
+    try { saveName(name.trim()); audio.unlock(); narrator.say('daily'); apply(await daily.start(name.trim() || 'Player')); } catch (e) { setErr(friendlyError(e)); }
     setBusy(false);
   }
   async function submit(e: React.FormEvent) {

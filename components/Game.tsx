@@ -192,6 +192,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
     if (!(phase === 'answer' || phase === 'guess') || msLeft <= 0) return;
     if (secs === lastTick.current) return;
     lastTick.current = secs;
+    if (secs === 10 && phase === 'answer') narrator.say('ten', { interrupt: false });
     if (secs <= 5) audio.heartbeat();
     if (secs <= 10) {
       audio.tick(true);
