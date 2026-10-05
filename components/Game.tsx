@@ -257,9 +257,9 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
             <motion.div key={`${phase}-${state.room.round}`}
               className={phase === 'duel_intro' ? 'stage-body duel-wrap' : 'stage-body'}
               style={phase === 'duel_intro' ? { padding: 0 } : undefined}
-              initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -18, filter: 'blur(6px)' }}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -18 }}
               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}>
               {main}
             </motion.div>
