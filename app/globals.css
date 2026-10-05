@@ -622,7 +622,7 @@ input { font: inherit; }
 .rv-chaos { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 440px; }
 @media (max-width: 600px) { .rv-classes { grid-template-columns: repeat(4, 1fr) !important; } }
 .duel-stage { position: relative; }
-.duel-count { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); font-family: var(--display); font-size: clamp(70px, 18vw, 150px); color: #fff; text-shadow: 0 6px 0 #6d0f24, 0 0 40px rgba(255,77,109,.8); pointer-events: none; z-index: 5; }
+.duel-count { position: absolute; inset: 0; padding-bottom: 16%; display: grid; place-items: center; text-align: center; line-height: 1; font-family: var(--display); font-size: clamp(70px, 18vw, 150px); color: #fff; text-shadow: 0 6px 0 #6d0f24, 0 0 40px rgba(255,77,109,.8); pointer-events: none; z-index: 5; }
 .duel-count.fight { color: var(--accent); text-shadow: 0 6px 0 #8a5a00, 0 0 50px rgba(255,207,74,.9); }
 @media (max-width: 520px) {
   .fighters { gap: 8px !important; }
