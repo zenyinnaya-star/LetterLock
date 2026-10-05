@@ -525,17 +525,17 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
 
   const ULTS: Record<string, { cost: number; phases: string[]; target?: boolean; buy?: boolean; needsUsed?: boolean }> = {
     ninja: { cost: 16, phases: ['answer', 'reveal', 'guess', 'react'] },
-    oracle: { cost: 12, phases: ['reveal', 'guess', 'react'] },
-    mastermind: { cost: 12, phases: ['answer', 'reveal', 'guess'], target: true },
+    oracle: { cost: 12, phases: ['answer', 'reveal', 'guess', 'react'] },
+    mastermind: { cost: 12, phases: ['answer', 'reveal', 'guess', 'react'], target: true },
     hero: { cost: 14, phases: ['answer', 'reveal', 'guess', 'react'], needsUsed: true },
-    jester: { cost: 14, phases: ['answer'] },
-    villain: { cost: 18, phases: ['guess', 'react'], target: true },
-    hacker: { cost: 20, phases: ['guess', 'react'] },
+    jester: { cost: 14, phases: ['answer', 'reveal', 'guess', 'react'] },
+    villain: { cost: 18, phases: ['answer', 'reveal', 'guess', 'react'], target: true },
+    hacker: { cost: 20, phases: ['answer', 'reveal', 'guess', 'react'] },
     gambler: { cost: 8, phases: ['answer', 'reveal', 'guess', 'react'], buy: true },
   };
   const ult = cfg.ultimates && !teamMode && !me.eliminated ? ULTS[me.class] : undefined;
   const charge = me.charge ?? 0;
-  const ultUsable = !!ult && charge >= ult.cost && (me.class !== 'ninja' || state.room.round >= 3) && ult.phases.includes(phase) && ultRound !== state.room.round && (!ult.needsUsed || me.perk_used);
+  const ultUsable = !!ult && charge >= ult.cost && ult.phases.includes(phase) && ultRound !== state.room.round && (!ult.needsUsed || me.perk_used);
   const ultClass = me.class as 'ninja' | 'oracle' | 'mastermind' | 'hero' | 'jester' | 'villain' | 'hacker' | 'gambler';
   const fireUlt = (targetId: string | null, kind: string | null = null) => {
     setOpen(null);

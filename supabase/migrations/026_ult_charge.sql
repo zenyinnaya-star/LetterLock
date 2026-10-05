@@ -1,6 +1,6 @@
 -- Ultimates v2: skill charges the ultimate (not score). Charge comes from valid answers (2 + streak + speed bonus)
 -- and cracked locks (+3), caps at 30, and costs are in charge. Ninja nerfed: vision shows 6 random locks, ult costs 16
--- and needs round 3+.
+-- (usable any time).
 
 alter table players add column if not exists charge int not null default 0;
 update players set charge = 0 where charge is null;
@@ -484,7 +484,7 @@ create or replace function use_ultimate(p_token uuid, p_target_id uuid default n
 language plpgsql security definer set search_path = public as $$
 declare
   v_me players; v_room rooms; v_target players; v_cost int; v_letters jsonb; v_hint text; v_prompt bigint;
-  v_result jsonb; v_n int := 0; v_p record; v_held int; v_kind card_kind;
+  v_result jsonb; v_jr int; v_n int := 0; v_p record; v_held int; v_kind card_kind;
 begin
   v_me := _me(p_token);
   select * into v_room from rooms where id = v_me.room_id for update;
@@ -498,8 +498,6 @@ begin
   if v_me.charge < v_cost then raise exception 'NOT_ENOUGH_CHARGE'; end if;
 
   if v_me.class = 'ninja' then
-    if v_room.phase not in ('answer','reveal','guess','react') then raise exception 'WRONG_PHASE'; end if;
-    if v_room.round < 3 then raise exception 'PERK_NOT_READY'; end if;
     select coalesce(jsonb_agg(x.l), '[]'::jsonb) into v_letters from (
       select bl.letter::text as l from banned_letters bl join players p on p.id = bl.player_id
       where p.room_id = v_room.id and not p.eliminated and p.id <> v_me.id
@@ -508,7 +506,6 @@ begin
     insert into intel (room_id, player_id, round, payload) values (v_room.id, v_me.id, v_room.round, v_result);
 
   elsif v_me.class = 'mastermind' then
-    if v_room.phase not in ('answer','reveal','guess') then raise exception 'WRONG_PHASE'; end if;
     select * into v_target from players where id = p_target_id and room_id = v_room.id;
     if not found then raise exception 'TARGET_NOT_FOUND'; end if;
     if v_target.id = v_me.id then raise exception 'CANNOT_TARGET_SELF'; end if;
@@ -520,7 +517,6 @@ begin
     update players set perk_round = v_room.round where id = v_me.id;
 
   elsif v_me.class = 'oracle' then
-    if v_room.phase not in ('reveal','guess','react') then raise exception 'WRONG_PHASE'; end if;
     v_prompt := _pick_prompt(v_room.id);
     update rooms set next_prompt_id = v_prompt where id = v_room.id;
     update players set oracle_round = v_room.round + 1 where id = v_me.id;
@@ -533,11 +529,11 @@ begin
     v_result := jsonb_build_object('kind','hero','rearmed',true);
 
   elsif v_me.class = 'jester' then
-    if v_room.phase <> 'answer' then raise exception 'WRONG_PHASE'; end if;
-    v_result := jsonb_build_object('kind','jester','unlocked',true);
+    -- during the answer phase it unlocks this round; any other time it unlocks the next round's answer
+    v_jr := case when v_room.phase = 'answer' then v_room.round else v_room.round + 1 end;
+    v_result := jsonb_build_object('kind','jester','unlocked',true,'round',v_jr);
 
   elsif v_me.class = 'villain' then
-    if v_room.phase not in ('guess','react') then raise exception 'WRONG_PHASE'; end if;
     select * into v_target from players where id = p_target_id and room_id = v_room.id;
     if not found then raise exception 'TARGET_NOT_FOUND'; end if;
     if v_target.id = v_me.id then raise exception 'CANNOT_TARGET_SELF'; end if;
@@ -548,7 +544,6 @@ begin
     v_result := jsonb_build_object('kind','villain','target_id',v_target.id,'amount',4);
 
   elsif v_me.class = 'hacker' then
-    if v_room.phase not in ('guess','react') then raise exception 'WRONG_PHASE'; end if;
     for v_p in select id from players where room_id = v_room.id and id <> v_me.id and not eliminated loop
       insert into pending_additions (room_id, round, target_id, source_id, kind, amount)
         values (v_room.id, v_room.round, v_p.id, v_me.id, 'hack', 1);
@@ -568,7 +563,7 @@ begin
     v_result := jsonb_build_object('kind','gambler','card',v_kind);
   end if;
 
-  update players set charge = charge - v_cost, ult_round = v_room.round where id = v_me.id;
+  update players set charge = charge - v_cost, ult_round = coalesce(v_jr, v_room.round) where id = v_me.id;
   perform _feed(v_room.id, jsonb_build_object('type','ult','from',v_me.id,'what',v_me.class));
   perform _bump(v_room.id, 'perk_used', jsonb_build_object('player_id', v_me.id, 'class', v_me.class));
   return v_result || jsonb_build_object('cost', v_cost);
