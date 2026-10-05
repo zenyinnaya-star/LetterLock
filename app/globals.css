@@ -1044,3 +1044,7 @@ input { font: inherit; }
 .mode-card.has-bg .mc-desc { color: #dbe1ff; }
 .mode-card.has-bg { min-height: 150px; }
 @media (min-width: 880px) { .mode-card.has-bg { min-height: 170px; } }
+
+/* ultimates */
+.ultbtn { background: linear-gradient(135deg, rgba(255,77,109,.28), rgba(255,207,74,.18)); border-color: rgba(255,120,140,.55); }
+.ultbtn:disabled { opacity: .55; filter: grayscale(.4); }

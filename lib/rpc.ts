@@ -37,6 +37,8 @@ export const rpc = {
       'play_card', { p_token: token, p_card_id: cardId, p_target_id: targetId }),
   usePerk: (token: string, targetId: string | null) =>
     call<Record<string, unknown>>('use_perk', { p_token: token, p_target_id: targetId }),
+  useUltimate: (token: string, targetId: string | null, kind: string | null = null) =>
+    call<Record<string, unknown>>('use_ultimate', { p_token: token, p_target_id: targetId, p_kind: kind }),
   reactReady: (token: string) => call<void>('react_ready', { p_token: token }),
   advance: (code: string) => call<{ ok: boolean; phase?: string; reason?: string }>('advance_phase', { p_code: code }),
   playAgain: (token: string) => call<void>('play_again', { p_token: token }),

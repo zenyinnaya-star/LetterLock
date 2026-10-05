@@ -480,7 +480,8 @@ export function Finished({ state, token, act }: PhaseProps) {
 export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
   const t = useT();
   const me = state.me;
-  const [open, setOpen] = useState<null | { kind: 'card'; id: number } | { kind: 'perk' } | { kind: 'trace' }>(null);
+  const [open, setOpen] = useState<null | { kind: 'card'; id: number } | { kind: 'perk' } | { kind: 'trace' } | { kind: 'ult' }>(null);
+  const [ultRound, setUltRound] = useState(-1);
   const phase = state.room.phase;
   useEffect(() => setOpen(null), [phase]);
   // Memory twist: my locks fade out a few seconds into each answer phase, so I have to remember them
@@ -521,6 +522,24 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
       && state.pending.some((p) => p.target_id === me!.id && p.status === 'pending');
     return false;
   }
+
+  const ULTS: Record<string, { cost: number; phases: string[]; target?: boolean; buy?: boolean; needsUsed?: boolean }> = {
+    ninja: { cost: 8, phases: ['answer', 'reveal', 'guess', 'react'] },
+    oracle: { cost: 8, phases: ['reveal', 'guess', 'react'] },
+    mastermind: { cost: 8, phases: ['answer', 'reveal', 'guess'], target: true },
+    hero: { cost: 10, phases: ['answer', 'reveal', 'guess', 'react'], needsUsed: true },
+    jester: { cost: 10, phases: ['answer'] },
+    villain: { cost: 12, phases: ['guess', 'react'], target: true },
+    hacker: { cost: 14, phases: ['guess', 'react'] },
+    gambler: { cost: 6, phases: ['answer', 'reveal', 'guess', 'react'], buy: true },
+  };
+  const ult = cfg.ultimates && !teamMode && !me.eliminated ? ULTS[me.class] : undefined;
+  const ultUsable = !!ult && me.points >= ult.cost && ult.phases.includes(phase) && ultRound !== state.room.round && (!ult.needsUsed || me.perk_used);
+  const ultClass = me.class as 'ninja' | 'oracle' | 'mastermind' | 'hero' | 'jester' | 'villain' | 'hacker' | 'gambler';
+  const fireUlt = (targetId: string | null, kind: string | null = null) => {
+    setOpen(null);
+    void act(async () => { const r = await rpc.useUltimate(token, targetId, kind); setUltRound(state.room.round); return r; }, t('ult.ok'));
+  };
 
   const perkLabel = !cfg.perks ? t('pk.off')
     : perk ? perk.label
@@ -629,6 +648,37 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
             )}
           </AnimatePresence>
         </div>
+        {ult && (
+          <>
+            <span className="sep" />
+            <div className="sect" style={{ position: 'relative' }}>
+              <motion.button className="perkbtn ultbtn" disabled={!ultUsable} whileTap={{ scale: 0.96 }}
+                animate={ultUsable ? { boxShadow: ['0 0 0 0 #ff4d6d00', '0 0 0 5px #ff4d6d88', '0 0 0 0 #ff4d6d00'] } : {}}
+                transition={{ repeat: Infinity, duration: 1.4 }}
+                onClick={() => {
+                  if (ult.target || ult.buy) setOpen(open?.kind === 'ult' ? null : { kind: 'ult' });
+                  else fireUlt(null);
+                }}>
+                <Icon name="bolt" size={26} />
+                <span>{t(`ult.n.${ultClass}` as never)}<small>{me.points >= ult.cost ? t(`ult.d.${ultClass}` as never) : t('ult.need', { n: ult.cost })} · {t('ult.cost', { n: ult.cost })}</small></span>
+              </motion.button>
+              <AnimatePresence>
+                {open?.kind === 'ult' && (
+                  <motion.div className="popover" initial={{ opacity: 0, y: 8, x: '-50%' }} animate={{ opacity: 1, y: 0, x: '-50%' }} exit={{ opacity: 0, y: 8, x: '-50%' }}>
+                    <span className="label">{ult.buy ? t('ult.buy') : t('ult.pick')}</span>
+                    {ult.buy
+                      ? (['attack', 'shield', 'cleanse'] as const).map((k) => (
+                          <button key={k} className="btn sm ghost" onClick={() => fireUlt(null, k)}><CardIcon kind={k} size={16} /> {CARD_INFO[k].name}</button>
+                        ))
+                      : others.map((p) => (
+                          <button key={p.id} className="btn sm danger" onClick={() => fireUlt(p.id)}><PlayerAvatar p={p} size={18} /> {p.name}</button>
+                        ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </>
+        )}
         {me.intel.length > 0 && (
           <>
             <span className="sep" />

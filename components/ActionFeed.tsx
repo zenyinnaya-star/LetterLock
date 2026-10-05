@@ -34,6 +34,7 @@ const LOOK: Record<FeedItem['type'], { icon: IconName; tone: string; sfx: () => 
   oracle: { icon: 'orb', tone: 'oracle', sfx: () => audio.mystic() },
   swap: { icon: 'swap', tone: 'jester', sfx: () => audio.whoosh() },
   chaos: { icon: 'dice', tone: 'chaos', sfx: () => audio.wheel() },
+  ult: { icon: 'bolt', tone: 'gold', sfx: () => audio.whoosh() },
 };
 
 const ARROW_TYPES = ['attack', 'hack', 'block', 'absorb', 'caught', 'trace_miss', 'steal', 'drop', 'latch', 'drain', 'host_down', 'mimic', 'swap'];
@@ -166,6 +167,7 @@ function Banner({ item, state, meId }: { item: FeedItem; state: RoomState; meId:
     case 'mimic': text = R('fd.mimic', <em>{t('fd.now_a', { cls: CLASSES[item.what as PlayerClass]?.name ?? item.what ?? '' })}</em>); break;
     case 'oracle': text = R('fd.oracle', <em>{t('fd.oracle_sub')}</em>); break;
     case 'swap': text = R('fd.swap', <em>{t('fd.switcheroo')}</em>); break;
+    case 'ult': text = R('fd.ult', <em>{CLASSES[item.what as PlayerClass]?.name ?? ''}</em>); break;
     case 'chaos': text = <><b>{t('fd.wildcard')}</b> {CHAOS_INFO[item.what ?? '']?.name ?? 'chaos'}<em>{CHAOS_INFO[item.what ?? '']?.text}</em></>; break;
   }
   const showArrow = ARROW_TYPES.includes(item.type);

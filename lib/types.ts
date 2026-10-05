@@ -123,10 +123,11 @@ export interface RoomSettings {
   perks: boolean;
   strikes: number;
   twist?: 'none' | 'reverse' | 'chaos' | 'memory';
+  ultimates?: boolean;
 }
 
 export type FeedType = 'attack' | 'hack' | 'block' | 'cleanse' | 'absorb' | 'caught' | 'trace_miss' | 'chicken'
-  | 'bet' | 'bet_win' | 'bet_lose' | 'steal' | 'drop' | 'latch' | 'drain' | 'host_down' | 'mimic' | 'oracle' | 'swap' | 'chaos';
+  | 'bet' | 'bet_win' | 'bet_lose' | 'steal' | 'drop' | 'latch' | 'drain' | 'host_down' | 'mimic' | 'oracle' | 'swap' | 'chaos' | 'ult';
 export interface FeedItem {
   id: number;
   round: number;

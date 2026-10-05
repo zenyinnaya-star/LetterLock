@@ -177,6 +177,7 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
             <Toggle label={t('st.shrink')} icon="clock" on={local.shrink} disabled={!editable} onClick={() => change({ shrink: !local.shrink })} />
             <Toggle label={t('st.cards')} icon="cards" on={local.cards} disabled={!editable} onClick={() => change({ cards: !local.cards })} />
             <Toggle label={t('st.perks')} icon="bolt" on={local.perks} disabled={!editable} onClick={() => change({ perks: !local.perks })} />
+            {local.mode !== 'team' && <Toggle label={t('st.ults')} icon="bolt" on={!!local.ultimates} disabled={!editable} onClick={() => change({ ultimates: !local.ultimates })} />}
           </section>
         )}
 
