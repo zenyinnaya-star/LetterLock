@@ -255,7 +255,7 @@ export function RulesVideo() {
   useEffect(() => {
     if (!playing) return;
     const scene = SCENES[idx];
-    let spoke = !(getPrefs().voice && 'speechSynthesis' in window);
+    let spoke = true; // no browser TTS: Gideon is the only voice
     let waited = false;
     const t0 = performance.now();
     const next = () => {
