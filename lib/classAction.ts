@@ -1,5 +1,5 @@
 // Action scenes for the class-select screen. Hosted on the Higgsfield CDN for now;
-// to self-host, save each into /public/art/action-<class>.png and the local file wins.
+// to self-host, save each into /public/art/action-<class>.webp and the local file wins.
 import type { PlayerClass } from './types';
 
 export const ACTION_ART: Record<PlayerClass, string> = {
@@ -19,5 +19,5 @@ export const ACTION_ART: Record<PlayerClass, string> = {
 
 /** Order to try: local self-hosted file, then the CDN scene, then the portrait. */
 export function actionSources(c: PlayerClass): string[] {
-  return [`/art/action-${c}.png`, ACTION_ART[c], `/art/class-${c}.webp`];
+  return [`/art/action-${c}.webp`, ACTION_ART[c], `/art/class-${c}.webp`];
 }
