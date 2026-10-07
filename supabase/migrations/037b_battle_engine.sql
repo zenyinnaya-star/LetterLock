@@ -118,19 +118,17 @@ end $$;
 create or replace function _battle_resolve(p_room uuid) returns void
 language plpgsql security definer set search_path = public as $$
 declare b battles; u battle_units; t battle_units; e battle_units; lg jsonb := '[]'::jsonb;
-        dmg int; heal int; r double precision; k int := 0; tgt uuid;
+        dmg int; heal int; r double precision; tgt uuid; ids uuid[];
+        i uuid;
 begin
   select * into b from battles where room_id = p_room for update;
-  select * into e from battle_units where room_id = p_room and side = 'enemy';
-  -- unsubmitted living heroes do a weak guard
   update battle_units set action = 'guard', power = 3, word = null
     where room_id = p_room and side = 'hero' and hp > 0 and action is null;
-  for u in select * from battle_units where room_id = p_room and hp > 0
-           and (action is not null or side = 'enemy')
-           order by spd + _brand(b.seed, b.turn, id::text) * 4 desc loop
-    select * into u from battle_units where id = u.id;
+  select array_agg(id order by spd + _brand(b.seed, b.turn, id::text) * 4 desc) into ids
+    from battle_units where room_id = p_room and hp > 0;
+  foreach i in array ids loop
+    select * into u from battle_units where id = i;
     continue when u.hp <= 0;
-    k := k + 1;
     if u.side = 'hero' then
       select * into e from battle_units where room_id = p_room and side = 'enemy';
       continue when e.hp <= 0;
@@ -159,16 +157,11 @@ begin
       continue when tgt is null;
       select * into t from battle_units where id = tgt;
       r := _brand(b.seed, b.turn, 'edodge');
-      if r < least(0.4, (t.spd - 10) * 0.02) then
+      if r < least(0.4, greatest(0, t.spd - 10) * 0.02) then
         lg := lg || jsonb_build_object('t','dodge','a',u.name,'d',t.name);
       else
         dmg := u.atk + floor(_brand(b.seed, b.turn, 'edmg') * 6)::int + b.turn;
-        if t.shield > 0 then
-          update battle_units set shield = greatest(0, shield - dmg), hp = hp - greatest(0, dmg - shield) where id = t.id;
-        else
-          update battle_units set hp = greatest(0, hp - dmg) where id = t.id;
-        end if;
-        update battle_units set hp = greatest(0, hp) where id = t.id;
+        update battle_units set shield = greatest(0, shield - dmg), hp = greatest(0, hp - greatest(0, dmg - shield)) where id = t.id;
         lg := lg || jsonb_build_object('t','hit','a',u.name,'d',t.name,'n',dmg);
       end if;
     end if;
