@@ -17,6 +17,7 @@ import { clearSession } from '@/lib/session';
 import type { PublicPlayer, RoomState } from '@/lib/types';
 import { Icon } from './icons';
 import { Lobby } from './Lobby';
+import { Battle } from './Battle';
 import { Reactions } from './Reactions';
 import { ActionFeed } from './ActionFeed';
 import { DuelHud } from './DuelHud';
@@ -220,7 +221,8 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
     case 'guess': main = <GuessPhase {...props} />; break;
     case 'react': main = <ReactPhase {...props} />; break;
     case 'duel_intro': main = <DuelIntro {...props} />; break;
-    case 'finished': main = <Finished {...props} />; break;
+    case 'finished': main = <Battle {...props} fallback={<Finished {...props} />} />; break;
+    case 'battle': main = <Battle {...props} />; break;
   }
   const total = phase === 'answer' ? state.room.answer_seconds : PHASE_TOTAL[phase] ?? 0;
   const stageName = state.room.stage;

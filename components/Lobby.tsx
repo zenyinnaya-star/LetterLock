@@ -168,6 +168,9 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
             <button className="btn lg block" disabled={teamMode ? !teamsReady : count < 2} onClick={() => token && void act(() => rpc.start(token))}>
               {teamMode ? (teamsReady ? t('tm.start', { n: count }) : t('tm.need_full')) : count < 2 ? (duelMode ? t('lb.wait_challenger') : t('lb.wait_more')) : duelMode ? t('lb.fight') : t('lb.start', { n: count })}
             </button>
+            <button className="btn ghost block" disabled={teamMode || duelMode} onClick={() => token && void act(() => rpc.startPve(token))}>
+              ⚔ Start PvE co-op (beta)
+            </button>
             <div className="muted small center">{t('lb.host_hint')}</div>
           </>
         ) : (

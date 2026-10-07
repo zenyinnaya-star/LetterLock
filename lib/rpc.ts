@@ -21,7 +21,22 @@ export interface Recap {
     events: { id: number; type: string; name?: string; from?: string | null; to?: string | null; what?: string; amount?: number }[] }[];
 }
 
+export interface BattleUnit {
+  id: string; side: 'hero' | 'enemy'; player_id: string | null; name: string; hp: number; max_hp: number;
+  shield: number; spd: number; locked: boolean; action: string | null; power: number | null;
+}
+export interface BattleLogEntry { t: 'hit' | 'miss' | 'dodge' | 'guard' | 'heal'; a: string; d?: string; n?: number; w?: string }
+export interface BattleState {
+  turn: number; step: 'input' | 'won' | 'lost'; ends_at: string; prompt: string; enemy: string;
+  log: BattleLogEntry[]; version: number; me: string; units: BattleUnit[];
+}
+
 export const rpc = {
+  startPve: (token: string) => call<void>('start_pve', { p_token: token }),
+  getBattle: (token: string) => call<BattleState | null>('get_battle', { p_token: token }),
+  battleSubmit: (token: string, word: string, action: string) =>
+    call<{ ok: boolean; reason?: string; power?: number }>('battle_submit', { p_token: token, p_word: word, p_action: action }),
+  battleStep: (token: string, turn: number) => call<void>('battle_step', { p_token: token, p_turn: turn }),
   getRecap: (code: string) => call<Recap>('get_recap', { p_code: code }),
   createRoom: (name: string, cls: PlayerClass) => call<JoinResult>('create_room', { p_name: name, p_class: cls }),
   joinRoom: (code: string, name: string, cls: PlayerClass) =>

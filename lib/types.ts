@@ -1,4 +1,4 @@
-export type Phase = 'lobby' | 'answer' | 'reveal' | 'guess' | 'react' | 'duel_intro' | 'finished';
+export type Phase = 'lobby' | 'answer' | 'reveal' | 'guess' | 'react' | 'duel_intro' | 'finished' | 'battle';
 export type PlayerClass = 'ninja' | 'mastermind' | 'hero' | 'villain' | 'hacker'
   | 'mimic' | 'gambler' | 'thief' | 'parasite' | 'oracle' | 'wildcard' | 'jester';
 export type ChaosKind = 'swap' | 'no_e' | 'shuffle' | 'double' | 'amnesty' | 'speed';
