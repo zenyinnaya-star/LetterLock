@@ -15,6 +15,7 @@ import { TeamLobby } from './team';
 import type { Act } from './phases';
 import { SettingsButton } from './SettingsPanel';
 import { HeroCards } from './HeroCards';
+import { StoryLobby } from './StoryLobby';
 import type { HeroId } from '@/lib/heroes';
 import { softSpring, spring } from './ui';
 
@@ -58,6 +59,8 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
       }
     } catch { /* cancelled */ }
   }
+
+  if (story && !teamMode && !duelMode) return <StoryLobby state={state} token={token} act={act} onLeave={onLeave} picks={picks} isHost={isHost} />;
 
   return (
     <>

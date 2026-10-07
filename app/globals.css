@@ -1260,3 +1260,33 @@ html[data-stage='library'] .stage-title { animation: promptfade 14s ease forward
 .sk-zoom{position:absolute;left:12px;top:12px;display:flex;flex-direction:column;gap:6px}.sk-zoom button{width:38px;height:38px;border-radius:10px;border:1px solid #334155;background:#0f172acc;color:#fff;font-size:18px}
 .sk-detail{position:absolute;right:12px;bottom:12px;width:min(300px,calc(100% - 24px));background:#0b1020ee;border:2px solid;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px}
 .sk-detail h2{margin:0}.sk-detail p{margin:0;font-size:14px}
+
+/* ── Story lobby ── */
+.sl{position:fixed;inset:0;z-index:40;overflow-y:auto;color:#fff;background:#05070f}
+.sl-bg{position:fixed;inset:0;background-size:cover;background-position:center;filter:saturate(1.15) brightness(.6);transform:scale(1.05);animation:slpan 40s ease-in-out infinite alternate}
+@keyframes slpan{to{transform:scale(1.15) translateX(-2%)}}
+.sl-shade{position:fixed;inset:0;background:radial-gradient(90% 70% at 50% 35%,transparent,rgba(3,5,12,.85)),linear-gradient(to top,#05070f,transparent 40%)}
+.sl-embers i{position:fixed;bottom:-10px;width:4px;height:4px;border-radius:50%;background:#fbbf24;box-shadow:0 0 8px #f59e0b;opacity:0;animation:slrise linear infinite}
+@keyframes slrise{0%{opacity:0;transform:translateY(0)}15%{opacity:.9}100%{opacity:0;transform:translateY(-90vh) translateX(30px)}}
+.sl-in{position:relative;max-width:1000px;margin:0 auto;padding:22px 16px 40px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.sl-title{text-align:center}.sl-title small{letter-spacing:.5em;color:#fde68a;font-size:12px}
+.sl-title h1{margin:2px 0;font-size:clamp(40px,9vw,88px);letter-spacing:.08em;background:linear-gradient(180deg,#fff,#fbbf24 70%,#b45309);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 18px rgba(245,158,11,.5))}
+.sl-title span{color:#cbd5e1;letter-spacing:.2em;font-size:13px}
+.sl-code{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.55);border:1px solid rgba(251,191,36,.4);border-radius:12px;padding:6px 8px 6px 14px;font-size:12px;color:#cbd5e1}
+.sl-code b{font-size:24px;letter-spacing:.3em;color:#fde68a}.sl-code button{background:#b45309;color:#fff;border:0;border-radius:8px;padding:6px 12px;cursor:pointer}
+.sl-party{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%}
+.sl-slot{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;min-height:300px;padding:10px 6px;border-radius:16px;border:2px dashed rgba(148,163,184,.35);background:linear-gradient(to top,rgba(0,0,0,.6),rgba(15,23,42,.25));text-align:center}
+.sl-slot.on{border:2px solid var(--hc);background:linear-gradient(to top,rgba(0,0,0,.7),color-mix(in srgb,var(--hc) 22%,transparent));box-shadow:0 0 24px color-mix(in srgb,var(--hc) 45%,transparent)}
+.sl-slot.me{outline:2px solid #fde047;outline-offset:3px}
+.sl-fig{height:210px;display:flex;align-items:flex-end;justify-content:center}.sl-fig img{height:100%;width:auto;filter:drop-shadow(0 10px 12px rgba(0,0,0,.7))}
+.sl-fig.q{font-size:64px;color:rgba(148,163,184,.4);align-items:center}
+.sl-slot b{font-size:15px}.sl-slot small{font-size:11px;color:#cbd5e1}
+.sl-pick{width:100%;background:rgba(5,8,18,.6);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:12px}
+.sl-pick h3{margin:0 0 8px;text-align:center;letter-spacing:.2em;color:#fde68a;font-size:13px}
+.sl-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;width:100%}
+.sl-begin{background:linear-gradient(180deg,#f59e0b,#b45309);color:#1a0f00;border:2px solid #fde68a;border-radius:14px;padding:14px 34px;font-size:20px;font-weight:900;letter-spacing:.1em;cursor:pointer;display:flex;flex-direction:column;align-items:center;box-shadow:0 0 30px rgba(245,158,11,.5);animation:rgpulse 2s infinite}
+.sl-begin small{font-size:11px;font-weight:600;letter-spacing:.05em}.sl-begin:disabled{opacity:.7}
+.sl-skill,.sl-leave{background:rgba(0,0,0,.55);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px 18px;text-decoration:none;cursor:pointer}
+.sl-wait{color:#cbd5e1;background:rgba(0,0,0,.5);padding:12px 18px;border-radius:12px}
+.sl-flash{position:fixed;inset:0;z-index:5;background:#000;display:flex;align-items:center;justify-content:center;font-size:clamp(20px,5vw,42px);letter-spacing:.3em;color:#fde68a}
+@media (max-width:700px){.sl-party{grid-template-columns:repeat(2,1fr)}.sl-slot{min-height:240px}.sl-fig{height:160px}}
