@@ -1386,3 +1386,10 @@ kbd{border:1px solid #b8b2a2;border-radius:3px;padding:0 4px;font-size:10px;marg
 .sn a{color:#cbd5e1;text-decoration:none;font-size:13px}.sn-tabs{display:flex;gap:4px}.sn-tabs a{padding:6px 14px;border-radius:8px;border:1px solid transparent}.sn-tabs .on{color:#fff;border-color:#fbbf24;background:rgba(251,191,36,.15)}
 .cp-link{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);color:#cbd5e1;border-radius:10px;padding:9px 14px;text-decoration:none;font-size:13px;margin-left:auto}.cp-link+.cp-link{margin-left:0}
 .sk-svg{height:calc(100dvh - 120px)!important}
+.rg-cap{position:absolute;left:50%;top:44%;transform:translateX(-50%);z-index:40;background:rgba(0,0,0,.72);border:1px solid rgba(251,191,36,.5);color:#fff;border-radius:10px;padding:6px 14px;font-size:14px;font-weight:700;animation:rgcap .65s ease-out;pointer-events:none;white-space:nowrap}
+@keyframes rgcap{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+.rg-turn{position:absolute;left:50%;top:38%;transform:translateX(-50%);z-index:41;padding:6px 22px;border-radius:999px;font-weight:900;letter-spacing:.14em;font-size:14px;pointer-events:none;white-space:nowrap}
+.rg-turn.mine{background:linear-gradient(180deg,#f59e0b,#b45309);color:#1a0f00;border:2px solid #fde68a;animation:rgturn 1.2s ease-out,rgpulse 1.6s 1.2s infinite}
+.rg-turn.play{background:rgba(127,29,29,.85);color:#fecaca;border:1px solid #ef4444}
+.rg-turn.wait{background:rgba(0,0,0,.6);color:#cbd5e1;border:1px solid #475569;font-size:12px}
+@keyframes rgturn{0%{opacity:0;transform:translateX(-50%) scale(.6)}60%{transform:translateX(-50%) scale(1.15)}100%{opacity:1;transform:translateX(-50%) scale(1)}}

@@ -56,14 +56,16 @@ const sprite = (u: BattleUnit) => (u.hero ? HERO_SPRITE[u.hero] : ENEMY_SPRITE[u
 
 type Float = { k: string; text: string; cls: string };
 
-function Sprite({ u, floats, picked, onPick, style }: { u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties }) {
+function Sprite({ u, floats, picked, onPick, style, lunge }: { u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
   const pct = Math.max(0, Math.min(100, (u.hp / u.max_hp) * 100));
   const hit = floats.some((f) => f.cls === 'dmg');
   return (
     <div className={`rg-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}${u.name === 'Government' ? ' boss' : ''}`}
       style={style} onClick={onPick} role={onPick ? 'button' : undefined}>
       <div className="rg-ehp"><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.5 }} /></div>
-      <motion.div animate={hit ? { x: [0, -8, 8, -5, 0], filter: ['brightness(2)', 'brightness(1)'] } : {}} transition={{ duration: 0.4 }}>
+      <motion.div key={`${lunge ? 'l' : hit ? 'h' : 'i'}-${floats[0]?.k ?? ''}`}
+        animate={lunge ? { x: [0, u.side === 'hero' ? 90 : -90, 0], scale: [1, 1.12, 1] } : hit ? { x: [0, -10, 10, -6, 0], filter: ['brightness(2.2)', 'brightness(1)'] } : {}}
+        transition={{ duration: lunge ? 0.5 : 0.4 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="rg-img" src={sprite(u)} alt={u.name} draggable={false} style={u.side === 'hero' ? undefined : { transform: 'scaleX(1)' }} />
       </motion.div>
@@ -97,6 +99,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const [bookLeft, setBookLeft] = useState(0);
   const [bookOpenStage, setBookOpenStage] = useState(false);
   const [result, setResult] = useState<StoryResult | null>(null);
+  const [active, setActive] = useState<BattleLogEntry | null>(null);
   const over = b?.step === 'won' || b?.step === 'lost';
   useEffect(() => {
     if (!over || !token) return;
@@ -159,22 +162,41 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     return () => clearInterval(i);
   }, [book]);
 
+  // turn playback: show each log entry one at a time (attacker lunges, target flinches, caption)
+  const playKey = b?.version ?? 0;
+  useEffect(() => {
+    const entries = b?.log ?? [];
+    if (!entries.length) { setActive(null); return; }
+    let i = 0;
+    setActive(entries[0]);
+    const id = setInterval(() => { i += 1; if (i >= entries.length) { clearInterval(id); setActive(null); } else setActive(entries[i]); }, 650);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playKey]);
+
   const orderUnits = useMemo(() => (b?.units ?? []).filter((u) => u.hp > 0).sort((a, c) => c.spd - a.spd), [b]);
 
-  const floatsFor = (u: BattleUnit): Float[] => {
-    if (!b) return [];
-    const out: Float[] = [];
-    b.log.forEach((e, i) => {
-      const k = `${b.version}-${i}`;
-      if (e.t === 'hit' || e.t === 'crit') { if (e.d === u.name) out.push({ k, text: `-${e.n}${e.t === 'crit' ? '!' : ''}`, cls: e.t === 'crit' ? 'dmg crit' : 'dmg' }); }
-      else if (e.t === 'heal' && e.d === u.name) out.push({ k, text: `+${e.n}`, cls: 'heal' });
-      else if (e.t === 'guard' && e.a === u.name) out.push({ k, text: `🛡${e.n}`, cls: 'shield' });
-      else if ((e.t === 'miss' || e.t === 'dodge') && e.d === u.name) out.push({ k, text: e.t === 'miss' ? 'MISS' : 'DODGE', cls: 'miss' });
-      else if ((e.t === 'sweep' || e.t === 'mega_sweep') && u.side === 'enemy') out.push({ k, text: `-${e.n}`, cls: 'dmg' });
-      else if (e.t === 'ult' && u.side === 'enemy' && e.n) out.push({ k, text: `-${e.n}`, cls: 'dmg crit' });
-    });
-    return out.slice(0, 3);
+  const firstNamed = (name: string | undefined, side?: 'hero' | 'enemy') => {
+    const l = (b?.units ?? []).filter((x) => x.name === name && (!side || x.side === side));
+    return l.find((x) => x.hp > 0) ?? l[0];
   };
+  const floatsFor = (u: BattleUnit): Float[] => {
+    if (!b || !active) return [];
+    const e = active; const k = `${b.version}-${e.t}-${e.a}-${e.d ?? ''}-${e.n ?? ''}`;
+    const dn = e.d ? firstNamed(e.d)?.id : undefined;
+    const an = firstNamed(e.a, e.t === 'season' ? 'enemy' : undefined)?.id;
+    if ((e.t === 'hit' || e.t === 'crit') && dn === u.id) return [{ k, text: `-${e.n}${e.t === 'crit' ? '!' : ''}`, cls: e.t === 'crit' ? 'dmg crit' : 'dmg' }];
+    if (e.t === 'heal' && dn === u.id) return [{ k, text: `+${e.n}`, cls: 'heal' }];
+    if (e.t === 'guard' && an === u.id) return [{ k, text: `🛡${e.n}`, cls: 'shield' }];
+    if ((e.t === 'miss' || e.t === 'dodge') && dn === u.id) return [{ k, text: e.t === 'miss' ? 'MISS' : 'DODGE', cls: 'miss' }];
+    if ((e.t === 'sweep' || e.t === 'mega_sweep') && u.side === 'enemy') return [{ k, text: `-${e.n}`, cls: 'dmg' }];
+    if (e.t === 'ult' && u.side === 'enemy' && e.n) return [{ k, text: `-${e.n}`, cls: 'dmg crit' }];
+    if (e.t === 'season' && u.side === 'hero') return [{ k, text: 'TAX!', cls: 'dmg crit' }];
+    if ((e.t === 'group_heal' || e.t === 'full_heal') && u.side === 'hero') return [{ k, text: e.n ? `+${e.n}` : '+', cls: 'heal' }];
+    return [];
+  };
+  const lungeId = active && ['hit', 'crit', 'miss', 'dodge', 'guard', 'heal', 'ult', 'season', 'sweep', 'mega_sweep'].includes(active.t)
+    ? firstNamed(active.t === 'dodge' ? active.d : active.a, active.t === 'dodge' ? undefined : undefined)?.id : undefined;
 
   if (loaded && !b) return <>{fallback ?? null}</>;
   if (!b) return <div className="center muted">Loading battle…</div>;
@@ -280,13 +302,20 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           {b.locked && <div className="rg-lock">🔒 Locked: <b>{b.locked.toUpperCase().split('').join(' ')}</b></div>}
         </div>
 
+        {active && <div className="rg-cap" key={`${active.t}-${active.a}-${active.n}`}>{logLine(active)}</div>}
+
+        <div className={`rg-turn${active ? ' play' : canAct ? ' mine' : ' wait'}`} key={active ? 'p' : canAct ? `m${b.turn}` : 'w'}>
+          {active ? (active.a && enemies.some((e) => e.name === active.a) ? '⚔ Enemies attack…' : '⚔ Resolving the turn…')
+            : mine && mine.hp <= 0 ? 'You are down' : canAct ? `YOUR TURN · Turn ${b.turn}` : mine?.locked ? 'Locked in · waiting for the team' : 'Waiting…'}
+        </div>
+
         {/* units */}
         {enemies.map((u, i) => (
-          <Sprite key={u.id} u={u} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={target === u.id}
+          <Sprite key={u.id} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={target === u.id}
             onPick={needsEnemy && canAct && u.hp > 0 ? () => setTarget(target === u.id ? null : u.id) : undefined} />
         ))}
         {heroes.map((u, i) => (
-          <Sprite key={u.id} u={u} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
+          <Sprite key={u.id} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
             onPick={needsAlly && canAct && u.hp > 0 ? () => setTarget(target === u.id ? null : u.id) : undefined} />
         ))}
 
