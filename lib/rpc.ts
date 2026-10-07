@@ -23,13 +23,14 @@ export interface Recap {
 
 export interface BattleUnit {
   id: string; side: 'hero' | 'enemy'; player_id: string | null; name: string; hero: string | null; corruption: number; hp: number; max_hp: number;
-  shield: number; spd: number; locked: boolean; action: string | null; power: number | null;
+  shield: number; spd: number; locked: boolean; action: string | null; power: number | null; ult?: number;
 }
-export interface BattleLogEntry { t: 'hit' | 'crit' | 'miss' | 'dodge' | 'guard' | 'heal' | 'sweep' | 'group_heal' | 'cleanse' | 'season' | 'corrupt' | 'resist' | 'stage'; a: string; d?: string; n?: number; w?: string }
+export interface BattleLogEntry { t: 'hit' | 'crit' | 'miss' | 'dodge' | 'guard' | 'heal' | 'sweep' | 'group_heal' | 'cleanse' | 'season' | 'corrupt' | 'resist' | 'stage' | 'ult' | 'mega_sweep' | 'full_heal' | 'revive' | 'overcharge' | 'book'; a: string; d?: string; n?: number; w?: string }
 export interface BattleState {
   turn: number; step: 'input' | 'won' | 'lost'; ends_at: string; prompt: string; enemy: string;
   cards: string[]; card_used: boolean; stage: number; stages: number; locked: string; intent: string; next_intent: string; drain: boolean;
   log: BattleLogEntry[]; version: number; me: string; units: BattleUnit[];
+  book_used?: boolean; book?: { prompt: string; ends_at: string } | null;
 }
 
 export const rpc = {
@@ -41,6 +42,8 @@ export const rpc = {
   battleSubmit: (token: string, word: string, action: string, target: string | null) =>
     call<{ ok: boolean; reason?: string; power?: number; letter?: string }>('battle_submit', { p_token: token, p_word: word, p_action: action, p_target: target }),
   battleCard: (token: string, kind: string) => call<{ ok: boolean }>('battle_card', { p_token: token, p_kind: kind }),
+  bookOpen: (token: string) => call<{ ok: boolean; reason?: string; prompt?: string; ends_at?: string }>('book_open', { p_token: token }),
+  bookAnswer: (token: string, word: string) => call<{ ok: boolean; reason?: string; card?: string }>('book_answer', { p_token: token, p_word: word }),
   battleStep: (token: string, turn: number) => call<void>('battle_step', { p_token: token, p_turn: turn }),
   getRecap: (code: string) => call<Recap>('get_recap', { p_code: code }),
   createRoom: (name: string, cls: PlayerClass) => call<JoinResult>('create_room', { p_name: name, p_class: cls }),

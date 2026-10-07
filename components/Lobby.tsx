@@ -185,10 +185,11 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
       <div className="narrow-col">
         {isHost ? (
           <>
-            {story ? (
+            {story ? (<>
+              <a className="btn block" href="/skills" style={{ textAlign: 'center' }}>✦ Skill Tree</a>
               <button className="btn lg block" onClick={() => token && void act(() => rpc.startPve(token))}>
                 ⚔ Begin the Story ({count} {count === 1 ? 'hero' : 'heroes'})
-              </button>
+              </button></>
             ) : (
               <>
             <button className="btn lg block" disabled={teamMode ? !teamsReady : count < 2} onClick={() => token && void act(() => rpc.start(token))}>
