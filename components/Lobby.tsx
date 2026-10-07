@@ -14,6 +14,8 @@ import { PlayerAvatar } from './PlayerAvatar';
 import { TeamLobby } from './team';
 import type { Act } from './phases';
 import { SettingsButton } from './SettingsPanel';
+import { HeroCards } from './HeroCards';
+import type { HeroId } from '@/lib/heroes';
 import { softSpring, spring } from './ui';
 
 const STYLE_KEYS = ['solo.s0', 'solo.s1', 'solo.s2', 'solo.s3'] as const;
@@ -25,9 +27,14 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
   const [copied, setCopied] = useState(false);
   const [botStyle, setBotStyle] = useState(0);
   const [story, setStory] = useState(false);
+  const [picks, setPicks] = useState<{ player_id: string; hero: string }[]>([]);
   useEffect(() => {
-    try { setStory(sessionStorage.getItem(`letterlock:story:${state.room.code}`) === '1'); } catch { /* ignore */ }
+    try { if (sessionStorage.getItem(`letterlock:story:${state.room.code}`) === '1') setStory(true); } catch { /* ignore */ }
   }, [state.room.code]);
+  useEffect(() => {
+    if (!token) return;
+    rpc.storyInfo(token).then((i) => { if (i.story) setStory(true); setPicks(i.picks); }).catch(() => undefined);
+  }, [token, state.room.state_version]);
   const me = state.me;
   const isHost = !!me && me.id === state.room.host_id;
   const count = state.players.length;
@@ -114,7 +121,16 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
       )}
 
       {me && (
-        <div className="narrow-col">
+        {story && (
+        <div className="hc-lobby">
+          <HeroCards value={(picks.find((x) => x.player_id === state.me?.id)?.hero as HeroId) ?? null}
+            taken={Object.fromEntries(picks.filter((x) => x.player_id !== state.me?.id).map((x) => [x.hero, state.players.find((p) => p.id === x.player_id)?.name ?? 'a player']))}
+            onPick={(h) => token && void act(() => rpc.setHero(token, h))} />
+          <div className="muted small center">Pick your hero. Unpicked heroes are assigned automatically when the Story begins.</div>
+        </div>
+      )}
+
+      <div className="narrow-col">
           <span className="label">{t('lb.avatar')}</span>
           <AvatarPicker name={me.name} url={state.players.find((p) => p.id === me.id)?.avatar_url ?? null}
             onChange={(url) => { saveAvatar(url); if (token) void act(() => rpc.setAvatar(token, url)); }} />

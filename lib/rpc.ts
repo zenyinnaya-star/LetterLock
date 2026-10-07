@@ -33,6 +33,9 @@ export interface BattleState {
 }
 
 export const rpc = {
+  setStory: (token: string) => call<void>('set_story', { p_token: token }),
+  setHero: (token: string, hero: string | null) => call<void>('set_hero', { p_token: token, p_hero: hero }),
+  storyInfo: (token: string) => call<{ story: boolean; picks: { player_id: string; hero: string }[] }>('story_info', { p_token: token }),
   startPve: (token: string) => call<void>('start_pve', { p_token: token }),
   getBattle: (token: string) => call<BattleState | null>('get_battle', { p_token: token }),
   battleSubmit: (token: string, word: string, action: string, target: string | null) =>

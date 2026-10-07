@@ -19,6 +19,7 @@ import { linkProfile } from '@/lib/profile';
 import { rpc } from '@/lib/rpc';
 import { loadName, saveName, saveSession } from '@/lib/session';
 import type { PlayerClass, RoomSettings } from '@/lib/types';
+import { StoryHeroSelect } from '@/components/StoryHeroSelect';
 
 type Kind = 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory' | 'join';
 const META: Record<Kind, { icon: IconName; k: string }> = {
@@ -189,6 +190,11 @@ function Select() {
   );
 }
 
+function Router() {
+  const sp = useSearchParams();
+  return sp.get('mode') === 'story' ? <StoryHeroSelect /> : <Select />;
+}
+
 export default function ClassSelect() {
-  return <Suspense fallback={null}><Select /></Suspense>;
+  return <Suspense fallback={null}><Router /></Suspense>;
 }
