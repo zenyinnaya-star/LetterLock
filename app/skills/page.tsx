@@ -53,6 +53,41 @@ add('u2', 'path', 'Overflow', 'Start every fight with 2 ult charge.', 500, 660, 
 add('u3', 'path', 'Echo', 'Ultimates repeat at 40% power.', 500, 590, ['u2'], 2);
 add('u4', 'path', 'Finale', 'Keystone: ultimate cannot miss and always crits.', 500, 220, ['w9', 'u3'], 4, true);
 
+
+// 24x24 stroke icons (lucide-style paths)
+const IC: Record<string, string> = {
+  quill: 'M20 4c-6 0-11 4-13 11l-3 5 5-3c7-2 11-7 11-13zM9 15l6-6',
+  ink: 'M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z',
+  ruler: 'M3 17 17 3l4 4L7 21zM8 12l2 2M11 9l2 2M14 6l2 2',
+  eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  clover: 'M12 12c-3-5-8-2-6 1s6 1 6-1zm0 0c5-3 2-8-1-6s-1 6 1 6zm0 0c3 5 8 2 6-1s-6-1-6 1zm0 0c-5 3-2 8 1 6s1-6-1-6zM12 12v9',
+  skull: 'M12 3a8 8 0 0 0-5 14v3h10v-3a8 8 0 0 0-5-14zM9 12h.01M15 12h.01M10 17v3M14 17v3',
+  claw: 'M4 20c2-6 4-11 8-16M9 20c1-5 3-9 6-13M14 20c1-4 2-7 5-10',
+  swirl: 'M12 3a9 9 0 1 0 9 9M12 7a5 5 0 1 0 5 5M12 11a1 1 0 1 0 1 1',
+  crown: 'M3 8l4 4 5-7 5 7 4-4-2 11H5zM5 21h14',
+  heart: 'M12 21s-8-5.5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 10c0 5.5-8 11-8 11z',
+  shield: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z',
+  feather: 'M20 4c-8 0-14 5-14 12l-2 4 4-2c7 0 12-6 12-14zM8 16l7-7',
+  cross: 'M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z',
+  drop: 'M12 3c4 5 7 8 7 12a7 7 0 0 1-14 0c0-4 3-7 7-12z',
+  wind: 'M3 9h11a3 3 0 1 0-3-3M3 15h15a3 3 0 1 1-3 3M3 12h7',
+  sun: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2',
+  clock: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2',
+  cards: 'M7 4h9a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM9 9h5M9 13h5',
+  book: 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21h15M8 7h7',
+  star: 'M12 3l2.8 6 6.2.7-4.6 4.2 1.3 6.1L12 17l-5.7 3 1.3-6.1L3 9.7 9.2 9z',
+  bolt: 'M13 2 4 14h7l-1 8 9-12h-7z',
+  repeat: 'M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3',
+  target: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 12h.01',
+  fire: 'M12 2s5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4 1-6 1-9z',
+};
+const NI: Record<string, string> = {
+  p1: 'quill', p2: 'ink', p3: 'ruler', p4: 'eye', p5: 'clover', p6: 'skull', p7: 'claw', p8: 'swirl', p9: 'crown',
+  r1: 'heart', r2: 'shield', r3: 'feather', r4: 'cross', r5: 'sun', r6: 'drop', r7: 'shield', r8: 'wind', r9: 'star',
+  w1: 'clock', w2: 'cards', w3: 'clover', w4: 'book', w5: 'star', w6: 'eye', w7: 'repeat', w8: 'target', w9: 'book',
+  u1: 'bolt', u2: 'fire', u3: 'repeat', u4: 'crown',
+};
+
 const KEY = 'letterlock:skills';
 const POINTS = 12;
 
@@ -118,7 +153,10 @@ export default function Skills() {
             return (
               <g key={n.id} onClick={() => setSel(n.id)} style={{ cursor: 'pointer' }} filter={own ? 'url(#skglow)' : undefined}>
                 <circle cx={n.x} cy={n.y} r={r} fill={own ? c : '#0b1020'} stroke={sel === n.id ? '#fff' : c} strokeWidth={sel === n.id ? 4 : can ? 3 : 2} opacity={own || can ? 1 : 0.5} />
-                <text x={n.x} y={n.y + 5} textAnchor="middle" fontSize={n.big ? 18 : 13} fontWeight="800" fill={own ? '#0b1020' : c}>{n.cost > 1 ? n.cost : '◆'}</text>
+                <g transform={`translate(${n.x - (n.big ? 15 : 10)} ${n.y - (n.big ? 15 : 10)}) scale(${n.big ? 1.25 : 0.83})`}>
+                  <path d={IC[NI[n.id] ?? 'star']} fill="none" stroke={own ? '#0b1020' : c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </g>
+                {n.cost > 1 && <text x={n.x + r - 2} y={n.y + r} textAnchor="middle" fontSize="12" fontWeight="800" fill="#fff" stroke="#000" strokeWidth="3" paintOrder="stroke">{n.cost}</text>}
               </g>
             );
           })}
@@ -134,6 +172,7 @@ export default function Skills() {
         {node && (
           <aside className="sk-detail" style={{ borderColor: BR[node.branch].color }}>
             <small style={{ color: BR[node.branch].color }}>{BR[node.branch].label} · {node.big ? 'KEYSTONE' : 'NODE'}</small>
+            <svg width="36" height="36" viewBox="0 0 24 24" aria-hidden><path d={IC[NI[node.id] ?? 'star']} fill="none" stroke={BR[node.branch].color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             <h2>{node.name}</h2>
             <p>{node.desc}</p>
             <p className="muted">Cost {node.cost} · {node.req.length ? `Needs ${node.req.map((r) => byId[r].name).join(' or ')}` : 'Starting node'}</p>
