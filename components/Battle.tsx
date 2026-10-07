@@ -43,6 +43,10 @@ function logLine(e: BattleLogEntry) {
     case 'resist': return `${e.d} resists Corruption`;
     case 'stage': return `Encounter ${e.n}`;
     case 'camp': return `Encounter ${e.n} cleared`;
+    case 'e_aoe': return `${e.a} strikes the whole party for ${e.n}!`;
+    case 'e_buff': return `${e.a} rallies the enemies (+2 attack)`;
+    case 'e_debuff': return `${e.a} weakens ${e.d} (-25% Power)`;
+    case 'e_heal': return `${e.a} mends ${e.d} +${e.n}`;
     case 'hit': return `${e.a} hits ${e.d} for ${e.n}${e.w ? ` (${e.w})` : ''}`;
     case 'miss': return `${e.a} misses ${e.d}`;
     case 'dodge': return `${e.d} dodges ${e.a}`;
@@ -191,11 +195,15 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     if ((e.t === 'miss' || e.t === 'dodge') && dn === u.id) return [{ k, text: e.t === 'miss' ? 'MISS' : 'DODGE', cls: 'miss' }];
     if ((e.t === 'sweep' || e.t === 'mega_sweep') && u.side === 'enemy') return [{ k, text: `-${e.n}`, cls: 'dmg' }];
     if (e.t === 'ult' && u.side === 'enemy' && e.n) return [{ k, text: `-${e.n}`, cls: 'dmg crit' }];
+    if (e.t === 'e_aoe' && u.side === 'hero') return [{ k, text: `-${e.n}`, cls: 'dmg' }];
+    if (e.t === 'e_debuff' && dn === u.id) return [{ k, text: 'WEAK', cls: 'miss' }];
+    if (e.t === 'e_heal' && dn === u.id) return [{ k, text: `+${e.n}`, cls: 'heal' }];
+    if (e.t === 'e_buff' && u.side === 'enemy') return [{ k, text: 'ATK ▲', cls: 'shield' }];
     if (e.t === 'season' && u.side === 'hero') return [{ k, text: 'TAX!', cls: 'dmg crit' }];
     if ((e.t === 'group_heal' || e.t === 'full_heal') && u.side === 'hero') return [{ k, text: e.n ? `+${e.n}` : '+', cls: 'heal' }];
     return [];
   };
-  const lungeId = active && ['hit', 'crit', 'miss', 'dodge', 'guard', 'heal', 'ult', 'season', 'sweep', 'mega_sweep'].includes(active.t)
+  const lungeId = active && ['hit', 'crit', 'miss', 'dodge', 'guard', 'heal', 'ult', 'season', 'sweep', 'mega_sweep', 'e_aoe', 'e_buff', 'e_debuff', 'e_heal'].includes(active.t)
     ? firstNamed(active.t === 'dodge' ? active.d : active.a, active.t === 'dodge' ? undefined : undefined)?.id : undefined;
 
   if (loaded && !b) return <>{fallback ?? null}</>;

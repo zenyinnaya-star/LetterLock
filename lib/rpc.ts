@@ -25,7 +25,7 @@ export interface BattleUnit {
   id: string; side: 'hero' | 'enemy'; player_id: string | null; name: string; hero: string | null; corruption: number; hp: number; max_hp: number;
   shield: number; spd: number; locked: boolean; action: string | null; power: number | null; ult?: number;
 }
-export interface BattleLogEntry { t: 'hit' | 'crit' | 'miss' | 'dodge' | 'guard' | 'heal' | 'sweep' | 'group_heal' | 'cleanse' | 'season' | 'corrupt' | 'resist' | 'stage' | 'ult' | 'mega_sweep' | 'full_heal' | 'revive' | 'overcharge' | 'book' | 'camp'; a: string; d?: string; n?: number; w?: string }
+export interface BattleLogEntry { t: 'hit' | 'crit' | 'miss' | 'dodge' | 'guard' | 'heal' | 'sweep' | 'group_heal' | 'cleanse' | 'season' | 'corrupt' | 'resist' | 'stage' | 'ult' | 'mega_sweep' | 'full_heal' | 'revive' | 'overcharge' | 'book' | 'camp' | 'e_aoe' | 'e_buff' | 'e_debuff' | 'e_heal'; a: string; d?: string; n?: number; w?: string }
 export interface BattleState {
   turn: number; step: 'input' | 'camp' | 'won' | 'lost'; ends_at: string; prompt: string; enemy: string;
   cards: string[]; card_used: boolean; stage: number; stages: number; locked: string; intent: string; next_intent: string; drain: boolean;
