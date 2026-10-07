@@ -12,20 +12,29 @@ const ACTIONS = [
   { id: 'heal', label: '✚ Heal', hint: 'Power ×2 to weakest ally' },
 ] as const;
 
+const INTENT: Record<string, string> = {
+  strike: 'Government strikes', red_tape: 'Red Tape: 4 letters locked', taxes: 'Taxes: applies Corruption', tax_season: 'TAX SEASON: huge party-wide hit — Guard!',
+};
+
 function Bar({ u }: { u: BattleUnit }) {
   const pct = Math.max(0, Math.min(100, (u.hp / u.max_hp) * 100));
   return (
     <div className={`bt-unit ${u.side}${u.hp <= 0 ? ' down' : ''}`}>
-      <div className="bt-name">{u.name}{u.locked && u.hp > 0 && u.side === 'hero' ? ' ✓' : ''}</div>
+      <div className="bt-name">{u.name}{u.hero ? ` (${u.hero})` : ''}{u.locked && u.hp > 0 && u.side === 'hero' ? ' ✓' : ''}</div>
       <div className="bt-sprite">{u.side === 'enemy' ? '🧾' : '🧙'}</div>
       <div className="bt-hp"><motion.i animate={{ width: `${pct}%` }} /></div>
-      <div className="bt-nums">{u.hp}/{u.max_hp}{u.shield > 0 ? ` · 🛡${u.shield}` : ''} · SPD {u.spd}</div>
+      <div className="bt-nums">{u.hp}/{u.max_hp}{u.shield > 0 ? ` · 🛡${u.shield}` : ''}{u.corruption > 0 ? ` · ☠${u.corruption}` : ''} · SPD {u.spd}</div>
     </div>
   );
 }
 
 function logLine(e: BattleState['log'][number]) {
   switch (e.t) {
+    case 'crit': return `${e.a} CRITS ${e.d} for ${e.n}${e.w ? ` (${e.w})` : ''}!`;
+    case 'season': return `${e.a} unleashes Tax Season on the whole party!`;
+    case 'corrupt': return `${e.d} is Corrupted`;
+    case 'resist': return `${e.d} resists Corruption`;
+    case 'stage': return `— Encounter ${e.n} —`;
     case 'hit': return `${e.a} hits ${e.d} for ${e.n}${e.w ? ` (${e.w})` : ''}`;
     case 'miss': return `${e.a} misses ${e.d}`;
     case 'dodge': return `${e.d} dodges ${e.a}`;
@@ -88,7 +97,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     if (!token || !word.trim() || !canAct) return;
     const r = await act(() => rpc.battleSubmit(token, word.trim(), action));
     if (!r) return;
-    if (!r.ok) setMsg(r.reason === 'OFF_TOPIC' ? "That doesn't fit the prompt." : r.reason === 'NOT_A_WORD' ? 'Not a word.' : 'Invalid.');
+    if (!r.ok) setMsg(r.reason === 'OFF_TOPIC' ? "That doesn't fit the prompt." : r.reason === 'NOT_A_WORD' ? 'Not a word.' : r.reason === 'LOCKED' ? `The letter ${r.letter?.toUpperCase()} is locked!` : 'Invalid.');
     else { setMsg(`Locked in! Power ${r.power}`); void load(); }
   }
 
@@ -102,7 +111,10 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
       {b.step === 'input' ? (
         <div className="bt-panel">
-          <div className="bt-turn">Turn {b.turn} · {left}s</div>
+          <div className="bt-turn">Encounter {b.stage}/{b.stages} · {b.enemy} · Turn {b.turn} · {left}s</div>
+          {b.locked && <div className="bt-lock">🔒 Locked letters: <b>{b.locked.toUpperCase().split('').join(' ')}</b></div>}
+          {b.intent !== 'attack' && <div className="bt-intent">⚠ {INTENT[b.intent] ?? b.intent}{b.next_intent !== 'strike' && b.next_intent !== 'attack' ? ` · next: ${INTENT[b.next_intent] ?? b.next_intent}` : ''}</div>}
+          {b.drain && <div className="bt-intent">The Collector garnishes your Power (−20%)</div>}
           <div className="bt-prompt">{b.prompt}</div>
           <div className="bt-actions">
             {ACTIONS.map((a) => (
@@ -122,7 +134,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         </div>
       ) : (
         <div className="bt-panel center">
-          <h2>{b.step === 'won' ? `Victory! The ${b.enemy} is audited out.` : 'Defeat… the IRS wins this round.'}</h2>
+          <h2>{b.step === 'won' ? `Victory! The Government has fallen.` : 'Defeat… the IRS wins this round.'}</h2>
           <a className="btn" href="/">Back to menu</a>
         </div>
       )}

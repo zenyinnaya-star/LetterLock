@@ -1101,3 +1101,4 @@ html[data-stage='library'] .stage-title { animation: promptfade 14s ease forward
 .bt-turn{font-size:.8rem;opacity:.7;text-align:center}.bt-prompt{font-size:1.3rem;font-weight:800;text-align:center}
 .bt-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.bt-form{display:flex;gap:8px}.bt-form input{flex:1}
 .bt-log{font-size:.8rem;opacity:.8;display:flex;flex-direction:column;gap:2px}
+.bt-lock{text-align:center;color:#fbbf24}.bt-intent{text-align:center;color:#f87171;font-weight:700;font-size:.9rem}
