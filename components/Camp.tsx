@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useState } from 'react';
 import { ACT_BG, HERO_SPRITE, actOf } from '@/lib/art';
@@ -30,7 +31,7 @@ function Timer({ ends, total }: { ends: string | null; total: number }) {
   return <div className="cp-timer"><i style={{ width: `${Math.min(100, (l / total) * 100)}%` }} /><span>{Math.ceil(l)}s</span></div>;
 }
 
-export function Camp({ b, token, state }: { b: BattleState; token: string | null; state: number }) {
+export function Camp({ b, token, state }: { b: BattleState; token: string | null; state: { code: string; v: number } }) {
   const [c, setC] = useState<CampState | null>(null);
   const [tab, setTab] = useState<'shop' | 'casino' | 'path'>('shop');
   const [msg, setMsg] = useState('');
@@ -40,7 +41,7 @@ export function Camp({ b, token, state }: { b: BattleState; token: string | null
   const [left, setLeft] = useState(90);
 
   const load = useCallback(async () => { if (token) { try { setC(await rpc.getCamp(token)); } catch { /* ignore */ } } }, [token]);
-  useEffect(() => { void load(); }, [load, state, b.version]);
+  useEffect(() => { void load(); }, [load, state.v, b.version]);
   useEffect(() => { const i = setInterval(() => void load(), 2500); return () => clearInterval(i); }, [load]);
 
   useEffect(() => {
@@ -84,6 +85,8 @@ export function Camp({ b, token, state }: { b: BattleState; token: string | null
         </div>
 
         <nav className="cp-tabs">
+          <Link href={`/skills?from=${encodeURIComponent(`/room/${state.code}`)}`} className="cp-link">✦ Skills</Link>
+          <Link href={`/stats?from=${encodeURIComponent(`/room/${state.code}`)}`} className="cp-link">📊 Stats</Link>
           <button type="button" className={tab === 'shop' ? 'on' : ''} onClick={() => setTab('shop')}>🛒 Shop</button>
           <button type="button" className={tab === 'casino' ? 'on' : ''} onClick={() => setTab('casino')}>🎰 Casino</button>
           <button type="button" className={tab === 'path' ? 'on' : ''} onClick={() => setTab('path')}>{pending ? '✦ Choose Pathway' : `${PATHS[c.path!]?.glyph} ${PATHS[c.path!]?.name}`}</button>

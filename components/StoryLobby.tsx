@@ -72,8 +72,8 @@ export function StoryLobby({ state, token, act, onLeave, picks, isHost }: {
           <div className="ul-tabs">
             <button type="button" className={panel === 'home' ? 'on' : ''} onClick={() => setPanel('home')}>PARTY</button>
             <button type="button" className={panel === 'heroes' ? 'on' : ''} onClick={() => setPanel('heroes')}>HEROES</button>
-            <Link href="/skills">SKILLS</Link>
-            <Link href="/stats">STATS</Link>
+            <Link href={`/skills?from=${encodeURIComponent(`/room/${state.room.code}`)}`}>SKILLS</Link>
+            <Link href={`/stats?from=${encodeURIComponent(`/room/${state.room.code}`)}`}>STATS</Link>
             <button type="button" onClick={() => void copy()}>{copied ? 'COPIED ✓' : 'INVITE'}</button>
           </div>
           <div className="ul-code"><small>CODE</small><b>{state.room.code}</b></div>

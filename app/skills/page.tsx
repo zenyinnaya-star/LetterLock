@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { StoryNav } from '@/components/StoryNav';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 type Branch = 'power' | 'resolve' | 'wit' | 'path';
@@ -125,11 +125,8 @@ export default function Skills() {
 
   return (
     <main className="sk-page">
-      <header className="sk-top">
-        <Link href="/play" className="sk-back">← Back</Link>
-        <h1>SKILL TREE</h1>
-        <div className="sk-pts"><b>{left}</b> / {POINTS} points</div>
-      </header>
+      <StoryNav active="skills" />
+      <header className="sk-top"><h1>SKILL TREE</h1><div className="sk-pts"><b>{left}</b> / {POINTS} points</div></header>
 
       <div className="sk-body">
         <svg ref={svgRef} className="sk-svg" viewBox={`${view.x} ${view.y} ${view.w} ${view.h}`} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerLeave={up}

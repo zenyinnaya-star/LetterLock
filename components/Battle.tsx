@@ -179,7 +179,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   if (loaded && !b) return <>{fallback ?? null}</>;
   if (!b) return <div className="center muted">Loading battle…</div>;
 
-  if (b.step === 'camp') return <Camp b={b} token={token} state={state.room.state_version} />;
+  if (b.step === 'camp') return <Camp b={b} token={token} state={{ code: state.room.code, v: state.room.state_version }} />;
 
   const heroes = b.units.filter((u) => u.side === 'hero');
   const enemies = b.units.filter((u) => u.side === 'enemy');
@@ -262,7 +262,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         <div className="rg-tr">
           <div className="rg-tr-row">
             <span className={`rg-chip${left <= 5 ? ' warn' : ''}`}>⏱ {left}s</span>
-            <Link href="/skills" className="rg-chip">✦ Skills</Link>
+            <Link href={`/skills?from=${encodeURIComponent(`/room/${state.room.code}`)}`} className="rg-chip">✦ Skills</Link>
             <button type="button" className="rg-chip" onClick={() => setShowLog((v) => !v)}>Log</button>
           </div>
           <div className="rg-obj">
@@ -376,7 +376,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
             </>
           ) : <div className="muted small">Tallying your performance…</div>}
           <div className="row" style={{ gap: 8, justifyContent: 'center' }}>
-            <Link className="btn" href="/stats">Stats</Link>
+            <Link className="btn" href={`/stats?from=${encodeURIComponent(`/room/${state.room.code}`)}`}>Stats</Link>
             <a className="btn ghost" href="/">Back to menu</a>
           </div>
         </div>

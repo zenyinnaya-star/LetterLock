@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { StoryNav } from '@/components/StoryNav';
 import { useEffect, useState } from 'react';
 import { fetchStoryStats, getStored, titleKey, type StoryStats } from '@/lib/profile';
 
@@ -18,7 +18,8 @@ export default function StatsPage() {
 
   return (
     <main className="st-page">
-      <header className="st-top"><Link href="/play">← Back</Link><h1>STATS</h1><Link href="/skills">Skills</Link></header>
+      <StoryNav active="stats" />
+      <header className="st-top"><h1>STATS</h1></header>
       {ready && !s && <p className="muted center" style={{ padding: 40 }}>No stats yet. Finish a Story run (or the stats migration is not applied) and they appear here.</p>}
       {p && t && (
         <div className="st-in">
