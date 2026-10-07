@@ -111,8 +111,13 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   useEffect(() => {
     if (!b) return;
     const a = actOf(b.stage);
-    if (seenAct.current !== a) { seenAct.current = a; setIntro(a); const id = setTimeout(() => setIntro(null), 3200); return () => clearTimeout(id); }
+    if (seenAct.current !== a) { seenAct.current = a; setIntro(a); }
   }, [b]);
+  useEffect(() => {
+    if (intro === null) return;
+    const id = setTimeout(() => setIntro(null), 3200);
+    return () => clearTimeout(id);
+  }, [intro]);
 
   useEffect(() => {
     if (!b || b.step !== 'input') return;
