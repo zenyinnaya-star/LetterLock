@@ -121,16 +121,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
       )}
 
       {me && (
-        {story && (
-        <div className="hc-lobby">
-          <HeroCards value={(picks.find((x) => x.player_id === state.me?.id)?.hero as HeroId) ?? null}
-            taken={Object.fromEntries(picks.filter((x) => x.player_id !== state.me?.id).map((x) => [x.hero, state.players.find((p) => p.id === x.player_id)?.name ?? 'a player']))}
-            onPick={(h) => token && void act(() => rpc.setHero(token, h))} />
-          <div className="muted small center">Pick your hero. Unpicked heroes are assigned automatically when the Story begins.</div>
-        </div>
-      )}
-
-      <div className="narrow-col">
+        <div className="narrow-col">
           <span className="label">{t('lb.avatar')}</span>
           <AvatarPicker name={me.name} url={state.players.find((p) => p.id === me.id)?.avatar_url ?? null}
             onChange={(url) => { saveAvatar(url); if (token) void act(() => rpc.setAvatar(token, url)); }} />
@@ -179,6 +170,15 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
           <span className={cfg.perks ? '' : 'off'}><Icon name="bolt" size={14} /> {cfg.perks ? t('lb.perks_on') : t('lb.perks_off')}</span>
           <span className="lang-chip"><Icon name="globe" size={14} /> {t('lb.words_in', { lang: WORD_LANGS.find((l) => l.code === (cfg.lang ?? 'en'))?.name ?? 'English' })}</span>
           {isHost && <SettingsButton state={state} token={token} act={act} />}
+        </div>
+      )}
+
+      {story && (
+        <div className="hc-lobby">
+          <HeroCards value={(picks.find((x) => x.player_id === state.me?.id)?.hero as HeroId) ?? null}
+            taken={Object.fromEntries(picks.filter((x) => x.player_id !== state.me?.id).map((x) => [x.hero, state.players.find((p) => p.id === x.player_id)?.name ?? 'a player']))}
+            onPick={(h) => token && void act(() => rpc.setHero(token, h))} />
+          <div className="muted small center">Pick your hero. Unpicked heroes are assigned automatically when the Story begins.</div>
         </div>
       )}
 
