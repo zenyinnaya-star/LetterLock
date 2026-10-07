@@ -135,7 +135,7 @@ begin
   if p_action not in ('attack','guard','heal') then raise exception 'BAD_ACTION'; end if;
   w := lower(trim(coalesce(p_word, '')));
   if w !~ '^[a-z]{2,20}$' then return jsonb_build_object('ok', false, 'reason', 'INVALID'); end if;
-  for ch in select regexp_split_to_table(b.locked, '') loop
+  for ch in select regexp_split_to_table(b.locked, '') where b.locked <> '' loop
     if position(ch in w) > 0 then return jsonb_build_object('ok', false, 'reason', 'LOCKED', 'letter', ch); end if;
   end loop;
   select coalesce(settings->>'lang','en') into v_lang from rooms where id = me.room_id;
