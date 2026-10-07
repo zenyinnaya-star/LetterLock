@@ -65,3 +65,24 @@ export const levelOf = (xp: number) => 1 + Math.floor(Math.sqrt(Math.max(0, xp) 
 export function titleKey(level: number) {
   return level >= 22 ? 'grandmaster' : level >= 15 ? 'cipher' : level >= 10 ? 'vault' : level >= 6 ? 'lockpicker' : level >= 3 ? 'wordsmith' : 'rookie';
 }
+
+export interface StoryTotals { runs: number; wins: number; dmg: number; healed: number; crits: number; ults: number; words: number; books: number; best_stage: number; xp: number }
+export interface StoryRun {
+  created_at: string; hero: string | null; won: boolean; stages_cleared: number; dmg: number; healed: number; crits: number; ults: number;
+  words: number; books: number; survived: boolean; xp: number; lvl_before: number; lvl_after: number; xp_after: number;
+}
+export interface StoryStats {
+  profile: ProfileInfo; totals: StoryTotals; heroes: { hero: string; runs: number; wins: number; dmg: number; healed: number }[]; recent: StoryRun[];
+}
+export interface StoryResult {
+  hero: string; won: boolean; stages_cleared: number; dmg: number; healed: number; crits: number; ults: number; words: number; books: number; survived: boolean;
+  xp: number; lvl_before: number; lvl_after: number; xp_after: number; level_floor: number; level_next: number;
+}
+export async function fetchStoryStats(): Promise<StoryStats | null> {
+  const s = getStored();
+  if (!s) return null;
+  try { return await call<StoryStats>('story_stats', { p_secret: s.secret }); } catch { return null; }
+}
+export async function fetchStoryResult(token: string): Promise<StoryResult | null> {
+  try { return await call<StoryResult | null>('story_result', { p_token: token }); } catch { return null; }
+}

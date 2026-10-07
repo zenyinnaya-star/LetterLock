@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ACT_BG, ACT_NAME, BOOK_ART, ENEMY_SPRITE, HERO_SPRITE, actOf } from '@/lib/art';
 import { heroById, type HeroId } from '@/lib/heroes';
+import { fetchStoryResult, type StoryResult } from '@/lib/profile';
 import { rpc, type BattleLogEntry, type BattleState, type BattleUnit } from '@/lib/rpc';
 import type { RoomState } from '@/lib/types';
 import type { Act } from './phases';
@@ -93,6 +94,13 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const [bookMsg, setBookMsg] = useState('');
   const [bookLeft, setBookLeft] = useState(0);
   const [bookOpenStage, setBookOpenStage] = useState(false);
+  const [result, setResult] = useState<StoryResult | null>(null);
+  const over = b?.step === 'won' || b?.step === 'lost';
+  useEffect(() => {
+    if (!over || !token) return;
+    let n = 0; const go = () => void fetchStoryResult(token).then((r) => { if (r) setResult(r); else if (n++ < 5) setTimeout(go, 1200); });
+    go();
+  }, [over, token]);
 
   const load = useCallback(async () => {
     if (!token) return;
@@ -349,9 +357,24 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           {msg && !mine?.locked && <div className="muted small center">{msg}</div>}
         </div>
       ) : (
-        <div className="rg-panel center">
+        <div className="rg-result">
           <h2>{b.step === 'won' ? 'Victory! The Government has fallen.' : 'Defeat… the IRS wins this round.'}</h2>
-          <a className="btn" href="/">Back to menu</a>
+          {result ? (
+            <>
+              {result.lvl_after > result.lvl_before && <div className="rg-lvlup">LEVEL UP! {result.lvl_before} → {result.lvl_after}</div>}
+              <div className="muted">+{result.xp} XP · Level {result.lvl_after}</div>
+              <div className="xp-bar" style={{ width: '100%' }}><i style={{ width: `${Math.min(100, Math.round(((result.xp_after - result.level_floor) / Math.max(1, result.level_next - result.level_floor)) * 100))}%` }} /></div>
+              <div className="rg-rgrid">
+                <div><b>{result.dmg}</b><span>Damage</span></div><div><b>{result.healed}</b><span>Healing</span></div>
+                <div><b>{result.crits}</b><span>Crits</span></div><div><b>{result.ults}</b><span>Ultimates</span></div>
+                <div><b>{result.words}</b><span>Words</span></div><div><b>{result.books}</b><span>Book answers</span></div>
+              </div>
+            </>
+          ) : <div className="muted small">Tallying your performance…</div>}
+          <div className="row" style={{ gap: 8, justifyContent: 'center' }}>
+            <Link className="btn" href="/stats">Stats</Link>
+            <a className="btn ghost" href="/">Back to menu</a>
+          </div>
         </div>
       )}
 

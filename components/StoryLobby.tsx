@@ -9,6 +9,7 @@ import type { RoomState } from '@/lib/types';
 import type { Act } from './phases';
 import { HeroCards } from './HeroCards';
 import { rpc } from '@/lib/rpc';
+import { fetchProfile, type ProfileInfo } from '@/lib/profile';
 
 const TIPS = [
   'Words of 7+ letters hit harder. Short words fill your ultimate faster.',
@@ -30,6 +31,8 @@ export function StoryLobby({ state, token, act, onLeave, picks, isHost }: {
   const [going, setGoing] = useState(false);
   const [panel, setPanel] = useState<'home' | 'heroes'>('home');
   const [tip] = useState(() => TIPS[Math.floor(Math.random() * TIPS.length)]);
+  const [prof, setProf] = useState<ProfileInfo | null>(null);
+  useEffect(() => { void fetchProfile().then(setProf); }, []);
   const me = state.me;
   const heroOf = (pid: string) => picks.find((x) => x.player_id === pid)?.hero as HeroId | undefined;
   const mine = me ? heroOf(me.id) ?? null : null;
@@ -63,13 +66,14 @@ export function StoryLobby({ state, token, act, onLeave, picks, isHost }: {
         {/* top bar */}
         <nav className="ul-nav">
           <div className="ul-me">
-            <span className="ul-lv">{state.players.length}</span>
-            <span><b>{me?.name ?? 'Hero'}</b><i><u style={{ width: '40%' }} /></i></span>
+            <span className="ul-lv">{prof?.level ?? 1}</span>
+            <span><b>{me?.name ?? 'Hero'}</b><i><u style={{ width: `${prof ? Math.min(100, Math.round(((prof.xp - prof.level_floor) / Math.max(1, prof.level_next - prof.level_floor)) * 100)) : 0}%` }} /></i></span>
           </div>
           <div className="ul-tabs">
             <button type="button" className={panel === 'home' ? 'on' : ''} onClick={() => setPanel('home')}>PARTY</button>
             <button type="button" className={panel === 'heroes' ? 'on' : ''} onClick={() => setPanel('heroes')}>HEROES</button>
             <Link href="/skills">SKILLS</Link>
+            <Link href="/stats">STATS</Link>
             <button type="button" onClick={() => void copy()}>{copied ? 'COPIED ✓' : 'INVITE'}</button>
           </div>
           <div className="ul-code"><small>CODE</small><b>{state.room.code}</b></div>
