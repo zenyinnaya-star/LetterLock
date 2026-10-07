@@ -131,6 +131,7 @@ export interface RoomSettings {
   mindgames?: boolean;
   stage?: 'none' | 'neon' | 'library' | 'station' | 'arcade' | 'jungle' | 'keep' | 'random';
   weekly?: boolean;
+  topics?: string[];
   pack?: 'all' | 'classic' | 'meme' | 'fantasy' | 'cyber' | 'comedy';
 }
 

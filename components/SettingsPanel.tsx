@@ -21,7 +21,7 @@ const OPTIONS: { key: NumKey; label: Key; icon: IconName; values: number[]; unit
 
 const TWISTS = ['none', 'reverse', 'chaos', 'memory'] as const;
 const STAGES = ['none', 'neon', 'library', 'station', 'arcade', 'jungle', 'keep', 'random'] as const;
-const PACKS = ['all', 'classic', 'meme', 'fantasy', 'cyber', 'comedy'] as const;
+const TOPICS = ['animals', 'food', 'nature', 'things', 'words', 'fun', 'internet', 'fantasy', 'tech', 'funny'] as const;
 const PRESETS: { id: string; label: Key; patch: Partial<RoomSettings> }[] = [
   { id: 'classic', label: 'st.p_classic', patch: { answer_seconds: 60, guess_seconds: 20, react_seconds: 8, strikes: 2, shrink: true } },
   { id: 'blitz', label: 'st.p_blitz', patch: { answer_seconds: 15, guess_seconds: 10, react_seconds: 5, strikes: 2, shrink: false } },
@@ -165,11 +165,17 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
 
             {(local.lang ?? 'en') === 'en' && (
               <div className="set-row col-row">
-                <span className="set-label"><Icon name="dice" size={16} /> {t('st.pack')}</span>
-                <div className="seg wrap" role="group" aria-label={t('st.pack')}>
-                  {PACKS.map((k) => (
-                    <button key={k} className={(local.pack ?? 'all') === k ? 'on' : ''} disabled={!editable} onClick={() => change({ pack: k })}>{t(`st.pk_${k}` as Key)}</button>
-                  ))}
+                <span className="set-label"><Icon name="dice" size={16} /> {t('st.topics')}</span>
+                <div className="seg wrap" role="group" aria-label={t('st.topics')}>
+                  <button className={!(local.topics?.length) ? 'on' : ''} disabled={!editable} onClick={() => change({ topics: [] })}>{t('st.tp_all')}</button>
+                  {TOPICS.map((k) => {
+                    const cur = local.topics ?? [];
+                    const on = cur.includes(k);
+                    return (
+                      <button key={k} className={on ? 'on' : ''} disabled={!editable}
+                        onClick={() => change({ topics: on ? cur.filter((x) => x !== k) : [...cur, k] })}>{t(`st.tp_${k}` as Key)}</button>
+                    );
+                  })}
                 </div>
               </div>
             )}
