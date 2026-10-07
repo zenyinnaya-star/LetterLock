@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ACT_BG, ACT_NAME, BOOK_ART, ENEMY_SPRITE, HERO_SPRITE, actOf } from '@/lib/art';
+import { Camp } from './Camp';
 import { heroById, type HeroId } from '@/lib/heroes';
 import { fetchStoryResult, type StoryResult } from '@/lib/profile';
 import { rpc, type BattleLogEntry, type BattleState, type BattleUnit } from '@/lib/rpc';
@@ -41,6 +42,7 @@ function logLine(e: BattleLogEntry) {
     case 'corrupt': return `${e.d} is Corrupted`;
     case 'resist': return `${e.d} resists Corruption`;
     case 'stage': return `Encounter ${e.n}`;
+    case 'camp': return `Encounter ${e.n} cleared`;
     case 'hit': return `${e.a} hits ${e.d} for ${e.n}${e.w ? ` (${e.w})` : ''}`;
     case 'miss': return `${e.a} misses ${e.d}`;
     case 'dodge': return `${e.d} dodges ${e.a}`;
@@ -176,6 +178,8 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
   if (loaded && !b) return <>{fallback ?? null}</>;
   if (!b) return <div className="center muted">Loading battle…</div>;
+
+  if (b.step === 'camp') return <Camp b={b} token={token} state={state.room.state_version} />;
 
   const heroes = b.units.filter((u) => u.side === 'hero');
   const enemies = b.units.filter((u) => u.side === 'enemy');

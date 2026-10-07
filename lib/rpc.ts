@@ -25,15 +25,32 @@ export interface BattleUnit {
   id: string; side: 'hero' | 'enemy'; player_id: string | null; name: string; hero: string | null; corruption: number; hp: number; max_hp: number;
   shield: number; spd: number; locked: boolean; action: string | null; power: number | null; ult?: number;
 }
-export interface BattleLogEntry { t: 'hit' | 'crit' | 'miss' | 'dodge' | 'guard' | 'heal' | 'sweep' | 'group_heal' | 'cleanse' | 'season' | 'corrupt' | 'resist' | 'stage' | 'ult' | 'mega_sweep' | 'full_heal' | 'revive' | 'overcharge' | 'book'; a: string; d?: string; n?: number; w?: string }
+export interface BattleLogEntry { t: 'hit' | 'crit' | 'miss' | 'dodge' | 'guard' | 'heal' | 'sweep' | 'group_heal' | 'cleanse' | 'season' | 'corrupt' | 'resist' | 'stage' | 'ult' | 'mega_sweep' | 'full_heal' | 'revive' | 'overcharge' | 'book' | 'camp'; a: string; d?: string; n?: number; w?: string }
 export interface BattleState {
-  turn: number; step: 'input' | 'won' | 'lost'; ends_at: string; prompt: string; enemy: string;
+  turn: number; step: 'input' | 'camp' | 'won' | 'lost'; ends_at: string; prompt: string; enemy: string;
   cards: string[]; card_used: boolean; stage: number; stages: number; locked: string; intent: string; next_intent: string; drain: boolean;
   log: BattleLogEntry[]; version: number; me: string; units: BattleUnit[];
   book_used?: boolean; book?: { prompt: string; ends_at: string } | null;
 }
 
+export interface CampState {
+  gold: number; path: string | null; pbonus: number; ready: boolean; flags: string[]; price_up: boolean; camp_ends: string; stage: number; oath: boolean;
+  ready_count: number; hero_count: number;
+  casino: { active: boolean; round: number; wins: number; stake: number; prompt: string | null; ends_at: string | null; closed: boolean; lucky: boolean };
+  puzzle: { kind: string; text: string; ends_at: string } | null;
+  shop: { id: string; name: string; desc: string; price: number }[];
+}
 export const rpc = {
+  getCamp: (token: string) => call<CampState | null>('get_camp', { p_token: token }),
+  campBuy: (token: string, item: string) => call<{ ok: boolean; card?: string }>('camp_buy', { p_token: token, p_item: item }),
+  campRest: (token: string) => call<{ ok: boolean }>('camp_rest', { p_token: token }),
+  campReady: (token: string) => call<void>('camp_ready', { p_token: token }),
+  campStep: (token: string) => call<void>('camp_step', { p_token: token }),
+  casinoStart: (token: string, stake: number) => call<{ round: number; prompt: string; ends_at: string }>('casino_start', { p_token: token, p_stake: stake }),
+  casinoAnswer: (token: string, word: string) => call<{ ok: boolean; reason?: string; done?: boolean; hit?: boolean; wins?: number; stake?: number; payout?: number; round?: number; prompt?: string; ends_at?: string }>('casino_answer', { p_token: token, p_word: word }),
+  pickPathway: (token: string, path: string) => call<void>('pick_pathway', { p_token: token, p_path: path }),
+  pathOpen: (token: string) => call<{ kind: string; text?: string; gold?: number; ends_at?: string }>('path_open', { p_token: token }),
+  pathAnswer: (token: string, word: string) => call<{ ok: boolean; reason?: string; text?: string }>('path_answer', { p_token: token, p_word: word }),
   setStory: (token: string) => call<void>('set_story', { p_token: token }),
   setHero: (token: string, hero: string | null) => call<void>('set_hero', { p_token: token, p_hero: hero }),
   storyInfo: (token: string) => call<{ story: boolean; picks: { player_id: string; hero: string }[] }>('story_info', { p_token: token }),
