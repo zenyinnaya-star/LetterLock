@@ -25,18 +25,19 @@ export interface BattleUnit {
   id: string; side: 'hero' | 'enemy'; player_id: string | null; name: string; hero: string | null; corruption: number; hp: number; max_hp: number;
   shield: number; spd: number; locked: boolean; action: string | null; power: number | null;
 }
-export interface BattleLogEntry { t: 'hit' | 'crit' | 'miss' | 'dodge' | 'guard' | 'heal' | 'season' | 'corrupt' | 'resist' | 'stage'; a: string; d?: string; n?: number; w?: string }
+export interface BattleLogEntry { t: 'hit' | 'crit' | 'miss' | 'dodge' | 'guard' | 'heal' | 'sweep' | 'group_heal' | 'cleanse' | 'season' | 'corrupt' | 'resist' | 'stage'; a: string; d?: string; n?: number; w?: string }
 export interface BattleState {
   turn: number; step: 'input' | 'won' | 'lost'; ends_at: string; prompt: string; enemy: string;
-  stage: number; stages: number; locked: string; intent: string; next_intent: string; drain: boolean;
+  cards: string[]; card_used: boolean; stage: number; stages: number; locked: string; intent: string; next_intent: string; drain: boolean;
   log: BattleLogEntry[]; version: number; me: string; units: BattleUnit[];
 }
 
 export const rpc = {
   startPve: (token: string) => call<void>('start_pve', { p_token: token }),
   getBattle: (token: string) => call<BattleState | null>('get_battle', { p_token: token }),
-  battleSubmit: (token: string, word: string, action: string) =>
-    call<{ ok: boolean; reason?: string; power?: number; letter?: string }>('battle_submit', { p_token: token, p_word: word, p_action: action }),
+  battleSubmit: (token: string, word: string, action: string, target: string | null) =>
+    call<{ ok: boolean; reason?: string; power?: number; letter?: string }>('battle_submit', { p_token: token, p_word: word, p_action: action, p_target: target }),
+  battleCard: (token: string, kind: string) => call<{ ok: boolean }>('battle_card', { p_token: token, p_kind: kind }),
   battleStep: (token: string, turn: number) => call<void>('battle_step', { p_token: token, p_turn: turn }),
   getRecap: (code: string) => call<Recap>('get_recap', { p_code: code }),
   createRoom: (name: string, cls: PlayerClass) => call<JoinResult>('create_room', { p_name: name, p_class: cls }),

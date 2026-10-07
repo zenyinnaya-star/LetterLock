@@ -12,14 +12,16 @@ const ACTIONS = [
   { id: 'heal', label: '✚ Heal', hint: 'Power ×2 to weakest ally' },
 ] as const;
 
+const CARDS: Record<string, string> = { sweep: 'Sweep (hits all enemies)', heal_all: 'Group Heal', cleanse: 'Cleanse' };
+
 const INTENT: Record<string, string> = {
   strike: 'Government strikes', red_tape: 'Red Tape: 4 letters locked', taxes: 'Taxes: applies Corruption', tax_season: 'TAX SEASON: huge party-wide hit — Guard!',
 };
 
-function Bar({ u }: { u: BattleUnit }) {
+function Bar({ u, picked, onPick }: { u: BattleUnit; picked?: boolean; onPick?: () => void }) {
   const pct = Math.max(0, Math.min(100, (u.hp / u.max_hp) * 100));
   return (
-    <div className={`bt-unit ${u.side}${u.hp <= 0 ? ' down' : ''}`}>
+    <div className={`bt-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}`} onClick={onPick} role={onPick ? 'button' : undefined}>
       <div className="bt-name">{u.name}{u.hero ? ` (${u.hero})` : ''}{u.locked && u.hp > 0 && u.side === 'hero' ? ' ✓' : ''}</div>
       <div className="bt-sprite">{u.side === 'enemy' ? '🧾' : '🧙'}</div>
       <div className="bt-hp"><motion.i animate={{ width: `${pct}%` }} /></div>
@@ -31,6 +33,9 @@ function Bar({ u }: { u: BattleUnit }) {
 function logLine(e: BattleState['log'][number]) {
   switch (e.t) {
     case 'crit': return `${e.a} CRITS ${e.d} for ${e.n}${e.w ? ` (${e.w})` : ''}!`;
+    case 'sweep': return `${e.a} plays Sweep: ${e.n} to every enemy!`;
+    case 'group_heal': return `${e.a} plays Group Heal: +${e.n} to everyone`;
+    case 'cleanse': return `${e.a} plays Cleanse`;
     case 'season': return `${e.a} unleashes Tax Season on the whole party!`;
     case 'corrupt': return `${e.d} is Corrupted`;
     case 'resist': return `${e.d} resists Corruption`;
@@ -50,6 +55,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const [action, setAction] = useState<'attack' | 'guard' | 'heal'>('attack');
   const [msg, setMsg] = useState('');
   const [left, setLeft] = useState(0);
+  const [target, setTarget] = useState<string | null>(null);
   const stepped = useRef(-1);
 
   const load = useCallback(async () => {
@@ -63,7 +69,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
   const mine = b?.units.find((u) => u.player_id === b.me);
   const turn = b?.turn ?? 0;
-  useEffect(() => { setWord(''); setMsg(''); }, [turn]);
+  useEffect(() => { setWord(''); setMsg(''); setTarget(null); }, [turn]);
 
   useEffect(() => {
     if (!b || b.step !== 'input') return;
@@ -89,13 +95,13 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   if (!b) return <div className="center muted">Loading battle…</div>;
 
   const heroes = b.units.filter((u) => u.side === 'hero');
-  const enemy = b.units.find((u) => u.side === 'enemy');
+  const enemies = b.units.filter((u) => u.side === 'enemy');
   const canAct = b.step === 'input' && mine && mine.hp > 0 && !mine.locked;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!token || !word.trim() || !canAct) return;
-    const r = await act(() => rpc.battleSubmit(token, word.trim(), action));
+    const r = await act(() => rpc.battleSubmit(token, word.trim(), action, target));
     if (!r) return;
     if (!r.ok) setMsg(r.reason === 'OFF_TOPIC' ? "That doesn't fit the prompt." : r.reason === 'NOT_A_WORD' ? 'Not a word.' : r.reason === 'LOCKED' ? `The letter ${r.letter?.toUpperCase()} is locked!` : 'Invalid.');
     else { setMsg(`Locked in! Power ${r.power}`); void load(); }
@@ -104,9 +110,9 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   return (
     <div className="battle">
       <div className="bt-field">
-        <div className="bt-side">{heroes.map((u) => <Bar key={u.id} u={u} />)}</div>
+        <div className="bt-side">{heroes.map((u) => <Bar key={u.id} u={u} picked={target === u.id} onPick={action === 'heal' && canAct && u.hp > 0 ? () => setTarget(target === u.id ? null : u.id) : undefined} />)}</div>
         <div className="bt-vs">VS</div>
-        <div className="bt-side">{enemy && <Bar u={enemy} />}</div>
+        <div className="bt-side">{enemies.map((u) => <Bar key={u.id} u={u} picked={target === u.id} onPick={action === 'attack' && canAct && u.hp > 0 ? () => setTarget(target === u.id ? null : u.id) : undefined} />)}</div>
       </div>
 
       {b.step === 'input' ? (
@@ -118,9 +124,19 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           <div className="bt-prompt">{b.prompt}</div>
           <div className="bt-actions">
             {ACTIONS.map((a) => (
-              <button key={a.id} type="button" className={`btn sm${action === a.id ? '' : ' ghost'}`} title={a.hint} onClick={() => setAction(a.id)}>{a.label}</button>
+              <button key={a.id} type="button" className={`btn sm${action === a.id ? '' : ' ghost'}`} title={a.hint} onClick={() => { setAction(a.id); setTarget(null); }}>{a.label}</button>
             ))}
           </div>
+          {(action === 'attack' || action === 'heal') && canAct && <div className="muted small center">Tap {action === 'attack' ? 'an enemy' : 'an ally'} to target it{target ? ' ✓' : ' (auto if none)'}</div>}
+          {mine && mine.hp > 0 && (
+            <div className="bt-actions">
+              {b.cards.map((c, i) => (
+                <button key={c + i} type="button" className="btn sm" disabled={b.card_used}
+                  onClick={() => token && void act(() => rpc.battleCard(token, c)).then(() => load())}>🃏 {CARDS[c] ?? c}</button>
+              ))}
+              {b.cards.length === 0 && <span className="muted small">No cards yet — good words draw them</span>}
+            </div>
+          )}
           {mine && mine.hp <= 0 ? <div className="muted center">You&apos;re down. Your team fights on…</div> : mine?.locked ? (
             <div className="muted center">{msg || 'Locked in'} — waiting for the team…</div>
           ) : (
