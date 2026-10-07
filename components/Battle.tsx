@@ -197,8 +197,8 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   async function openBook() {
     if (!token) return;
     const r = await act(() => rpc.bookOpen(token));
-    if (!r) return;
-    if (r.ok && r.prompt) { setBook({ prompt: r.prompt, ends: r.ends_at ? new Date(r.ends_at).getTime() : Date.now() + 15000 }); setBookWord(''); setBookMsg(''); setBookOpenStage(true); void load(); }
+    if (!r) { setBookMsg('The Book was already read this encounter.'); setBookOpenStage(true); return; }
+    if (r.prompt) { setBook({ prompt: r.prompt, ends: r.ends_at ? new Date(r.ends_at).getTime() : Date.now() + 15000 }); setBookWord(''); setBookMsg(''); setBookOpenStage(true); void load(); }
     else setBookMsg(r.reason === 'ALREADY_USED' ? 'The Book was already read this encounter.' : 'The Book stays shut.');
   }
   async function answerBook(e: React.FormEvent) {
