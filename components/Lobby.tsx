@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { saveAvatar } from '@/lib/avatar';
 import { rpc } from '@/lib/rpc';
 import { WORD_LANGS } from '@/lib/i18n';
@@ -24,6 +24,10 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
   const t = useT();
   const [copied, setCopied] = useState(false);
   const [botStyle, setBotStyle] = useState(0);
+  const [story, setStory] = useState(false);
+  useEffect(() => {
+    try { setStory(sessionStorage.getItem(`letterlock:story:${state.room.code}`) === '1'); } catch { /* ignore */ }
+  }, [state.room.code]);
   const me = state.me;
   const isHost = !!me && me.id === state.room.host_id;
   const count = state.players.length;
@@ -165,12 +169,17 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
       <div className="narrow-col">
         {isHost ? (
           <>
+            {story ? (
+              <button className="btn lg block" onClick={() => token && void act(() => rpc.startPve(token))}>
+                ⚔ Begin the Story ({count} {count === 1 ? 'hero' : 'heroes'})
+              </button>
+            ) : (
+              <>
             <button className="btn lg block" disabled={teamMode ? !teamsReady : count < 2} onClick={() => token && void act(() => rpc.start(token))}>
               {teamMode ? (teamsReady ? t('tm.start', { n: count }) : t('tm.need_full')) : count < 2 ? (duelMode ? t('lb.wait_challenger') : t('lb.wait_more')) : duelMode ? t('lb.fight') : t('lb.start', { n: count })}
             </button>
-            <button className="btn ghost block" disabled={teamMode || duelMode} onClick={() => token && void act(() => rpc.startPve(token))}>
-              ⚔ Start PvE co-op (beta)
-            </button>
+              </>
+            )}
             <div className="muted small center">{t('lb.host_hint')}</div>
           </>
         ) : (

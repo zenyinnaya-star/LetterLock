@@ -10,7 +10,7 @@ import { audio } from '@/lib/audio';
 import { useT } from '@/lib/i18n/react';
 import type { Key } from '@/lib/i18n';
 
-type Kind = 'create' | 'duel' | 'team' | 'solo' | 'reverse' | 'chaos' | 'memory';
+type Kind = 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory';
 interface Mode { kind: Kind; icon: IconName; k: string; tone: string }
 // Scene art per mode (local file wins once self-hosted; CDN copy until then). Solo stays plain on purpose.
 const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_';
@@ -24,6 +24,7 @@ const MODES: Mode[] = [
   { kind: 'create', icon: 'users', k: 'classic', tone: 'amber' },
   { kind: 'duel', icon: 'swords', k: 'duel', tone: 'red' },
   { kind: 'team', icon: 'shield', k: 'team', tone: 'cyan' },
+  { kind: 'story', icon: 'crown', k: 'story', tone: 'gold' },
   { kind: 'solo', icon: 'terminal', k: 'solo', tone: 'violet' },
 ];
 const LAB: Mode[] = [

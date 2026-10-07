@@ -20,9 +20,9 @@ import { rpc } from '@/lib/rpc';
 import { loadName, saveName, saveSession } from '@/lib/session';
 import type { PlayerClass, RoomSettings } from '@/lib/types';
 
-type Kind = 'create' | 'duel' | 'team' | 'solo' | 'reverse' | 'chaos' | 'memory' | 'join';
+type Kind = 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory' | 'join';
 const META: Record<Kind, { icon: IconName; k: string }> = {
-  create: { icon: 'users', k: 'classic' }, duel: { icon: 'swords', k: 'duel' }, team: { icon: 'shield', k: 'team' },
+  create: { icon: 'users', k: 'classic' }, duel: { icon: 'swords', k: 'duel' }, team: { icon: 'shield', k: 'team' }, story: { icon: 'crown', k: 'story' },
   solo: { icon: 'terminal', k: 'solo' }, reverse: { icon: 'swap', k: 'reverse' }, chaos: { icon: 'dice', k: 'chaos' },
   memory: { icon: 'eye', k: 'memory' }, join: { icon: 'users', k: 'classic' },
 };
@@ -90,12 +90,14 @@ function Select() {
       const r = kind === 'join' ? await rpc.joinRoom(code, name.trim(), cls) : await rpc.createRoom(name.trim(), cls);
       if (kind === 'duel') await rpc.updateSettings(r.token, { mode: 'duel', max_players: 2 });
       if (kind === 'team') await rpc.updateSettings(r.token, { mode: 'team' });
+      if (kind === 'story') await rpc.updateSettings(r.token, { max_players: 4 });
       if (kind === 'solo') for (let i = 0; i < 3; i++) await rpc.addBot(r.token, 2, [1, 2, 3][i]);
       if (kind === 'reverse' || kind === 'chaos' || kind === 'memory') await rpc.updateSettings(r.token, { twist: kind } as Partial<RoomSettings>);
       if (avatar) await rpc.setAvatar(r.token, avatar).catch(() => undefined);
       await linkProfile(r.token, name.trim());
       saveName(name.trim());
       saveSession(r.code, { token: r.token, playerId: r.player_id });
+      if (kind === 'story') { try { sessionStorage.setItem(`letterlock:story:${r.code}`, '1'); } catch { /* ignore */ } }
       router.push(`/room/${r.code}`);
     } catch (e) {
       setErr(friendlyError(e));
