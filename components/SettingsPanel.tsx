@@ -20,6 +20,7 @@ const OPTIONS: { key: NumKey; label: Key; icon: IconName; values: number[]; unit
 ];
 
 const TWISTS = ['none', 'reverse', 'chaos', 'memory'] as const;
+const STAGES = ['none', 'neon', 'library', 'station', 'arcade', 'jungle', 'keep', 'random'] as const;
 const PACKS = ['all', 'classic', 'meme', 'fantasy', 'cyber', 'comedy'] as const;
 const PRESETS: { id: string; label: Key; patch: Partial<RoomSettings> }[] = [
   { id: 'classic', label: 'st.p_classic', patch: { answer_seconds: 60, guess_seconds: 20, react_seconds: 8, strikes: 2, shrink: true } },
@@ -151,6 +152,16 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
                 <span className="muted small">{t(`st.twh_${local.twist ?? 'none'}` as Key)}</span>
               </div>
             )}
+
+            <div className="set-row col-row">
+              <span className="set-label"><Icon name="sparkle" size={16} /> {t('st.stage')}</span>
+              <div className="seg wrap" role="group" aria-label={t('st.stage')}>
+                {STAGES.map((k) => (
+                  <button key={k} className={(local.stage ?? 'none') === k ? 'on' : ''} disabled={!editable} onClick={() => change({ stage: k })}>{t(`st.stg_${k}` as Key)}</button>
+                ))}
+              </div>
+              <span className="muted small">{t(`st.stgd_${local.stage ?? 'none'}` as Key)}</span>
+            </div>
 
             {(local.lang ?? 'en') === 'en' && (
               <div className="set-row col-row">

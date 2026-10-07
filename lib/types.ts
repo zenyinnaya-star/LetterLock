@@ -85,6 +85,7 @@ export interface RoomState {
     answer_seconds: number;
     settings: RoomSettings;
     chaos: ChaosKind | null;
+    stage?: 'none' | 'neon' | 'library' | 'station' | 'arcade' | 'jungle' | 'keep';
     mutation?: 'bigwords' | 'speedrun' | 'charged' | 'chaos' | null;
   };
   prompt: string | null;
@@ -128,6 +129,7 @@ export interface RoomSettings {
   twist?: 'none' | 'reverse' | 'chaos' | 'memory';
   ultimates?: boolean;
   mindgames?: boolean;
+  stage?: 'none' | 'neon' | 'library' | 'station' | 'arcade' | 'jungle' | 'keep' | 'random';
   weekly?: boolean;
   pack?: 'all' | 'classic' | 'meme' | 'fantasy' | 'cyber' | 'comedy';
 }

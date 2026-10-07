@@ -49,6 +49,11 @@ function StageHead({ state, label, msLeft, showClock = true }: { state: RoomStat
           <Icon name="dice" size={14} /> {CHAOS_INFO[state.room.chaos]?.name}
         </motion.span>
       )}
+      {state.room.stage && state.room.stage !== 'none' && (
+        <span className="chaos-chip stage-chip" title={t(`st.stgd_${state.room.stage}`)}>
+          <Icon name="sparkle" size={14} /> {t(`st.stg_${state.room.stage}`)}
+        </span>
+      )}
       {state.room.mutation && (
         <span className="chaos-chip" title={t(`mut.d.${state.room.mutation}`)}>
           <Icon name="sparkle" size={14} /> {t(`mut.n.${state.room.mutation}`)}

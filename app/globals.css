@@ -1059,3 +1059,30 @@ input { font: inherit; }
 
 .recap { margin: 16px 0; display: grid; gap: 10px; }
 .recap-body { overflow: hidden; display: grid; gap: 10px; padding: 12px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); }
+
+/* ───────── stages ───────── */
+.stage-fx { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.stage-fx::before, .stage-fx::after { content: ''; position: absolute; inset: 0; }
+.stage-neon { background: radial-gradient(900px 500px at 15% 0%, rgba(255, 0, 160, .28), transparent 60%), radial-gradient(800px 500px at 90% 10%, rgba(0, 220, 255, .25), transparent 60%), linear-gradient(#0a0720, #130a33); }
+.stage-neon::before { top: auto; height: 55%; bottom: 0; background-image: linear-gradient(rgba(255, 0, 200, .35) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 220, 255, .3) 1px, transparent 1px); background-size: 48px 48px; transform: perspective(500px) rotateX(62deg); transform-origin: bottom; animation: gridrun 3s linear infinite; mask-image: linear-gradient(transparent, #000 60%); }
+@keyframes gridrun { to { background-position: 0 48px, 48px 0; } }
+.stage-library { background: radial-gradient(700px 500px at 50% 0%, rgba(255, 190, 90, .18), transparent 65%), linear-gradient(#150d0a, #1d120d); }
+.stage-library::before { background-image: radial-gradient(2px 2px at 20% 30%, rgba(255, 220, 150, .8), transparent), radial-gradient(2px 2px at 70% 60%, rgba(255, 220, 150, .6), transparent), radial-gradient(3px 3px at 40% 80%, rgba(255, 220, 150, .7), transparent), radial-gradient(2px 2px at 85% 20%, rgba(255, 220, 150, .6), transparent); background-size: 300px 300px; animation: floatup 14s linear infinite; }
+@keyframes floatup { from { background-position: 0 0; } to { background-position: 40px -300px; } }
+html[data-stage='library'] .stage-title { animation: promptfade 14s ease forwards; }
+@keyframes promptfade { 0%, 45% { opacity: 1; filter: none; } 100% { opacity: .08; filter: blur(5px); } }
+.stage-station { background: radial-gradient(600px 400px at 80% 20%, rgba(120, 140, 255, .22), transparent 60%), linear-gradient(#03040d, #0a0d24); }
+.stage-station::before { background-image: radial-gradient(1.5px 1.5px at 10% 20%, #fff, transparent), radial-gradient(1px 1px at 30% 70%, #fff, transparent), radial-gradient(2px 2px at 60% 40%, #cfe0ff, transparent), radial-gradient(1px 1px at 80% 80%, #fff, transparent), radial-gradient(1.5px 1.5px at 90% 10%, #fff, transparent); background-size: 360px 360px; animation: drift 60s linear infinite; }
+@keyframes drift { to { background-position: -360px 360px; } }
+.stage-arcade { background: linear-gradient(#0b0b1e, #14102e); }
+.stage-arcade::before { background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, .04) 0 1px, transparent 1px 3px); animation: scan 6s linear infinite; }
+.stage-arcade::after { background: radial-gradient(circle at center, transparent 55%, rgba(0, 0, 0, .55)); }
+@keyframes scan { to { background-position: 0 6px; } }
+.stage-jungle { background: radial-gradient(800px 500px at 50% 0%, rgba(120, 220, 120, .16), transparent 65%), linear-gradient(#07140c, #0d2214); }
+.stage-jungle::before { background-image: radial-gradient(60px 120px at 8% 0%, rgba(40, 120, 60, .5), transparent 70%), radial-gradient(70px 150px at 92% 0%, rgba(40, 120, 60, .5), transparent 70%), radial-gradient(40px 90px at 30% 0%, rgba(40, 120, 60, .35), transparent 70%); animation: sway 7s ease-in-out infinite alternate; }
+@keyframes sway { from { transform: translateX(-6px); } to { transform: translateX(6px); } }
+.stage-keep { background: radial-gradient(700px 500px at 50% 0%, rgba(160, 220, 255, .2), transparent 65%), linear-gradient(#071421, #0e2236); }
+.stage-keep::before { background-image: radial-gradient(3px 3px at 15% 10%, rgba(255, 255, 255, .85), transparent), radial-gradient(2px 2px at 55% 30%, rgba(255, 255, 255, .7), transparent), radial-gradient(3px 3px at 80% 50%, rgba(255, 255, 255, .8), transparent), radial-gradient(2px 2px at 35% 70%, rgba(255, 255, 255, .6), transparent); background-size: 260px 260px; animation: snow 9s linear infinite; }
+@keyframes snow { to { background-position: -30px 260px; } }
+.stage-chip { background: linear-gradient(90deg, #2bbbad, #4b3fc2); }
+@media (prefers-reduced-motion: reduce) { .stage-fx::before, html[data-stage='library'] .stage-title { animation: none; } }

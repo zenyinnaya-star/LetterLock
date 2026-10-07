@@ -223,10 +223,17 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
     case 'finished': main = <Finished {...props} />; break;
   }
   const total = phase === 'answer' ? state.room.answer_seconds : PHASE_TOTAL[phase] ?? 0;
+  const stageName = state.room.stage;
+  useEffect(() => {
+    const el = document.documentElement;
+    if (stageName && stageName !== 'none') el.dataset.stage = stageName; else delete el.dataset.stage;
+    return () => { delete el.dataset.stage; };
+  }, [stageName]);
   const timed = !!state.room.phase_ends_at && phase !== 'lobby' && phase !== 'finished';
 
   return (
     <MotionConfig reducedMotion="user">
+      {stageName && stageName !== 'none' && <div className={`stage-fx stage-${stageName}`} aria-hidden />}
       <div className="shell">
         <Header
           settings={<SettingsButton state={state} token={token} act={act} />}
