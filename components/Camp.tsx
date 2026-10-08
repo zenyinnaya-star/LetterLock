@@ -8,7 +8,7 @@ import { heroById, type HeroId } from '@/lib/heroes';
 import { rpc, type BattleState, type CampState } from '@/lib/rpc';
 
 const PATHS: Record<string, { name: string; glyph: string; perk: string; feature: string }> = {
-  gambler: { name: 'Gambler', glyph: '🎲', perk: 'Casino pays +0.4x and the first missed prompt is forgiven', feature: 'Lucky Coin: +25 gold each camp' },
+  gambler: { name: 'Gambler', glyph: '🎲', perk: 'Opens the casino for the whole party. Your bets pay +0.4x and your first miss is forgiven', feature: 'Lucky Coin: +25 gold each camp' },
   thief: { name: 'Thief', glyph: '🗝️', perk: '+25% gold from every fight', feature: 'The Heist: answer one prompt to steal a free item' },
   hacker: { name: 'Hacker', glyph: '💾', perk: 'Unscramble vaults for rare cards', feature: 'The Vault: solve a scrambled word (fail = prices rise)' },
   oracle: { name: 'Oracle', glyph: '🔮', perk: 'See what waits ahead', feature: 'Fortune Tent: reveal the next encounter' },
@@ -17,7 +17,7 @@ const PATHS: Record<string, { name: string; glyph: string; perk: string; feature
 };
 const ERR: Record<string, string> = {
   NO_GOLD: 'Not enough gold.', HAND_FULL: 'Your hand is full (4 cards).', MAXED: 'Already maxed.', ALREADY_USED: 'Already used this camp.',
-  BAD_STAKE: 'Stake between 10 and your gold.', HOUSE_CLOSED: 'The house is closed. You won too much.', IN_PROGRESS: 'Already in progress.', PACT_LIMIT: 'You already made two pacts.',
+  BAD_STAKE: 'Stake between 10 and your gold.', HOUSE_CLOSED: 'The house is closed. You won too much.', IN_PROGRESS: 'Already in progress.', PACT_LIMIT: 'You already made two pacts.', CASINO_LOCKED: 'The casino is closed. A Gambler has to open it.', NOT_GAMBLER: 'Only a Gambler can open the casino.',
 };
 const errText = (e: unknown) => { const m = e instanceof Error ? e.message : String(e); const k = Object.keys(ERR).find((x) => m.includes(x)); return k ? ERR[k] : 'That did not work.'; };
 
@@ -88,7 +88,7 @@ export function Camp({ b, token, state }: { b: BattleState; token: string | null
           <Link href={`/skills?from=${encodeURIComponent(`/room/${state.code}`)}`} className="cp-link">✦ Skills</Link>
           <Link href={`/stats?from=${encodeURIComponent(`/room/${state.code}`)}`} className="cp-link">📊 Stats</Link>
           <button type="button" className={tab === 'shop' ? 'on' : ''} onClick={() => setTab('shop')}>🛒 Shop</button>
-          <button type="button" className={tab === 'casino' ? 'on' : ''} onClick={() => setTab('casino')}>🎰 Casino</button>
+          <button type="button" className={tab === 'casino' ? 'on' : ''} onClick={() => setTab('casino')}>🎰 Casino{c.casino_open ? ' ●' : ''}</button>
           <button type="button" className={tab === 'path' ? 'on' : ''} onClick={() => setTab('path')}>{pending ? '✦ Choose Pathway' : `${PATHS[c.path!]?.glyph} ${PATHS[c.path!]?.name}`}</button>
         </nav>
 
@@ -96,6 +96,20 @@ export function Camp({ b, token, state }: { b: BattleState; token: string | null
           {tab === 'shop' && (
             <>
               {c.price_up && <div className="cp-warn">The vault locked: prices are +20% this camp.</div>}
+              {c.gear_shop && (<>
+                <div className="cp-h">⚔ GEAR · lasts the whole run</div>
+                <div className="cp-grid">
+                  {c.gear_shop.map((g) => (
+                    <button key={g.slot} type="button" className={`cp-item gear${g.tier ? ' owned' : ''}`} disabled={!g.next || c.gold < g.next.price}
+                      onClick={() => void run(() => rpc.campGear(token, g.slot), (r) => `Equipped ${r.name}!`)}>
+                      <small className="cp-slot">{g.slot.toUpperCase()} {'◆'.repeat(g.tier)}{'◇'.repeat(2 - g.tier)}</small>
+                      {g.next ? <><b>{g.next.name}</b><span>{g.next.desc}</span><em>🪙 {g.next.price}</em></> : <><b>{g.have}</b><span>Fully upgraded</span><em>MAX</em></>}
+                      {g.have && g.next && <span className="cp-have">Equipped: {g.have}</span>}
+                    </button>
+                  ))}
+                </div>
+                <div className="cp-h">🧪 SUPPLIES</div>
+              </>)}
               <div className="cp-grid">
                 {c.shop.map((it) => (
                   <button key={it.id} type="button" className="cp-item" disabled={c.gold < it.price} onClick={() => void run(() => rpc.campBuy(token, it.id), (r) => r.card ? `Got a card: ${r.card.replace('_', ' ')}` : 'Bought!')}>
@@ -111,7 +125,15 @@ export function Camp({ b, token, state }: { b: BattleState; token: string | null
 
           {tab === 'casino' && (
             <>
-              {c.casino.closed ? <div className="cp-warn">The house is closed. You cleaned them out.</div> : !c.casino.active ? (
+              {c.casino_open === false && !c.casino.active ? (
+                <div className="cp-casino cp-locked">
+                  <p className="cp-big">🎰 The casino is closed</p>
+                  {c.path === 'gambler'
+                    ? <><p>You're the <b>Gambler</b>. Open the house and the whole party can bet this camp.</p>
+                        <button type="button" className="btn lg" onClick={() => void run(() => rpc.casinoOpen(token), () => 'The house is open!')}>🎲 Open the casino</button></>
+                    : <p>Only a <b>Gambler</b> can open it. {c.gambler_here ? 'Ask your Gambler to open the house.' : 'Nobody in the party walks the Gambler pathway. Pick it in the Pathway tab to unlock the casino.'}</p>}
+                </div>
+              ) : c.casino.closed ? <div className="cp-warn">The house is closed. You cleaned them out.</div> : !c.casino.active ? (
                 <div className="cp-casino">
                   <p>Answer <b>5 timed prompts</b> in a row. Get <b>3</b> right to win back <b>1.5x</b>, <b>4</b> for <b>2.2x</b>, <b>5</b> for <b>3.2x</b>. Fewer and the house keeps your stake.</p>
                   <div className="cp-stakes">

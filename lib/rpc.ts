@@ -39,11 +39,15 @@ export interface CampState {
   casino: { active: boolean; round: number; wins: number; stake: number; prompt: string | null; ends_at: string | null; closed: boolean; lucky: boolean };
   puzzle: { kind: string; text: string; ends_at: string } | null;
   shop: { id: string; name: string; desc: string; price: number }[];
+  casino_open?: boolean; gambler_here?: boolean; gear?: Record<string, number>;
+  gear_shop?: { slot: string; tier: number; have: string | null; next: { name: string; desc: string; price: number } | null }[];
 }
 export const rpc = {
   getCamp: (token: string) => call<CampState | null>('get_camp', { p_token: token }),
   campBuy: (token: string, item: string) => call<{ ok: boolean; card?: string }>('camp_buy', { p_token: token, p_item: item }),
   campRest: (token: string) => call<{ ok: boolean }>('camp_rest', { p_token: token }),
+  campGear: (token: string, slot: string) => call<{ ok: boolean; name: string }>('camp_gear', { p_token: token, p_slot: slot }),
+  casinoOpen: (token: string) => call<{ ok: boolean }>('casino_open', { p_token: token }),
   campReady: (token: string) => call<void>('camp_ready', { p_token: token }),
   campStep: (token: string) => call<void>('camp_step', { p_token: token }),
   casinoStart: (token: string, stake: number) => call<{ round: number; prompt: string; ends_at: string }>('casino_start', { p_token: token, p_stake: stake }),

@@ -1545,3 +1545,8 @@ h3{font-weight:800}
 @media(max-width:480px){.up-stats div{grid-template-columns:78px 1fr}}
 .st-what{font-size:12px;color:#cbd5e1}.st-what summary{cursor:pointer;color:var(--gold);font-weight:700}.st-what p{margin:4px 0}.st-what b{color:var(--gold);margin-right:4px}
 .rg-idle{position:absolute;left:50%;top:150px;transform:translateX(-50%) skewX(-6deg);z-index:56;background:#7c2d12;color:#fff;border:2px solid #000;box-shadow:4px 4px 0 #000;padding:6px 14px;font-weight:700;font-size:13px;max-width:80%;text-align:center}
+
+.cp-h{font:900 13px var(--impact);font-style:italic;letter-spacing:.18em;color:#fda4af;margin:8px 0 4px}
+.cp-item.gear{border-left:4px solid var(--gold)}.cp-item.gear.owned{background:linear-gradient(120deg,#2a2208,#0b0e1c)}
+.cp-slot{font-weight:800;letter-spacing:.14em;color:var(--gold);font-size:10px}.cp-have{font-size:10px;color:#94a3b8}
+.cp-locked{text-align:center}.cp-big{font:900 22px var(--impact);font-style:italic;text-transform:uppercase}
