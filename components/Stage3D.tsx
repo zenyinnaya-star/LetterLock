@@ -421,24 +421,54 @@ function Env({ act }: { act: number }) {
 }
 
 /* ─────────────────────────────── camera ─────────────────────────────── */
-function Rig({ fx }: { fx: StageFx }) {
+function Rig({ fx, world }: { fx: StageFx; world: MutableRefObject<Map<string, THREE.Vector3>> }) {
   const shake = useRef({ t0: -9, amp: 0, push: 0 });
+  const cine = useRef<{ t0: number; pos: THREE.Vector3; look: THREE.Vector3; dur: number; punch: number; full: boolean } | null>(null);
   const { clock, camera, size } = useThree();
   useEffect(() => {
     if (!fx) return;
     const t = clock.elapsedTime;
     if (fx.hurt.length) shake.current = { t0: t + 0.3, amp: fx.type === 'limit' ? 0.6 : fx.type === 'crit' || fx.type === 'season' || fx.type === 'ult' ? 0.35 : 0.14, push: fx.type === 'ult' || fx.type === 'limit' ? 1 : 0 };
-    else if (fx.type === 'ult') shake.current = { t0: t, amp: 0.1, push: 1 };
+    else if (fx.type === 'ult' || fx.type === 'limit') shake.current = { t0: t, amp: 0.1, push: 1 };
+    // cinematic framing: attacker -> target close-up, wide low angle for team moves
+    const A = fx.actor ? world.current.get(fx.actor) : undefined;
+    const T = fx.target ? world.current.get(fx.target) : undefined;
+    if (fx.type === 'limit' || fx.type === 'ult' || AOE.includes(fx.type)) {
+      cine.current = { t0: t, pos: new THREE.Vector3(0, 1.3, 6.2), look: new THREE.Vector3(0, 1.9, -3), dur: fx.type === 'limit' ? 1.8 : 1.3, punch: fx.type === 'limit' ? 9 : 5, full: true };
+    } else if (A && T) {
+      const mid = A.clone().lerp(T, 0.5);
+      const side = A.x <= T.x ? -1 : 1;
+      cine.current = { t0: t, pos: new THREE.Vector3(mid.x + side * 3.4, 1.7, Math.max(mid.z, A.z) + 4.6), look: mid.clone().setY(1.2), dur: 1.25, punch: fx.type === 'crit' ? 6 : 3, full: false };
+    } else if (A) {
+      cine.current = { t0: t, pos: new THREE.Vector3(A.x * 0.6, 2.3, A.z + 5.5), look: A.clone().setY(1.3), dur: 1.1, punch: 0, full: false };
+    }
   }, [fx?.key]); // eslint-disable-line react-hooks/exhaustive-deps
+  const tmp = useRef({ p: new THREE.Vector3(), l: new THREE.Vector3(), lk: new THREE.Vector3() });
   useFrame(({ clock: c }) => {
     const t = c.elapsedTime; const s = shake.current; const k = (t - s.t0) / 0.6;
     const e = k > 0 && k < 1 ? (1 - k) * s.amp : 0;
     const sway = Math.sin(t * 0.35) * 0.35;
     const push = s.push ? Math.sin(Math.min(1, Math.max(0, (t - s.t0 + 0.5) / 1.6)) * Math.PI) * 2 : 0;
-    camera.position.set(BASE_CAM.pos.x + sway + Math.sin(t * 60) * e, BASE_CAM.pos.y - push * 0.6 + Math.cos(t * 55) * e, BASE_CAM.pos.z - push);
-    const pc = camera as THREE.PerspectiveCamera; const f = camFov(size.width / Math.max(1, size.height));
+    const { p, l, lk } = tmp.current;
+    p.set(BASE_CAM.pos.x + sway, BASE_CAM.pos.y - push * 0.6, BASE_CAM.pos.z - push);
+    l.copy(BASE_CAM.look);
+    let fovAdd = 0;
+    const c0 = cine.current;
+    if (c0) {
+      const u = (t - c0.t0) / c0.dur;
+      if (u >= 1) cine.current = null;
+      else {
+        const w = u < 0.18 ? u / 0.18 : u < 0.72 ? 1 : 1 - (u - 0.72) / 0.28;
+        const ease = w * w * (3 - 2 * w) * (c0.full ? 1 : 0.5); // partial for single targets so DOM bars/numbers stay aligned
+        p.lerp(c0.pos, ease); l.lerp(c0.look, ease);
+        const imp = (t - c0.t0 - 0.38) / 0.25; // impact punch-in on the hit frame
+        if (imp > 0 && imp < 1) fovAdd = -c0.punch * Math.sin(imp * Math.PI);
+      }
+    }
+    camera.position.set(p.x + Math.sin(t * 60) * e, p.y + Math.cos(t * 55) * e, p.z);
+    const pc = camera as THREE.PerspectiveCamera; const f = camFov(size.width / Math.max(1, size.height)) + fovAdd;
     if (Math.abs(pc.fov - f) > 0.01) { pc.fov = f; pc.updateProjectionMatrix(); }
-    camera.lookAt(BASE_CAM.look);
+    lk.copy(l); camera.lookAt(lk);
   });
   return null;
 }
@@ -459,7 +489,7 @@ function Scene({ units, pos, act, fx, pickedId, pickableIds }: { units: StageUni
   return (
     <>
       <Env act={act} />
-      <Rig fx={fx} />
+      <Rig fx={fx} world={world} />
       {units.map((u) => homes[u.id] && (
         <Unit key={u.id} u={u} home={homes[u.id]} world={world} fx={fx} picked={pickedId === u.id} pickable={pickableIds.includes(u.id)}
           scale={u.name === 'Government' ? 0.95 : u.name === 'The Collector' ? 0.8 : u.side === 'hero' ? 0.95 : 0.9} />
