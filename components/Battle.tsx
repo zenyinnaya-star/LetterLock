@@ -17,6 +17,9 @@ import type { Act } from './phases';
 type ActionId = 'attack' | 'guard' | 'heal' | 'ult';
 const ULT_NAME: Record<string, string> = { Shiro: 'Thousand Letters', Nero: 'Bastion Wall', Kira: 'All In', Mira: 'Bloom of Dawn', Prince: 'Crown Strike' };
 const CARDS: Record<string, { label: string; glyph: string; rare?: boolean; hint: string }> = {
+  sp_attack: { label: 'Special Attack', glyph: '⚔️', rare: true, hint: 'Big hit on one enemy' },
+  sp_guard: { label: 'Special Guard', glyph: '🛡️', rare: true, hint: 'Shields the whole party' },
+  sp_heal: { label: 'Special Heal', glyph: '💚', rare: true, hint: 'Big heal on one ally' },
   sweep: { label: 'Sweep', glyph: '🌀', hint: 'Hits all enemies' },
   heal_all: { label: 'Group Heal', glyph: '✨', hint: 'Heals the whole party' },
   cleanse: { label: 'Cleanse', glyph: '🧿', hint: 'Removes Corruption' },
@@ -31,8 +34,9 @@ const INTENT: Record<string, string> = {
 
 function logLine(e: BattleLogEntry) {
   switch (e.t) {
+    case 'odds': return `${e.a} calls the team's ODDS!`;
     case 'limit': return `LIMIT BREAK! ${e.a} leads the team for ${e.n} to everyone!`;
-    case 'crit': return `${e.a} CRITS ${e.d} for ${e.n}${e.w ? ` (${e.w})` : ''}!`;
+    case 'crit': if (e.sp) return `${e.a} uses ${e.sp} on ${e.d} for ${e.n}!`; return `${e.a} CRITS ${e.d} for ${e.n}${e.w ? ` (${e.w})` : ''}!`;
     case 'sweep': return `${e.a} plays Sweep: ${e.n} to every enemy!`;
     case 'mega_sweep': return `${e.a} plays Mega Sweep: ${e.n} to every enemy!`;
     case 'group_heal': return `${e.a} plays Group Heal: +${e.n} to everyone`;
@@ -54,8 +58,8 @@ function logLine(e: BattleLogEntry) {
     case 'hit': return `${e.a} hits ${e.d} for ${e.n}${e.w ? ` (${e.w})` : ''}`;
     case 'miss': return `${e.a} misses ${e.d}`;
     case 'dodge': return `${e.d} dodges ${e.a}`;
-    case 'guard': return `${e.a} guards +${e.n}${e.w ? ` (${e.w})` : ''}`;
-    case 'heal': return `${e.a} heals ${e.d} +${e.n}${e.w ? ` (${e.w})` : ''}`;
+    case 'guard': if (e.sp) return `${e.a} uses ${e.sp}: +${e.n} shield to the party`; return `${e.a} guards +${e.n}${e.w ? ` (${e.w})` : ''}`;
+    case 'heal': if (e.sp) return `${e.a} uses ${e.sp} on ${e.d}: +${e.n}`; return `${e.a} heals ${e.d} +${e.n}${e.w ? ` (${e.w})` : ''}`;
   }
 }
 
@@ -94,8 +98,8 @@ function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3 }: { elNow?
 export function Battle({ state, token, act, fallback }: { state: RoomState; token: string | null; act: Act; fallback?: React.ReactNode }) {
   const [b, setB] = useState<BattleState | null>(null);
   const [loaded, setLoaded] = useState(false);
-  const [word, setWord] = useState('');
-  const [action, setAction] = useState<ActionId>('attack');
+  const [pend, setPend] = useState<{ kind: 'attack' } | { kind: 'card'; c: string } | null>(null);
+  const [oddsCalled, setOddsCalled] = useState(false);
   const [target, setTarget] = useState<string | null>(null);
   const [msg, setMsg] = useState('');
   const [left, setLeft] = useState(0);
@@ -130,7 +134,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const mine = b?.units.find((u) => u.player_id === b.me);
   useEffect(() => { if (mine?.hero) { try { localStorage.setItem('letterlock:hero', mine.hero); } catch { /* ignore */ } } }, [mine?.hero]);
   const turn = b?.turn ?? 0;
-  useEffect(() => { setWord(''); setMsg(''); setTarget(null); setAction('attack'); }, [turn]);
+  useEffect(() => { setMsg(''); setTarget(null); setPend(null); setOddsCalled(false); }, [turn]);
 
   // Act intro card
   useEffect(() => {
@@ -241,8 +245,8 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const ultReady = (mine?.ult ?? 0) >= 6;
   const ai = actOf(b.stage);
   const myHero = mine?.hero ? heroById(mine.hero as HeroId) : null;
-  const needsEnemy = action === 'attack';
-  const needsAlly = action === 'heal';
+  const needsEnemy = !!pend && (pend.kind === 'attack' || pend.c === 'sp_attack');
+  const needsAlly = pend?.kind === 'card' && pend.c === 'sp_heal';
 
   // enemy field layout: spread across the right half, staggered rows
   const ePos = (i: number, n: number): React.CSSProperties => {
@@ -257,13 +261,42 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   enemies.forEach((u, i) => { const p = ePos(i, enemies.length); posMap[u.id] = { x: parseFloat(String(p.left)), y: parseFloat(String(p.top)) }; });
   heroes.forEach((u, i) => { const p = hPos(i, heroes.length); posMap[u.id] = { x: parseFloat(String(p.left)), y: parseFloat(String(p.top)) }; });
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!token || !word.trim() || !canAct) return;
-    const r = await act(() => rpc.battleSubmit(token, word.trim(), action, target));
+  async function doAction(kind: 'attack' | 'guard' | 'ult', tgt: string | null) {
+    if (!token || !canAct) return;
+    const r = await act(() => rpc.battleSubmit(token, '', kind, tgt));
     if (!r) return;
-    if (!r.ok) setMsg(r.reason === 'OFF_TOPIC' ? "That doesn't fit the prompt." : r.reason === 'NOT_A_WORD' ? 'Not a word.' : r.reason === 'LOCKED' ? `The letter ${r.letter?.toUpperCase()} is locked!` : r.reason === 'ULT_NOT_READY' ? 'Ultimate is not charged yet.' : 'Invalid.');
-    else { setMsg(`Locked in! Power ${r.power}`); void load(); }
+    if (!r.ok) setMsg('Invalid.');
+    else { setMsg(kind === 'attack' ? 'Attack locked in' : kind === 'guard' ? 'Guarding' : 'Ultimate locked in'); setPend(null); setTarget(null); void load(); }
+  }
+  async function playCard(c: string, tgt: string | null) {
+    if (!token) return;
+    const r = await act(() => rpc.battlePlay(token, c, tgt));
+    setPend(null); setTarget(null);
+    if (r) void load();
+  }
+  // tap on a unit while something is waiting for a target
+  function pickUnit(id: string) {
+    if (!pend || !canAct) return;
+    setTarget(id);
+    if (pend.kind === 'attack') void doAction('attack', id);
+    else void playCard(pend.c, id);
+  }
+  function chooseCard(c: string) {
+    if (c === 'sp_attack' || c === 'sp_heal') {
+      const alive = enemies.filter((e) => e.hp > 0);
+      if (c === 'sp_attack' && alive.length === 1) { void playCard(c, alive[0].id); return; }
+      setPend(pend?.kind === 'card' && pend.c === c ? null : { kind: 'card', c });
+    } else void playCard(c, null);
+  }
+  function chooseAttack() {
+    const alive = enemies.filter((e) => e.hp > 0);
+    if (alive.length === 1) { void doAction('attack', alive[0].id); return; }
+    setPend(pend?.kind === 'attack' ? null : { kind: 'attack' });
+  }
+  async function callOdds() {
+    if (!token) return;
+    const r = await act(() => rpc.battleOdds(token));
+    if (r) { setOddsCalled(true); void load(); }
   }
 
   async function openBook() {
@@ -332,14 +365,20 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           </div>
         </div>
 
-        {/* prompt banner */}
+        {/* element banner */}
         <div className="rg-prompt">
-          <div className="rg-prompt-t">{b.element && <span className="rg-elchip" title={`${b.element} prompt`}>{EL[b.element]}</span>} {b.prompt}</div>
-          {b.locked && <div className="rg-lock">🔒 Locked: <b>{b.locked.toUpperCase().split('').join(' ')}</b></div>}
+          <div className="rg-prompt-t">{b.element ? <><span className="rg-elchip">{EL[b.element]}</span> {b.element.toUpperCase()} turn · hit weaknesses for ×1.5</> : 'Choose your move'}</div>
         </div>
 
         {active && <div className={`rg-ban ${active.t === 'ult' ? 'ult' : active.t === 'crit' ? 'crit' : enemies.some((e) => e.name === active.a) ? 'e' : ''}`} key={`${active.t}-${active.a}-${active.n}-${b.version}`}><span>{logLine(active)}</span></div>}
-        {(b.momentum ?? 0) > 0 || active?.t === 'limit' ? <div className={`rg-mom${(b.momentum ?? 0) >= 100 ? ' full' : ''}`} title="Momentum: attack +10, weakness +20, crit +25, guard +5, miss −10. At 100 the team unleashes a Limit Break."><em>MOMENTUM</em><span><i style={{ width: `${Math.min(100, b.momentum ?? 0)}%` }} /></span><b>{(b.momentum ?? 0) >= 100 ? 'LIMIT BREAK READY' : b.momentum}</b></div> : null}
+        <div className={`rg-mom${(b.momentum ?? 0) >= 100 ? ' full' : ''}`} title="Odds: each basic attack +1, each special +3 (scaled by party size). When full, unleash the Limit Break.">
+          <em>ODDS</em>
+          <span><i style={{ width: `${Math.min(100, b.momentum ?? 0)}%` }} /></span>
+          <b>{Math.min(10, Math.floor((b.momentum ?? 0) / 10))}/10</b>
+        </div>
+        {mine && b.step === 'input' && (b.momentum ?? 0) >= 100 && mine.hp > 0 && (
+          <button type="button" className="rg-oddsbtn" disabled={oddsCalled} onClick={() => void callOdds()}>{oddsCalled ? 'ODDS LOCKED IN' : 'UNLEASH ODDS!'}</button>
+        )}
         {active?.t === 'limit' && <><div className="rg-lbflash" key={`lf-${b.version}`} /><div className="rg-burst crit" key={`lb-${b.version}`}>LIMIT BREAK!</div></>}
         {active && (active.x === 'weak' || active.x === 'resist') && <div className={`rg-burst ${active.x === 'weak' ? 'crit' : 'miss'}`} key={`wk-${b.version}-${active.a}-${active.n}`}>{active.x === 'weak' ? 'WEAKNESS!' : 'RESIST'}</div>}
         {active && !active.x && active.t !== 'limit' && (active.t === 'miss' || active.t === 'dodge' || active.t === 'crit' || active.t === 'ult') && <div className={`rg-burst ${active.t}`} key={`bu-${active.t}-${active.a}-${b.version}`}>{active.t === 'miss' ? 'MISS' : active.t === 'dodge' ? 'DODGE' : active.t === 'crit' ? 'CRITICAL!' : 'ALL-OUT!'}</div>}
@@ -353,11 +392,11 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         {/* units */}
         {enemies.map((u, i) => (
           <Sprite key={u.id} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={target === u.id}
-            onPick={needsEnemy && canAct && u.hp > 0 ? () => setTarget(target === u.id ? null : u.id) : undefined} />
+            onPick={needsEnemy && canAct && u.hp > 0 ? () => pickUnit(u.id) : undefined} />
         ))}
         {heroes.map((u, i) => (
           <Sprite key={u.id} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
-            onPick={needsAlly && canAct && u.hp > 0 ? () => setTarget(target === u.id ? null : u.id) : undefined} />
+            onPick={needsAlly && canAct && u.hp > 0 ? () => pickUnit(u.id) : undefined} />
         ))}
 
         {/* bottom-left: party cards */}
@@ -367,7 +406,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
             const me = u.player_id === b.me;
             return (
               <button key={u.id} type="button" className={`rg-pc${me ? ' me' : ''}${u.hp <= 0 ? ' down' : ''}${target === u.id ? ' picked' : ''}`}
-                onClick={needsAlly && canAct && u.hp > 0 ? () => setTarget(target === u.id ? null : u.id) : undefined}>
+                onClick={needsAlly && canAct && u.hp > 0 ? () => pickUnit(u.id) : undefined}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={portrait(u)} alt="" draggable={false} />
                 <span className="rg-pc-ult">{u.ult ?? 0}/6</span>
@@ -382,12 +421,11 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         {/* bottom-right: skills + ultimate */}
         {mine && b.step === 'input' && (
           <div className="rg-skills">
-            <small className="rg-lab">SKILLS</small>
-            <button type="button" className={`rg-sk${action === 'attack' ? ' sel' : ''}`} disabled={skillDisabled} onClick={() => { setAction('attack'); setTarget(null); }}><b>⚔</b><em>Strike</em></button>
-            <button type="button" className={`rg-sk${action === 'guard' ? ' sel' : ''}`} disabled={skillDisabled} onClick={() => { setAction('guard'); setTarget(null); }}><b>🛡</b><em>Guard</em></button>
-            <button type="button" className={`rg-sk${action === 'heal' ? ' sel' : ''}`} disabled={skillDisabled} onClick={() => { setAction('heal'); setTarget(null); }}><b>✚</b><em>Heal</em></button>
-            <button type="button" className={`rg-ult${ultReady ? ' ready' : ''}${action === 'ult' ? ' sel' : ''}`} disabled={skillDisabled || !ultReady}
-              onClick={() => { setAction('ult'); setTarget(null); }} title={ULT_NAME[mine.hero ?? ''] ?? 'Ultimate'}>
+            <small className="rg-lab">COMMAND</small>
+            <button type="button" className={`rg-sk${pend?.kind === 'attack' ? ' sel' : ''}`} disabled={skillDisabled} onClick={chooseAttack}><b>⚔</b><em>Attack</em></button>
+            <button type="button" className="rg-sk" disabled={skillDisabled} onClick={() => void doAction('guard', null)}><b>🛡</b><em>Guard</em></button>
+            <button type="button" className={`rg-ult${ultReady ? ' ready' : ''}`} disabled={skillDisabled || !ultReady}
+              onClick={() => void doAction('ult', enemies.find((e) => e.hp > 0)?.id ?? null)} title={ULT_NAME[mine.hero ?? ''] ?? 'Ultimate'}>
               {myHero && /* eslint-disable-next-line @next/next/no-img-element */ <img src={myHero.artFull} alt="" draggable={false} />}
               <span className="rg-ult-n">{mine.ult ?? 0}/6</span>
               <em>{ultReady ? (ULT_NAME[mine.hero ?? ''] ?? 'ULT') : 'ULT'}</em>
@@ -399,16 +437,16 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
       {/* hand of cards + book */}
       {b.step === 'input' && mine && (
         <div className="rg-hand">
-          <small className="rg-lab">ITEMS</small>
+          <small className="rg-lab">BOOK &amp; SPECIALS</small>
           <button type="button" className="rg-book" disabled={!!b.book_used || mine.hp <= 0} onClick={() => void openBook()}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={BOOK_ART} alt="" draggable={false} />
-            <b>Book of Wisdom</b><small>{b.book_used ? 'Read' : 'Answer fast → rare card'}</small>
+            <b>Book of Wisdom</b><small>{b.book_used ? 'Read this turn' : 'Answer fast → special'}</small>
           </button>
-          {b.cards.length === 0 && <span className="muted small">No cards. Good words draw them, the Book gives rare ones.</span>}
+          {b.cards.length === 0 && <span className="muted small">No specials yet. Read the Book of Wisdom to get Special Attack, Guard or Heal.</span>}
           {b.cards.map((c, i) => (
-            <button key={c + i} type="button" className={`rg-card${CARDS[c]?.rare ? ' rare' : ''}`} disabled={b.card_used || mine.hp <= 0}
-              onClick={() => token && void act(() => rpc.battleCard(token, c)).then(() => load())}>
+            <button key={c + i} type="button" className={`rg-card${CARDS[c]?.rare ? ' rare' : ''}${pend?.kind === 'card' && pend.c === c ? ' sel' : ''}`} disabled={b.card_used || mine.hp <= 0}
+              onClick={() => chooseCard(c)}>
               {myHero && /* eslint-disable-next-line @next/next/no-img-element */ <img src={myHero.artFull} alt="" draggable={false} />}
               <span className="rg-card-g">{CARDS[c]?.glyph ?? '🃏'}</span>
               <b>{CARDS[c]?.label ?? c}</b><small>{CARDS[c]?.hint}</small>
@@ -422,14 +460,8 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           {mine && mine.hp <= 0 ? <div className="muted center">You&apos;re down. Your team fights on…</div> : mine?.locked ? (
             <div className="muted center">{msg || 'Locked in'}. Waiting for the team…</div>
           ) : (
-            <form onSubmit={submit} className="bt-form">
-              <input className="input" autoComplete="off" autoCapitalize="none" value={word} maxLength={20}
-                placeholder={action === 'ult' ? `${ULT_NAME[mine?.hero ?? ''] ?? 'Ultimate'}: type a word that fits…` : `${action === 'attack' ? 'Strike' : action === 'guard' ? 'Guard' : 'Heal'}: type a word that fits…`}
-                onChange={(e) => setWord(e.target.value)} />
-              <button className="btn" disabled={!word.trim() || !canAct}>Cast ▸</button>
-            </form>
+            <div className="muted center">{pend ? `Tap ${needsAlly ? 'an ally' : 'an enemy'} to ${pend.kind === 'attack' ? 'attack it' : 'use ' + (CARDS[pend.c]?.label ?? 'it')}` : 'Choose: Attack, Guard, or read the Book of Wisdom for specials'}</div>
           )}
-          {(needsEnemy || needsAlly) && canAct && <div className="muted small center">Tap {needsEnemy ? 'an enemy' : 'an ally'} to target it{target ? ' ✓' : ' (auto if none)'}</div>}
           {msg && !mine?.locked && <div className="muted small center">{msg}</div>}
         </div>
       ) : (
@@ -443,7 +475,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
               <div className="rg-rgrid">
                 <div><b>{result.dmg}</b><span>Damage</span></div><div><b>{result.healed}</b><span>Healing</span></div>
                 <div><b>{result.crits}</b><span>Crits</span></div><div><b>{result.ults}</b><span>Ultimates</span></div>
-                <div><b>{result.words}</b><span>Words</span></div><div><b>{result.books}</b><span>Book answers</span></div>
+                <div><b>{result.books}</b><span>Book answers</span></div>
               </div>
             </>
           ) : <div className="muted small">Tallying your performance…</div>}

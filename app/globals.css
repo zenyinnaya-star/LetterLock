@@ -1550,3 +1550,9 @@ h3{font-weight:800}
 .cp-item.gear{border-left:4px solid var(--gold)}.cp-item.gear.owned{background:linear-gradient(120deg,#2a2208,#0b0e1c)}
 .cp-slot{font-weight:800;letter-spacing:.14em;color:var(--gold);font-size:10px}.cp-have{font-size:10px;color:#94a3b8}
 .cp-locked{text-align:center}.cp-big{font:900 22px var(--impact);font-style:italic;text-transform:uppercase}
+
+/* odds finisher button + selected special card */
+.rg-oddsbtn{position:absolute;left:50%;top:92px;transform:translateX(-50%);z-index:40;padding:10px 22px;font:900 20px/1 var(--font-barlow,inherit);letter-spacing:.12em;text-transform:uppercase;color:#fff;background:#e5001f;border:3px solid #fff;transform:translateX(-50%) skewX(-8deg);box-shadow:0 0 0 3px #000,0 0 26px #ff2a44;cursor:pointer;animation:oddsPulse .8s ease-in-out infinite}
+.rg-oddsbtn:disabled{animation:none;background:#333;box-shadow:0 0 0 3px #000;cursor:default}
+@keyframes oddsPulse{50%{box-shadow:0 0 0 3px #000,0 0 44px #ff6a7a}}
+.rg-card.sel{outline:3px solid #ffd400;transform:translateY(-6px)}
