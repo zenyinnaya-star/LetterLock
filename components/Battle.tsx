@@ -111,6 +111,20 @@ const INTENT_ICON: Record<string, string> = { attack: '⚔', aoe: '💥', buff: 
 const OLD_UI = false as boolean; // detached command bars replaced by the card menu
 const EL: Record<string, string> = { fire: '🔥', ice: '❄️', storm: '⚡', earth: '⛰️', light: '✨', dark: '🌑' };
 
+
+const EL_COL: Record<string, string> = { fire: '#fb923c', ice: '#7dd3fc', storm: '#facc15', earth: '#a8a29e', light: '#fef08a', dark: '#a78bfa' };
+const EL_PATH: Record<string, React.ReactNode> = {
+  fire: <path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z" fill="currentColor" />,
+  ice: <path d="M12 2v20M4 7l16 10M20 7 4 17M9 3l3 3 3-3M9 21l3-3 3 3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />,
+  storm: <path d="M13 2 5 14h6l-1 8 8-12h-6z" fill="currentColor" />,
+  earth: <path d="M2 20 9 8l4 6 3-4 6 10z" fill="currentColor" />,
+  light: <><circle cx="12" cy="12" r="4" fill="currentColor" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></>,
+  dark: <path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z" fill="currentColor" />,
+};
+function ElIcon({ el, size = 14 }: { el: string; size?: number }) {
+  return <svg className="rg-elsvg" width={size} height={size} viewBox="0 0 24 24" style={{ color: EL_COL[el] ?? '#fff' }} aria-label={el}>{EL_PATH[el] ?? null}</svg>;
+}
+
 type Float = { k: string; text: string; cls: string };
 
 function Sprite({ elNow, u, floats, picked, onPick, style, lunge, lungeTo, t3, mine, menu, win, pose }: { lungeTo?: { x: number; y: number }; pose?: 'strike' | 'cast'; win?: boolean; menu?: React.ReactNode; elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
@@ -130,7 +144,7 @@ function Sprite({ elNow, u, floats, picked, onPick, style, lunge, lungeTo, t3, m
           <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
           <span className="rg-uc-hp"><span className="rg-ehp"><motion.u animate={{ width: `${pct}%` }} transition={{ duration: 1.1, delay: 0.35 }} /><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.3 }} /></span><b>{u.hp}</b></span>
           {hit && <span className="rg-slash" key={floats[0]?.k} />}
-          {u.side === 'enemy' && (u.weak_el || u.res_el) && u.hp > 0 && <span className="rg-el">{u.weak_el && <b title={`Weak to ${u.weak_el}`} className={u.weak_el === elNow ? 'hot' : ''}>{EL[u.weak_el]}▼</b>}{u.res_el && <i title={`Resists ${u.res_el}`}>{EL[u.res_el]}✕</i>}</span>}
+          {u.side === 'enemy' && (u.weak_el || u.res_el) && u.hp > 0 && <span className="rg-el">{u.weak_el && <b title={`Weak to ${u.weak_el}`} className={u.weak_el === elNow ? 'hot' : ''}><ElIcon el={u.weak_el} />▼</b>}{u.res_el && <i title={`Resists ${u.res_el}`}><ElIcon el={u.res_el} />✕</i>}</span>}
         </div>
       </motion.div>
       {menu}
@@ -161,6 +175,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const [oddsCalled, setOddsCalled] = useState(false);
   const [spOpen, setSpOpen] = useState(false);
   const [itemOpen, setItemOpen] = useState(false);
+  const [retrying, setRetrying] = useState(false);
   const [target, setTarget] = useState<string | null>(null);
   const [msg, setMsg] = useState('');
   const [left, setLeft] = useState(0);
@@ -179,7 +194,8 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const [active, setActive] = useState<BattleLogEntry | null>(null);
   const over = b?.step === 'won' || b?.step === 'lost';
   useEffect(() => {
-    if (!over || !token) return;
+    if (!over) { setResult(null); return; }
+    if (!token) return;
     let n = 0; const go = () => void fetchStoryResult(token).then((r) => { if (r) setResult(r); else if (n++ < 5) setTimeout(go, 1200); });
     go();
   }, [over, token]);
@@ -300,6 +316,19 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     if ((e.t === 'group_heal' || e.t === 'full_heal') && u.side === 'hero') return [{ k, text: e.n ? `+${e.n}` : '+', cls: 'heal' }];
     return [];
   };
+  const wheel = (() => {
+    const alive = (b?.units ?? []).filter((u) => u.hp > 0 || (b?.log ?? []).some((e) => e.ai === u.id));
+    if (!active || !b?.log?.length) return [...alive].filter((u) => u.hp > 0).sort((x, y) => effSpd(y) - effSpd(x)).slice(0, 8).map((u, i) => ({ u, cur: false, done: false }));
+    const order: string[] = [];
+    for (const e of b.log) if (e.ai && !order.includes(e.ai)) order.push(e.ai);
+    const idx = b.log.indexOf(active);
+    const acted = new Set(b.log.slice(0, Math.max(0, idx)).map((e) => e.ai).filter(Boolean) as string[]);
+    acted.delete(active.ai ?? '');
+    const rows = order.map((id) => alive.find((u) => u.id === id)).filter(Boolean) as BattleUnit[];
+    const upcoming = rows.filter((u) => !acted.has(u.id));
+    const past = rows.filter((u) => acted.has(u.id));
+    return [...upcoming, ...past].slice(0, 8).map((u) => ({ u, cur: u.id === active.ai, done: acted.has(u.id) }));
+  })();
   const lungeId = active && ['hit', 'crit', 'miss', 'dodge', 'guard', 'heal', 'ult', 'limit', 'season', 'sweep', 'mega_sweep', 'e_aoe', 'e_buff', 'e_debuff', 'e_heal'].includes(active.t)
     ? (active.t === 'dodge' ? (active.di ?? firstNamed(active.d)?.id) : (active.ai ?? firstNamed(active.a)?.id)) : undefined;
 
@@ -360,6 +389,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   };
   const tgtId = target && aliveEnemies.some((e) => e.id === target) ? target : aliveEnemies.length === 1 ? aliveEnemies[0].id : null;
   const tgtUnit = enemies.find((e) => e.id === tgtId) ?? null;
+  const isBoss = (e: BattleUnit) => e.name === 'Government' || e.name === 'The Collector' || e.name === 'The Commissioner';
   const lead = enemies.find((e) => e.name === 'Government') ?? enemies.find((e) => e.name === 'The Collector') ?? enemies.find((e) => e.name === 'The Commissioner') ?? enemies[0];
   const leadPct = lead ? Math.max(0, Math.round((lead.hp / lead.max_hp) * 100)) : 0;
   const ultReady = (mine?.ult ?? 0) >= 6;
@@ -400,6 +430,14 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     const k = 0.8; // stop just short so the sprites overlap at the point of contact
     return { x: ((tx - me.x) / 100) * W * k, y: ((ty - me.y) / 100) * H * k };
   };
+
+  async function retry(sameStage: boolean) {
+    if (!token || retrying) return;
+    setRetrying(true);
+    try { await rpc.battleRetry(token, sameStage); setResult(null); setApplied({ ver: -1, ids: [], all: true }); seenAct.current = -1; await load(); }
+    catch { /* ignore, the poll will show the new battle */ }
+    setRetrying(false);
+  }
 
   async function doAction(kind: 'attack' | 'guard' | 'ult', tgt: string | null) {
     if (!token || !canAct) return;
@@ -504,19 +542,21 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           pickedId={target} pickableIds={b.units.filter((u) => u.hp > 0 && ((needsEnemy && u.side === 'enemy') || (needsAlly && u.side === 'hero')) && canAct).map((u) => u.id)} />}
         <div className="rg-vig" />
 
-        {/* top-left: turn order */}
+        {/* top-left: turn order. Idle: by speed. While a turn plays: the real order, the acting unit lit up */}
         <div className="rg-order" aria-label="Turn order">
           <span className="rg-rd">{b.turn}<small>/{b.stages * 5}</small></span>
-          {orderUnits.slice(0, 7).map((u, i) => (
-            <div key={u.id} className={`rg-ord ${u.side}${i === 0 ? ' first' : ''}`} title={u.name}>
+          {wheel.map((w) => (
+            <motion.div layout transition={{ type: 'spring', stiffness: 380, damping: 32 }} key={w.u.id}
+              className={`rg-ord ${w.u.side}${w.cur ? ' first' : ''}${w.done ? ' done' : ''}`} title={`${w.u.name} · SPD ${effSpd(w.u)}`}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={portrait(u)} alt={u.name} draggable={false} />
-            </div>
+              <img src={portrait(w.u)} alt={w.u.name} draggable={false} />
+              <i>{effSpd(w.u)}</i>
+            </motion.div>
           ))}
         </div>
 
         {/* top-center: boss bar */}
-        {lead && (
+        {lead && isBoss(lead) && (
           <div className="rg-boss">
             <div className="rg-boss-name"><b>{lead.name}</b><span>{leadPct}%</span></div>
             <div className="rg-boss-bar"><motion.i animate={{ width: `${leadPct}%` }} transition={{ duration: 0.6 }} /></div>
@@ -539,22 +579,18 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
             <span className={heroes.every((h) => h.hp > 0) ? 'ok' : ''}>◉ Keep every hero standing</span>
             {b.drain && <span className="bad">The Collector garnishes Power (−20%)</span>}
           </div>
-          {(tgtUnit ?? lead) && (() => { const e = (tgtUnit ?? lead)!; const p = Math.max(0, Math.min(100, (e.hp / e.max_hp) * 100)); return (
+          {tgtUnit && isBoss(tgtUnit) && (() => { const e = tgtUnit; const p = Math.max(0, Math.min(100, (e.hp / e.max_hp) * 100)); return (
             <div className="rg-tgt"><b>{e.name}</b><span className="rg-tgt-bar"><motion.i animate={{ width: `${p}%` }} transition={{ duration: 0.4 }} /></span><em>{Math.max(0, e.hp)} / {e.max_hp}</em></div>
           ); })()}
         </div>
 
         {/* element banner */}
         <div className="rg-prompt">
-          <div className="rg-prompt-t">{b.element ? <><span className="rg-elchip">{EL[b.element]}</span> {b.element.toUpperCase()} turn · hit weaknesses for ×1.5</> : 'Choose your move'}</div>
+          <div className="rg-prompt-t">{b.element ? <><span className="rg-elchip"><ElIcon el={b.element} size={16} /></span> {b.element.toUpperCase()} turn · hit weaknesses for ×1.5</> : 'Choose your move'}</div>
         </div>
 
         {active && <div className={`rg-ban ${active.t === 'ult' ? 'ult' : active.t === 'crit' ? 'crit' : enemies.some((e) => e.name === active.a) ? 'e' : ''}`} key={`${active.t}-${active.a}-${active.n}-${b.version}`}><span>{logLine(active)}</span></div>}
-        <div className={`rg-mom${(b.momentum ?? 0) >= 100 ? ' full' : ''}`} title="Odds: each basic attack +1, each special +3 (scaled by party size). When full, unleash the Limit Break.">
-          <em>ODDS</em>
-          <span><i style={{ width: `${Math.min(100, b.momentum ?? 0)}%` }} /></span>
-          <b>{Math.min(10, Math.floor((b.momentum ?? 0) / 10))}/10</b>
-        </div>
+
         {OLD_UI && mine && b.step === 'input' && (b.momentum ?? 0) >= 100 && mine.hp > 0 && (
           <button type="button" className="rg-oddsbtn" disabled={oddsCalled} onClick={() => void callOdds()}>{oddsCalled ? 'ODDS LOCKED IN' : 'UNLEASH ODDS!'}</button>
         )}
@@ -687,9 +723,11 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
               </div>
             </>
           ) : <div className="muted small">Tallying your performance…</div>}
-          <div className="row" style={{ gap: 8, justifyContent: 'center' }}>
-            <Link className="btn" href={`/stats?from=${encodeURIComponent(`/room/${state.room.code}`)}`}>Stats</Link>
-            <a className="btn ghost" href="/">Back to menu</a>
+          <div className="row" style={{ gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button type="button" className="btn lg" disabled={retrying || !!active} onClick={() => void retry(false)}>{b.step === 'won' ? 'Play again' : 'Try again'}</button>
+            {b.step === 'lost' && b.stage > 1 && <button type="button" className="btn" disabled={retrying || !!active} onClick={() => void retry(true)}>Retry encounter {b.stage}</button>}
+            <Link className="btn ghost" href={`/stats?from=${encodeURIComponent(`/room/${state.room.code}`)}`}>Stats</Link>
+            <a className="btn ghost" href="/">Menu</a>
           </div>
         </div>
       )}

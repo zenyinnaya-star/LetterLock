@@ -1,0 +1,1 @@
+-- 067: battle_retry(p_token, p_same_stage) restarts a finished run in place (copy of start_pve without lobby/host checks). Applied via MCP.

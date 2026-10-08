@@ -70,6 +70,7 @@ export const rpc = {
   battleOdds: (token: string) => call<{ ok: boolean }>('battle_odds', { p_token: token }),
   bookOpen: (token: string) => call<{ ok: boolean; reason?: string; prompt?: string; ends_at?: string }>('book_open', { p_token: token }),
   bookAnswer: (token: string, word: string) => call<{ ok: boolean; reason?: string; card?: string }>('book_answer', { p_token: token, p_word: word }),
+  battleRetry: (token: string, sameStage: boolean) => call<void>('battle_retry', { p_token: token, p_same_stage: sameStage }),
   battleStep: (token: string, turn: number) => call<void>('battle_step', { p_token: token, p_turn: turn }),
   getRecap: (code: string) => call<Recap>('get_recap', { p_code: code }),
   createRoom: (name: string, cls: PlayerClass) => call<JoinResult>('create_room', { p_name: name, p_class: cls }),
