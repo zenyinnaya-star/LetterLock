@@ -112,6 +112,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   const duelMode = state.room.settings?.mode === 'duel';
   useEffect(() => {
     if (phase === 'duel_intro' || (duel && phase !== 'lobby' && phase !== 'finished') || (phase === 'lobby' && duelMode)) { music.play('duel'); return; }
+    if (phase === 'battle') { music.play('battle'); return; }
     if (phase === 'finished') {
       music.play('none'); // let the fanfare + announcer land, then bring the theme back
       const id = window.setTimeout(() => music.play('theme'), 4000);

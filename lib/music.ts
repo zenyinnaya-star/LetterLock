@@ -3,15 +3,16 @@
 import { audio } from './audio';
 import { getPrefs } from './prefs';
 
-export type Track = 'theme' | 'duel' | 'none';
+export type Track = 'theme' | 'duel' | 'battle' | 'none';
 
-const SRC: Record<Exclude<Track, 'none'>, string> = { theme: '/audio/theme.mp3', duel: '/audio/duel.mp3' };
-const LEVEL: Record<Exclude<Track, 'none'>, number> = { theme: 0.32, duel: 0.55 };
+const SRC: Record<Exclude<Track, 'none'>, string> = { theme: '/audio/theme.mp3', duel: '/audio/duel.mp3', battle: '/audio/battle.mp3' };
+const LEVEL: Record<Exclude<Track, 'none'>, number> = { theme: 0.32, duel: 0.55, battle: 0.5 };
 
 let els: Partial<Record<Exclude<Track, 'none'>, HTMLAudioElement>> = {};
 let want: Track = 'none';
 let quiet = false; // in-game: sit the theme lower under the announcer
 let gestureHooked = false;
+let switchTimer = 0;
 const fades = new Map<HTMLAudioElement, number>();
 
 function el(t: Exclude<Track, 'none'>): HTMLAudioElement {
@@ -19,6 +20,8 @@ function el(t: Exclude<Track, 'none'>): HTMLAudioElement {
   if (!a) {
     a = new Audio(SRC[t]);
     a.loop = true;
+    // dedicated RPG track is optional: until /public/audio/battle.mp3 exists, the duel track stands in
+    if (t === 'battle') a.addEventListener('error', () => { if (!a!.src.endsWith('duel.mp3')) { a!.src = SRC.duel; a!.load(); if (want === 'battle') void a!.play().catch(() => undefined); } }, { once: true });
     a.preload = 'auto';
     a.volume = 0;
     els = { ...els, [t]: a };
@@ -54,7 +57,7 @@ function hookGesture() {
 
 function apply() {
   if (typeof window === 'undefined') return;
-  (['theme', 'duel'] as const).forEach((t) => {
+  (['theme', 'duel', 'battle'] as const).forEach((t) => {
     const on = want === t && !audio.isMuted() && getPrefs().music;
     const a = els[t];
     if (on) {
@@ -64,7 +67,7 @@ function apply() {
       }
       fade(x, target(t), 900);
     } else if (a && !a.paused) {
-      fade(a, 0, t === 'duel' ? 700 : 900, () => { if (want !== t || audio.isMuted() || !getPrefs().music) a.pause(); });
+      fade(a, 0, t === 'theme' ? 900 : 700, () => { if (want !== t || audio.isMuted() || !getPrefs().music) a.pause(); });
     }
   });
 }
@@ -79,8 +82,15 @@ export const music = {
     if (t === want && q === quiet) return;
     want = t;
     quiet = q;
-    if (t === 'duel') { const d = el('duel'); if (d.paused) d.currentTime = 0; }
-    apply();
+    if (t === 'duel' || t === 'battle') { const d = el(t); if (d.paused) d.currentTime = 0; }
+    // never overlap: fade whatever is playing out first, then bring the new track in
+    if (switchTimer) window.clearTimeout(switchTimer);
+    const others = (['theme', 'duel', 'battle'] as const).some((k) => k !== t && els[k] && !els[k]!.paused);
+    if (others && t !== 'none') {
+      const keep = want;
+      want = 'none'; apply(); want = keep;
+      switchTimer = window.setTimeout(() => apply(), 800);
+    } else apply();
   },
   current() { return want; },
 };
