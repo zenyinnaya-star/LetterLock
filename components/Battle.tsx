@@ -13,7 +13,7 @@ import { heroById, type HeroId } from '@/lib/heroes';
 import { fetchStoryResult, type StoryResult } from '@/lib/profile';
 import { rpc, type BattleLogEntry, type BattleState, type BattleUnit } from '@/lib/rpc';
 import type { RoomState } from '@/lib/types';
-import { useCombatDirector, BREAK_MAX } from './useCombatDirector';
+import { useCombatDirector, breakMaxOf } from './useCombatDirector';
 import { LetterVfx } from './LetterVfx';
 import { preloadFor } from '@/lib/combat/registry';
 import type { Act } from './phases';
@@ -632,14 +632,14 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         {dir.fx && <LetterVfx fx={dir.fx} w={stageEl.current?.clientWidth ?? 800} h={stageEl.current?.clientHeight ?? 450} />}
         {enemies.filter((u) => u.hp > 0 && posMap[u.id]).map((u) => { const br = dir.breaks[u.id]; const v = br?.v ?? 0; return (
           <div key={`brk-${u.id}`} className={`rg-brk${br?.broken ? ' on' : ''}`} style={{ left: `${posMap[u.id].x}%`, top: `${posMap[u.id].y + 17}%` }} title="Break meter">
-            {Array.from({ length: BREAK_MAX }).map((_, i) => <i key={i} className={i < v ? 'f' : ''} />)}
+            {Array.from({ length: breakMaxOf(u.name) }).map((_, i) => <i key={i} className={i < v ? 'f' : ''} />)}
             {br?.broken && <b>BROKEN</b>}
           </div>); })}
         </div>
         {dir.flash && <div className={`rg-cflash ${dir.flash.cls}`} key={`fl-${dir.flash.k}`} />}
         {dir.label && <div className={`rg-lab ${dir.label.cls}`} key={`lb-${dir.label.key}`}>{dir.label.big && <b>{dir.label.big}</b>}{dir.label.rank && <span className={`rk rk-${dir.label.rank}`}>{dir.label.rank} WORD</span>}</div>}
         {dir.combo.n >= 2 && <div className="rg-combo" key={`cb-${dir.combo.k}`}>WORD COMBO <b>x{dir.combo.n}</b></div>}
-        {dir.intro && <div className={`rg-intro ${dir.intro.kind}`} key={`in-${dir.intro.k}`}><i /><small>{dir.intro.kind === 'boss' ? 'BOSS' : dir.intro.kind === 'elite' ? 'ELITE' : 'BATTLE START'}</small>{dir.intro.kind !== 'normal' && <b>{dir.intro.name}</b>}</div>}
+        {dir.intro && <div className={`rg-intro ${dir.intro.kind}`} key={`in-${dir.intro.k}`}><i /><small>{dir.intro.kind === 'boss' ? 'BOSS' : dir.intro.kind === 'elite' ? 'ELITE' : 'BATTLE START'}</small>{dir.intro.kind !== 'normal' && <b>{dir.intro.name}</b>}{dir.intro.kind !== 'normal' && dir.intro.title && <em>{dir.intro.title}</em>}</div>}
 
         {/* bottom-left: party cards */}
         <div className="rg-party">

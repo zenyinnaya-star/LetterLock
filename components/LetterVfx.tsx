@@ -25,7 +25,7 @@ export function LetterVfx({ fx, w, h }: { fx: LetterFx; w: number; h: number }) 
     <div className={`lv lv-${fx.kind}`} aria-hidden>
       {parts.map((p, i) => (
         <span key={`${fx.key}-${i}`} className="lv-l" style={{
-          left: `${fx.from.x}%`, top: `${fx.from.y}%`, fontSize: p.sz,
+          left: `${fx.from.x}%`, top: `${fx.from.y}%`, fontSize: p.sz, ...(fx.glow ? { color: fx.core, textShadow: `0 0 8px ${fx.glow}, 0 0 20px ${fx.glow}, 2px 2px 0 #000` } : {}),
           ['--x0' as string]: `${p.x0}px`, ['--y0' as string]: `${p.y0}px`, ['--x1' as string]: `${p.x1}px`, ['--y1' as string]: `${p.y1}px`,
           ['--x2' as string]: `${p.x2}px`, ['--y2' as string]: `${p.y2}px`, ['--rot' as string]: `${p.rot}deg`,
           animationDuration: `${p.d}ms`, animationDelay: `${p.dl}ms`,

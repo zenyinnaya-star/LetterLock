@@ -11,6 +11,7 @@ export class CameraDirector {
   private el: HTMLElement | null = null;
   private anim: Animation | null = null;
   reduced = false;
+  style = { amp: 1, speed: 1 }; // per-character camera personality
   attach(el: HTMLElement | null) {
     this.el = el;
     try { this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { /* ignore */ }
@@ -18,7 +19,7 @@ export class CameraDirector {
   private run(frames: KF[], ms: number, damp = 1) {
     if (!this.el) return;
     this.anim?.cancel();
-    const k = this.reduced ? 0 : damp; // reduced motion: no camera travel at all
+    const k = this.reduced ? 0 : damp * this.style.amp; ms = ms / this.style.speed; // reduced motion: no camera travel at all
     if (k === 0) return;
     this.anim = this.el.animate(
       frames.map((f) => ({ offset: f.t, transform: `translate(${f.x * k}%, ${f.y * k}%) scale(${1 + (f.s - 1) * k}) rotate(${f.r * k}deg)`, easing: EASE })),

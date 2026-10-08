@@ -8,10 +8,12 @@ import { CombatBus, eventsFor, type CombatEvent } from '@/lib/combat/events';
 import { CameraDirector } from '@/lib/combat/camera';
 import { scoreWord, type WordScore } from '@/lib/combat/score';
 import type { CameraPreset } from '@/lib/combat/registry';
+import { DEFAULT_PROFILE, ENEMY_PROFILE, HERO_PROFILE } from '@/lib/combat/profiles';
 
-export type LetterFx = { key: string; kind: 'pop' | 'orbit' | 'streak' | 'fill' | 'shatter'; word: string; from: { x: number; y: number }; to: { x: number; y: number }; };
+export type LetterFx = { key: string; kind: 'pop' | 'orbit' | 'streak' | 'fill' | 'shatter'; word: string; glow?: string; core?: string; from: { x: number; y: number }; to: { x: number; y: number }; };
 export type Label = { key: string; big?: string; cls: string; rank?: string };
-export const BREAK_MAX = 6;
+export const BREAK_MAX = 6; // default; enemies override via ENEMY_PROFILE
+export const breakMaxOf = (name?: string) => (name && ENEMY_PROFILE[name]?.breakMax) || BREAK_MAX;
 
 type Pos = Record<string, { x: number; y: number }>;
 type In = { active: BattleLogEntry | null; units: BattleUnit[]; pos: Pos; stage: number; foe?: string; boss: boolean; elite: boolean; version: number };
@@ -26,7 +28,7 @@ export function useCombatDirector(inp: In) {
   const [fx, setFx] = useState<LetterFx | null>(null);
   const [flash, setFlash] = useState<{ k: number; cls: string } | null>(null);
   const [breaks, setBreaks] = useState<Record<string, { v: number; broken: boolean }>>({});
-  const [intro, setIntro] = useState<{ k: number; kind: 'normal' | 'elite' | 'boss'; name: string } | null>(null);
+  const [intro, setIntro] = useState<{ k: number; kind: 'normal' | 'elite' | 'boss'; name: string; title?: string } | null>(null);
   const comboRef = useRef(0); const brkRef = useRef<Record<string, { v: number; broken: boolean }>>({});
   const seq = useRef(0); const introFor = useRef(-1);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -41,7 +43,7 @@ export function useCombatDirector(inp: In) {
     const kind = boss ? 'boss' : elite ? 'elite' : 'normal';
     cam.intro(kind);
     bus.emit({ type: 'BATTLE_INTRO', data: { kind } });
-    setIntro({ k: ++seq.current, kind, name: foe });
+    setIntro({ k: ++seq.current, kind, name: foe, title: ENEMY_PROFILE[foe]?.title });
     later(() => setIntro(null), kind === 'boss' ? 3600 : kind === 'elite' ? 2400 : 1500);
     if (kind !== 'normal') audio.file(kind === 'boss' ? 'siren' : 'metal-clang', 300);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,6 +84,8 @@ export function useCombatDirector(inp: In) {
     const word = e.w ? e.w.toUpperCase() : undefined;
     const actor = evs[0]?.actorId ?? units.find((u) => u.name === e.a)?.id;
     const target = evs[0]?.targetId;
+    const prof = HERO_PROFILE[units.find((u) => u.id === actor)?.hero ?? ''] ?? DEFAULT_PROFILE;
+    cam.style = prof.cam;
 
     // an enemy acting ends its Break
     const actingFoe = units.find((u) => u.id === (e.ai ?? actor) && u.side === 'enemy');
@@ -96,11 +100,13 @@ export function useCombatDirector(inp: In) {
     let broke = false;
     const foe = units.find((u) => u.id === target && u.side === 'enemy');
     if (foe && hero && has('DAMAGE_DEALT') && (correct || has('CRITICAL_HIT') || has('ULTIMATE_SUCCESS'))) {
-      const pts = 1 + (has('WORD_LONG') ? 1 : 0) + (has('WORD_RARE') ? 1 : 0) + (has('WEAKNESS_HIT') ? 2 : 0) + (has('CRITICAL_HIT') ? 3 : 0) + (has('ULTIMATE_SUCCESS') ? 3 : 0);
+      const pts = 1 + (has('WORD_LONG') ? 1 : 0) + (has('WORD_RARE') ? 1 : 0) + (has('WEAKNESS_HIT') ? 2 : 0) + (has('CRITICAL_HIT') ? 3 : 0) + (has('ULTIMATE_SUCCESS') ? 3 : 0)
+        + prof.breakBonus({ long: !!has('WORD_LONG'), rare: !!has('WORD_RARE'), weak: !!has('WEAKNESS_HIT'), crit: !!has('CRITICAL_HIT'), len: (word ?? '').length });
+      const max = breakMaxOf(foe.name);
       const cur = brkRef.current[foe.id] ?? { v: 0, broken: false };
       if (!cur.broken) {
-        const v = Math.min(BREAK_MAX, cur.v + pts);
-        broke = v >= BREAK_MAX;
+        const v = Math.min(max, cur.v + pts);
+        broke = v >= max;
         brkRef.current = { ...brkRef.current, [foe.id]: { v, broken: broke } };
         setBreaks(brkRef.current);
         if (broke) bus.emit({ type: 'BREAK_TRIGGERED', actorId: actor, targetId: foe.id, heroSide: true });
@@ -119,7 +125,7 @@ export function useCombatDirector(inp: In) {
     const k = `${++seq.current}`;
     const rank = hero && correct && ['B', 'A', 'S', 'SS'].includes(sc.rank) ? sc.rank : undefined;
     if (broke) setLabel({ key: k, big: 'BREAK!', cls: 'brk', rank });
-    else if (has('ULTIMATE_STARTED')) setLabel({ key: k, big: rank === 'SS' ? 'SS WORD' : undefined, cls: 'ult', rank });
+    else if (has('ULTIMATE_STARTED')) setLabel({ key: k, big: prof.ult, cls: 'ult', rank });
     else if (has('CRITICAL_HIT')) setLabel({ key: k, big: 'CRITICAL', cls: 'crit', rank });
     else if (has('WEAKNESS_HIT')) setLabel({ key: k, big: 'WEAKNESS', cls: 'weak', rank });
     else if (rank) setLabel({ key: k, cls: 'rank', rank });
@@ -130,8 +136,8 @@ export function useCombatDirector(inp: In) {
     const a = actor ? pos[actor] : undefined, t = target ? pos[target] : undefined;
     if (hero && word && a) {
       const tp = t ?? { x: 55, y: 40 };
-      const kind: LetterFx['kind'] = has('ULTIMATE_STARTED') ? 'fill' : has('CRITICAL_HIT') ? 'streak' : (has('WORD_LONG') || has('WORD_RARE')) ? 'orbit' : 'pop';
-      setFx({ key: k, kind, word, from: a, to: tp });
+      const kind: LetterFx['kind'] = has('ULTIMATE_STARTED') ? 'fill' : has('CRITICAL_HIT') ? 'streak' : (has('WORD_LONG') || has('WORD_RARE')) ? 'orbit' : prof.popKind;
+      setFx({ key: k, kind, word, glow: prof.glow, core: prof.core, from: a, to: tp });
     } else if (broke && t) setFx({ key: k, kind: 'shatter', word: 'BREAK', from: t, to: t });
     else setFx(null);
   // eslint-disable-next-line react-hooks/exhaustive-deps

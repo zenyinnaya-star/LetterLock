@@ -2076,3 +2076,5 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 @keyframes introFade{0%{opacity:1}55%{opacity:.82}100%{opacity:0}}
 @keyframes introTxt{0%{opacity:0;transform:scale(1.35)}20%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0}}
 @media (prefers-reduced-motion: reduce){.lv-l,.rg-cflash,.rg-lab{animation-duration:.01ms!important}.rg-intro i{animation-duration:.4s!important}}
+.rg-intro em{position:relative;font:italic 700 clamp(13px,2.4vw,22px)/1 system-ui;letter-spacing:.2em;color:#fecdd3;animation:introTxt 2.4s ease-out 1.2s both}
+.rg-intro.boss em{animation-duration:2.8s;animation-delay:1.9s}
