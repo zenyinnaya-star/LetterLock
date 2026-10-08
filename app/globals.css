@@ -1950,3 +1950,14 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .rg-unit.cheer .rg-img{animation:cheerHop .7s ease-in-out infinite alternate}
 @keyframes cheerHop{from{transform:translateY(0)}to{transform:translateY(-14px)}}
 .rg-unit.hero .rg-img{image-rendering:pixelated}
+
+/* idle life: every unit breathes / bobs while waiting */
+.rg-unit .rg-img{transform-origin:50% 100%}
+.rg-unit.hero:not(.down):not(.cheer) .rg-img{animation:idleBreathe 2.6s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit.enemy:not(.down) .rg-img{animation:idleBob 2.2s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit.enemy.boss:not(.down) .rg-img{animation:idleBoss 3.4s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit.striking .rg-img,.rg-unit.ouch .rg-img{animation:none}
+@keyframes idleBreathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.015,1.035) translateY(-1%)}}
+@keyframes idleBob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-4%) rotate(1.2deg)}}
+@keyframes idleBoss{0%,100%{transform:translateY(0) scale(1)}35%{transform:translate(1.5%,-2%) scale(1.02)}70%{transform:translate(-1.5%,-1%) scale(1.01)}}
+@media (prefers-reduced-motion:reduce){.rg-unit .rg-img{animation:none!important}}
