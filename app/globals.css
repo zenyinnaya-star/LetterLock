@@ -1571,7 +1571,7 @@ h3{font-weight:800}
 .rg-sk.sel{border-color:var(--gold2);box-shadow:0 0 0 2px #000,0 0 18px #f0d28acc}
 /* top chips / banners: dark glass with gold hairline */
 .rg-chip,.rg-obj,.rg-prompt-t{background:rgba(8,10,16,.72);backdrop-filter:blur(6px);border:1px solid rgba(201,164,92,.45);border-radius:4px}
-.rg-prompt-t{font-family:var(--font-barlow,inherit);letter-spacing:.12em;color:var(--gold2)}
+.rg-prompt-t{font-family:var(--font-barlow,inherit);letter-spacing:.12em;color:#fff6d8;background:rgba(6,8,14,.92)!important;border-color:rgba(243,220,155,.65)!important;text-shadow:0 2px 4px #000,0 0 10px rgba(201,164,92,.5);font-weight:800}
 /* odds meter as a crimson blade */
 .rg-mom>span{background:#14070a;border:1px solid var(--gold);height:12px}.rg-mom>span i{background:linear-gradient(90deg,#8e0b1b,#ff3b52)}
 /* Book of Wisdom: glowing arcane eye */
@@ -1683,7 +1683,7 @@ h3{font-weight:700;color:var(--gold-hi)}
 @media(max-width:600px){.lp-hero-img{margin:0 -7%}.lp-hero-img.h0,.lp-hero-img.h4{display:none}}
 
 /* generated world art as real backgrounds */
-body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),url('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_063255_20876ecb-71fb-47e1-abb5-86be76caf752.png'),radial-gradient(ellipse 80% 55% at 50% -10%,rgba(201,164,92,.20),transparent 65%),linear-gradient(180deg,#0a0d16,#04060a);background-size:auto,cover,auto,auto;background-position:center,center top,center,center;background-attachment:fixed}
+body{background-image:linear-gradient(180deg,rgba(4,6,10,.7),rgba(4,6,10,.88)),url('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_131257_851376aa-3c7c-4b25-92af-b27a37825f08.png'),radial-gradient(ellipse 80% 55% at 50% -10%,rgba(201,164,92,.20),transparent 65%),linear-gradient(180deg,#0a0d16,#04060a);background-size:auto,cover,auto,auto;background-position:center,center top,center,center;background-attachment:fixed;image-rendering:pixelated}
 .hs-page{position:relative;isolation:isolate}
 .hs-bgimg{position:fixed;inset:0;z-index:-1;background-size:cover;background-position:center;filter:saturate(1.1) brightness(.62);animation:slpan 50s ease-in-out infinite alternate}
 .hs-bgimg::after{content:"";position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 40%,transparent,rgba(3,5,12,.85)),linear-gradient(to top,#05070f,transparent 45%)}
@@ -2067,15 +2067,48 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .rg-combo{position:absolute;right:14px;top:16%;z-index:58;pointer-events:none;font:900 14px/1 system-ui;letter-spacing:.18em;color:#fde68a;background:#0a0a0acc;border-right:5px solid #f59e0b;padding:6px 12px;transform:skewX(-10deg);animation:comboPulse .45s cubic-bezier(.2,1.6,.4,1) both}
 .rg-combo b{font-size:28px;color:#fff;margin-left:6px;text-shadow:0 0 10px #f59e0b}
 @keyframes comboPulse{from{transform:skewX(-10deg) scale(1.5)}to{transform:skewX(-10deg) scale(1)}}
-.rg-intro{position:absolute;inset:0;z-index:70;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
-.rg-intro i{position:absolute;inset:0;background:#000;animation:introFade 1.5s ease-out both}
-.rg-intro.elite i{animation-duration:2.2s}.rg-intro.boss i{animation-duration:3.2s;background:radial-gradient(circle,#1a0510,#000)}
-.rg-intro small{position:relative;font:900 clamp(14px,3vw,26px)/1 system-ui;letter-spacing:.5em;color:#fde68a;text-shadow:0 0 14px #f59e0b;animation:introTxt 1.4s ease-out .35s both}
-.rg-intro b{position:relative;font:900 clamp(30px,8vw,80px)/1 system-ui;font-style:italic;color:#fff;-webkit-text-stroke:2px #000;text-shadow:6px 6px 0 #e11d48;animation:introTxt 2.2s ease-out .9s both}
-.rg-intro.boss b{animation-duration:2.8s;animation-delay:1.4s}.rg-intro.boss small{animation-duration:3s;animation-delay:1s}
+.rg-cintro{position:absolute;inset:0;z-index:70;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.rg-cintro i{position:absolute;inset:0;background:#000;animation:introFade 1.5s ease-out both}
+.rg-cintro.elite i{animation-duration:2.2s}.rg-cintro.boss i{animation-duration:3.2s;background:radial-gradient(circle,#1a0510,#000)}
+.rg-cintro small{position:relative;font:900 clamp(14px,3vw,26px)/1 system-ui;letter-spacing:.5em;color:#fde68a;text-shadow:0 0 14px #f59e0b;animation:introTxt 1.4s ease-out .35s both}
+.rg-cintro b{position:relative;font:900 clamp(30px,8vw,80px)/1 system-ui;font-style:italic;color:#fff;-webkit-text-stroke:2px #000;text-shadow:6px 6px 0 #e11d48;animation:introTxt 2.2s ease-out .9s both}
+.rg-cintro.boss b{animation-duration:2.8s;animation-delay:1.4s}.rg-cintro.boss small{animation-duration:3s;animation-delay:1s}
 @keyframes introFade{0%{opacity:1}55%{opacity:.82}100%{opacity:0}}
 @keyframes introTxt{0%{opacity:0;transform:scale(1.35)}20%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0}}
-@media (prefers-reduced-motion: reduce){.lv-l,.rg-cflash,.rg-lab{animation-duration:.01ms!important}.rg-intro i{animation-duration:.4s!important}}
-.rg-intro em{position:relative;font:italic 700 clamp(13px,2.4vw,22px)/1 system-ui;letter-spacing:.2em;color:#fecdd3;animation:introTxt 2.4s ease-out 1.2s both}
-.rg-intro.boss em{animation-duration:2.8s;animation-delay:1.9s}
+@media (prefers-reduced-motion: reduce){.lv-l,.rg-cflash,.rg-lab{animation-duration:.01ms!important}.rg-cintro i{animation-duration:.4s!important}}
+.rg-cintro em{position:relative;font:italic 700 clamp(13px,2.4vw,22px)/1 system-ui;letter-spacing:.2em;color:#fecdd3;animation:introTxt 2.4s ease-out 1.2s both}
+.rg-cintro.boss em{animation-duration:2.8s;animation-delay:1.9s}
 .rg-ctag{font:800 11px/1 ui-monospace,monospace;letter-spacing:.16em;color:#fde68a;background:#0a0a0ac0;border:1px solid #f5d07a;padding:2px 9px;transform:skewX(-8deg)}
+
+
+/* ===== class/hero sheet: one-line summary + collapsible full details ===== */
+.cs-oneline{font-size:15px;font-weight:600;color:var(--gold-hi,#f3dc9b);background:rgba(0,0,0,.28);border:1px solid rgba(243,220,155,.3);border-radius:8px;padding:8px 12px;margin:2px 0}
+.cs-more{border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:0 12px;background:rgba(0,0,0,.18)}
+.cs-more summary{cursor:pointer;list-style:none;padding:10px 0;font-weight:800;letter-spacing:.06em;display:flex;align-items:center;gap:6px;color:var(--gold-hi,#f3dc9b)}
+.cs-more summary::-webkit-details-marker{display:none}
+.cs-more summary::after{content:'▾';margin-left:auto;transition:transform .2s}
+.cs-more[open] summary::after{transform:rotate(180deg)}
+.cs-more[open]{padding-bottom:12px}
+.cs-more>*:not(summary){margin-top:10px}
+.cs-shot{display:flex;gap:10px;align-items:center;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px}
+.cs-shot img{width:64px;height:64px;object-fit:contain;image-rendering:pixelated;flex:0 0 auto;background:rgba(0,0,0,.4);border-radius:6px}
+.cs-shot b{display:block;font-size:12px;letter-spacing:.08em;color:var(--gold-hi,#f3dc9b)}
+.cs-shot p{margin:2px 0 0;font-size:13px;line-height:1.35}
+
+/* ===== 1v1 Duel HUD revamp: match the gold-glass JRPG theme instead of the old red/black skin ===== */
+.duel-hud{background:linear-gradient(180deg,var(--glass-hi),rgba(6,8,14,.85));border:1px solid var(--line);box-shadow:0 10px 26px rgba(0,0,0,.5),inset 0 0 24px rgba(201,164,92,.08);border-radius:14px}
+.dh-fighter{position:relative;padding:4px 6px;border-radius:10px;transition:background .2s}
+.dh-fighter.me{background:rgba(201,164,92,.1)}
+.dh-fighter .class-ico.portrait,.dh-fighter img{border:2px solid var(--gold-lo);border-radius:10px;box-shadow:0 0 10px rgba(201,164,92,.25)}
+.dh-fighter.me .class-ico.portrait,.dh-fighter.me img{border-color:var(--gold);box-shadow:0 0 14px rgba(201,164,92,.5)}
+.dh-name b{font-family:var(--serif);letter-spacing:.04em;color:var(--gold-hi)}
+.dh-name span{color:var(--gold);opacity:.8;font-weight:700}
+.dh-bar{background:#1a0d12;border:2px solid #000;box-shadow:inset 0 0 0 1px rgba(201,164,92,.25)}
+.dh-fill{background:linear-gradient(180deg,var(--arcane),#1f8fa8)}
+.dh-fill.low{background:linear-gradient(180deg,#ffd36a,var(--crimson));animation:dhpulse .7s infinite alternate}
+.dh-notch{background:rgba(0,0,0,.6)}
+.dh-stats{color:var(--gold-hi)}
+.dh-mid{position:relative}
+.dh-vs{font-family:var(--serif);font-weight:900;font-size:26px;color:var(--gold-hi);text-shadow:0 2px 0 #000,0 0 16px rgba(201,164,92,.5);background:radial-gradient(circle,rgba(201,164,92,.18),transparent 70%);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--line)}
+.dh-round{color:var(--gold);letter-spacing:.18em}
+@media (max-width:520px){.duel-hud{border-radius:10px}.dh-vs{width:36px;height:36px;font-size:20px}}

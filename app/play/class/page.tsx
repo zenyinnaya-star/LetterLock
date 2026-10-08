@@ -155,16 +155,17 @@ function Select() {
                 <span>{guide.difficulty === 1 ? t('cs.easy') : guide.difficulty === 2 ? t('cs.medium') : t('cs.hard')}</span>
               </div>
               <p className="sel-tag">{info.tagline}</p>
-              <div className="sel-pp">
-                <div className="cs-box plus"><b>{t('cs.power')}</b><p>{info.perk}</p></div>
+              <p className="cs-oneline">{info.perk}</p>
+              <details className="cs-more sel-more">
+                <summary>{t('cs.how')} <Icon name="eye" size={14} /></summary>
                 <div className="cs-box minus"><b>{t('cs.price')}</b><p>{info.cost}</p></div>
-              </div>
-              <div className="sel-box"><b>{t('cs.how')}</b><p>{guide.how}</p></div>
-              <div className="sel-box">
-                <b>{t('cs.tips')}</b>
-                <ol className="cs-tips">{guide.tips.slice(0, 3).map((x) => <li key={x}>{x}</li>)}</ol>
-              </div>
-              <div className="sel-box counter"><b><Icon name="target" size={14} /> {t('cs.counter')}</b><p>{guide.counter}</p></div>
+                <div className="sel-box"><p>{guide.how}</p></div>
+                <div className="sel-box">
+                  <b>{t('cs.tips')}</b>
+                  <ol className="cs-tips">{guide.tips.slice(0, 3).map((x) => <li key={x}>{x}</li>)}</ol>
+                </div>
+                <div className="sel-box counter"><b><Icon name="target" size={14} /> {t('cs.counter')}</b><p>{guide.counter}</p></div>
+              </details>
             </div>
         </section>
       </div>

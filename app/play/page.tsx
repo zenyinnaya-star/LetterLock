@@ -14,15 +14,10 @@ type Kind = 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' 
 interface Mode { kind: Kind; icon: IconName; k: string; tone: string }
 // Scene art per mode (local file wins once self-hosted; CDN copy until then).
 const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_';
+// Only Story gets a background image on its mode button — every other mode stays a plain
+// icon + tone card, so the grid reads cleanly instead of competing photo/pixel-art styles.
 const BG: Partial<Record<Kind, string>> = {
-  create: `url(/art/mode-classic.webp), url(${CDN}20261005_051536_b7f898c0-9f76-41a2-a8b3-f74fdabe184d.png)`,
-  duel: `url(/art/mode-duel.webp), url(${CDN}20261005_051536_53b2e5b2-a949-4a03-80f6-a27be7013203.png)`,
   story: `url(${CDN}20261008_072145_be5c6185-1e84-4cf8-b0c2-942af2b412c9.png)`,
-  solo: `url(${CDN}20261008_072145_ea576408-75eb-47c9-b6e8-1a90aedf8d83.png)`,
-  reverse: `url(${CDN}20261008_072145_ee25922a-0941-4e38-8159-a355a4b04825.png)`,
-  chaos: `url(${CDN}20261008_072146_bb1be6f6-6288-432f-a303-981f2c4740c0.png)`,
-  memory: `url(${CDN}20261008_072205_fc568745-e4cd-4879-a11d-622c0e0dce2e.png)`,
-  team: `url(/art/mode-team.webp), url(${CDN}20261005_051536_697b7012-abd7-48ad-ab89-6a5a4171375d.png)`,
 };
 
 const MODES: Mode[] = [

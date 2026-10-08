@@ -65,29 +65,30 @@ export function ClassSheet({ cls, selected, onClose, onPick, onNav }: {
             </div>
           </div>
 
-          <div className="cs-pp">
-            <div className="cs-box plus"><b>{t('cs.power')}</b><p>{info.perk}</p></div>
+          <p className="cs-oneline">{info.perk}</p>
+
+          <details className="cs-more">
+            <summary>{t('cs.how')} <Icon name="eye" size={14} /></summary>
             <div className="cs-box minus"><b>{t('cs.price')}</b><p>{info.cost}</p></div>
-          </div>
 
-          <section className="cs-sec">
-            <h3>{t('cs.how')}</h3>
-            <p>{guide.how}</p>
-          </section>
+            <section className="cs-sec">
+              <p>{guide.how}</p>
+            </section>
 
-          <section className="cs-sec">
-            <h3>{t('cs.tips')}</h3>
-            <ol className="cs-tips">
-              {guide.tips.map((t, n) => (
-                <motion.li key={t} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 + n * 0.05 }}>{t}</motion.li>
-              ))}
-            </ol>
-          </section>
+            <section className="cs-sec">
+              <h3>{t('cs.tips')}</h3>
+              <ol className="cs-tips">
+                {guide.tips.map((t, n) => (
+                  <motion.li key={t} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 + n * 0.05 }}>{t}</motion.li>
+                ))}
+              </ol>
+            </section>
 
-          <section className="cs-sec cs-counter">
-            <h3><Icon name="target" size={16} /> {t('cs.counter')}</h3>
-            <p>{guide.counter}</p>
-          </section>
+            <section className="cs-sec cs-counter">
+              <h3><Icon name="target" size={16} /> {t('cs.counter')}</h3>
+              <p>{guide.counter}</p>
+            </section>
+          </details>
         </motion.div>
 
         <div className="cs-foot">

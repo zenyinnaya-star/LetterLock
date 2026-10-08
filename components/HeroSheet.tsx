@@ -8,6 +8,8 @@ import { HEROES, STAT_INFO, heroById, type HeroId } from '@/lib/heroes';
 import { useT } from '@/lib/i18n/react';
 import { Icon } from './icons';
 import { HeroIcon } from './HeroPicker';
+import { HERO_PROFILE, DEFAULT_PROFILE } from '@/lib/combat/profiles';
+import { HERO_STRIKE } from '@/lib/art';
 
 /** Mirror of ClassSheet for the story heroes: portrait, power, price, how it plays, tips, counter (+ stats). */
 export function HeroSheet({ hero, selected, taken, onClose, onPick, onNav }: {
@@ -33,6 +35,7 @@ export function HeroSheet({ hero, selected, taken, onClose, onPick, onNav }: {
   }, [onClose, onNav, prev, next]);
 
   const locked = !!taken && !selected;
+  const prof = HERO_PROFILE[hero] ?? DEFAULT_PROFILE;
   return (
     <motion.div className="sheet-backdrop cs-backdrop" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <motion.div className="class-sheet" role="dialog" aria-modal="true" aria-label={info.name}
@@ -65,37 +68,49 @@ export function HeroSheet({ hero, selected, taken, onClose, onPick, onNav }: {
             </div>
           </div>
 
-          <div className="cs-pp">
-            <div className="cs-box plus"><b>{t('cs.power')}</b><p>{guide.power}</p></div>
+          <p className="cs-oneline">{guide.power}</p>
+
+          <details className="cs-more">
+            <summary>{t('cs.how')} <Icon name="eye" size={14} /></summary>
             <div className="cs-box minus"><b>{t('cs.price')}</b><p>{guide.price}</p></div>
-          </div>
 
-          <section className="cs-sec">
-            <h3>Stats</h3>
-            <div className="hp-stats">
-              {(Object.keys(info.stats) as (keyof typeof info.stats)[]).map((k) => (
-                <div key={k} className="hp-stat" title={STAT_INFO[k].what}>
-                  <em>{k}</em><span><motion.i initial={{ width: 0 }} animate={{ width: `${info.stats[k] * 12.5}%` }} transition={{ duration: 0.5 }} /></span><b>{info.stats[k]}</b>
+            {prof.mechanic && (
+              <div className="cs-shot">
+                {HERO_STRIKE[hero] && <img src={HERO_STRIKE[hero]} alt="" draggable={false} />}
+                <div>
+                  <b>Word mechanic</b>
+                  <p>{prof.mechanic}</p>
                 </div>
-              ))}
-            </div>
-          </section>
+              </div>
+            )}
 
-          <section className="cs-sec"><h3>{t('cs.how')}</h3><p>{guide.how}</p></section>
+            <section className="cs-sec">
+              <h3>Stats</h3>
+              <div className="hp-stats">
+                {(Object.keys(info.stats) as (keyof typeof info.stats)[]).map((k) => (
+                  <div key={k} className="hp-stat" title={STAT_INFO[k].what}>
+                    <em>{k}</em><span><motion.i initial={{ width: 0 }} animate={{ width: `${info.stats[k] * 12.5}%` }} transition={{ duration: 0.5 }} /></span><b>{info.stats[k]}</b>
+                  </div>
+                ))}
+              </div>
+            </section>
 
-          <section className="cs-sec">
-            <h3>{t('cs.tips')}</h3>
-            <ol className="cs-tips">
-              {guide.tips.map((tip, n) => (
-                <motion.li key={tip} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 + n * 0.05 }}>{tip}</motion.li>
-              ))}
-            </ol>
-          </section>
+            <section className="cs-sec"><p>{guide.how}</p></section>
 
-          <section className="cs-sec cs-counter">
-            <h3><Icon name="target" size={16} /> {t('cs.counter')}</h3>
-            <p>{guide.counter}</p>
-          </section>
+            <section className="cs-sec">
+              <h3>{t('cs.tips')}</h3>
+              <ol className="cs-tips">
+                {guide.tips.map((tip, n) => (
+                  <motion.li key={tip} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 + n * 0.05 }}>{tip}</motion.li>
+                ))}
+              </ol>
+            </section>
+
+            <section className="cs-sec cs-counter">
+              <h3><Icon name="target" size={16} /> {t('cs.counter')}</h3>
+              <p>{guide.counter}</p>
+            </section>
+          </details>
         </motion.div>
 
         <div className="cs-foot">

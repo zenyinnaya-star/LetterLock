@@ -639,7 +639,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         {dir.flash && <div className={`rg-cflash ${dir.flash.cls}`} key={`fl-${dir.flash.k}`} />}
         {dir.label && <div className={`rg-lab ${dir.label.cls}`} key={`lb-${dir.label.key}`}>{dir.label.big && <b>{dir.label.big}</b>}{dir.label.rank && <span className={`rk rk-${dir.label.rank}`}>{dir.label.rank} WORD</span>}{dir.label.tag && <small className="rg-ctag">{dir.label.tag}</small>}</div>}
         {dir.combo.n >= 2 && <div className="rg-combo" key={`cb-${dir.combo.k}`}>WORD COMBO <b>x{dir.combo.n}</b></div>}
-        {dir.intro && <div className={`rg-intro ${dir.intro.kind}`} key={`in-${dir.intro.k}`}><i /><small>{dir.intro.kind === 'boss' ? 'BOSS' : dir.intro.kind === 'elite' ? 'ELITE' : 'BATTLE START'}</small>{dir.intro.kind !== 'normal' && <b>{dir.intro.name}</b>}{dir.intro.kind !== 'normal' && dir.intro.title && <em>{dir.intro.title}</em>}</div>}
+        {dir.intro && <div className={`rg-cintro ${dir.intro.kind}`} key={`in-${dir.intro.k}`}><i /><small>{dir.intro.kind === 'boss' ? 'BOSS' : dir.intro.kind === 'elite' ? 'ELITE' : 'BATTLE START'}</small>{dir.intro.kind !== 'normal' && <b>{dir.intro.name}</b>}{dir.intro.kind !== 'normal' && dir.intro.title && <em>{dir.intro.title}</em>}</div>}
 
         {/* bottom-left: party cards */}
         <div className="rg-party">
