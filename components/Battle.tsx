@@ -4,7 +4,7 @@ import { audio } from '@/lib/audio';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ACT_BG, PIXEL_BG, ACT_NAME, BOOK_ART, ENEMY_SPRITE, HERO_SPRITE, actOf } from '@/lib/art';
+import { ACT_BG, PIXEL_BG, ACT_NAME, BOOK_ART, ENEMY_SPRITE, HERO_SPRITE, HERO_BACK, HERO_WIN, actOf } from '@/lib/art';
 import dynamic from 'next/dynamic';
 import { Camp } from './Camp';
 import { webglOk, type StageFx } from './Stage3D';
@@ -103,7 +103,7 @@ function KeyedImg({ src, className, alt, style }: { src: string; className?: str
 }
 
 const portrait = (u: BattleUnit) => (u.hero ? heroById(u.hero as HeroId)?.artFull : ENEMY_SPRITE[u.name]) ?? '';
-const sprite = (u: BattleUnit) => (u.hero ? HERO_SPRITE[u.hero] : ENEMY_SPRITE[u.name]) ?? '';
+const sprite = (u: BattleUnit, win?: boolean) => (u.hero ? ((win ? HERO_WIN[u.hero] : HERO_BACK[u.hero]) ?? HERO_SPRITE[u.hero]) : ENEMY_SPRITE[u.name]) ?? '';
 
 const INTENT_ICON: Record<string, string> = { attack: '⚔', aoe: '💥', buff: '⬆', debuff: '🐌', heal: '✚', strike: '⚔', red_tape: '🔒', taxes: '☠', tax_season: '💥' };
 const OLD_UI = false as boolean; // detached command bars replaced by the card menu
@@ -111,11 +111,11 @@ const EL: Record<string, string> = { fire: '🔥', ice: '❄️', storm: '⚡', 
 
 type Float = { k: string; text: string; cls: string };
 
-function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3, mine, menu }: { menu?: React.ReactNode; elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
+function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3, mine, menu, win }: { win?: boolean; menu?: React.ReactNode; elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
   const pct = Math.max(0, Math.min(100, (u.hp / u.max_hp) * 100));
   const hit = floats.some((f) => f.cls === 'dmg');
   return (
-    <div className={`rg-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}${u.name === 'Government' ? ' boss' : ''}${t3 ? ' t3' : ''}${mine ? ' mine' : ''}${menu ? ' lift' : ''}${hit ? ' ouch' : ''}${floats.some((f) => f.text === 'DODGE') ? ' dodged' : ''}${floats.some((f) => f.cls.includes('heal')) ? ' healed' : ''}${floats.some((f) => f.cls.includes('shield')) ? ' shielded' : ''}${lunge ? ' striking' : ''}`}
+    <div className={`rg-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}${u.name === 'Government' ? ' boss' : ''}${t3 ? ' t3' : ''}${mine ? ' mine' : ''}${menu ? ' lift' : ''}${hit ? ' ouch' : ''}${floats.some((f) => f.text === 'DODGE') ? ' dodged' : ''}${floats.some((f) => f.cls.includes('heal')) ? ' healed' : ''}${floats.some((f) => f.cls.includes('shield')) ? ' shielded' : ''}${lunge ? ' striking' : ''}${win && u.hp > 0 ? ' cheer' : ''}`}
       style={style} onClick={onPick} role={onPick ? 'button' : undefined}>
       <motion.div key={`${lunge ? 'l' : hit ? 'h' : 'i'}-${floats[0]?.k ?? ''}`}
         animate={lunge ? { x: [0, u.side === 'hero' ? 90 : -90, 0], scale: [1, 1.12, 1] } : hit ? { x: [0, -10, 10, -6, 0], filter: ['brightness(2.2)', 'brightness(1)'] } : {}}
@@ -124,7 +124,7 @@ function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3, mine, menu
           {u.hp > 0 && u.intent && <span className={`rg-intent i-${u.intent}`} title={`Next: ${u.intent}`}>{INTENT_ICON[u.intent] ?? '⚔'}</span>}
           {u.hp > 0 && (u.haste ?? 0) !== 0 && <span className={`rg-haste ${(u.haste ?? 0) > 0 ? 'up' : 'dn'}`} title={(u.haste ?? 0) > 0 ? 'Hasted: acts earlier' : 'Slowed: acts later'}>{(u.haste ?? 0) > 0 ? '⚡' : '🐌'}</span>}
           <span className="rg-uc-tag">{mine ? 'YOU' : u.side === 'hero' ? (u.hero ?? 'HERO') : u.name === 'Government' ? 'BOSS' : 'FOE'}</span>
-          <KeyedImg className="rg-img" src={sprite(u)} alt={u.name} />
+          <KeyedImg className="rg-img" src={sprite(u, win)} alt={u.name} />
           <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
           <span className="rg-uc-hp"><span className="rg-ehp"><motion.u animate={{ width: `${pct}%` }} transition={{ duration: 1.1, delay: 0.35 }} /><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.3 }} /></span><b>{u.hp}</b></span>
           {hit && <span className="rg-slash" key={floats[0]?.k} />}
@@ -350,6 +350,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const enemies = shown.filter((u) => u.side === 'enemy');
   const aliveEnemies = enemies.filter((e) => e.hp > 0);
   const canAct = b.step === 'input' && !!mine && mine.hp > 0 && !mine.locked && !active;
+  const won = b.step === 'won' || active?.t === 'stage' || (aliveEnemies.length === 0 && b.step === 'input');
   const tgtId = target && aliveEnemies.some((e) => e.id === target) ? target : aliveEnemies.length === 1 ? aliveEnemies[0].id : null;
   const tgtUnit = enemies.find((e) => e.id === tgtId) ?? null;
   const lead = enemies.find((e) => e.name === 'Government') ?? enemies.find((e) => e.name === 'The Collector') ?? enemies.find((e) => e.name === 'The Commissioner') ?? enemies[0];
@@ -548,7 +549,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
             onPick={canAct && u.hp > 0 ? () => tapEnemy(u.id) : undefined} />
         ))}
         {heroes.map((u, i) => (
-          <Sprite key={u.id} menu={u.player_id === b.me && mine && b.step === 'input' && canAct && !mine.locked ? <></> : undefined} mine={u.player_id === b.me} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
+          <Sprite key={u.id} menu={u.player_id === b.me && mine && b.step === 'input' && canAct && !mine.locked ? <></> : undefined} win={won} mine={u.player_id === b.me} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
             onPick={((needsAlly && u.hp > 0) || (needsDown && u.hp <= 0)) && canAct ? () => pickUnit(u.id) : undefined} />
         ))}
 

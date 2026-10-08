@@ -1947,3 +1947,6 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .rg-stage[data-foes="1"] .rg-unit.enemy{width:26%;max-width:290px;min-width:160px}
 .rg-stage[data-foes="1"] .rg-unit.enemy.boss{width:34%;max-width:360px}
 .rg-bg,.rg-intro{image-rendering:pixelated;background-size:cover;background-position:center bottom}
+.rg-unit.cheer .rg-img{animation:cheerHop .7s ease-in-out infinite alternate}
+@keyframes cheerHop{from{transform:translateY(0)}to{transform:translateY(-14px)}}
+.rg-unit.hero .rg-img{image-rendering:pixelated}

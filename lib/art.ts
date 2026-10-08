@@ -53,3 +53,19 @@ export const HERO_BG = u('20261008_063230_5d2b88fe-8bdd-4a43-a030-dcad86f63b89')
 export const BOOK_ART = u('20261008_063230_8c35b853-eb22-4ed6-b263-f0377c6d91f3');
 export const actOf = (stage: number) => (stage <= 2 ? 0 : stage <= 4 ? 1 : 2);
 export const ACT_NAME = ['Act I · The Outer Provinces', 'Act II · The Midlands', 'Act III · The Capital'];
+
+// pixel-art hero poses: back view (over-the-shoulder battle) and victory
+export const HERO_BACK: Record<string, string> = {
+  Shiro: u('20261008_131437_218e776f-22a4-4136-a489-25ed55924ff4'),
+  Nero: u('20261008_131506_390f4574-d492-447a-ad7a-a97136ae8200'),
+  Kira: u('20261008_131505_98a4ddb4-4955-44c3-b813-0e0d3ab0d121'),
+  Mira: u('20261008_131549_be3a452d-8caf-4721-afea-f0cbfe6290a6'),
+  Prince: u('20261008_131436_0c2165e6-79e2-4942-aec7-12fcb76ee214'),
+};
+export const HERO_WIN: Record<string, string> = {
+  Shiro: u('20261008_131437_565cae77-5fb3-4bb2-b787-3f4f493588d9'),
+  Nero: u('20261008_131547_c6da2e92-92fb-4769-af97-88ef8633e487'),
+  Kira: u('20261008_131435_e6316653-6d24-4802-9bc5-7b68c468bc27'),
+  Mira: u('20261008_131547_414d9439-4b90-48bd-aa05-bba4a59219df'),
+  Prince: u('20261008_131557_77e38682-c762-45f0-b605-f063d6372c2a'),
+};
