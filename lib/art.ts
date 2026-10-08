@@ -5,9 +5,13 @@ const u = (id: string) => `${C}${id}.png`;
 // v2 cel-shaded sprites (2026-10-08)
 const N = (id: string) => `${C}${id}.png`;
 const S2 = {
-  Shiro: N('20261008_014229_5ae93eb2-b608-49cb-b769-ada896926255'),
-  Government: N('20261008_014523_9bb17cc4-2ee2-4e29-bece-72e21434d6d6'),
-  Auditor: N('20261008_014539_3cb98a37-589c-4a58-9245-4bb0c79ae166'),
+  Shiro: N('20261008_015326_684f5384-e54e-4848-becb-2a1471d0ab6e'),
+  Nero: N('20261008_015254_a3d67e43-a3ff-42d7-8e5d-7b2e128d774b'),
+  Kira: N('20261008_015256_276e1e64-48fb-47e4-92fb-53a72734886f'),
+  Mira: N('20261008_015258_4c233066-9d98-45af-94f0-5a78fdeb0699'),
+  Prince: N('20261008_015300_99da7422-382b-41c2-b12b-158e44632523'),
+  Government: N('20261008_015328_a02c0825-4ff3-4843-b7fe-6709b5000a89'),
+  Auditor: N('20261008_015330_977b7004-0014-417e-ad36-7caa03fa44b6'),
   Enforcer: N('20261008_014539_a1c5dee7-b5d6-40e3-8fab-f8a77117688b'),
   Bureaucrat: N('20261008_014538_d9f320b3-3101-448e-96fd-e9c5f775cd41'),
   Collector: N('20261008_014539_bfab3d5b-3d6a-4a20-9e97-0421d81a27e2'),
@@ -15,10 +19,10 @@ const S2 = {
 
 export const HERO_SPRITE: Record<string, string> = {
   Shiro: S2.Shiro,
-  Nero: u('20261007_225038_9df82aa3-bae7-4a05-8a96-06d8247184ef'),
-  Kira: u('20261007_225037_06533df7-72b6-469b-a41d-b14e23a154f7'),
-  Mira: u('20261007_224939_9cf994b9-e97d-4f23-b899-6e1f963a81a1'),
-  Prince: u('20261007_225038_38f2f5f7-08ce-4b59-81fc-2b6f1ad1df18'),
+  Nero: S2.Nero,
+  Kira: S2.Kira,
+  Mira: S2.Mira,
+  Prince: S2.Prince,
 };
 
 // keyed by enemy name as spawned by _spawn (042)
