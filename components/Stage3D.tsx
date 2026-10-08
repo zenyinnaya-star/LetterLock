@@ -13,9 +13,9 @@ export type StageUnit = { id: string; side: 'hero' | 'enemy'; name: string; hero
 export type StageFx = { key: string; type: string; actor?: string; target?: string; hurt: string[]; heal: string[]; guard: string[] } | null;
 type P = { x: number; y: number };
 
-const STRIKE = ['hit', 'crit', 'miss', 'ult', 'season', 'sweep', 'mega_sweep', 'e_aoe', 'ehit'];
+const STRIKE = ['limit', 'hit', 'crit', 'miss', 'ult', 'season', 'sweep', 'mega_sweep', 'e_aoe', 'ehit'];
 const CAST = ['heal', 'guard', 'e_buff', 'e_debuff', 'e_heal', 'group_heal', 'full_heal', 'cleanse', 'revive', 'overcharge'];
-const AOE = ['season', 'sweep', 'mega_sweep', 'e_aoe'];
+const AOE = ['limit', 'season', 'sweep', 'mega_sweep', 'e_aoe'];
 
 export function webglOk(): boolean {
   try {
@@ -325,7 +325,7 @@ function Burst({ fx, world, ids }: { fx: StageFx; world: MutableRefObject<Map<st
   useEffect(() => {
     if (!fx || !ids.length) return;
     const rnd = rand(fx.key.length * 977 + 13);
-    const col = fx.type === 'crit' || fx.type === 'ult' ? '#ffd24a' : fx.type.includes('heal') || fx.type === 'full_heal' || fx.type === 'revive' ? '#4ade80' : fx.type === 'guard' ? '#60a5fa' : '#ff5a4a';
+    const col = fx.type === 'crit' || fx.type === 'ult' || fx.type === 'limit' ? '#ffd24a' : fx.type.includes('heal') || fx.type === 'full_heal' || fx.type === 'revive' ? '#4ade80' : fx.type === 'guard' ? '#60a5fa' : '#ff5a4a';
     const origin = ids.map((id) => (world.current.get(id) ?? new THREE.Vector3()).clone().setY(1.1));
     const vel = Array.from({ length: ids.length * 14 }, () => new THREE.Vector3((rnd() - 0.5) * 4, rnd() * 3.2 + 0.6, (rnd() - 0.5) * 4));
     st.current = { t0: clock.elapsedTime + (fx.type === 'ult' ? 0.5 : 0.3), vel, color: col, origin };
@@ -427,7 +427,7 @@ function Rig({ fx }: { fx: StageFx }) {
   useEffect(() => {
     if (!fx) return;
     const t = clock.elapsedTime;
-    if (fx.hurt.length) shake.current = { t0: t + 0.3, amp: fx.type === 'crit' || fx.type === 'season' || fx.type === 'ult' ? 0.35 : 0.14, push: fx.type === 'ult' ? 1 : 0 };
+    if (fx.hurt.length) shake.current = { t0: t + 0.3, amp: fx.type === 'limit' ? 0.6 : fx.type === 'crit' || fx.type === 'season' || fx.type === 'ult' ? 0.35 : 0.14, push: fx.type === 'ult' || fx.type === 'limit' ? 1 : 0 };
     else if (fx.type === 'ult') shake.current = { t0: t, amp: 0.1, push: 1 };
   }, [fx?.key]); // eslint-disable-line react-hooks/exhaustive-deps
   useFrame(({ clock: c }) => {

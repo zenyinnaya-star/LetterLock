@@ -1417,3 +1417,14 @@ kbd{border:1px solid #b8b2a2;border-radius:3px;padding:0 4px;font-size:10px;marg
 .rg-el i{font-style:normal;color:#9ca3af;opacity:.8}
 @keyframes elp{to{transform:scale(1.25)}}
 .rg-elchip{display:inline-block;background:#0008;border:1px solid #fff4;border-radius:8px;padding:0 6px;margin-right:4px}
+
+/* momentum + limit break */
+.rg-mom{position:absolute;left:50%;top:9px;transform:translateX(-50%);z-index:55;display:flex;align-items:center;gap:8px;background:#000a;border:1px solid #fff3;border-radius:10px;padding:3px 10px;font-size:11px;color:#fff;pointer-events:none}
+.rg-mom em{font-style:normal;font-weight:800;letter-spacing:.12em;color:#fda4af}
+.rg-mom span{display:block;width:clamp(90px,22vw,190px);height:8px;background:#fff2;border-radius:5px;overflow:hidden}
+.rg-mom i{display:block;height:100%;background:linear-gradient(90deg,#f43f5e,#facc15);transition:width .5s}
+.rg-mom.full{border-color:#facc15;animation:momp .6s infinite alternate}.rg-mom.full b{color:#facc15}
+@keyframes momp{to{box-shadow:0 0 18px #facc15}}
+.rg-lbflash{position:absolute;inset:0;z-index:58;pointer-events:none;background:radial-gradient(circle,#fff 0,#facc15 25%,#e11d48 60%,#000 100%);mix-blend-mode:screen;animation:lbf 1.3s ease-out forwards}
+@keyframes lbf{0%{opacity:0}15%{opacity:.95}100%{opacity:0}}
+.rg.lb .rg-party,.rg.lb .rg-skills,.rg.lb .rg-hand,.rg.lb .rg-prompt,.rg.lb .rg-turn{opacity:0;transition:opacity .2s}

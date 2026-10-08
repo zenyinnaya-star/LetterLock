@@ -31,6 +31,7 @@ const INTENT: Record<string, string> = {
 
 function logLine(e: BattleLogEntry) {
   switch (e.t) {
+    case 'limit': return `LIMIT BREAK! ${e.a} leads the team for ${e.n} to everyone!`;
     case 'crit': return `${e.a} CRITS ${e.d} for ${e.n}${e.w ? ` (${e.w})` : ''}!`;
     case 'sweep': return `${e.a} plays Sweep: ${e.n} to every enemy!`;
     case 'mega_sweep': return `${e.a} plays Mega Sweep: ${e.n} to every enemy!`;
@@ -200,6 +201,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     if (e.t === 'guard' && an === u.id) return [{ k, text: `🛡${e.n}`, cls: 'shield' }];
     if ((e.t === 'miss' || e.t === 'dodge') && dn === u.id) return [{ k, text: e.t === 'miss' ? 'MISS' : 'DODGE', cls: 'miss' }];
     if ((e.t === 'sweep' || e.t === 'mega_sweep') && u.side === 'enemy') return [{ k, text: `-${e.n}`, cls: 'dmg' }];
+    if (e.t === 'limit' && u.side === 'enemy') return [{ k, text: `-${e.n}`, cls: 'dmg crit' }];
     if (e.t === 'ult' && u.side === 'enemy' && e.n) return [{ k, text: `-${e.n}`, cls: 'dmg crit' }];
     if (e.t === 'e_aoe' && u.side === 'hero') return [{ k, text: `-${e.n}`, cls: 'dmg' }];
     if (e.t === 'e_debuff' && dn === u.id) return [{ k, text: 'WEAK', cls: 'miss' }];
@@ -209,7 +211,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     if ((e.t === 'group_heal' || e.t === 'full_heal') && u.side === 'hero') return [{ k, text: e.n ? `+${e.n}` : '+', cls: 'heal' }];
     return [];
   };
-  const lungeId = active && ['hit', 'crit', 'miss', 'dodge', 'guard', 'heal', 'ult', 'season', 'sweep', 'mega_sweep', 'e_aoe', 'e_buff', 'e_debuff', 'e_heal'].includes(active.t)
+  const lungeId = active && ['hit', 'crit', 'miss', 'dodge', 'guard', 'heal', 'ult', 'limit', 'season', 'sweep', 'mega_sweep', 'e_aoe', 'e_buff', 'e_debuff', 'e_heal'].includes(active.t)
     ? firstNamed(active.t === 'dodge' ? active.d : active.a, active.t === 'dodge' ? undefined : undefined)?.id : undefined;
 
   const [use3d, setUse3d] = useState(false);
@@ -283,7 +285,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const skillDisabled = !canAct;
 
   return (
-    <div className="rg">
+    <div className={`rg${active?.t === 'limit' ? ' lb' : ''}`}>
       <div className={`rg-stage${use3d ? ' t3' : ''}`} data-boss={lead?.name === 'Government' ? 1 : 0}>
         <div className="rg-bg" style={{ backgroundImage: `url(${ACT_BG[ai]})` }} />
         {use3d && <Stage3D act={ai} fx={fx} pos={posMap}
@@ -335,8 +337,10 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         </div>
 
         {active && <div className={`rg-ban ${active.t === 'ult' ? 'ult' : active.t === 'crit' ? 'crit' : enemies.some((e) => e.name === active.a) ? 'e' : ''}`} key={`${active.t}-${active.a}-${active.n}-${b.version}`}><span>{logLine(active)}</span></div>}
+        {(b.momentum ?? 0) > 0 || active?.t === 'limit' ? <div className={`rg-mom${(b.momentum ?? 0) >= 100 ? ' full' : ''}`} title="Momentum: attack +10, weakness +20, crit +25, guard +5, miss −10. At 100 the team unleashes a Limit Break."><em>MOMENTUM</em><span><i style={{ width: `${Math.min(100, b.momentum ?? 0)}%` }} /></span><b>{(b.momentum ?? 0) >= 100 ? 'LIMIT BREAK READY' : b.momentum}</b></div> : null}
+        {active?.t === 'limit' && <><div className="rg-lbflash" key={`lf-${b.version}`} /><div className="rg-burst crit" key={`lb-${b.version}`}>LIMIT BREAK!</div></>}
         {active && (active.x === 'weak' || active.x === 'resist') && <div className={`rg-burst ${active.x === 'weak' ? 'crit' : 'miss'}`} key={`wk-${b.version}-${active.a}-${active.n}`}>{active.x === 'weak' ? 'WEAKNESS!' : 'RESIST'}</div>}
-        {active && !active.x && (active.t === 'miss' || active.t === 'dodge' || active.t === 'crit' || active.t === 'ult') && <div className={`rg-burst ${active.t}`} key={`bu-${active.t}-${active.a}-${b.version}`}>{active.t === 'miss' ? 'MISS' : active.t === 'dodge' ? 'DODGE' : active.t === 'crit' ? 'CRITICAL!' : 'ALL-OUT!'}</div>}
+        {active && !active.x && active.t !== 'limit' && (active.t === 'miss' || active.t === 'dodge' || active.t === 'crit' || active.t === 'ult') && <div className={`rg-burst ${active.t}`} key={`bu-${active.t}-${active.a}-${b.version}`}>{active.t === 'miss' ? 'MISS' : active.t === 'dodge' ? 'DODGE' : active.t === 'crit' ? 'CRITICAL!' : 'ALL-OUT!'}</div>}
 
         <div className={`rg-turn${active ? ' play' : canAct ? ' mine' : ' wait'}`} key={active ? 'p' : canAct ? `m${b.turn}` : 'w'}>
           {active ? (active.a && enemies.some((e) => e.name === active.a) ? '⚔ Enemies attack…' : '⚔ Resolving the turn…')
