@@ -1817,3 +1817,10 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .rg-hud .rg-cm{position:static;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:flex-end;min-width:0;max-width:60%;animation:none}
 .rg-hud .rg-cmb{padding:11px 14px}
 @media (max-width:760px){.rg-hud{flex-wrap:wrap}.rg-hud .rg-cm{max-width:100%;width:100%;justify-content:flex-start}.rg-hud-id{width:60px}}
+
+/* dodge afterimage, heal / guard glows */
+.rg-unit.dodged .rg-uc{animation:dodgeAway .5s ease-out}
+@keyframes dodgeAway{0%{translate:0;filter:none}35%{translate:-46px 0;filter:blur(2px) drop-shadow(30px 0 0 rgba(147,197,253,.5)) drop-shadow(60px 0 0 rgba(147,197,253,.25))}100%{translate:0;filter:none}}
+.rg-unit.healed::before,.rg-unit.shielded::before{content:"";position:absolute;left:50%;top:50%;width:130%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;animation:impact .7s ease-out both;pointer-events:none;z-index:25}
+.rg-unit.healed::before{background:radial-gradient(circle,rgba(134,239,172,.8),rgba(34,197,94,.3) 45%,transparent 70%)}
+.rg-unit.shielded::before{background:radial-gradient(circle,transparent 40%,rgba(147,197,253,.7) 58%,transparent 72%)}
