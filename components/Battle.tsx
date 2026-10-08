@@ -107,17 +107,17 @@ const EL: Record<string, string> = { fire: '🔥', ice: '❄️', storm: '⚡', 
 
 type Float = { k: string; text: string; cls: string };
 
-function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3 }: { elNow?: string; t3?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
+function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3, mine }: { elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
   const pct = Math.max(0, Math.min(100, (u.hp / u.max_hp) * 100));
   const hit = floats.some((f) => f.cls === 'dmg');
   return (
-    <div className={`rg-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}${u.name === 'Government' ? ' boss' : ''}${t3 ? ' t3' : ''}`}
+    <div className={`rg-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}${u.name === 'Government' ? ' boss' : ''}${t3 ? ' t3' : ''}${mine ? ' mine' : ''}`}
       style={style} onClick={onPick} role={onPick ? 'button' : undefined}>
       <motion.div key={`${lunge ? 'l' : hit ? 'h' : 'i'}-${floats[0]?.k ?? ''}`}
         animate={lunge ? { x: [0, u.side === 'hero' ? 90 : -90, 0], scale: [1, 1.12, 1] } : hit ? { x: [0, -10, 10, -6, 0], filter: ['brightness(2.2)', 'brightness(1)'] } : {}}
         transition={{ duration: lunge ? 0.5 : 0.4 }}>
         <div className="rg-uc">
-          <span className="rg-uc-tag">{u.side === 'hero' ? (u.hero ?? 'HERO') : u.name === 'Government' ? 'BOSS' : 'FOE'}</span>
+          <span className="rg-uc-tag">{mine ? 'YOU' : u.side === 'hero' ? (u.hero ?? 'HERO') : u.name === 'Government' ? 'BOSS' : 'FOE'}</span>
           <KeyedImg className="rg-img" src={sprite(u)} alt={u.name} />
           <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
           <span className="rg-uc-hp"><span className="rg-ehp"><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.5 }} /></span><b>{u.hp}</b></span>
@@ -208,6 +208,13 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
       return () => clearTimeout(id);
     }
   }, [b, left, token, load, intro, mine?.locked]);
+
+  // timer expired: keep nudging the server until the turn resolves (an early no-op from clock skew must not stall the fight)
+  useEffect(() => {
+    if (!b || b.step !== 'input' || !token || intro !== null || left > 0) return;
+    const id = setInterval(() => { void rpc.battleStep(token, b.turn).then(load).catch(() => {}); }, 1500);
+    return () => clearInterval(id);
+  }, [b?.step, b?.turn, left, token, load, intro]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // book timer
   useEffect(() => {
@@ -434,7 +441,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
             onPick={needsEnemy && canAct && u.hp > 0 ? () => pickUnit(u.id) : undefined} />
         ))}
         {heroes.map((u, i) => (
-          <Sprite key={u.id} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
+          <Sprite key={u.id} mine={u.player_id === b.me} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
             onPick={needsAlly && canAct && u.hp > 0 ? () => pickUnit(u.id) : undefined} />
         ))}
 
