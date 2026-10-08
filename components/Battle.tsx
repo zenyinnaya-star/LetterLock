@@ -4,7 +4,7 @@ import { audio } from '@/lib/audio';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ACT_BG, PIXEL_BG, ACT_NAME, BOOK_ART, ENEMY_SPRITE, HERO_SPRITE, HERO_BACK, HERO_WIN, HERO_STRIKE, HERO_CAST, ENEMY_STRIKE, ENEMY_PIXEL, actOf } from '@/lib/art';
+import { ACT_BG, PIXEL_BG, ACT_NAME, BOOK_ART, ENEMY_SPRITE, HERO_SPRITE, HERO_BACK, HERO_WIN, HERO_STRIKE, HERO_CAST, ENEMY_STRIKE, ENEMY_PIXEL, HURT, actOf } from '@/lib/art';
 import dynamic from 'next/dynamic';
 import { Camp } from './Camp';
 import { webglOk, type StageFx } from './Stage3D';
@@ -103,7 +103,7 @@ function KeyedImg({ src, className, alt, style }: { src: string; className?: str
 }
 
 const portrait = (u: BattleUnit) => (u.hero ? heroById(u.hero as HeroId)?.artFull : (ENEMY_PIXEL[u.name] ?? ENEMY_SPRITE[u.name])) ?? '';
-const sprite = (u: BattleUnit, win?: boolean, pose?: 'strike' | 'cast') => (u.hero
+const sprite = (u: BattleUnit, win?: boolean, pose?: 'strike' | 'cast' | 'hurt') => pose === 'hurt' && HURT[u.hero ?? u.name] ? HURT[u.hero ?? u.name] : (u.hero
   ? ((win ? HERO_WIN[u.hero] : pose === 'cast' ? HERO_CAST[u.hero] : pose === 'strike' ? HERO_STRIKE[u.hero] : undefined) ?? HERO_BACK[u.hero] ?? HERO_SPRITE[u.hero])
   : ((pose ? ENEMY_STRIKE[u.name] : undefined) ?? ENEMY_PIXEL[u.name] ?? ENEMY_SPRITE[u.name])) ?? '';
 
@@ -127,7 +127,7 @@ function ElIcon({ el, size = 14 }: { el: string; size?: number }) {
 
 type Float = { k: string; text: string; cls: string };
 
-function Sprite({ elNow, u, floats, picked, onPick, style, lunge, lungeTo, t3, mine, menu, win, pose }: { lungeTo?: { x: number; y: number }; pose?: 'strike' | 'cast'; win?: boolean; menu?: React.ReactNode; elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
+function Sprite({ elNow, u, floats, picked, onPick, style, lunge, lungeTo, t3, mine, menu, win, pose }: { lungeTo?: { x: number; y: number }; pose?: 'strike' | 'cast' | 'hurt'; win?: boolean; menu?: React.ReactNode; elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
   const pct = Math.max(0, Math.min(100, (u.hp / u.max_hp) * 100));
   const hit = floats.some((f) => f.cls === 'dmg');
   return (
@@ -141,7 +141,7 @@ function Sprite({ elNow, u, floats, picked, onPick, style, lunge, lungeTo, t3, m
           {u.hp > 0 && u.intent && <span className={`rg-intent i-${u.intent}`} title={`Next: ${u.intent}`}>{INTENT_ICON[u.intent] ?? '⚔'}</span>}
           {u.hp > 0 && (u.haste ?? 0) !== 0 && <span className={`rg-haste ${(u.haste ?? 0) > 0 ? 'up' : 'dn'}`} title={(u.haste ?? 0) > 0 ? 'Hasted: acts earlier' : 'Slowed: acts later'}>{(u.haste ?? 0) > 0 ? '⚡' : '🐌'}</span>}
           <span className="rg-uc-tag">{mine ? 'YOU' : u.side === 'hero' ? (u.hero ?? 'HERO') : u.name === 'Government' ? 'BOSS' : 'FOE'}</span>
-          <KeyedImg className="rg-img" src={sprite(u, win, pose)} alt={u.name} />
+          <KeyedImg className="rg-img" src={sprite(u, win, pose ?? (hit && u.hp > 0 ? 'hurt' : undefined))} alt={u.name} />
           <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
           <span className="rg-uc-hp"><span className="rg-ehp"><motion.u animate={{ width: `${pct}%` }} transition={{ duration: 1.1, delay: 0.35 }} /><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.3 }} /></span><b>{u.hp}</b></span>
           {hit && <span className="rg-slash" key={floats[0]?.k} />}

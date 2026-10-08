@@ -105,3 +105,20 @@ export const ENEMY_STRIKE: Record<string, string> = {
   'Tax Drone': u('20261008_163149_9ad765f4-ce21-4ffb-8b59-5e829103229f'),
   'Government': u('20261008_163121_53fef8f3-1087-4eaf-a4fd-fe8d6945ee11'),
 };
+// hit-reaction frames (heroes by name, enemies by name)
+export const HURT: Record<string, string> = {
+  'Shiro': u('20261008_163321_5eaa6168-9c8b-47d0-a620-be9ffbc298d6'),
+  'Nero': u('20261008_163323_561fa6d0-f3d5-41c6-a92d-85cad4348d88'),
+  'Kira': u('20261008_163325_08935687-bb89-41b4-ac28-e1a087d7ce62'),
+  'Mira': u('20261008_163326_1d9c1f00-1a3c-4740-bcca-6c62fe156afe'),
+  'Prince': u('20261008_163410_8f99d3a6-4b23-442f-9418-41f5b4f0b84f'),
+  'Intern Auditor': u('20261008_163412_7af5f3f0-6af3-46e1-9fd2-d4fe9d55f23d'),
+  'Filer Alpha': u('20261008_163412_7af5f3f0-6af3-46e1-9fd2-d4fe9d55f23d'),
+  'Clerk': u('20261008_163416_006178fc-c5ab-407e-8a08-1cc2d28ba60a'),
+  'Filer Beta': u('20261008_163416_006178fc-c5ab-407e-8a08-1cc2d28ba60a'),
+  'The Collector': u('20261008_163418_eac1c9b6-fa59-4d39-96d5-3d0df73d710a'),
+  'Bailiff': u('20261008_163501_706ec2e8-bd1d-481a-a807-614da10cc1ec'),
+  'The Commissioner': u('20261008_163507_250f2af4-ef88-4ff3-9820-186a79e91642'),
+  'Tax Drone': u('20261008_163509_01d028a8-56ab-4950-8ddc-20fe6f3d825b'),
+  'Government': u('20261008_163502_4dd3bd2a-8487-4953-8cf8-9dfe5caff352'),
+};
