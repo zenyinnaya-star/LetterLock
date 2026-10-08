@@ -9,11 +9,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@react-three/fiber": "^9.0.0",
     "@supabase/supabase-js": "2.117.2",
+    "@types/three": "^0.170.0",
     "motion": "13.4.4",
     "next": "16.3.6",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "three": "^0.170.0",
+    "use-sync-external-store": "^1.7.0",
     "wanakana": "^5.3.1"
   },
   "devDependencies": {

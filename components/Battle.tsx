@@ -4,7 +4,10 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ACT_BG, ACT_NAME, BOOK_ART, ENEMY_SPRITE, HERO_SPRITE, actOf } from '@/lib/art';
+import dynamic from 'next/dynamic';
 import { Camp } from './Camp';
+import { webglOk, type StageFx } from './Stage3D';
+const Stage3D = dynamic(() => import('./Stage3D'), { ssr: false });
 import { heroById, type HeroId } from '@/lib/heroes';
 import { fetchStoryResult, type StoryResult } from '@/lib/profile';
 import { rpc, type BattleLogEntry, type BattleState, type BattleUnit } from '@/lib/rpc';
@@ -60,11 +63,11 @@ const sprite = (u: BattleUnit) => (u.hero ? HERO_SPRITE[u.hero] : ENEMY_SPRITE[u
 
 type Float = { k: string; text: string; cls: string };
 
-function Sprite({ u, floats, picked, onPick, style, lunge }: { u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
+function Sprite({ u, floats, picked, onPick, style, lunge, t3 }: { t3?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
   const pct = Math.max(0, Math.min(100, (u.hp / u.max_hp) * 100));
   const hit = floats.some((f) => f.cls === 'dmg');
   return (
-    <div className={`rg-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}${u.name === 'Government' ? ' boss' : ''}`}
+    <div className={`rg-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}${u.name === 'Government' ? ' boss' : ''}${t3 ? ' t3' : ''}`}
       style={style} onClick={onPick} role={onPick ? 'button' : undefined}>
       <div className="rg-ehp"><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.5 }} /></div>
       <motion.div key={`${lunge ? 'l' : hit ? 'h' : 'i'}-${floats[0]?.k ?? ''}`}
@@ -206,6 +209,17 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const lungeId = active && ['hit', 'crit', 'miss', 'dodge', 'guard', 'heal', 'ult', 'season', 'sweep', 'mega_sweep', 'e_aoe', 'e_buff', 'e_debuff', 'e_heal'].includes(active.t)
     ? firstNamed(active.t === 'dodge' ? active.d : active.a, active.t === 'dodge' ? undefined : undefined)?.id : undefined;
 
+  const [use3d, setUse3d] = useState(false);
+  useEffect(() => { setUse3d(webglOk()); }, []);
+  const fxSeq = useRef(0);
+  const fx = useMemo<StageFx>(() => {
+    if (!active || !b) return null;
+    const ids = (cls: string) => b.units.filter((u) => floatsFor(u).some((f) => f.cls.startsWith(cls))).map((u) => u.id);
+    const tgt = active.d ? firstNamed(active.d)?.id : undefined;
+    return { key: `${b.version}-${fxSeq.current++}`, type: active.t, actor: lungeId, target: active.t === 'dodge' ? undefined : tgt, hurt: ids('dmg'), heal: ids('heal'), guard: ids('shield') };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+
   if (loaded && !b) return <>{fallback ?? null}</>;
   if (!b) return <div className="center muted">Loading battle…</div>;
 
@@ -231,6 +245,10 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     return { left: `${x}%`, top: `${y}%`, zIndex: 10 + (i % 2) };
   };
   const hPos = (i: number, n: number): React.CSSProperties => ({ left: `${14 + i * (n > 1 ? 22 / (n - 1) * 1.6 : 0)}%`, top: `${i % 2 ? 78 : 66}%`, zIndex: 20 + (i % 2) });
+
+  const posMap: Record<string, { x: number; y: number }> = {};
+  enemies.forEach((u, i) => { const p = ePos(i, enemies.length); posMap[u.id] = { x: parseFloat(String(p.left)), y: parseFloat(String(p.top)) }; });
+  heroes.forEach((u, i) => { const p = hPos(i, heroes.length); posMap[u.id] = { x: parseFloat(String(p.left)), y: parseFloat(String(p.top)) }; });
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -263,8 +281,11 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
   return (
     <div className="rg">
-      <div className="rg-stage" data-boss={lead?.name === 'Government' ? 1 : 0}>
+      <div className={`rg-stage${use3d ? ' t3' : ''}`} data-boss={lead?.name === 'Government' ? 1 : 0}>
         <div className="rg-bg" style={{ backgroundImage: `url(${ACT_BG[ai]})` }} />
+        {use3d && <Stage3D act={ai} fx={fx} pos={posMap}
+          units={b.units.map((u) => ({ id: u.id, side: u.side, name: u.name, hero: u.hero, dead: u.hp <= 0 }))}
+          pickedId={target} pickableIds={b.units.filter((u) => u.hp > 0 && ((needsEnemy && u.side === 'enemy') || (needsAlly && u.side === 'hero')) && canAct).map((u) => u.id)} />}
         <div className="rg-vig" />
 
         {/* top-left: turn order */}
@@ -310,7 +331,8 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           {b.locked && <div className="rg-lock">🔒 Locked: <b>{b.locked.toUpperCase().split('').join(' ')}</b></div>}
         </div>
 
-        {active && <div className="rg-cap" key={`${active.t}-${active.a}-${active.n}`}>{logLine(active)}</div>}
+        {active && <div className={`rg-ban ${active.t === 'ult' ? 'ult' : active.t === 'crit' ? 'crit' : enemies.some((e) => e.name === active.a) ? 'e' : ''}`} key={`${active.t}-${active.a}-${active.n}-${b.version}`}><span>{logLine(active)}</span></div>}
+        {active && (active.t === 'miss' || active.t === 'dodge' || active.t === 'crit' || active.t === 'ult') && <div className={`rg-burst ${active.t}`} key={`bu-${active.t}-${active.a}-${b.version}`}>{active.t === 'miss' ? 'MISS' : active.t === 'dodge' ? 'DODGE' : active.t === 'crit' ? 'CRITICAL!' : 'ALL-OUT!'}</div>}
 
         <div className={`rg-turn${active ? ' play' : canAct ? ' mine' : ' wait'}`} key={active ? 'p' : canAct ? `m${b.turn}` : 'w'}>
           {active ? (active.a && enemies.some((e) => e.name === active.a) ? '⚔ Enemies attack…' : '⚔ Resolving the turn…')
@@ -319,11 +341,11 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
         {/* units */}
         {enemies.map((u, i) => (
-          <Sprite key={u.id} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={target === u.id}
+          <Sprite key={u.id} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={target === u.id}
             onPick={needsEnemy && canAct && u.hp > 0 ? () => setTarget(target === u.id ? null : u.id) : undefined} />
         ))}
         {heroes.map((u, i) => (
-          <Sprite key={u.id} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
+          <Sprite key={u.id} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
             onPick={needsAlly && canAct && u.hp > 0 ? () => setTarget(target === u.id ? null : u.id) : undefined} />
         ))}
 

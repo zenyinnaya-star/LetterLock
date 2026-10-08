@@ -1393,3 +1393,21 @@ kbd{border:1px solid #b8b2a2;border-radius:3px;padding:0 4px;font-size:10px;marg
 .rg-turn.play{background:rgba(127,29,29,.85);color:#fecaca;border:1px solid #ef4444}
 .rg-turn.wait{background:rgba(0,0,0,.6);color:#cbd5e1;border:1px solid #475569;font-size:12px}
 @keyframes rgturn{0%{opacity:0;transform:translateX(-50%) scale(.6)}60%{transform:translateX(-50%) scale(1.15)}100%{opacity:1;transform:translateX(-50%) scale(1)}}
+
+/* 3D stage */
+.rg-3d{position:absolute!important;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.rg-stage.t3 .rg-bg{display:none}
+.rg-unit.t3 .rg-img{opacity:0}
+
+/* P5-style action banners */
+.rg-ban{position:absolute;left:-4%;top:17%;z-index:60;pointer-events:none;transform:skewX(-14deg) rotate(-2deg);background:#0a0a0a;border-left:10px solid #e11d48;border-bottom:3px solid #fff;padding:7px 38px 7px 22px;box-shadow:8px 8px 0 #e11d48;animation:banIn .35s cubic-bezier(.2,1.4,.4,1) both,banOut .3s ease-in 1.15s forwards}
+.rg-ban span{display:block;transform:skewX(14deg);color:#fff;font:900 clamp(15px,3.6vw,24px)/1.1 system-ui;letter-spacing:.04em;text-transform:uppercase}
+.rg-ban.e{left:auto;right:-4%;border-left:0;border-right:10px solid #7c3aed;box-shadow:-8px 8px 0 #7c3aed;padding:7px 22px 7px 38px}
+.rg-ban.ult{background:#e11d48;border-color:#fff;box-shadow:8px 8px 0 #000}
+.rg-ban.crit{border-left-color:#facc15;box-shadow:8px 8px 0 #facc15}
+@keyframes banIn{from{transform:translateX(-120%) skewX(-14deg) rotate(-2deg)}}
+@keyframes banOut{to{opacity:0;transform:translateX(60%) skewX(-14deg) rotate(-2deg)}}
+.rg-burst{position:absolute;left:50%;top:40%;z-index:61;pointer-events:none;font:900 clamp(44px,13vw,110px)/1 system-ui;font-style:italic;color:#fff;-webkit-text-stroke:3px #000;text-shadow:6px 6px 0 #e11d48,-4px -4px 0 #000;transform:translate(-50%,-50%) rotate(-8deg);animation:burst 1.1s ease-out forwards}
+.rg-burst.miss,.rg-burst.dodge{color:#93c5fd;text-shadow:6px 6px 0 #1d4ed8,-4px -4px 0 #000}
+.rg-burst.crit{color:#facc15}
+@keyframes burst{0%{transform:translate(-50%,-50%) scale(.2) rotate(-20deg);opacity:0}25%{transform:translate(-50%,-50%) scale(1.25) rotate(-8deg);opacity:1}70%{opacity:1}100%{transform:translate(-50%,-60%) scale(1) rotate(-8deg);opacity:0}}
