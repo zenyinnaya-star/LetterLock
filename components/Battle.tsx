@@ -1,5 +1,6 @@
 'use client';
 
+import { audio } from '@/lib/audio';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -270,6 +271,12 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const lungeId = active && ['hit', 'crit', 'miss', 'dodge', 'guard', 'heal', 'ult', 'limit', 'season', 'sweep', 'mega_sweep', 'e_aoe', 'e_buff', 'e_debuff', 'e_heal'].includes(active.t)
     ? firstNamed(active.t === 'dodge' ? active.d : active.a, active.t === 'dodge' ? undefined : undefined)?.id : undefined;
 
+  useEffect(() => {
+    if (!active) return;
+    audio.battle(active.t, (b?.units ?? []).some((e) => e.side === 'enemy' && e.name === active.a));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+
   const [use3d, setUse3d] = useState(false);
   useEffect(() => { setUse3d(webglOk() && new URLSearchParams(window.location.search).has('3d')); }, []); // 2D cel-shaded sprites by default; ?3d opts into the old 3D stage
   const fxSeq = useRef(0);
@@ -448,7 +455,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         {OLD_UI && mine && b.step === 'input' && (b.momentum ?? 0) >= 100 && mine.hp > 0 && (
           <button type="button" className="rg-oddsbtn" disabled={oddsCalled} onClick={() => void callOdds()}>{oddsCalled ? 'ODDS LOCKED IN' : 'UNLEASH ODDS!'}</button>
         )}
-        {active?.t === 'limit' && <><div className="rg-lbflash" key={`lf-${b.version}`} /><div className="rg-burst crit" key={`lb-${b.version}`}>LIMIT BREAK!</div></>}
+        {(active?.t === 'ult' || active?.t === 'limit') && <><div className="rg-lbflash" key={`lf-${b.version}`} /><div className="rg-burst crit" key={`lb-${b.version}`}>LIMIT BREAK!</div></>}
         {active && (active.x === 'weak' || active.x === 'resist') && <div className={`rg-burst ${active.x === 'weak' ? 'crit' : 'miss'}`} key={`wk-${b.version}-${active.a}-${active.n}`}>{active.x === 'weak' ? 'WEAKNESS!' : 'RESIST'}</div>}
         {active && !active.x && active.t !== 'limit' && (active.t === 'miss' || active.t === 'dodge' || active.t === 'crit' || active.t === 'ult') && <div className={`rg-burst ${active.t}`} key={`bu-${active.t}-${active.a}-${b.version}`}>{active.t === 'miss' ? 'MISS' : active.t === 'dodge' ? 'DODGE' : active.t === 'crit' ? 'CRITICAL!' : 'ALL-OUT!'}</div>}
 

@@ -123,6 +123,24 @@ export const audio = {
   caught() {
     for (let i = 0; i < 3; i++) { tone(880, i * 0.28, 0.14, 'square', 0.22); tone(660, i * 0.28 + 0.14, 0.14, 'square', 0.22); }
   },
+  /** Battle SFX by log type. */
+  battle(t: string, enemyActing = false) {
+    switch (t) {
+      case 'hit': noise(0, 0.14, 0.6, 1100, 0.8, 250); tone(180, 0, 0.25, 'sawtooth', 0.3, 60); if (enemyActing) tone(90, 0.03, 0.3, 'square', 0.25, 45); break;
+      case 'crit': noise(0, 0.22, 0.8, 1500, 0.7, 200); tone(260, 0, 0.4, 'sawtooth', 0.4, 50); tone(1318, 0.02, 0.25, 'triangle', 0.3); tone(1760, 0.08, 0.3, 'triangle', 0.25); break;
+      case 'miss': noise(0, 0.2, 0.25, 2500, 2, 700); break;
+      case 'dodge': noise(0, 0.28, 0.35, 600, 1.5, 4500); tone(900, 0, 0.18, 'sine', 0.18, 1800); break;
+      case 'guard': tone(523, 0, 0.35, 'triangle', 0.3); tone(1319, 0, 0.3, 'triangle', 0.2); noise(0, 0.05, 0.4, 4000, 1.5); break;
+      case 'heal': [659, 880, 1175, 1568].forEach((f, i) => tone(f, i * 0.07, 0.3, 'sine', 0.25)); break;
+      case 'ult': noise(0, 0.7, 0.5, 300, 1.2, 5000); tone(110, 0, 0.9, 'sawtooth', 0.45, 440); [523, 784, 1047, 1568].forEach((f, i) => tone(f, 0.35 + i * 0.08, 0.5, 'square', 0.22)); noise(0.55, 0.4, 0.7, 500, 0.6, 90); break;
+      case 'limit': noise(0, 1, 0.6, 200, 1, 6000); tone(80, 0, 1.2, 'sawtooth', 0.5, 600); [392, 523, 659, 784, 1047, 1318].forEach((f, i) => tone(f, 0.3 + i * 0.09, 0.6, 'square', 0.25)); noise(0.8, 0.6, 0.8, 400, 0.5, 60); break;
+      case 'sweep': case 'mega_sweep': case 'e_aoe': case 'season': noise(0, 0.5, 0.6, 700, 0.8, 120); tone(140, 0, 0.5, 'sawtooth', 0.4, 50); break;
+      case 'e_buff': tone(300, 0, 0.4, 'sawtooth', 0.25, 600); break;
+      case 'e_debuff': tone(500, 0, 0.4, 'square', 0.22, 150); break;
+      case 'e_heal': this.battle('heal'); break;
+      case 'stage': this.fanfare(); break;
+    }
+  },
   /** Error buzz: trace missed. */
   denied() { tone(180, 0, 0.12, 'square', 0.25); tone(140, 0.14, 0.22, 'square', 0.25); },
   /** Play one of the recorded effects in /public/audio (after `delay` seconds); returns false if it can't. */
