@@ -104,6 +104,7 @@ function KeyedImg({ src, className, alt, style }: { src: string; className?: str
 const portrait = (u: BattleUnit) => (u.hero ? heroById(u.hero as HeroId)?.artFull : ENEMY_SPRITE[u.name]) ?? '';
 const sprite = (u: BattleUnit) => (u.hero ? HERO_SPRITE[u.hero] : ENEMY_SPRITE[u.name]) ?? '';
 
+const INTENT_ICON: Record<string, string> = { attack: '⚔', aoe: '💥', buff: '⬆', debuff: '🐌', heal: '✚', strike: '⚔', red_tape: '🔒', taxes: '☠', tax_season: '💥' };
 const OLD_UI = false as boolean; // detached command bars replaced by the card menu
 const EL: Record<string, string> = { fire: '🔥', ice: '❄️', storm: '⚡', earth: '⛰️', light: '✨', dark: '🌑' };
 
@@ -119,6 +120,8 @@ function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3, mine, menu
         animate={lunge ? { x: [0, u.side === 'hero' ? 90 : -90, 0], scale: [1, 1.12, 1] } : hit ? { x: [0, -10, 10, -6, 0], filter: ['brightness(2.2)', 'brightness(1)'] } : {}}
         transition={{ duration: lunge ? 0.5 : 0.4 }}>
         <div className="rg-uc">
+          {u.hp > 0 && u.intent && <span className={`rg-intent i-${u.intent}`} title={`Next: ${u.intent}`}>{INTENT_ICON[u.intent] ?? '⚔'}</span>}
+          {u.hp > 0 && (u.haste ?? 0) !== 0 && <span className={`rg-haste ${(u.haste ?? 0) > 0 ? 'up' : 'dn'}`} title={(u.haste ?? 0) > 0 ? 'Hasted: acts earlier' : 'Slowed: acts later'}>{(u.haste ?? 0) > 0 ? '⚡' : '🐌'}</span>}
           <span className="rg-uc-tag">{mine ? 'YOU' : u.side === 'hero' ? (u.hero ?? 'HERO') : u.name === 'Government' ? 'BOSS' : 'FOE'}</span>
           <KeyedImg className="rg-img" src={sprite(u)} alt={u.name} />
           <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
@@ -237,12 +240,17 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     if (!entries.length) { setActive(null); return; }
     let i = 0;
     setActive(entries[0]);
-    const id = setInterval(() => { i += 1; if (i >= entries.length) { clearInterval(id); setActive(null); } else setActive(entries[i]); }, 650);
-    return () => clearInterval(id);
+    // big moments (crit, ultimate, limit break) hold longer: a short slow-motion beat
+    const delay = (e: BattleLogEntry) => (e.t === 'crit' || e.t === 'ult' || e.t === 'limit' ? 1150 : 650);
+    let id: ReturnType<typeof setTimeout>;
+    const next = () => { i += 1; if (i >= entries.length) setActive(null); else { setActive(entries[i]); id = setTimeout(next, delay(entries[i])); } };
+    id = setTimeout(next, delay(entries[0]));
+    return () => clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playKey]);
 
-  const orderUnits = useMemo(() => (b?.units ?? []).filter((u) => u.hp > 0).sort((a, c) => c.spd - a.spd), [b]);
+  const effSpd = (u: BattleUnit) => u.spd + ((u.haste ?? 0) > 0 ? 4 : (u.haste ?? 0) < 0 ? -4 : 0);
+  const orderUnits = useMemo(() => (b?.units ?? []).filter((u) => u.hp > 0).sort((a, c) => effSpd(c) - effSpd(a)), [b]);
 
   const firstNamed = (name: string | undefined, side?: 'hero' | 'enemy') => {
     const l = (b?.units ?? []).filter((x) => x.name === name && (!side || x.side === side));

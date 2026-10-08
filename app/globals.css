@@ -1850,3 +1850,11 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 @keyframes clearFlash{from{opacity:.9}to{opacity:0}}
 @keyframes clearPop{from{scale:2.2;opacity:0}to{scale:1;opacity:1}}
 @keyframes clearHold{0%,80%{opacity:1}100%{opacity:0}}
+
+/* intent + haste/slow badges */
+.rg-intent{position:absolute;left:50%;top:-16px;translate:-50% 0;z-index:5;min-width:30px;height:30px;display:grid;place-items:center;font-size:16px;border-radius:50%;background:rgba(10,8,4,.92);border:2px solid #d4a73c;box-shadow:0 0 10px rgba(0,0,0,.7);animation:intentBob 1.4s ease-in-out infinite}
+.rg-intent.i-attack,.rg-intent.i-strike{border-color:#ef4444}.rg-intent.i-aoe,.rg-intent.i-tax_season{border-color:#f97316;background:#3b0d0d}
+.rg-intent.i-buff{border-color:#a78bfa}.rg-intent.i-debuff,.rg-intent.i-taxes{border-color:#84cc16}.rg-intent.i-heal{border-color:#4ade80}
+@keyframes intentBob{50%{transform:translateY(-4px)}}
+.rg-haste{position:absolute;right:-8px;top:18px;z-index:5;font-size:16px;filter:drop-shadow(0 0 4px #000)}
+.rg-haste.up{animation:intentBob .8s infinite}

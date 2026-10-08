@@ -1,0 +1,1 @@
+-- 059 (applied via MCP): battle_units.haste/misses; _eintent(); resolve: crit=>haste 2, enemy debuff=>slow, speed ordering uses haste, miss streak +12% hit chance per consecutive miss; get_battle returns haste + per-enemy intent.

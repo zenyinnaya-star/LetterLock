@@ -23,7 +23,7 @@ export interface Recap {
 
 export interface BattleUnit {
   id: string; side: 'hero' | 'enemy'; player_id: string | null; name: string; hero: string | null; corruption: number; hp: number; max_hp: number;
-  shield: number; spd: number; locked: boolean; action: string | null; power: number | null; ult?: number; afk?: number; weak_el?: string | null; res_el?: string | null;
+  shield: number; spd: number; locked: boolean; action: string | null; power: number | null; ult?: number; afk?: number; weak_el?: string | null; res_el?: string | null; haste?: number; intent?: string | null;
 }
 export interface BattleLogEntry { t: 'hit' | 'crit' | 'miss' | 'dodge' | 'guard' | 'heal' | 'sweep' | 'group_heal' | 'cleanse' | 'season' | 'corrupt' | 'resist' | 'stage' | 'ult' | 'mega_sweep' | 'full_heal' | 'revive' | 'overcharge' | 'book' | 'camp' | 'e_aoe' | 'e_buff' | 'e_debuff' | 'e_heal' | 'limit' | 'odds'; sp?: string; a: string; d?: string; n?: number; w?: string; x?: 'weak' | 'resist' | null; el?: string }
 export interface BattleState {
