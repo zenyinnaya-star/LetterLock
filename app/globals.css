@@ -1530,3 +1530,17 @@ h3{font-weight:800}
 .st-pick button{background:#0b0e1c;color:#cbd5e1;border:1px solid #2a3050;border-radius:3px;padding:5px 12px;font:800 13px var(--impact);letter-spacing:.08em;text-transform:uppercase}
 .st-pick button.on{background:var(--gold);color:#1a1200;border-color:#000}
 @media(max-width:480px){.st-hero{grid-template-columns:100px 1fr}.st-hero-r>b{font-size:26px}}
+/* upgrades */
+.up-pts{display:flex;align-items:center;gap:8px;margin-top:6px}.up-pts b{font:900 30px var(--impact);color:var(--gold)}.up-pts span{font-size:12px;color:#cbd5e1;flex:1}
+.up-xp{color:#94a3b8!important;letter-spacing:.05em!important;font-weight:600!important}
+.up-msg{color:#fca5a5;text-align:center;margin:0;font-size:13px}
+.up-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.up-card{display:flex;align-items:center;gap:10px;background:linear-gradient(120deg,#151a30,#0a0d1c);border:1px solid #2a3050;border-left:4px solid #475086;border-radius:3px;box-shadow:4px 4px 0 rgba(0,0,0,.5);padding:10px 12px;color:#cbd5e1}
+.up-card.has{border-left-color:var(--hc);color:var(--hc)}
+.up-t{flex:1;display:flex;flex-direction:column;gap:3px;color:#fff}.up-t b{font:900 17px var(--impact);font-style:italic;text-transform:uppercase;letter-spacing:.05em}.up-t small{font-size:11px;color:#94a3b8}
+.up-pips{display:flex;gap:4px}.up-pips i{width:16px;height:7px;background:#ffffff1c;transform:skewX(-20deg)}.up-pips i.on{background:var(--gold)}
+.up-info{display:flex;flex-direction:column;gap:8px}
+.up-stats{display:grid;gap:6px}.up-stats div{display:grid;grid-template-columns:96px 1fr;gap:10px;background:#0b0e1c;border:1px solid #2a3050;border-radius:3px;padding:7px 10px;font-size:13px;color:#cbd5e1}
+.up-stats b{font:900 15px var(--impact);font-style:italic;color:var(--gold);text-transform:uppercase}.up-stats em{font-style:normal;font-weight:800;color:#fff}
+@media(max-width:480px){.up-stats div{grid-template-columns:78px 1fr}}
+.st-what{font-size:12px;color:#cbd5e1}.st-what summary{cursor:pointer;color:var(--gold);font-weight:700}.st-what p{margin:4px 0}.st-what b{color:var(--gold);margin-right:4px}

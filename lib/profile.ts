@@ -86,3 +86,17 @@ export async function fetchStoryStats(): Promise<StoryStats | null> {
 export async function fetchStoryResult(token: string): Promise<StoryResult | null> {
   try { return await call<StoryResult | null>('story_result', { p_token: token }); } catch { return null; }
 }
+
+export interface HeroProg { hero: string; xp: number; level: number; floor: number; next: number; max: boolean; points: number; ups: Record<string, number> }
+export async function fetchHeroProg(): Promise<HeroProg[] | null> {
+  const s = getStored(); if (!s) return null;
+  try { return await call<HeroProg[] | null>('hero_prog_list', { p_secret: s.secret }); } catch { return null; }
+}
+export async function heroUpgrade(hero: string, node: string): Promise<HeroProg> {
+  const s = getStored(); if (!s) throw new Error('NO_PROFILE');
+  return call<HeroProg>('hero_upgrade', { p_secret: s.secret, p_hero: hero, p_node: node });
+}
+export async function heroRespec(hero: string): Promise<HeroProg> {
+  const s = getStored(); if (!s) throw new Error('NO_PROFILE');
+  return call<HeroProg>('hero_respec', { p_secret: s.secret, p_hero: hero });
+}

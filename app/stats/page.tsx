@@ -2,7 +2,7 @@
 
 import { StoryNav } from '@/components/StoryNav';
 import { useEffect, useState } from 'react';
-import { HEROES, heroById, type HeroId } from '@/lib/heroes';
+import { HEROES, STAT_INFO, heroById, type HeroId } from '@/lib/heroes';
 import { fetchStoryStats, getStored, titleKey, type StoryStats } from '@/lib/profile';
 
 const nf = (n: number) => n.toLocaleString();
@@ -43,8 +43,9 @@ export default function StatsPage() {
                 <small>YOUR HERO</small>
                 <b>{hero.name}</b>
                 <span>{hero.role}</span>
-                <div className="st-bars">{Object.entries(hero.stats).map(([k, v]) => (<div key={k}><em>{k}</em><u><i style={{ width: `${v * 12.5}%` }} /></u><b>{v}</b></div>))}</div>
+                <div className="st-bars">{Object.entries(hero.stats).map(([k, v]) => (<div key={k} title={`${STAT_INFO[k as keyof typeof STAT_INFO].name}: ${STAT_INFO[k as keyof typeof STAT_INFO].what}`}><em>{k}</em><u><i style={{ width: `${v * 12.5}%` }} /></u><b>{v}</b></div>))}</div>
                 <p>{hero.signature}</p>
+                <details className="st-what"><summary>What do these stats mean?</summary>{(Object.keys(STAT_INFO) as (keyof typeof STAT_INFO)[]).map((k) => (<p key={k}><b>{k}</b> {STAT_INFO[k].what}</p>))}</details>
                 <div className="st-hero-c">
                   <div><b>{hs?.runs ?? 0}</b><span>Runs</span></div><div><b>{hs?.wins ?? 0}</b><span>Wins</span></div>
                   <div><b>{nf(hs?.dmg ?? 0)}</b><span>Damage</span></div><div><b>{nf(hs?.healed ?? 0)}</b><span>Healed</span></div>

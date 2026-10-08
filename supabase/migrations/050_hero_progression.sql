@@ -1,0 +1,4 @@
+-- 050: per-hero XP, levels and upgrades (applied to Supabase as migration 050_hero_progression).
+-- hero_prog(profile_id, hero, xp, ups jsonb); level = 1 + floor(sqrt(xp/50)) capped at 20; 1 upgrade point per level above 1.
+-- Upgrades: vit(+6 max HP) lex foc spd wil lck (+1 stat per rank, max 5), ult (+1 start charge, max 3), gold (+15 start gold, max 3).
+-- RPCs: hero_prog_list(secret), hero_upgrade(secret, hero, node), hero_respec(secret, hero). _apply_upgrades(room) runs inside start_pve; _award_story also credits hero XP.

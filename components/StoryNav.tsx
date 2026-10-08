@@ -23,7 +23,7 @@ export function StoryNav({ active }: { active: 'skills' | 'stats' }) {
       <Link href={from ?? '/play'} className="sn-back">← {from ? 'Back to the Story' : 'Menu'}</Link>
       <div className="sn-tabs">
         {from && <Link href={from}>Party</Link>}
-        <Link href={hubHref('/skills', from)} className={active === 'skills' ? 'on' : ''}>Skills</Link>
+        <Link href={hubHref('/skills', from)} className={active === 'skills' ? 'on' : ''}>Upgrades</Link>
         <Link href={hubHref('/stats', from)} className={active === 'stats' ? 'on' : ''}>Stats</Link>
       </div>
     </nav>

@@ -29,3 +29,23 @@ export const HEROES: Hero[] = [
     signature: 'Royal Decree: once per battle, an ally acts first.', stats: { VIT: 5, LEX: 5, FOC: 5, SPD: 5, WIL: 5, LUK: 5 }, ...art('Prince') },
 ];
 export const heroById = (id: string | null | undefined) => HEROES.find((h) => h.id === id);
+
+// What every stat actually does in battle (kept in sync with the server rules).
+export const STAT_INFO: Record<keyof Hero['stats'], { name: string; what: string }> = {
+  VIT: { name: 'Vitality', what: 'Max HP. Every point is +6 HP.' },
+  LEX: { name: 'Lexicon', what: 'Word power. Every point makes your words hit about 4% harder, and crits do more damage.' },
+  FOC: { name: 'Focus', what: 'Accuracy. Every point is +1% chance to land your hit.' },
+  SPD: { name: 'Speed', what: 'Acts earlier in the turn and dodges more. Every point is +1.5% dodge (up to 40%).' },
+  WIL: { name: 'Willpower', what: 'Resists Corruption. Every point is +4% chance to shrug it off (up to 60%).' },
+  LUK: { name: 'Luck', what: 'Crit chance. Every point is +1% (on top of a 5% base), plus a little accuracy.' },
+};
+export const GLOSSARY: { term: string; what: string }[] = [
+  { term: 'Power', what: 'How strong your action is. Longer, rarer words and answering fast raise it.' },
+  { term: 'Shield', what: 'Absorbs damage before your HP. Guard builds it.' },
+  { term: 'Crit', what: 'A lucky hit for extra damage. Chance comes from Luck.' },
+  { term: 'Weakness / Resist', what: 'Each prompt has an element. Hitting an enemy weak to it does +50% damage, a resisted element does 40% less.' },
+  { term: 'Momentum', what: 'Team meter. Hits, weaknesses, crits and guards fill it; misses drain it. At 100 the team unleashes a Limit Break.' },
+  { term: 'Ultimate (n/6)', what: 'Your hero charges one step per turn you act. At 6/6 you can unleash your ultimate.' },
+  { term: 'Corruption', what: 'A curse from enemy taxes that locks more letters. Willpower helps you resist it.' },
+  { term: 'Hero level', what: 'Each hero levels up from the XP they earn on runs. Every level gives 1 upgrade point.' },
+];
