@@ -61,9 +61,11 @@ function logLine(e: BattleLogEntry) {
 const portrait = (u: BattleUnit) => (u.hero ? heroById(u.hero as HeroId)?.artFull : ENEMY_SPRITE[u.name]) ?? '';
 const sprite = (u: BattleUnit) => (u.hero ? HERO_SPRITE[u.hero] : ENEMY_SPRITE[u.name]) ?? '';
 
+const EL: Record<string, string> = { fire: '🔥', ice: '❄️', storm: '⚡', earth: '⛰️', light: '✨', dark: '🌑' };
+
 type Float = { k: string; text: string; cls: string };
 
-function Sprite({ u, floats, picked, onPick, style, lunge, t3 }: { t3?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
+function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3 }: { elNow?: string; t3?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
   const pct = Math.max(0, Math.min(100, (u.hp / u.max_hp) * 100));
   const hit = floats.some((f) => f.cls === 'dmg');
   return (
@@ -77,6 +79,7 @@ function Sprite({ u, floats, picked, onPick, style, lunge, t3 }: { t3?: boolean;
         <img className="rg-img" src={sprite(u)} alt={u.name} draggable={false} style={u.side === 'hero' ? undefined : { transform: 'scaleX(1)' }} />
       </motion.div>
       <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
+      {u.side === 'enemy' && (u.weak_el || u.res_el) && u.hp > 0 && <span className="rg-el">{u.weak_el && <b title={`Weak to ${u.weak_el}`} className={u.weak_el === elNow ? 'hot' : ''}>{EL[u.weak_el]}▼</b>}{u.res_el && <i title={`Resists ${u.res_el}`}>{EL[u.res_el]}✕</i>}</span>}
       <AnimatePresence>
         {floats.map((f, i) => (
           <motion.span key={f.k} className={`rg-float ${f.cls}`} style={{ marginLeft: i * 16 }}
@@ -327,12 +330,13 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
         {/* prompt banner */}
         <div className="rg-prompt">
-          <div className="rg-prompt-t">{b.prompt}</div>
+          <div className="rg-prompt-t">{b.element && <span className="rg-elchip" title={`${b.element} prompt`}>{EL[b.element]}</span>} {b.prompt}</div>
           {b.locked && <div className="rg-lock">🔒 Locked: <b>{b.locked.toUpperCase().split('').join(' ')}</b></div>}
         </div>
 
         {active && <div className={`rg-ban ${active.t === 'ult' ? 'ult' : active.t === 'crit' ? 'crit' : enemies.some((e) => e.name === active.a) ? 'e' : ''}`} key={`${active.t}-${active.a}-${active.n}-${b.version}`}><span>{logLine(active)}</span></div>}
-        {active && (active.t === 'miss' || active.t === 'dodge' || active.t === 'crit' || active.t === 'ult') && <div className={`rg-burst ${active.t}`} key={`bu-${active.t}-${active.a}-${b.version}`}>{active.t === 'miss' ? 'MISS' : active.t === 'dodge' ? 'DODGE' : active.t === 'crit' ? 'CRITICAL!' : 'ALL-OUT!'}</div>}
+        {active && (active.x === 'weak' || active.x === 'resist') && <div className={`rg-burst ${active.x === 'weak' ? 'crit' : 'miss'}`} key={`wk-${b.version}-${active.a}-${active.n}`}>{active.x === 'weak' ? 'WEAKNESS!' : 'RESIST'}</div>}
+        {active && !active.x && (active.t === 'miss' || active.t === 'dodge' || active.t === 'crit' || active.t === 'ult') && <div className={`rg-burst ${active.t}`} key={`bu-${active.t}-${active.a}-${b.version}`}>{active.t === 'miss' ? 'MISS' : active.t === 'dodge' ? 'DODGE' : active.t === 'crit' ? 'CRITICAL!' : 'ALL-OUT!'}</div>}
 
         <div className={`rg-turn${active ? ' play' : canAct ? ' mine' : ' wait'}`} key={active ? 'p' : canAct ? `m${b.turn}` : 'w'}>
           {active ? (active.a && enemies.some((e) => e.name === active.a) ? '⚔ Enemies attack…' : '⚔ Resolving the turn…')
@@ -341,11 +345,11 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
         {/* units */}
         {enemies.map((u, i) => (
-          <Sprite key={u.id} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={target === u.id}
+          <Sprite key={u.id} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={target === u.id}
             onPick={needsEnemy && canAct && u.hp > 0 ? () => setTarget(target === u.id ? null : u.id) : undefined} />
         ))}
         {heroes.map((u, i) => (
-          <Sprite key={u.id} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
+          <Sprite key={u.id} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
             onPick={needsAlly && canAct && u.hp > 0 ? () => setTarget(target === u.id ? null : u.id) : undefined} />
         ))}
 
