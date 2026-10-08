@@ -1,0 +1,1 @@
+-- 066: battle_play revive honours p_target (revives only that hero when given). Applied via MCP.

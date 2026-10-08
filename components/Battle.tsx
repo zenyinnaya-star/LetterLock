@@ -29,6 +29,7 @@ const CARDS: Record<string, { label: string; glyph: string; rare?: boolean; hint
   revive: { label: 'Revive', glyph: '🕊️', rare: true, hint: 'Raises a fallen hero' },
   overcharge: { label: 'Overcharge', glyph: '⚡', rare: true, hint: 'Fills your ultimate' },
 };
+const ITEM_CARDS = ['sp_heal', 'heal_all', 'full_heal', 'revive', 'cleanse', 'overcharge'];
 const INTENT: Record<string, string> = {
   strike: 'Government strikes', red_tape: 'Red Tape: 4 letters locked', taxes: 'Taxes: applies Corruption', tax_season: 'TAX SEASON: huge party hit. Guard!',
 };
@@ -157,6 +158,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const [pend, setPend] = useState<{ kind: 'attack' } | { kind: 'card'; c: string } | null>(null);
   const [oddsCalled, setOddsCalled] = useState(false);
   const [spOpen, setSpOpen] = useState(false);
+  const [itemOpen, setItemOpen] = useState(false);
   const [target, setTarget] = useState<string | null>(null);
   const [msg, setMsg] = useState('');
   const [left, setLeft] = useState(0);
@@ -191,7 +193,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const mine = b?.units.find((u) => u.player_id === b.me);
   useEffect(() => { if (mine?.hero) { try { localStorage.setItem('letterlock:hero', mine.hero); } catch { /* ignore */ } } }, [mine?.hero]);
   const turn = b?.turn ?? 0;
-  useEffect(() => { setMsg(''); setPend(null); setOddsCalled(false); setSpOpen(false); }, [turn]);
+  useEffect(() => { setMsg(''); setPend(null); setOddsCalled(false); setSpOpen(false); setItemOpen(false); }, [turn]);
 
   // Act intro card
   useEffect(() => {
@@ -357,6 +359,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const myHero = mine?.hero ? heroById(mine.hero as HeroId) : null;
   const needsEnemy = !!pend && (pend.kind === 'attack' || pend.c === 'sp_attack');
   const needsAlly = pend?.kind === 'card' && pend.c === 'sp_heal';
+  const needsDown = pend?.kind === 'card' && pend.c === 'revive';
 
   // enemy field layout: spread across the right half, staggered rows
   const ePos = (i: number, n: number): React.CSSProperties => {
@@ -381,7 +384,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   async function playCard(c: string, tgt: string | null) {
     if (!token) return;
     const r = await act(() => rpc.battlePlay(token, c, tgt));
-    setPend(null); setSpOpen(false);
+    setPend(null); setSpOpen(false); setItemOpen(false);
     if (r) void load();
   }
   // tap on a unit while something is waiting for a target
@@ -399,6 +402,12 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   }
   function needTarget() { setMsg('Tap an enemy to target it first'); }
   function chooseCard(c: string) {
+    if (c === 'revive') {
+      const down = heroes.filter((h) => h.hp <= 0);
+      if (down.length === 0) { setMsg('No one has fallen'); return; }
+      if (down.length === 1) { void playCard(c, down[0].id); return; }
+      setPend({ kind: 'card', c }); setMsg('Tap the fallen ally'); setItemOpen(false); return;
+    }
     if (c === 'sp_attack' || c === 'sp_heal') {
       if (c === 'sp_attack' && tgtId) { void playCard(c, tgtId); return; }
       setPend(pend?.kind === 'card' && pend.c === c ? null : { kind: 'card', c });
@@ -434,15 +443,22 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
   const cardMenu = mine ? (
     <div className="rg-cm" onClick={(e) => e.stopPropagation()}>
-      {!spOpen ? (<>
+      {itemOpen ? (<>
+        {b.cards.filter((c) => ITEM_CARDS.includes(c)).length === 0 && <span className="rg-cm-empty">No items. Buy potions at camp or read the Book of Wisdom.</span>}
+        {b.cards.map((c, i) => ITEM_CARDS.includes(c) && (
+          <button key={c + i} type="button" className={`rg-cmb${pend?.kind === 'card' && pend.c === c ? ' sel' : ''}`} disabled={!canAct || b.card_used} title={CARDS[c]?.hint} onClick={() => chooseCard(c)}><i>▶</i>{c === 'sp_heal' ? 'Healing Potion' : c === 'revive' ? 'Revive Potion' : CARDS[c]?.label ?? c}</button>
+        ))}
+        <button type="button" className="rg-cmb back" onClick={() => { setItemOpen(false); setPend(null); }}><i>◀</i>Back</button>
+      </>) : !spOpen ? (<>
         <button type="button" className="rg-cmb" disabled={!canAct} onClick={() => { setSpOpen(false); chooseAttack(); }}><i>▶</i>Attack</button>
         <button type="button" className="rg-cmb" disabled={!canAct} onClick={() => void doAction('guard', null)}><i>▶</i>Guard</button>
         <button type="button" className="rg-cmb ult" disabled={!canAct || !ultReady} onClick={() => { if (!tgtId) needTarget(); else void doAction('ult', tgtId); }}><i>▶</i>{ULT_NAME[mine.hero ?? ''] ?? 'Ultimate'}<em>{ultReady ? 'READY' : `${mine.ult ?? 0}/6`}</em></button>
         <button type="button" className="rg-cmb" disabled={!canAct || !!b.book_used} onClick={() => void openBook()}><i>▶</i>Book of Wisdom</button>
-        {b.cards.length > 0 && <button type="button" className="rg-cmb" disabled={!canAct} onClick={() => setSpOpen(true)}><i>▶</i>Specials<em>{b.cards.length}</em></button>}
+        <button type="button" className="rg-cmb" disabled={!canAct} onClick={() => setItemOpen(true)}><i>▶</i>Item<em>{b.cards.filter((c) => ITEM_CARDS.includes(c)).length}</em></button>
+        {b.cards.some((c) => !ITEM_CARDS.includes(c)) && <button type="button" className="rg-cmb" disabled={!canAct} onClick={() => setSpOpen(true)}><i>▶</i>Specials<em>{b.cards.filter((c) => !ITEM_CARDS.includes(c)).length}</em></button>}
         {(b.momentum ?? 0) >= 100 && <button type="button" className="rg-cmb odds" disabled={!canAct || oddsCalled} onClick={() => void callOdds()}><i>★</i>{oddsCalled ? 'Odds locked' : 'Unleash Odds!'}</button>}
       </>) : (<>
-        {b.cards.map((c, i) => (
+        {b.cards.map((c, i) => !ITEM_CARDS.includes(c) && (
           <button key={c + i} type="button" className={`rg-cmb${pend?.kind === 'card' && pend.c === c ? ' sel' : ''}`} disabled={!canAct || b.card_used} onClick={() => chooseCard(c)}><i>▶</i>{CARDS[c]?.label ?? c}</button>
         ))}
         <button type="button" className="rg-cmb back" onClick={() => setSpOpen(false)}><i>◀</i>Back</button>
@@ -533,7 +549,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         ))}
         {heroes.map((u, i) => (
           <Sprite key={u.id} menu={u.player_id === b.me && mine && b.step === 'input' && canAct && !mine.locked ? <></> : undefined} mine={u.player_id === b.me} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
-            onPick={needsAlly && canAct && u.hp > 0 ? () => pickUnit(u.id) : undefined} />
+            onPick={((needsAlly && u.hp > 0) || (needsDown && u.hp <= 0)) && canAct ? () => pickUnit(u.id) : undefined} />
         ))}
 
         {/* bottom-left: party cards */}
@@ -543,7 +559,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
             const me = u.player_id === b.me;
             return (
               <button key={u.id} type="button" className={`rg-pc${me ? ' me' : ''}${u.hp <= 0 ? ' down' : ''}${target === u.id ? ' picked' : ''}`}
-                onClick={needsAlly && canAct && u.hp > 0 ? () => pickUnit(u.id) : undefined}>
+                onClick={((needsAlly && u.hp > 0) || (needsDown && u.hp <= 0)) && canAct ? () => pickUnit(u.id) : undefined}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={portrait(u)} alt="" draggable={false} />
                 <span className="rg-pc-ult">{u.ult ?? 0}/6</span>
@@ -575,7 +591,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         <div className="rg-bottom">
         {b.step === 'input' && (
           <div className={`rg-cmd${canAct ? '' : ' lock'}`}>
-            <div className="rg-cmd-h">{canAct ? (needsAlly ? 'Tap an ally' : tgtUnit ? `Target: ${tgtUnit.name}` : 'Tap an enemy to target') : active ? 'Enemy turn…' : mine.hp <= 0 ? 'Down' : mine.locked ? 'Waiting…' : '…'}</div>
+            <div className="rg-cmd-h">{canAct ? (needsAlly || needsDown ? 'Tap an ally' : tgtUnit ? `Target: ${tgtUnit.name}` : 'Tap an enemy to target') : active ? 'Enemy turn…' : mine.hp <= 0 ? 'Down' : mine.locked ? 'Waiting…' : '…'}</div>
             {cardMenu}
           </div>
         )}
