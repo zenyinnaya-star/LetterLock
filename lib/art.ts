@@ -69,3 +69,28 @@ export const HERO_WIN: Record<string, string> = {
   Mira: u('20261008_131547_414d9439-4b90-48bd-aa05-bba4a59219df'),
   Prince: u('20261008_131557_77e38682-c762-45f0-b605-f063d6372c2a'),
 };
+
+// attack / cast animation frames (swapped in while a unit acts)
+export const HERO_STRIKE: Record<string, string> = {
+  'Shiro': u('20261008_132044_45b0f30b-d39e-424c-b01a-ccf8df3b7adc'),
+  'Nero': u('20261008_132043_433298b1-2aac-4dc5-9acc-5dbe2b4844fc'),
+  'Kira': u('20261008_132045_61b2490e-9a61-4fa0-bc06-7483c8d91d07'),
+  'Mira': u('20261008_132052_2feed035-8808-4372-8b82-42c503fed1d6'),
+  'Prince': u('20261008_132117_3f930982-9c3e-4fcb-b98e-5704b5e3b75b'),
+};
+export const HERO_CAST: Record<string, string> = {
+  'Shiro': u('20261008_132116_1d5eb801-a80a-4732-a583-0b0455261d2d'),
+  'Nero': u('20261008_132116_832454fd-e7c4-43e5-aee4-4780896cf282'),
+  'Kira': u('20261008_132145_da1922de-1bcd-4a36-b4ce-91d053c29a1a'),
+  'Mira': u('20261008_132146_7c031210-7d63-46c5-9724-a61a55d6d09e'),
+  'Prince': u('20261008_132146_e5360481-10d3-4d37-8416-a06fb9e2de3d'),
+};
+export const ENEMY_STRIKE: Record<string, string> = {
+  'Intern Auditor': u('20261008_132214_c9de097b-d553-41ac-a393-021989fad0bb'),
+  'Filer Alpha': u('20261008_132214_c9de097b-d553-41ac-a393-021989fad0bb'),
+  'Clerk': u('20261008_132213_6b148394-c7bf-4e88-be96-0cda8f609280'),
+  'Filer Beta': u('20261008_132213_6b148394-c7bf-4e88-be96-0cda8f609280'),
+  'The Collector': u('20261008_132214_aa1b71cd-263e-4a9c-ad08-6c01bf7176a4'),
+  'Bailiff': u('20261008_132256_67c89f6b-684e-4083-906a-4d7403b8b71f'),
+  'Government': u('20261008_132257_25dd7a17-9c4b-48e8-9fcd-51fffafcb71c'),
+};

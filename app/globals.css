@@ -1961,3 +1961,4 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 @keyframes idleBob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-4%) rotate(1.2deg)}}
 @keyframes idleBoss{0%,100%{transform:translateY(0) scale(1)}35%{transform:translate(1.5%,-2%) scale(1.02)}70%{transform:translate(-1.5%,-1%) scale(1.01)}}
 @media (prefers-reduced-motion:reduce){.rg-unit .rg-img{animation:none!important}}
+.rg-unit.striking .rg-img{transition:none}
