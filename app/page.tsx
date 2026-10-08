@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 import { Icon } from '@/components/icons';
 import { Header, spring } from '@/components/ui';
 import { useT } from '@/lib/i18n/react';
+import { HEROES } from '@/lib/heroes';
 
 const TITLE = 'LETTERLOCK';
 
@@ -15,12 +16,18 @@ export default function Home() {
       <Header />
       <section className="lp-hero">
         <motion.div className="hero-art lp-art" aria-hidden initial={{ opacity: 0, scale: 1.08 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}>
-          <video className="hero-vid" src="/art/hero-loop.mp4" autoPlay loop muted playsInline preload="metadata" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+          <div className="lp-line">
+            {[HEROES[1], HEROES[2], HEROES[0], HEROES[3], HEROES[4]].map((h, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <motion.img key={h.id} src={h.artFull} alt="" draggable={false} className={`lp-hero-img h${i}`}
+                initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 + i * 0.12, duration: 0.9, ease: [0.22, 1, 0.36, 1] }} />
+            ))}
+          </div>
         </motion.div>
         <h1 className="hero-tiles lp-tiles" aria-label="Letterlock">
           {TITLE.split('').map((c, i) => (
             <motion.span key={i} className="tile" aria-hidden
-              style={i >= 6 ? { backgroundColor: 'var(--lock)', color: '#fff', boxShadow: '0 4px 0 #9e1f3a, 0 8px 16px rgba(0,0,0,.35)' } : undefined}
+              style={i >= 6 ? { background: 'linear-gradient(180deg,#e0384f,#8e0b1b)', color: '#fff' } : undefined}
               initial={{ y: -120, rotate: (i % 2 ? 1 : -1) * 25, opacity: 0 }}
               animate={{ y: 0, rotate: (i % 3 - 1) * 3, opacity: 1 }}
               whileHover={{ y: -6, rotate: 0 }}
