@@ -471,7 +471,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
             onPick={needsEnemy && canAct && u.hp > 0 ? () => pickUnit(u.id) : undefined} />
         ))}
         {heroes.map((u, i) => (
-          <Sprite key={u.id} menu={u.player_id === b.me && mine && b.step === 'input' && canAct && !mine.locked ? cardMenu : undefined} mine={u.player_id === b.me} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
+          <Sprite key={u.id} menu={u.player_id === b.me && mine && b.step === 'input' && canAct && !mine.locked ? <></> : undefined} mine={u.player_id === b.me} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
             onPick={needsAlly && canAct && u.hp > 0 ? () => pickUnit(u.id) : undefined} />
         ))}
 
@@ -509,6 +509,25 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           </div>
         )}
       </div>
+
+      {mine && myHero && (
+        <div className={`rg-hud${mine.hp <= 0 ? ' down' : ''}`}>
+          <div className="rg-hud-id">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={myHero.artFull} alt="" draggable={false} />
+          </div>
+          <div className="rg-hud-hp">
+            <div className="rg-hud-name"><b>{myHero.name}</b><span>{myHero.role}</span><em>ULT {mine.ult ?? 0}/6</em></div>
+            <div className="rg-hud-bar">
+              <motion.u animate={{ width: `${Math.max(0, Math.min(100, (mine.hp / mine.max_hp) * 100))}%` }} transition={{ duration: 1.2, delay: 0.35 }} />
+              <motion.i animate={{ width: `${Math.max(0, Math.min(100, (mine.hp / mine.max_hp) * 100))}%` }} transition={{ duration: 0.35 }} />
+              <strong>{Math.max(0, mine.hp)} / {mine.max_hp}</strong>
+            </div>
+            <div className="rg-hud-sub">{mine.shield ? <span>🛡 {mine.shield}</span> : null}{mine.corruption > 0 ? <span>☠ {mine.corruption}</span> : null}<span>{b.step !== 'input' ? 'Resolving…' : mine.hp <= 0 ? 'Down' : mine.locked ? (msg || 'Locked in') : canAct ? (pend ? `Tap ${needsAlly ? 'an ally' : 'an enemy'}` : 'Your move') : 'Waiting…'}</span></div>
+          </div>
+          {b.step === 'input' && mine.hp > 0 && !mine.locked && cardMenu}
+        </div>
+      )}
 
       {/* hand of cards + book */}
       {OLD_UI && b.step === 'input' && mine && (
