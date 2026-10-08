@@ -6,12 +6,12 @@ import type { BattleLogEntry, BattleUnit } from '@/lib/rpc';
 import { audio } from '@/lib/audio';
 import { CombatBus, eventsFor, type CombatEvent } from '@/lib/combat/events';
 import { CameraDirector } from '@/lib/combat/camera';
-import { scoreWord, type WordScore } from '@/lib/combat/score';
+import { scoreWord, isLong, isRare, type WordScore } from '@/lib/combat/score';
 import type { CameraPreset } from '@/lib/combat/registry';
 import { DEFAULT_PROFILE, ENEMY_PROFILE, HERO_PROFILE } from '@/lib/combat/profiles';
 
 export type LetterFx = { key: string; kind: 'pop' | 'orbit' | 'streak' | 'fill' | 'shatter'; word: string; glow?: string; core?: string; from: { x: number; y: number }; to: { x: number; y: number }; };
-export type Label = { key: string; big?: string; cls: string; rank?: string };
+export type Label = { key: string; big?: string; cls: string; rank?: string; tag?: string };
 export const BREAK_MAX = 6; // default; enemies override via ENEMY_PROFILE
 export const breakMaxOf = (name?: string) => (name && ENEMY_PROFILE[name]?.breakMax) || BREAK_MAX;
 
@@ -121,14 +121,17 @@ export function useCombatDirector(inp: In) {
     }
 
     // UI label: only the single most important result
-    const sc: WordScore = scoreWord({ word, ok: !!correct, crit: !!has('CRITICAL_HIT'), weak: !!has('WEAKNESS_HIT'), ult: !!has('ULTIMATE_STARTED'), combo: comboRef.current });
+    const wctx = { long: isLong(word), rare: isRare(word), weak: !!has('WEAKNESS_HIT'), crit: !!has('CRITICAL_HIT'), len: (word ?? '').length };
+    const classBonus = hero ? prof.scoreBonus(wctx) : 0;
+    const classTag = hero && correct ? prof.tag?.(wctx) : undefined;
+    const sc: WordScore = scoreWord({ word, ok: !!correct, crit: !!has('CRITICAL_HIT'), weak: !!has('WEAKNESS_HIT'), ult: !!has('ULTIMATE_STARTED'), combo: comboRef.current, classBonus });
     const k = `${++seq.current}`;
     const rank = hero && correct && ['B', 'A', 'S', 'SS'].includes(sc.rank) ? sc.rank : undefined;
-    if (broke) setLabel({ key: k, big: 'BREAK!', cls: 'brk', rank });
-    else if (has('ULTIMATE_STARTED')) setLabel({ key: k, big: prof.ult, cls: 'ult', rank });
-    else if (has('CRITICAL_HIT')) setLabel({ key: k, big: 'CRITICAL', cls: 'crit', rank });
-    else if (has('WEAKNESS_HIT')) setLabel({ key: k, big: 'WEAKNESS', cls: 'weak', rank });
-    else if (rank) setLabel({ key: k, cls: 'rank', rank });
+    if (broke) setLabel({ key: k, big: 'BREAK!', cls: 'brk', rank, tag: classTag });
+    else if (has('ULTIMATE_STARTED')) setLabel({ key: k, big: prof.ult, cls: 'ult', rank, tag: classTag });
+    else if (has('CRITICAL_HIT')) setLabel({ key: k, big: 'CRITICAL', cls: 'crit', rank, tag: classTag });
+    else if (has('WEAKNESS_HIT')) setLabel({ key: k, big: 'WEAKNESS', cls: 'weak', rank, tag: classTag });
+    else if (rank || classTag) setLabel({ key: k, cls: 'rank', rank, tag: classTag });
     else setLabel(null);
 
     // screen flash + letter VFX (the game's visual language)
