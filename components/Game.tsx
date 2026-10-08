@@ -236,7 +236,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   return (
     <MotionConfig reducedMotion="user">
       {stageName && stageName !== 'none' && <div className={`stage-fx stage-${stageName}`} aria-hidden />}
-      <div className="shell">
+      <div className={`shell${phase === 'battle' ? ' rpg' : ''}`}>
         <Header
           settings={<SettingsButton state={state} token={token} act={act} />}
           right={
@@ -275,7 +275,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           </AnimatePresence>
         </section>
       </div>
-      <Rack state={state} token={token} act={act} />
+      {phase !== 'battle' && <Rack state={state} token={token} act={act} />}
       <Reactions state={state} token={token} />
       <ActionFeed state={state} />
       <AnimatePresence>
