@@ -63,6 +63,43 @@ function logLine(e: BattleLogEntry) {
   }
 }
 
+// sprites come with a plain background: key out the white connected to the edges (falls back to the raw image if CORS blocks canvas reads)
+const keyed = new Map<string, string>();
+function KeyedImg({ src, className, alt, style }: { src: string; className?: string; alt: string; style?: React.CSSProperties }) {
+  const [s, setS] = useState(keyed.get(src) ?? src);
+  useEffect(() => {
+    if (!src) return;
+    if (keyed.has(src)) { setS(keyed.get(src)!); return; }
+    let dead = false;
+    const im = new Image(); im.crossOrigin = 'anonymous';
+    im.onload = () => {
+      try {
+        const w = im.naturalWidth, h = im.naturalHeight; if (!w || !h) return;
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const x = c.getContext('2d', { willReadFrequently: true }); if (!x) return;
+        x.drawImage(im, 0, 0);
+        const d = x.getImageData(0, 0, w, h); const px = d.data;
+        const bg = (i: number) => px[i + 3] > 200 && px[i] > 228 && px[i + 1] > 228 && px[i + 2] > 228;
+        if (!bg(0) || !bg((w - 1) * 4)) { keyed.set(src, src); return; }  // already transparent / not a white backdrop
+        const seen = new Uint8Array(w * h); const st: number[] = [0, w - 1, (h - 1) * w, h * w - 1];
+        while (st.length) {
+          const p = st.pop()!; if (seen[p]) continue; seen[p] = 1;
+          const i = p * 4; if (!bg(i)) continue;
+          px[i + 3] = 0;
+          const cx = p % w, cy = (p / w) | 0;
+          if (cx > 0) st.push(p - 1); if (cx < w - 1) st.push(p + 1); if (cy > 0) st.push(p - w); if (cy < h - 1) st.push(p + w);
+        }
+        x.putImageData(d, 0, 0);
+        const url = c.toDataURL('image/png'); keyed.set(src, url); if (!dead) setS(url);
+      } catch { keyed.set(src, src); }
+    };
+    im.src = src;
+    return () => { dead = true; };
+  }, [src]);
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img className={className} src={s} alt={alt} draggable={false} style={style} />;
+}
+
 const portrait = (u: BattleUnit) => (u.hero ? heroById(u.hero as HeroId)?.artFull : ENEMY_SPRITE[u.name]) ?? '';
 const sprite = (u: BattleUnit) => (u.hero ? HERO_SPRITE[u.hero] : ENEMY_SPRITE[u.name]) ?? '';
 
@@ -80,8 +117,7 @@ function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3 }: { elNow?
       <motion.div key={`${lunge ? 'l' : hit ? 'h' : 'i'}-${floats[0]?.k ?? ''}`}
         animate={lunge ? { x: [0, u.side === 'hero' ? 90 : -90, 0], scale: [1, 1.12, 1] } : hit ? { x: [0, -10, 10, -6, 0], filter: ['brightness(2.2)', 'brightness(1)'] } : {}}
         transition={{ duration: lunge ? 0.5 : 0.4 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="rg-img" src={sprite(u)} alt={u.name} draggable={false} style={u.side === 'hero' ? undefined : { transform: 'scaleX(1)' }} />
+        <KeyedImg className="rg-img" src={sprite(u)} alt={u.name} />
       </motion.div>
       <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
       {u.side === 'enemy' && (u.weak_el || u.res_el) && u.hp > 0 && <span className="rg-el">{u.weak_el && <b title={`Weak to ${u.weak_el}`} className={u.weak_el === elNow ? 'hot' : ''}>{EL[u.weak_el]}▼</b>}{u.res_el && <i title={`Resists ${u.res_el}`}>{EL[u.res_el]}✕</i>}</span>}
@@ -221,7 +257,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     ? firstNamed(active.t === 'dodge' ? active.d : active.a, active.t === 'dodge' ? undefined : undefined)?.id : undefined;
 
   const [use3d, setUse3d] = useState(false);
-  useEffect(() => { setUse3d(webglOk()); }, []);
+  useEffect(() => { setUse3d(webglOk() && new URLSearchParams(window.location.search).has('3d')); }, []); // 2D cel-shaded sprites by default; ?3d opts into the old 3D stage
   const fxSeq = useRef(0);
   const fx = useMemo<StageFx>(() => {
     if (!active || !b) return null;
