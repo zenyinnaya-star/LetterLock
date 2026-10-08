@@ -18,6 +18,7 @@ Handoff doc: start each new session by reading this file, not the whole codebase
 | 4 | DONE (labels: Skills=Strike/Guard/Heal/Ult, Items=cards+Book) — Commands: Skills submenu + Items | Usable in battle | Battle.tsx, migration 050 |
 | 5 | DONE 051 (realtime was already wired; added AFK/disconnect/bot handling + idle notice) — Multiplayer: Realtime push, shared playback cue, AFK auto-guard, party scaling, ready-up | 2–4 clients stay in sync | lib/rpc.ts, Battle.tsx, migration 051 |
 | 6 | DONE 052 (sim found solo/2p/3p unwinnable; party scaling + momentum scaling) — Multi-client scripted test + balance pass | Full run with 3 simulated players | scripts/, SQL tests |
+| 8 | DONE 054 — Combat rework: wordless Attack (click enemy), Book specials, Odds meter + manual finisher | — | Battle.tsx, 054 |
 | 7 | Optional Higgsfield: 1 finisher clip + SFX (quote first; 11.25 credits left) | — | lib/art.ts |
 
 ## Rules for cheap sessions

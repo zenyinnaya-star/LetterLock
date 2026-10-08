@@ -1,0 +1,5 @@
+-- 054 (applied as 054a-e): combat rework. Descriptive stub.
+-- battles.odds_fire; battle_submit word optional (wordless Attack/Guard/Ult = base stat power; heal only via Book);
+-- _battle_resolve: Limit Break only fires when odds_fire, flat +10 odds per basic attack, ult charges on any submitted action, book_used resets each turn;
+-- battle_play(token, kind, target): sp_attack / sp_guard / sp_heal + old cards, each special adds +30 odds (scaled 4/(n+3));
+-- book_answer: 38% sp_attack, 24% sp_heal, 22% sp_guard, rest rare; battle_odds(token): call the finisher at turn resolve.
