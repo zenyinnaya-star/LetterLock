@@ -2004,3 +2004,30 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .rg-ord i{position:absolute;right:1px;bottom:0;font:800 9px/1 var(--font-barlow,sans-serif);font-style:normal;color:#fff;text-shadow:0 1px 2px #000,0 0 3px #000}
 .rg-ord.done{opacity:.4;filter:grayscale(.7)}
 .rg-ord.first{transform:scale(1.08)}
+
+/* each character idles in their own way */
+.rg-unit[data-u] .rg-img{animation-timing-function:ease-in-out}
+.rg-unit[data-u="shiro"]:not(.down):not(.cheer):not(.striking):not(.ouch) .rg-img{animation:idShiro 1.3s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit[data-u="nero"]:not(.down):not(.cheer):not(.striking):not(.ouch) .rg-img{animation:idNero 3.8s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit[data-u="kira"]:not(.down):not(.cheer):not(.striking):not(.ouch) .rg-img{animation:idKira 2.4s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit[data-u="mira"]:not(.down):not(.cheer):not(.striking):not(.ouch) .rg-img{animation:idMira 3.2s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit[data-u="prince"]:not(.down):not(.cheer):not(.striking):not(.ouch) .rg-img{animation:idPrince 3s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit[data-u="intern-auditor"]:not(.down):not(.striking):not(.ouch) .rg-img,.rg-unit[data-u="filer-alpha"]:not(.down):not(.striking):not(.ouch) .rg-img{animation:idTwitch 1.1s steps(2,end) infinite;animation-delay:var(--idle,0s)}
+.rg-unit[data-u="clerk"]:not(.down):not(.striking):not(.ouch) .rg-img,.rg-unit[data-u="filer-beta"]:not(.down):not(.striking):not(.ouch) .rg-img{animation:idNod 2.6s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit[data-u="the-collector"]:not(.down):not(.striking):not(.ouch) .rg-img{animation:idLurch 3s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit[data-u="bailiff"]:not(.down):not(.striking):not(.ouch) .rg-img{animation:idStomp 1.8s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit[data-u="the-commissioner"]:not(.down):not(.striking):not(.ouch) .rg-img{animation:idLoom 4s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit[data-u="tax-drone"]:not(.down):not(.striking):not(.ouch) .rg-img{animation:idHover 1.6s ease-in-out infinite;animation-delay:var(--idle,0s)}
+.rg-unit[data-u="government"]:not(.down):not(.striking):not(.ouch) .rg-img{animation:idGov 3.6s ease-in-out infinite;animation-delay:var(--idle,0s)}
+@keyframes idShiro{0%,100%{transform:translateY(0) rotate(-1.5deg)}25%{transform:translateY(-6%) rotate(1deg)}50%{transform:translateY(0) rotate(-1deg)}75%{transform:translateY(-3%) rotate(1.5deg)}}
+@keyframes idNero{0%,100%{transform:scale(1,1) translateX(0)}50%{transform:scale(1.03,1.05) translateX(1.5%)}}
+@keyframes idKira{0%,100%{transform:rotate(-3deg) translateY(0)}30%{transform:rotate(3deg) translateY(-4%)}60%{transform:rotate(-1deg) translateY(-1%)}85%{transform:rotate(4deg) translateY(-5%)}}
+@keyframes idMira{0%,100%{transform:translateY(0);filter:drop-shadow(0 0 4px #fde68a)}50%{transform:translateY(-7%);filter:drop-shadow(0 0 14px #fde68a)}}
+@keyframes idPrince{0%,100%{transform:scale(1,1) rotate(0)}40%{transform:scale(1.02,1.045) rotate(.8deg)}70%{transform:scale(1.01,1.02) rotate(-.8deg)}}
+@keyframes idTwitch{0%{transform:translate(0,0)}50%{transform:translate(2%,-2%) rotate(1deg)}}
+@keyframes idNod{0%,100%{transform:rotate(0) translateY(0)}45%{transform:rotate(-2.5deg) translateY(1%)}70%{transform:rotate(1deg) translateY(0)}}
+@keyframes idLurch{0%,70%,100%{transform:translateX(0) scale(1)}80%{transform:translateX(-5%) scale(1.04,.97)}90%{transform:translateX(-2%) scale(1.02)}}
+@keyframes idStomp{0%,100%{transform:translateY(0) scale(1,1)}40%{transform:translateY(-4%) scale(.99,1.03)}55%{transform:translateY(1%) scale(1.04,.96)}}
+@keyframes idLoom{0%,100%{transform:scale(1) translateX(0)}50%{transform:scale(1.04) translateX(-2%)}}
+@keyframes idHover{0%,100%{transform:translate(0,0) rotate(-2deg)}25%{transform:translate(4%,-6%) rotate(2deg)}50%{transform:translate(0,-9%) rotate(-1deg)}75%{transform:translate(-4%,-5%) rotate(2deg)}}
+@keyframes idGov{0%,100%{transform:scale(1);filter:drop-shadow(0 8px 10px rgba(0,0,0,.75))}50%{transform:scale(1.045,1.03);filter:drop-shadow(0 0 20px rgba(217,4,41,.7))}}

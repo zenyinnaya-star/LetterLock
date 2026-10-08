@@ -54,43 +54,54 @@ export const BOOK_ART = u('20261008_063230_8c35b853-eb22-4ed6-b263-f0377c6d91f3'
 export const actOf = (stage: number) => (stage <= 2 ? 0 : stage <= 4 ? 1 : 2);
 export const ACT_NAME = ['Act I · The Outer Provinces', 'Act II · The Midlands', 'Act III · The Capital'];
 
-// pixel-art hero poses: back view (over-the-shoulder battle) and victory
+// pixel-art poses, backgrounds removed (2026-10-08)
 export const HERO_BACK: Record<string, string> = {
-  Shiro: u('20261008_131437_218e776f-22a4-4136-a489-25ed55924ff4'),
-  Nero: u('20261008_131506_390f4574-d492-447a-ad7a-a97136ae8200'),
-  Kira: u('20261008_131505_98a4ddb4-4955-44c3-b813-0e0d3ab0d121'),
-  Mira: u('20261008_131549_be3a452d-8caf-4721-afea-f0cbfe6290a6'),
-  Prince: u('20261008_131436_0c2165e6-79e2-4942-aec7-12fcb76ee214'),
+  'Shiro': u('20261008_162642_06761fb6-c1c2-4e4c-87c0-7f60fecb834f'),
+  'Nero': u('20261008_162644_e500d7ca-7c25-4029-aebc-1c05a57b4ff5'),
+  'Kira': u('20261008_162645_791df225-9473-4cd0-a4ac-d58a0025a65f'),
+  'Mira': u('20261008_162648_ab670073-e7c7-458e-a01a-27f58819dd64'),
+  'Prince': u('20261008_162707_8975dfdb-1d82-4e7c-8b5c-adc314175d22'),
 };
 export const HERO_WIN: Record<string, string> = {
-  Shiro: u('20261008_131437_565cae77-5fb3-4bb2-b787-3f4f493588d9'),
-  Nero: u('20261008_131547_c6da2e92-92fb-4769-af97-88ef8633e487'),
-  Kira: u('20261008_131435_e6316653-6d24-4802-9bc5-7b68c468bc27'),
-  Mira: u('20261008_131547_414d9439-4b90-48bd-aa05-bba4a59219df'),
-  Prince: u('20261008_131557_77e38682-c762-45f0-b605-f063d6372c2a'),
+  'Shiro': u('20261008_162709_96e3bda2-f7d7-4f63-ae7b-3a4ca42803c1'),
+  'Nero': u('20261008_162711_ba89539b-f3b6-475b-acfa-c9909d4713c2'),
+  'Kira': u('20261008_162714_1ab9101b-0e58-4069-80e2-17e53f272e95'),
+  'Mira': u('20261008_162742_cbb0907e-62a2-4d22-b94c-2da9a091e0e2'),
+  'Prince': u('20261008_162745_2e73bdc6-fa5f-44b3-9230-2974a645247e'),
 };
-
-// attack / cast animation frames (swapped in while a unit acts)
 export const HERO_STRIKE: Record<string, string> = {
-  'Shiro': u('20261008_132044_45b0f30b-d39e-424c-b01a-ccf8df3b7adc'),
-  'Nero': u('20261008_132043_433298b1-2aac-4dc5-9acc-5dbe2b4844fc'),
-  'Kira': u('20261008_132045_61b2490e-9a61-4fa0-bc06-7483c8d91d07'),
-  'Mira': u('20261008_132052_2feed035-8808-4372-8b82-42c503fed1d6'),
-  'Prince': u('20261008_132117_3f930982-9c3e-4fcb-b98e-5704b5e3b75b'),
+  'Shiro': u('20261008_162504_472fe7bf-52ef-4272-9ba6-14ece981dfab'),
+  'Nero': u('20261008_162533_294f1a1e-b4fb-477a-9501-01531ca14b00'),
+  'Kira': u('20261008_162617_95cb5585-2a33-442e-b456-a48d847a1865'),
+  'Mira': u('20261008_162618_a13a7e7d-142e-47c1-986e-013d54de9016'),
+  'Prince': u('20261008_162620_67901412-abb1-4e7c-8ccc-82ff6065cbe3'),
 };
 export const HERO_CAST: Record<string, string> = {
-  'Shiro': u('20261008_132116_1d5eb801-a80a-4732-a583-0b0455261d2d'),
-  'Nero': u('20261008_132116_832454fd-e7c4-43e5-aee4-4780896cf282'),
-  'Kira': u('20261008_132145_da1922de-1bcd-4a36-b4ce-91d053c29a1a'),
-  'Mira': u('20261008_132146_7c031210-7d63-46c5-9724-a61a55d6d09e'),
-  'Prince': u('20261008_132146_e5360481-10d3-4d37-8416-a06fb9e2de3d'),
+  'Shiro': u('20261008_162623_5a5f9dcf-c1a9-4053-8655-3791c56b8a81'),
+  'Nero': u('20261008_162545_f9824450-2563-4be5-bec3-cb427caec00f'),
+  'Kira': u('20261008_162548_ad11884d-2d97-4178-ac9e-89e37a7af875'),
+  'Mira': u('20261008_162549_6516b53b-430b-4c4e-9764-0569d591155f'),
+  'Prince': u('20261008_162551_70269d2e-7ca4-44d2-ac2a-bde0f1e8d45e'),
+};
+export const ENEMY_PIXEL: Record<string, string> = {
+  'Intern Auditor': u('20261008_162746_c1e0a926-7a26-4cb6-9530-fe9005397a21'),
+  'Filer Alpha': u('20261008_162746_c1e0a926-7a26-4cb6-9530-fe9005397a21'),
+  'Clerk': u('20261008_162748_9739e69f-190a-41b1-89d3-72faccd40396'),
+  'Filer Beta': u('20261008_162748_9739e69f-190a-41b1-89d3-72faccd40396'),
+  'The Collector': u('20261008_162824_dde09f22-e759-46ea-a83b-53d003d6f123'),
+  'Bailiff': u('20261008_162903_e0ff2743-7e9a-48db-8997-d33fe6954de9'),
+  'The Commissioner': u('20261008_162907_81022161-4525-41b0-8004-f090e0426566'),
+  'Tax Drone': u('20261008_162946_bd8c2c87-8d0d-4ab2-8524-26a070982b6a'),
+  'Government': u('20261008_162905_0347b7c0-6524-41d4-8b00-b82c846e04a7'),
 };
 export const ENEMY_STRIKE: Record<string, string> = {
-  'Intern Auditor': u('20261008_132214_c9de097b-d553-41ac-a393-021989fad0bb'),
-  'Filer Alpha': u('20261008_132214_c9de097b-d553-41ac-a393-021989fad0bb'),
-  'Clerk': u('20261008_132213_6b148394-c7bf-4e88-be96-0cda8f609280'),
-  'Filer Beta': u('20261008_132213_6b148394-c7bf-4e88-be96-0cda8f609280'),
-  'The Collector': u('20261008_132214_aa1b71cd-263e-4a9c-ad08-6c01bf7176a4'),
-  'Bailiff': u('20261008_132256_67c89f6b-684e-4083-906a-4d7403b8b71f'),
-  'Government': u('20261008_132257_25dd7a17-9c4b-48e8-9fcd-51fffafcb71c'),
+  'Intern Auditor': u('20261008_163053_50807779-dc82-428d-b6fa-469a003267ba'),
+  'Filer Alpha': u('20261008_163053_50807779-dc82-428d-b6fa-469a003267ba'),
+  'Clerk': u('20261008_163055_1e5d4061-b3a2-4597-b3cf-c4292c5b3a02'),
+  'Filer Beta': u('20261008_163055_1e5d4061-b3a2-4597-b3cf-c4292c5b3a02'),
+  'The Collector': u('20261008_163057_49c3ee12-6941-4d2b-8cdb-35af60124ce0'),
+  'Bailiff': u('20261008_163059_c7a6b4fe-0f77-49d0-bf60-3f7a54a681f8'),
+  'The Commissioner': u('20261008_163122_57445333-0c09-4794-944a-c3279b36c317'),
+  'Tax Drone': u('20261008_163149_9ad765f4-ce21-4ffb-8b59-5e829103229f'),
+  'Government': u('20261008_163121_53fef8f3-1087-4eaf-a4fd-fe8d6945ee11'),
 };
