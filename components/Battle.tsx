@@ -289,12 +289,12 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
   // enemy field layout: spread across the right half, staggered rows
   const ePos = (i: number, n: number): React.CSSProperties => {
-    const cols = Math.min(n, 4);
-    const x = n === 1 ? 66 : 46 + (i * 44) / Math.max(1, cols - 1);
-    const y = i % 2 ? 56 : 42;
-    return { left: `${x}%`, top: `${y}%`, zIndex: 10 + (i % 2) };
+    // one clean row across the upper-right two thirds, evenly spaced
+    const x = n === 1 ? 66 : 40 + (i * 52) / (n - 1);
+    return { left: `${x}%`, top: '40%', zIndex: 10 };
   };
-  const hPos = (i: number, n: number): React.CSSProperties => ({ left: `${14 + i * (n > 1 ? 22 / (n - 1) * 1.6 : 0)}%`, top: `${i % 2 ? 78 : 66}%`, zIndex: 20 + (i % 2) });
+  // heroes: one even row along the lower-left, same baseline
+  const hPos = (i: number, n: number): React.CSSProperties => ({ left: `${n === 1 ? 22 : 10 + (i * 34) / (n - 1)}%`, top: '74%', zIndex: 20 });
 
   const posMap: Record<string, { x: number; y: number }> = {};
   enemies.forEach((u, i) => { const p = ePos(i, enemies.length); posMap[u.id] = { x: parseFloat(String(p.left)), y: parseFloat(String(p.top)) }; });
