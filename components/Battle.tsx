@@ -241,7 +241,8 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     let i = 0;
     setActive(entries[0]);
     // big moments (crit, ultimate, limit break) hold longer: a short slow-motion beat
-    const delay = (e: BattleLogEntry) => (e.t === 'crit' || e.t === 'ult' || e.t === 'limit' ? 1150 : 650);
+    const enemyIds = new Set((b?.units ?? []).filter((x) => x.side === 'enemy').map((x) => x.id));
+    const delay = (e: BattleLogEntry) => (e.t === 'crit' || e.t === 'ult' || e.t === 'limit' ? 1150 : (e.ai && enemyIds.has(e.ai)) ? 450 : 650);
     let id: ReturnType<typeof setTimeout>;
     const next = () => { i += 1; if (i >= entries.length) setActive(null); else { setActive(entries[i]); id = setTimeout(next, delay(entries[i])); } };
     id = setTimeout(next, delay(entries[0]));
@@ -259,8 +260,8 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const floatsFor = (u: BattleUnit): Float[] => {
     if (!b || !active) return [];
     const e = active; const k = `${b.version}-${e.t}-${e.a}-${e.d ?? ''}-${e.n ?? ''}`;
-    const dn = e.d ? firstNamed(e.d)?.id : undefined;
-    const an = firstNamed(e.a, e.t === 'season' ? 'enemy' : undefined)?.id;
+    const dn = e.di ?? (e.d ? firstNamed(e.d)?.id : undefined);
+    const an = e.ai ?? firstNamed(e.a, e.t === 'season' ? 'enemy' : undefined)?.id;
     if ((e.t === 'hit' || e.t === 'crit') && dn === u.id) return [{ k, text: `-${e.n}${e.t === 'crit' ? '!' : ''}`, cls: e.t === 'crit' ? 'dmg crit' : 'dmg' }];
     if (e.t === 'heal' && dn === u.id) return [{ k, text: `+${e.n}`, cls: 'heal' }];
     if (e.t === 'guard' && an === u.id) return [{ k, text: `🛡${e.n}`, cls: 'shield' }];
@@ -277,7 +278,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     return [];
   };
   const lungeId = active && ['hit', 'crit', 'miss', 'dodge', 'guard', 'heal', 'ult', 'limit', 'season', 'sweep', 'mega_sweep', 'e_aoe', 'e_buff', 'e_debuff', 'e_heal'].includes(active.t)
-    ? firstNamed(active.t === 'dodge' ? active.d : active.a, active.t === 'dodge' ? undefined : undefined)?.id : undefined;
+    ? (active.t === 'dodge' ? (active.di ?? firstNamed(active.d)?.id) : (active.ai ?? firstNamed(active.a)?.id)) : undefined;
 
   useEffect(() => {
     if (!active) return;
@@ -291,7 +292,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const fx = useMemo<StageFx>(() => {
     if (!active || !b) return null;
     const ids = (cls: string) => b.units.filter((u) => floatsFor(u).some((f) => f.cls.startsWith(cls))).map((u) => u.id);
-    const tgt = active.d ? firstNamed(active.d)?.id : undefined;
+    const tgt = active.di ?? (active.d ? firstNamed(active.d)?.id : undefined);
     return { key: `${b.version}-${fxSeq.current++}`, type: active.t, actor: lungeId, target: active.t === 'dodge' ? undefined : tgt, hurt: ids('dmg'), heal: ids('heal'), guard: ids('shield') };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
@@ -463,7 +464,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         {OLD_UI && mine && b.step === 'input' && (b.momentum ?? 0) >= 100 && mine.hp > 0 && (
           <button type="button" className="rg-oddsbtn" disabled={oddsCalled} onClick={() => void callOdds()}>{oddsCalled ? 'ODDS LOCKED IN' : 'UNLEASH ODDS!'}</button>
         )}
-        {active?.t === 'stage' && <div className="rg-clear" key={`cl-${b.version}`}><div className="rg-clear-flash" /><b>ENCOUNTER CLEARED</b><small>+{20 + 8 * (Number(active.n ?? 2) - 1)} XP · the path opens…</small></div>}
+        {active?.t === 'stage' && <div className="rg-clear" key={`cl-${b.version}`}><div className="rg-clear-flash" /><b>ENCOUNTER CLEARED</b><small>+{20 + 8 * (Number(active.n ?? 2) - 1)}+ XP (quick clears earn more) · the path opens…</small></div>}
         {(active?.t === 'ult' || active?.t === 'limit') && <><div className="rg-lbflash" key={`lf-${b.version}`} /><div className="rg-burst crit" key={`lb-${b.version}`}>LIMIT BREAK!</div></>}
         {active && (active.x === 'weak' || active.x === 'resist') && <div className={`rg-burst ${active.x === 'weak' ? 'crit' : 'miss'}`} key={`wk-${b.version}-${active.a}-${active.n}`}>{active.x === 'weak' ? 'WEAKNESS!' : 'RESIST'}</div>}
         {active && !active.x && active.t !== 'limit' && (active.t === 'miss' || active.t === 'dodge' || active.t === 'crit' || active.t === 'ult') && <div className={`rg-burst ${active.t}`} key={`bu-${active.t}-${active.a}-${b.version}`}>{active.t === 'miss' ? 'MISS' : active.t === 'dodge' ? 'DODGE' : active.t === 'crit' ? 'CRITICAL!' : 'ALL-OUT!'}</div>}

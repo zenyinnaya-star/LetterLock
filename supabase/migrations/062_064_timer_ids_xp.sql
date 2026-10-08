@@ -1,0 +1,1 @@
+-- 062-064 (applied via MCP): turn timer 25s->15s; battle log entries carry unit ids (ai/di); stage XP also credits hero_prog + quick-clear bonus (battles.stage_t0).
