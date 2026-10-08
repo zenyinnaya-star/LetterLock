@@ -8,6 +8,8 @@ import { AvatarPicker } from '@/components/AvatarPicker';
 import { Game } from '@/components/Game';
 import { loadAvatar, saveAvatar } from '@/lib/avatar';
 import { ClassPicker, Header } from '@/components/ui';
+import { HeroCards } from '@/components/HeroCards';
+import type { HeroId } from '@/lib/heroes';
 import { useRoom } from '@/hooks/useRoom';
 import { audio } from '@/lib/audio';
 import { friendlyError } from '@/lib/errors';
@@ -71,14 +73,30 @@ function JoinHere({ code, onJoined }: { code: string; onJoined: (token: string) 
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [story, setStory] = useState(false);
+  const [hero, setHero] = useState<HeroId | null>(null);
+  const [taken, setTaken] = useState<Record<string, string>>({});
   useEffect(() => { setName(loadName()); setAvatar(loadAvatar()); }, []);
+  useEffect(() => {
+    let live = true;
+    const load = () => rpc.roomStoryPublic(code).then((r) => {
+      if (!live || !r) return;
+      setStory(!!r.story);
+      setTaken(Object.fromEntries((r.taken ?? []).map((x) => [x.hero, x.name])));
+    }).catch(() => undefined);
+    void load();
+    const iv = setInterval(load, 3000);
+    return () => { live = false; clearInterval(iv); };
+  }, [code]);
 
+  const ready = story ? !!hero : !!cls;
   async function join() {
-    if (!cls || !name.trim()) { setErr(t('room.err')); return; }
+    if (!ready || !name.trim()) { setErr(t('room.err')); return; }
     audio.unlock();
     setBusy(true); setErr(null);
     try {
-      const r = await rpc.joinRoom(code, name.trim(), cls);
+      const r = await rpc.joinRoom(code, name.trim(), story ? 'hero' : cls!);
+      if (story && hero) await rpc.setHero(r.token, hero);
       saveName(name.trim());
       saveSession(r.code, { token: r.token, playerId: r.player_id });
       if (avatar) await rpc.setAvatar(r.token, avatar).catch(() => undefined);
@@ -104,9 +122,18 @@ function JoinHere({ code, onJoined }: { code: string; onJoined: (token: string) 
         </label>
         <span className="label">{t('home.avatar')}</span>
         <AvatarPicker name={name} url={avatar} onChange={(u) => { setAvatar(u); saveAvatar(u); }} />
-        <span className="label">{t('home.class')}</span>
-        <ClassPicker value={cls} onChange={setCls} />
-        <button className="btn lg block" disabled={busy || !cls || !name.trim()} onClick={join}>{t('room.join')}</button>
+        {story ? (
+          <>
+            <span className="label">Choose your hero</span>
+            <HeroCards value={hero} onPick={setHero} taken={taken} />
+          </>
+        ) : (
+          <>
+            <span className="label">{t('home.class')}</span>
+            <ClassPicker value={cls} onChange={setCls} />
+          </>
+        )}
+        <button className="btn lg block" disabled={busy || !ready || !name.trim()} onClick={join}>{t('room.join')}</button>
         {err && <div className="note bad">{err}</div>}
       </div>
     </main>

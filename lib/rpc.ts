@@ -56,6 +56,7 @@ export const rpc = {
   pathOpen: (token: string) => call<{ kind: string; text?: string; gold?: number; ends_at?: string }>('path_open', { p_token: token }),
   pathAnswer: (token: string, word: string) => call<{ ok: boolean; reason?: string; text?: string }>('path_answer', { p_token: token, p_word: word }),
   setStory: (token: string) => call<void>('set_story', { p_token: token }),
+  roomStoryPublic: (code: string) => call<{ story: boolean; taken: { hero: string; name: string }[] }>('room_story_public', { p_code: code }),
   setHero: (token: string, hero: string | null) => call<void>('set_hero', { p_token: token, p_hero: hero }),
   storyInfo: (token: string) => call<{ story: boolean; picks: { player_id: string; hero: string }[] }>('story_info', { p_token: token }),
   startPve: (token: string) => call<void>('start_pve', { p_token: token }),

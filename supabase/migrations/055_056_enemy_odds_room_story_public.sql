@@ -1,0 +1,3 @@
+-- Applied via Supabase MCP.
+-- 055: enemy action odds attack 66% / aoe 10% / buff 10% / debuff 8% / heal 6%; _atkm = [0.26,0.52,0.70,0.92].
+-- 056: room_story_public(p_code text) returns jsonb {story, taken:[{hero,name}]} (security definer, stable) so joiners see hero select.
