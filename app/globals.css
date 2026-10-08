@@ -1900,3 +1900,28 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 @keyframes endIn{from{opacity:0}to{opacity:1}}
 @keyframes endPop{from{scale:2.4;opacity:0}to{scale:1;opacity:1}}
 .rg-end.wait{opacity:0;pointer-events:none;animation:none}
+
+/* ===== JRPG command-menu layout ===== */
+.rg-bottom{display:flex;align-items:stretch;gap:12px;margin:10px 0 0}
+.rg-bottom .rg-hud{flex:1;margin:0;border-radius:6px}
+.rg-cmd{flex:0 0 clamp(210px,24vw,280px);padding:8px;background:linear-gradient(180deg,#14246b,#0a1240);border:3px double #e5e7eb;border-radius:8px;box-shadow:0 0 0 1px #000,0 8px 24px rgba(0,0,0,.6);position:relative}
+.rg-cmd-h{font:700 11px var(--font-cinzel,Cinzel,serif);letter-spacing:.1em;text-transform:uppercase;color:#bfdbfe;padding:0 6px 6px;border-bottom:1px solid rgba(191,219,254,.3);margin-bottom:6px}
+.rg-cmd .rg-cm{position:static;display:flex;flex-direction:column;gap:0;min-width:0;animation:none}
+.rg-cmd .rg-cmb{background:transparent;border:0;box-shadow:none;border-radius:4px;color:#fff;padding:8px 8px;min-height:0;font:700 14px var(--font-cinzel,Cinzel,serif);letter-spacing:.06em;text-transform:none;flex-direction:row;gap:8px;max-width:none;text-align:left;transform:none}
+.rg-cmd .rg-cmb i{font-style:normal;font-size:11px;color:transparent;width:14px}
+.rg-cmd .rg-cmb:hover:not(:disabled) i,.rg-cmd .rg-cmb.sel i{color:#fde047;animation:cmdPoint .6s infinite alternate}
+.rg-cmd .rg-cmb:hover:not(:disabled),.rg-cmd .rg-cmb.sel{background:rgba(255,255,255,.14);color:#fff;transform:none}
+.rg-cmd .rg-cmb em{margin-left:auto;font-style:normal;font-size:11px;color:#fde047}
+.rg-cmd .rg-cmb.ult:not(:disabled){color:#fde047;text-shadow:0 0 8px #f59e0b}
+.rg-cmd .rg-cmb:disabled{opacity:.38}
+.rg-cmd.lock{filter:saturate(.5) brightness(.8)}
+@keyframes cmdPoint{from{transform:translateX(0)}to{transform:translateX(4px)}}
+.rg-tgt{display:flex;flex-direction:column;gap:3px;min-width:190px;padding:7px 10px;background:linear-gradient(180deg,#14246b,#0a1240);border:2px solid #e5e7eb;border-radius:6px;color:#fff;font-size:12px}
+.rg-tgt b{font:700 13px var(--font-cinzel,Cinzel,serif);letter-spacing:.06em}
+.rg-tgt-bar{height:8px;background:#1f2937;border:1px solid #9ca3af;overflow:hidden;display:block}
+.rg-tgt-bar i{display:block;height:100%;background:linear-gradient(180deg,#fde68a,#ca8a04)}
+.rg-tgt em{font-style:normal;text-align:right;color:#bfdbfe}
+.rg-unit.enemy.picked::after{content:"▼";position:absolute;left:50%;top:-26px;translate:-50% 0;color:#fde047;font-size:26px;text-shadow:0 0 8px #000,0 0 14px #f59e0b;animation:tgtBob .55s infinite alternate;pointer-events:none;z-index:30}
+@keyframes tgtBob{from{transform:translateY(0)}to{transform:translateY(7px)}}
+.rg-unit.enemy.down{opacity:0;filter:grayscale(1) brightness(2);transition:opacity .9s ease-out .15s,filter .5s;pointer-events:none}
+@media (max-width:760px){.rg-bottom{flex-direction:column}.rg-cmd{flex:none}.rg-cmd .rg-cm{display:grid;grid-template-columns:1fr 1fr}}
