@@ -1731,3 +1731,25 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .lp-art{height:clamp(120px,22vh,240px)}
 .lp-hero{min-height:calc(100dvh - 140px)}
 .shell.rpg{padding-bottom:12px}
+
+/* ===== Battle units as cards ===== */
+.rg-unit{width:13%;min-width:96px;max-width:156px}
+.rg-unit.boss{width:22%;min-width:150px;max-width:260px}
+.rg-uc{position:relative;aspect-ratio:3/4.3;border-radius:10px;overflow:hidden;border:2px solid var(--gold);
+  background:radial-gradient(ellipse 80% 60% at 50% 38%,rgba(201,164,92,.28),transparent 70%),linear-gradient(170deg,#1b2233,#07090f);
+  box-shadow:0 0 0 1px #000,0 12px 26px rgba(0,0,0,.7),inset 0 0 18px rgba(0,0,0,.7)}
+.rg-unit.enemy .rg-uc{border-color:#a3202f;background:radial-gradient(ellipse 80% 60% at 50% 38%,rgba(190,40,60,.30),transparent 70%),linear-gradient(170deg,#2a1218,#07090f)}
+.rg-unit.boss .rg-uc{border-color:var(--gold-hi);box-shadow:0 0 0 1px #000,0 0 36px rgba(190,40,60,.55),0 14px 30px rgba(0,0,0,.75)}
+.rg-uc::after{content:"";position:absolute;inset:3px;border-radius:7px;border:1px solid rgba(243,220,155,.22);pointer-events:none}
+.rg-uc .rg-img{position:absolute;left:0;right:0;top:9%;width:100%;height:68%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 6px 8px rgba(0,0,0,.7))}
+.rg-uc-tag{position:absolute;z-index:3;top:5px;left:5px;font:800 9px/1 var(--font-barlow,inherit);letter-spacing:.14em;text-transform:uppercase;color:#1a1204;background:linear-gradient(180deg,var(--gold-hi),var(--gold));padding:3px 6px;border-radius:2px}
+.rg-unit.enemy .rg-uc-tag{background:linear-gradient(180deg,#e0384f,#8e0b1b);color:#fff}
+.rg-uc .rg-uname{position:absolute;z-index:3;left:0;right:0;bottom:22px;padding:4px 4px;font:700 12px/1.1 var(--serif);letter-spacing:.06em;text-transform:uppercase;color:var(--gold-hi);background:linear-gradient(180deg,transparent,rgba(0,0,0,.85) 40%)}
+.rg-uc-hp{position:absolute;z-index:3;left:6px;right:6px;bottom:5px;display:flex;align-items:center;gap:5px}
+.rg-uc-hp .rg-ehp{flex:1;margin:0;height:8px;border:1px solid #000;background:#14070a}
+.rg-uc-hp b{font:800 11px/1 var(--font-barlow,inherit);color:#fff;text-shadow:0 1px 2px #000;min-width:22px;text-align:right}
+.rg-unit.enemy .rg-ehp i{background:linear-gradient(180deg,#ff5468,#8e0b1b)}
+.rg-uc .rg-el{position:absolute;z-index:4;right:4px;top:4px;margin:0;flex-direction:column;gap:2px}
+.rg-unit.pickable .rg-uc{border-color:#fde047;box-shadow:0 0 0 1px #000,0 0 22px #fde047aa}
+.rg-unit.picked .rg-uc{border-color:#ef4444;box-shadow:0 0 0 1px #000,0 0 26px #ef4444}
+.rg-unit.pickable .rg-img,.rg-unit.picked .rg-img{filter:drop-shadow(0 6px 8px rgba(0,0,0,.7))}
