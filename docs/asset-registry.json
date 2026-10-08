@@ -1,0 +1,12 @@
+{
+  "note": "Higgsfield = OFFLINE asset production only. Never triggered from gameplay. Reserve 20-30% of credits; test low-res first; check the cost shown before each final batch.",
+  "budget": { "available": null, "reserved_pct": 25, "workable": null },
+  "assets": [
+    { "asset": "kira_attack", "type": "motion", "model": "kling-3.0-motion-control", "duration": "3-4s", "resolution": "720p", "test_count": 2, "final_count": 1, "credits_estimated": null, "credits_actual": null, "status": "not_started", "quality": null },
+    { "asset": "kira_critical", "type": "motion", "duration": "3-4s", "resolution": "720p", "test_count": 2, "final_count": 1, "status": "blocked_on:kira_attack" },
+    { "asset": "kira_ultimate", "type": "motion", "duration": "4-6s", "resolution": "720p/1080p final", "test_count": 3, "final_count": 1, "status": "blocked_on:kira_critical" },
+    { "asset": "kira_victory", "type": "motion", "status": "blocked_on:kira_ultimate" },
+    { "asset": "enemy_hit_reaction", "type": "motion", "status": "blocked_on:kira_victory" },
+    { "asset": "boss_intro", "type": "cinematic", "duration": "5-8s", "resolution": "720p", "test_count": 2, "final_count": 1, "status": "blocked_on:enemy_hit_reaction" }
+  ]
+}
