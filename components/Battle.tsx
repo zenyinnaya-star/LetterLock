@@ -364,7 +364,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   // enemy field layout: spread across the right half, staggered rows
   const ePos = (i: number, n: number): React.CSSProperties => {
     // one clean row across the upper-right two thirds, evenly spaced
-    const x = n === 1 ? 66 : 40 + (i * 52) / (n - 1);
+    const x = n === 1 ? 52 : 40 + (i * 52) / (n - 1);
     return { left: `${x}%`, top: '40%', zIndex: 10 };
   };
   // heroes: one even row along the lower-left, same baseline
@@ -470,7 +470,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
   return (
     <div className={`rg${active?.t === 'limit' ? ' lb' : ''}`}>
-      <div className={`rg-stage${use3d ? ' t3' : ''}`} data-boss={lead?.name === 'Government' ? 1 : 0}>
+      <div className={`rg-stage${use3d ? ' t3' : ''}`} data-boss={lead?.name === 'Government' ? 1 : 0} data-foes={aliveEnemies.length <= 1 ? 1 : 0}>
         <div className="rg-bg" style={{ backgroundImage: `url(${ACT_BG[ai]})` }} />
         {use3d && <Stage3D act={ai} fx={fx} pos={posMap}
           units={b.units.map((u) => ({ id: u.id, side: u.side, name: u.name, hero: u.hero, dead: u.hp <= 0 }))}
@@ -607,6 +607,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
               <motion.i animate={{ width: `${Math.max(0, Math.min(100, ((heroes.find((x) => x.id === mine.id)?.hp ?? mine.hp) / mine.max_hp) * 100))}%` }} transition={{ duration: 0.35 }} />
               <strong>{Math.max(0, heroes.find((x) => x.id === mine.id)?.hp ?? mine.hp)} / {mine.max_hp}</strong>
             </div>
+            <div className="rg-hud-ult"><em>ULT</em><span><i style={{ width: `${Math.min(100, ((mine.ult ?? 0) / 6) * 100)}%` }} /></span></div>
             <div className="rg-hud-sub">{mine.shield ? <span>🛡 {mine.shield}</span> : null}{mine.corruption > 0 ? <span>☠ {mine.corruption}</span> : null}<span>{b.step !== 'input' ? 'Resolving…' : mine.hp <= 0 ? 'Down' : mine.locked ? (msg || 'Locked in') : canAct ? (pend ? `Tap ${needsAlly ? 'an ally' : 'an enemy'}` : 'Your command') : 'Waiting…'}</span></div>
           </div>
         </div>

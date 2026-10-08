@@ -1925,3 +1925,24 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 @keyframes tgtBob{from{transform:translateY(0)}to{transform:translateY(7px)}}
 .rg-unit.enemy.down{opacity:0;filter:grayscale(1) brightness(2);transition:opacity .9s ease-out .15s,filter .5s;pointer-events:none}
 @media (max-width:760px){.rg-bottom{flex-direction:column}.rg-cmd{flex:none}.rg-cmd .rg-cm{display:grid;grid-template-columns:1fr 1fr}}
+
+/* ===== JRPG chrome: gold-glass restyle ===== */
+.rg-cmd{background:linear-gradient(180deg,rgba(32,24,10,.94),rgba(8,6,3,.96));border:2px solid #b8892f;border-radius:8px;box-shadow:0 0 0 1px #000,0 0 0 4px rgba(184,137,47,.25),0 8px 24px rgba(0,0,0,.65),inset 0 0 26px rgba(184,137,47,.14)}
+.rg-cmd-h{color:#fde68a;border-bottom-color:rgba(212,167,60,.4)}
+.rg-cmd .rg-cmb{color:#fef3c7}
+.rg-cmd .rg-cmb:hover:not(:disabled),.rg-cmd .rg-cmb.sel{background:linear-gradient(90deg,rgba(212,167,60,.35),transparent)}
+.rg-cmd .rg-cmb i{font-size:13px}
+.rg-cmd .rg-cmb:not(:disabled):first-child i{color:#fde047}
+.rg-tgt{background:linear-gradient(180deg,rgba(32,24,10,.94),rgba(8,6,3,.96));border:2px solid #b8892f;box-shadow:0 0 0 1px #000,inset 0 0 18px rgba(184,137,47,.14);color:#fde68a;min-width:220px}
+.rg-tgt b{font-size:15px;color:#fef3c7}
+.rg-tgt-bar{height:10px;border-color:#b8892f;background:#140808}
+.rg-tgt-bar i{background:linear-gradient(180deg,#fca5a5,#dc2626 50%,#7f1d1d)}
+.rg-tgt em{color:#fde68a}
+.rg-hud-ult{display:flex;align-items:center;gap:8px}
+.rg-hud-ult em{font:700 11px var(--font-cinzel,Cinzel,serif);font-style:normal;color:#fbbf24;letter-spacing:.1em}
+.rg-hud-ult span{flex:1;height:8px;background:#140c02;border:1px solid #b8892f;overflow:hidden}
+.rg-hud-ult i{display:block;height:100%;background:linear-gradient(90deg,#f59e0b,#fde047);box-shadow:0 0 8px #f59e0b}
+/* composition: big foe centered in frame, heroes large in the foreground */
+.rg-stage .rg-unit.hero{width:17%;max-width:200px;min-width:110px}
+.rg-stage[data-foes="1"] .rg-unit.enemy{width:26%;max-width:290px;min-width:160px}
+.rg-stage[data-foes="1"] .rg-unit.enemy.boss{width:34%;max-width:360px}
