@@ -128,6 +128,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   useEffect(() => { const i = setInterval(() => void load(), 3000); return () => clearInterval(i); }, [load]);
 
   const mine = b?.units.find((u) => u.player_id === b.me);
+  useEffect(() => { if (mine?.hero) { try { localStorage.setItem('letterlock:hero', mine.hero); } catch { /* ignore */ } } }, [mine?.hero]);
   const turn = b?.turn ?? 0;
   useEffect(() => { setWord(''); setMsg(''); setTarget(null); setAction('attack'); }, [turn]);
 

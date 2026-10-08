@@ -37,6 +37,7 @@ export function StoryLobby({ state, token, act, onLeave, picks, isHost }: {
   const heroOf = (pid: string) => picks.find((x) => x.player_id === pid)?.hero as HeroId | undefined;
   const mine = me ? heroOf(me.id) ?? null : null;
   const info = mine ? heroById(mine) : null;
+  useEffect(() => { if (mine) { try { localStorage.setItem('letterlock:hero', mine); } catch { /* ignore */ } } }, [mine]);
   const url = typeof window !== 'undefined' ? `${window.location.origin}/room/${state.room.code}` : '';
   const others = state.players.filter((p) => p.id !== me?.id);
 

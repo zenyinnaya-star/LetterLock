@@ -2,6 +2,7 @@
 
 import { StoryNav } from '@/components/StoryNav';
 import { useEffect, useState } from 'react';
+import { HEROES, heroById, type HeroId } from '@/lib/heroes';
 import { fetchStoryStats, getStored, titleKey, type StoryStats } from '@/lib/profile';
 
 const nf = (n: number) => n.toLocaleString();
@@ -11,6 +12,17 @@ export default function StatsPage() {
   const [s, setS] = useState<StoryStats | null>(null);
   const [ready, setReady] = useState(false);
   useEffect(() => { if (getStored()) void fetchStoryStats().then((x) => { setS(x); setReady(true); }); else setReady(true); }, []);
+
+  const [pick, setPick] = useState<HeroId | null>(null);
+  useEffect(() => {
+    try {
+      const q = new URLSearchParams(window.location.search).get('hero') ?? localStorage.getItem('letterlock:hero');
+      if (q && heroById(q)) setPick(q as HeroId);
+    } catch { /* ignore */ }
+  }, []);
+  const hero = heroById(pick);
+  const hs = s?.heroes.find((h) => h.hero === pick);
+  const runs = s ? (hero ? s.recent.filter((r) => r.hero === hero.id) : s.recent) : [];
 
   const p = s?.profile;
   const pct = p ? Math.min(100, Math.round(((p.xp - p.level_floor) / Math.max(1, p.level_next - p.level_floor)) * 100)) : 0;
@@ -23,6 +35,25 @@ export default function StatsPage() {
       {ready && !s && <p className="muted center" style={{ padding: 40 }}>No stats yet. Finish a Story run (or the stats migration is not applied) and they appear here.</p>}
       {p && t && (
         <div className="st-in">
+          {hero && (
+            <section className="st-hero" style={{ ['--hc' as string]: hero.color }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={hero.artFull} alt={hero.name} draggable={false} />
+              <div className="st-hero-r">
+                <small>YOUR HERO</small>
+                <b>{hero.name}</b>
+                <span>{hero.role}</span>
+                <div className="st-bars">{Object.entries(hero.stats).map(([k, v]) => (<div key={k}><em>{k}</em><u><i style={{ width: `${v * 12.5}%` }} /></u><b>{v}</b></div>))}</div>
+                <p>{hero.signature}</p>
+                <div className="st-hero-c">
+                  <div><b>{hs?.runs ?? 0}</b><span>Runs</span></div><div><b>{hs?.wins ?? 0}</b><span>Wins</span></div>
+                  <div><b>{nf(hs?.dmg ?? 0)}</b><span>Damage</span></div><div><b>{nf(hs?.healed ?? 0)}</b><span>Healed</span></div>
+                </div>
+              </div>
+            </section>
+          )}
+          <div className="st-pick">{HEROES.map((h) => (<button key={h.id} type="button" className={h.id === pick ? 'on' : ''} onClick={() => setPick(h.id === pick ? null : h.id)}>{h.name}</button>))}</div>
+
           <section className="st-lvl">
             <div className="st-badge">{p.level}</div>
             <div className="st-lvl-r">
@@ -52,9 +83,9 @@ export default function StatsPage() {
           )}
 
           <section>
-            <h3>Recent runs</h3>
-            {s.recent.length === 0 && <p className="muted">No runs yet.</p>}
-            {s.recent.map((r, i) => (
+            <h3>{hero ? `${hero.name}'s recent runs` : 'Recent runs'}</h3>
+            {runs.length === 0 && <p className="muted">No runs yet.</p>}
+            {runs.map((r, i) => (
               <div key={i} className={`st-run${r.won ? ' win' : ''}`}>
                 <div><b>{r.hero ?? '—'}</b><span>{r.won ? 'Victory' : `Fell in encounter ${r.stages_cleared + 1}`}</span></div>
                 <div className="st-run-n">{nf(r.dmg)} dmg · {nf(r.healed)} heal · {r.crits} crits · {r.ults} ult · {r.books} book</div>
