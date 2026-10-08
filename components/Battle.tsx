@@ -477,11 +477,11 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         ))}
         <button type="button" className="rg-cmb back" onClick={() => { setItemOpen(false); setPend(null); }}><i>◀</i>Back</button>
       </>) : !spOpen ? (<>
-        <button type="button" className="rg-cmb" disabled={!canAct} onClick={() => { setSpOpen(false); chooseAttack(); }}><i>▶</i>Attack</button>
-        <button type="button" className="rg-cmb" disabled={!canAct} onClick={() => void doAction('guard', null)}><i>▶</i>Guard</button>
-        <button type="button" className="rg-cmb ult" disabled={!canAct || !ultReady} onClick={() => { if (!tgtId) needTarget(); else void doAction('ult', tgtId); }}><i>▶</i>{ULT_NAME[mine.hero ?? ''] ?? 'Ultimate'}<em>{ultReady ? 'READY' : `${mine.ult ?? 0}/6`}</em></button>
-        <button type="button" className="rg-cmb" disabled={!canAct || !!b.book_used} onClick={() => void openBook()}><i>▶</i>Book of Wisdom</button>
-        <button type="button" className="rg-cmb" disabled={!canAct} onClick={() => setItemOpen(true)}><i>▶</i>Item<em>{b.cards.filter((c) => ITEM_CARDS.includes(c)).length}</em></button>
+        <button type="button" className="rg-cmb" data-sub="strike the target" disabled={!canAct} onClick={() => { setSpOpen(false); chooseAttack(); }}><i>▶</i>Attack</button>
+        <button type="button" className="rg-cmb" data-sub="brace for impact" disabled={!canAct} onClick={() => void doAction('guard', null)}><i>▶</i>Guard</button>
+        <button type="button" className="rg-cmb ult" data-sub="limit-break finisher" disabled={!canAct || !ultReady} onClick={() => { if (!tgtId) needTarget(); else void doAction('ult', tgtId); }}><i>▶</i>{ULT_NAME[mine.hero ?? ''] ?? 'Ultimate'}<em>{ultReady ? 'READY' : `${mine.ult ?? 0}/6`}</em></button>
+        <button type="button" className="rg-cmb" data-sub="type to draw a special" disabled={!canAct || !!b.book_used} onClick={() => void openBook()}><i>▶</i>Book of Wisdom</button>
+        <button type="button" className="rg-cmb" data-sub="potions & consumables" disabled={!canAct} onClick={() => setItemOpen(true)}><i>▶</i>Item<em>{b.cards.filter((c) => ITEM_CARDS.includes(c)).length}</em></button>
         {b.cards.some((c) => !ITEM_CARDS.includes(c)) && <button type="button" className="rg-cmb" disabled={!canAct} onClick={() => setSpOpen(true)}><i>▶</i>Specials<em>{b.cards.filter((c) => !ITEM_CARDS.includes(c)).length}</em></button>}
         {(b.momentum ?? 0) >= 100 && <button type="button" className="rg-cmb odds" disabled={!canAct || oddsCalled} onClick={() => void callOdds()}><i>★</i>{oddsCalled ? 'Odds locked' : 'Unleash Odds!'}</button>}
       </>) : (<>
