@@ -156,14 +156,15 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     if (!b || b.step !== 'input' || !token || intro !== null) return;
     const enemiesAlive = b.units.some((u) => u.side === 'enemy' && u.hp > 0);
     const allLocked = b.units.filter((u) => u.side === 'hero' && u.hp > 0).every((u) => u.locked);
-    const go = allLocked || left <= 0 || !enemiesAlive;
-    const key = b.turn * 10 + (allLocked ? 1 : 2);
+    // once I've locked in, nudge the server on every change: it resolves as soon as every *present, active* player is in
+    const go = allLocked || left <= 0 || !enemiesAlive || !!mine?.locked;
+    const key = b.turn * 100000 + (allLocked || left <= 0 || !enemiesAlive ? 99999 : b.version % 99999);
     if (go && stepped.current !== key) {
       stepped.current = key;
       const id = setTimeout(() => { void rpc.battleStep(token, b.turn).then(load).catch(() => {}); }, allLocked ? 400 : 300);
       return () => clearTimeout(id);
     }
-  }, [b, left, token, load, intro]);
+  }, [b, left, token, load, intro, mine?.locked]);
 
   // book timer
   useEffect(() => {
@@ -348,6 +349,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
             : mine && mine.hp <= 0 ? 'You are down' : canAct ? `YOUR TURN · Turn ${b.turn}` : mine?.locked ? 'Locked in · waiting for the team' : 'Waiting…'}
         </div>
 
+        {mine && (mine.afk ?? 0) >= 2 && b.step === 'input' && !mine.locked && <div className="rg-idle">You've been idle, so you're auto-guarding. Cast a word to rejoin. The team won't wait for idle players.</div>}
         {/* units */}
         {enemies.map((u, i) => (
           <Sprite key={u.id} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={target === u.id}

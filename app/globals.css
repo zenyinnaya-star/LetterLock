@@ -1544,3 +1544,4 @@ h3{font-weight:800}
 .up-stats b{font:900 15px var(--impact);font-style:italic;color:var(--gold);text-transform:uppercase}.up-stats em{font-style:normal;font-weight:800;color:#fff}
 @media(max-width:480px){.up-stats div{grid-template-columns:78px 1fr}}
 .st-what{font-size:12px;color:#cbd5e1}.st-what summary{cursor:pointer;color:var(--gold);font-weight:700}.st-what p{margin:4px 0}.st-what b{color:var(--gold);margin-right:4px}
+.rg-idle{position:absolute;left:50%;top:150px;transform:translateX(-50%) skewX(-6deg);z-index:56;background:#7c2d12;color:#fff;border:2px solid #000;box-shadow:4px 4px 0 #000;padding:6px 14px;font-weight:700;font-size:13px;max-width:80%;text-align:center}
