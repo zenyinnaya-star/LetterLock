@@ -1,0 +1,1 @@
+-- 057 (applied via MCP): _award_story XP now rewards damage (cap 70), crits (cap 40), Book answers + ultimates (cap 40) instead of typed words.
