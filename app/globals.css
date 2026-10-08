@@ -1237,7 +1237,7 @@ html[data-stage='library'] .stage-title { animation: promptfade 14s ease forward
 .rg-bookbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35}
 .rg-bookin{position:relative;padding:20px;display:flex;flex-direction:column;gap:10px;color:#fff}
 .rg-bookin h3{margin:0;text-align:center;color:#fde68a}
-.rg-bookq{font-size:18px;font-weight:700;text-align:center;background:rgba(0,0,0,.5);border-radius:10px;padding:10px}
+.rg-bookq{font-size:19px;font-weight:800;text-align:center;background:#000;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:12px;color:#fff;letter-spacing:.02em}
 .rg-booktimer{height:8px;background:#0008;border-radius:4px;overflow:hidden}.rg-booktimer i{display:block;height:100%;background:#fbbf24;transition:width .2s linear}.rg-booktimer.warn i{background:#ef4444}
 .rg-intro{position:fixed;inset:0;z-index:120;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff}
 .rg-intro::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.55)}
@@ -1576,7 +1576,7 @@ h3{font-weight:800}
 .rg-mom>span{background:#14070a;border:1px solid var(--gold);height:12px}.rg-mom>span i{background:linear-gradient(90deg,#8e0b1b,#ff3b52)}
 /* Book of Wisdom: glowing arcane eye */
 .rg-bookbox{border:2px solid var(--arcane);background:radial-gradient(circle at 50% 30%,#0c3a4a,#04080f 75%);box-shadow:0 0 50px #5fd8ee55,inset 0 0 40px #000}
-.rg-bookbg{opacity:.55;mix-blend-mode:screen;filter:drop-shadow(0 0 24px #5fd8ee)}
+.rg-bookbg{opacity:.3;mix-blend-mode:screen;filter:drop-shadow(0 0 24px #5fd8ee)}
 .rg-bookin h3{color:#bff4ff;text-shadow:0 0 14px #5fd8ee;letter-spacing:.2em;text-transform:uppercase}
 .rg-book{border-color:var(--arcane);box-shadow:0 0 16px #5fd8ee66}
 .rg-card.rare{border-color:var(--gold2)}
