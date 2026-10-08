@@ -1824,3 +1824,11 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .rg-unit.healed::before,.rg-unit.shielded::before{content:"";position:absolute;left:50%;top:50%;width:130%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;animation:impact .7s ease-out both;pointer-events:none;z-index:25}
 .rg-unit.healed::before{background:radial-gradient(circle,rgba(134,239,172,.8),rgba(34,197,94,.3) 45%,transparent 70%)}
 .rg-unit.shielded::before{background:radial-gradient(circle,transparent 40%,rgba(147,197,253,.7) 58%,transparent 72%)}
+
+/* HUD row: HP far left, each action its own tile on the same row */
+.rg-hud{margin:10px 0 0;padding:10px 16px 10px 10px;border-left:0;border-radius:0 8px 8px 0;gap:22px}
+.rg-hud-hp{flex:0 0 clamp(300px,34vw,460px)}
+.rg-hud .rg-cm{flex:1;max-width:none;flex-wrap:nowrap;gap:12px;justify-content:flex-end;align-items:stretch}
+.rg-hud .rg-cmb{flex:1 1 0;max-width:150px;min-height:78px;flex-direction:column;justify-content:center;text-align:center;gap:6px;font-size:12px;padding:10px 6px;border-radius:8px}
+.rg-hud .rg-cmb b{font-size:26px;width:auto}
+@media (max-width:900px){.rg-hud{flex-wrap:wrap}.rg-hud-hp{flex-basis:100%}.rg-hud .rg-cm{flex-wrap:wrap}.rg-hud .rg-cmb{min-width:96px}}
