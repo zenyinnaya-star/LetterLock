@@ -1,0 +1,1 @@
+-- 058 (applied via MCP): _spawn pacing: minions ~-25% HP, bosses +20% HP (Collector 105, Commissioner 160, Government 440).
