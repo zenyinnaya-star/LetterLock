@@ -103,15 +103,16 @@ function KeyedImg({ src, className, alt, style }: { src: string; className?: str
 const portrait = (u: BattleUnit) => (u.hero ? heroById(u.hero as HeroId)?.artFull : ENEMY_SPRITE[u.name]) ?? '';
 const sprite = (u: BattleUnit) => (u.hero ? HERO_SPRITE[u.hero] : ENEMY_SPRITE[u.name]) ?? '';
 
+const OLD_UI = false as boolean; // detached command bars replaced by the card menu
 const EL: Record<string, string> = { fire: '🔥', ice: '❄️', storm: '⚡', earth: '⛰️', light: '✨', dark: '🌑' };
 
 type Float = { k: string; text: string; cls: string };
 
-function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3, mine }: { elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
+function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3, mine, menu }: { menu?: React.ReactNode; elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
   const pct = Math.max(0, Math.min(100, (u.hp / u.max_hp) * 100));
   const hit = floats.some((f) => f.cls === 'dmg');
   return (
-    <div className={`rg-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}${u.name === 'Government' ? ' boss' : ''}${t3 ? ' t3' : ''}${mine ? ' mine' : ''}`}
+    <div className={`rg-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}${u.name === 'Government' ? ' boss' : ''}${t3 ? ' t3' : ''}${mine ? ' mine' : ''}${menu ? ' lift' : ''}${hit ? ' ouch' : ''}${lunge ? ' striking' : ''}`}
       style={style} onClick={onPick} role={onPick ? 'button' : undefined}>
       <motion.div key={`${lunge ? 'l' : hit ? 'h' : 'i'}-${floats[0]?.k ?? ''}`}
         animate={lunge ? { x: [0, u.side === 'hero' ? 90 : -90, 0], scale: [1, 1.12, 1] } : hit ? { x: [0, -10, 10, -6, 0], filter: ['brightness(2.2)', 'brightness(1)'] } : {}}
@@ -120,10 +121,12 @@ function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3, mine }: { 
           <span className="rg-uc-tag">{mine ? 'YOU' : u.side === 'hero' ? (u.hero ?? 'HERO') : u.name === 'Government' ? 'BOSS' : 'FOE'}</span>
           <KeyedImg className="rg-img" src={sprite(u)} alt={u.name} />
           <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
-          <span className="rg-uc-hp"><span className="rg-ehp"><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.5 }} /></span><b>{u.hp}</b></span>
+          <span className="rg-uc-hp"><span className="rg-ehp"><motion.u animate={{ width: `${pct}%` }} transition={{ duration: 1.1, delay: 0.35 }} /><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.3 }} /></span><b>{u.hp}</b></span>
+          {hit && <span className="rg-slash" key={floats[0]?.k} />}
           {u.side === 'enemy' && (u.weak_el || u.res_el) && u.hp > 0 && <span className="rg-el">{u.weak_el && <b title={`Weak to ${u.weak_el}`} className={u.weak_el === elNow ? 'hot' : ''}>{EL[u.weak_el]}▼</b>}{u.res_el && <i title={`Resists ${u.res_el}`}>{EL[u.res_el]}✕</i>}</span>}
         </div>
       </motion.div>
+      {menu}
       <AnimatePresence>
         {floats.map((f, i) => (
           <motion.span key={f.k} className={`rg-float ${f.cls}`} style={{ marginLeft: i * 16 }}
@@ -139,6 +142,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const [loaded, setLoaded] = useState(false);
   const [pend, setPend] = useState<{ kind: 'attack' } | { kind: 'card'; c: string } | null>(null);
   const [oddsCalled, setOddsCalled] = useState(false);
+  const [spOpen, setSpOpen] = useState(false);
   const [target, setTarget] = useState<string | null>(null);
   const [msg, setMsg] = useState('');
   const [left, setLeft] = useState(0);
@@ -173,7 +177,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const mine = b?.units.find((u) => u.player_id === b.me);
   useEffect(() => { if (mine?.hero) { try { localStorage.setItem('letterlock:hero', mine.hero); } catch { /* ignore */ } } }, [mine?.hero]);
   const turn = b?.turn ?? 0;
-  useEffect(() => { setMsg(''); setTarget(null); setPend(null); setOddsCalled(false); }, [turn]);
+  useEffect(() => { setMsg(''); setTarget(null); setPend(null); setOddsCalled(false); setSpOpen(false); }, [turn]);
 
   // Act intro card
   useEffect(() => {
@@ -317,7 +321,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   async function playCard(c: string, tgt: string | null) {
     if (!token) return;
     const r = await act(() => rpc.battlePlay(token, c, tgt));
-    setPend(null); setTarget(null);
+    setPend(null); setTarget(null); setSpOpen(false);
     if (r) void load();
   }
   // tap on a unit while something is waiting for a target
@@ -362,6 +366,25 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     else if (r.reason === 'WRONG') setBookMsg('The Book does not accept that. Try again!');
     else setBookMsg('Invalid.');
   }
+
+  const cardMenu = mine ? (
+    <div className="rg-cm" onClick={(e) => e.stopPropagation()}>
+      {!spOpen ? (<>
+        <button type="button" className={`rg-cmb${pend?.kind === 'attack' ? ' sel' : ''}`} onClick={() => { setSpOpen(false); chooseAttack(); }}><b>⚔</b>Attack</button>
+        <button type="button" className="rg-cmb" onClick={() => void doAction('guard', null)}><b>🛡</b>Guard</button>
+        <button type="button" className="rg-cmb" onClick={() => setSpOpen(true)}><b>✦</b>Special{b.cards.length ? ` (${b.cards.length})` : ''}</button>
+        <button type="button" className="rg-cmb" disabled={!!b.book_used} onClick={() => void openBook()}><b>📖</b>Book of Wisdom</button>
+        {(b.momentum ?? 0) >= 100 && <button type="button" className="rg-cmb odds" disabled={oddsCalled} onClick={() => void callOdds()}><b>★</b>{oddsCalled ? 'Odds locked' : 'Unleash Odds!'}</button>}
+        {ultReady && <button type="button" className="rg-cmb odds" onClick={() => void doAction('ult', enemies.find((e) => e.hp > 0)?.id ?? null)}><b>⚡</b>{ULT_NAME[mine.hero ?? ''] ?? 'Ultimate'}</button>}
+      </>) : (<>
+        {b.cards.length === 0 && <span className="rg-cm-empty">No specials yet. Read the Book of Wisdom.</span>}
+        {b.cards.map((c, i) => (
+          <button key={c + i} type="button" className={`rg-cmb${pend?.kind === 'card' && pend.c === c ? ' sel' : ''}`} disabled={b.card_used} onClick={() => chooseCard(c)}><b>{CARDS[c]?.glyph ?? '🃏'}</b>{CARDS[c]?.label ?? c}</button>
+        ))}
+        <button type="button" className="rg-cmb back" onClick={() => setSpOpen(false)}>← Back</button>
+      </>)}
+    </div>
+  ) : undefined;
 
   const skillDisabled = !canAct;
 
@@ -422,7 +445,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           <span><i style={{ width: `${Math.min(100, b.momentum ?? 0)}%` }} /></span>
           <b>{Math.min(10, Math.floor((b.momentum ?? 0) / 10))}/10</b>
         </div>
-        {mine && b.step === 'input' && (b.momentum ?? 0) >= 100 && mine.hp > 0 && (
+        {OLD_UI && mine && b.step === 'input' && (b.momentum ?? 0) >= 100 && mine.hp > 0 && (
           <button type="button" className="rg-oddsbtn" disabled={oddsCalled} onClick={() => void callOdds()}>{oddsCalled ? 'ODDS LOCKED IN' : 'UNLEASH ODDS!'}</button>
         )}
         {active?.t === 'limit' && <><div className="rg-lbflash" key={`lf-${b.version}`} /><div className="rg-burst crit" key={`lb-${b.version}`}>LIMIT BREAK!</div></>}
@@ -441,7 +464,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
             onPick={needsEnemy && canAct && u.hp > 0 ? () => pickUnit(u.id) : undefined} />
         ))}
         {heroes.map((u, i) => (
-          <Sprite key={u.id} mine={u.player_id === b.me} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
+          <Sprite key={u.id} menu={u.player_id === b.me && mine && b.step === 'input' && canAct && !mine.locked ? cardMenu : undefined} mine={u.player_id === b.me} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
             onPick={needsAlly && canAct && u.hp > 0 ? () => pickUnit(u.id) : undefined} />
         ))}
 
@@ -465,7 +488,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         </div>
 
         {/* bottom-right: skills + ultimate */}
-        {mine && b.step === 'input' && (
+        {OLD_UI && mine && b.step === 'input' && (
           <div className="rg-skills">
             <small className="rg-lab">COMMAND</small>
             <button type="button" className={`rg-sk${pend?.kind === 'attack' ? ' sel' : ''}`} disabled={skillDisabled} onClick={chooseAttack}><b>⚔</b><em>Attack</em></button>
@@ -481,7 +504,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
       </div>
 
       {/* hand of cards + book */}
-      {b.step === 'input' && mine && (
+      {OLD_UI && b.step === 'input' && mine && (
         <div className="rg-hand">
           <small className="rg-lab">BOOK &amp; SPECIALS</small>
           <button type="button" className="rg-book" disabled={!!b.book_used || mine.hp <= 0} onClick={() => void openBook()}>

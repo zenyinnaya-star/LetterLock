@@ -1757,3 +1757,33 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .rg-unit.hero:not(.mine) .rg-uc{filter:saturate(.8) brightness(.9)}
 .rg-unit.hero.mine .rg-uc{border-color:var(--gold-hi);box-shadow:0 0 0 1px #000,0 0 28px rgba(243,220,155,.6),0 12px 26px rgba(0,0,0,.7)}
 .rg-unit.hero.mine .rg-uc-tag{background:linear-gradient(180deg,#fff3c4,#e7c777);box-shadow:0 0 10px rgba(243,220,155,.8)}
+
+/* ===== CARD ACTION MENU + IMPACT FX ===== */
+.rg-unit{transition:transform .25s cubic-bezier(.2,.9,.3,1.2),filter .2s}
+.rg-unit.lift{z-index:60!important;transform:translateY(-26px) scale(1.12);filter:drop-shadow(0 0 18px rgba(250,204,21,.65))}
+.rg-unit.lift .rg-uc{box-shadow:0 0 0 2px #facc15,0 12px 34px rgba(0,0,0,.6)}
+.rg-cm{position:absolute;left:calc(100% + 10px);top:0;display:flex;flex-direction:column;gap:6px;min-width:170px;z-index:70;animation:cmIn .25s ease-out both}
+@keyframes cmIn{from{opacity:0;transform:translateX(-14px) scale(.92)}to{opacity:1;transform:none}}
+.rg-cmb{display:flex;align-items:center;gap:8px;padding:9px 12px;font:700 13px/1 var(--font-cinzel,Cinzel,serif);letter-spacing:.06em;text-transform:uppercase;color:#fef3c7;background:linear-gradient(180deg,rgba(30,24,12,.95),rgba(10,8,4,.95));border:1px solid #b8892f;border-radius:6px;cursor:pointer;text-align:left;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.rg-cmb b{font-size:16px;width:20px;text-align:center}
+.rg-cmb:hover:not(:disabled),.rg-cmb.sel{background:linear-gradient(180deg,#a16207,#451a03);color:#fff;border-color:#fde047;transform:translateX(4px)}
+.rg-cmb:disabled{opacity:.4;cursor:not-allowed}
+.rg-cmb.odds{border-color:#f472b6;animation:oddsPulse 1s infinite alternate}
+.rg-cmb.back{opacity:.8}
+.rg-cm-empty{font-size:12px;color:#fde68a;max-width:170px;background:rgba(0,0,0,.7);padding:8px;border-radius:6px}
+@keyframes oddsPulse{to{box-shadow:0 0 16px #f472b6}}
+@media (max-width:700px){.rg-cm{left:auto;right:0;top:auto;bottom:calc(100% + 8px);min-width:150px}}
+/* attacker: dash + glow trail */
+.rg-unit.striking .rg-uc{filter:brightness(1.4) drop-shadow(0 0 14px #fde047)}
+.rg-unit.striking::after{content:"";position:absolute;inset:-10%;border-radius:50%;background:radial-gradient(circle,rgba(253,224,71,.5),transparent 65%);animation:strikeGlow .5s ease-out both;pointer-events:none}
+@keyframes strikeGlow{from{opacity:1;transform:scale(.6)}to{opacity:0;transform:scale(1.6)}}
+/* victim: red flash + slash */
+.rg-unit.ouch .rg-uc{animation:ouch .45s ease-out}
+@keyframes ouch{0%{filter:brightness(3) saturate(0) }30%{filter:brightness(1.4) sepia(1) hue-rotate(-40deg) saturate(6)}100%{filter:none}}
+.rg-slash{position:absolute;left:-10%;top:30%;width:120%;height:6px;background:linear-gradient(90deg,transparent,#fff,#fca5a5,transparent);transform:rotate(-28deg);box-shadow:0 0 14px #ef4444,0 0 30px #dc2626;animation:slash .35s ease-out both;z-index:30;pointer-events:none}
+@keyframes slash{0%{opacity:0;transform:rotate(-28deg) scaleX(0)}40%{opacity:1;transform:rotate(-28deg) scaleX(1)}100%{opacity:0;transform:rotate(-28deg) scaleX(1.2) translateY(14px)}}
+/* Witcher-style HP bar with trailing damage */
+.rg-uc-hp .rg-ehp{position:relative;height:12px;background:#120a0a;border:1px solid #b8892f;border-radius:2px;overflow:hidden;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+.rg-uc-hp .rg-ehp u{position:absolute;inset:0 auto 0 0;background:#f8fafc;opacity:.9;text-decoration:none}
+.rg-uc-hp .rg-ehp i{position:absolute;inset:0 auto 0 0;background:linear-gradient(180deg,#f87171,#b91c1c 55%,#7f1d1d)}
+.rg-unit.hero .rg-uc-hp .rg-ehp i{background:linear-gradient(180deg,#86efac,#16a34a 55%,#14532d)}
