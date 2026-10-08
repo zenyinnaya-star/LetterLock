@@ -243,18 +243,26 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     return () => clearInterval(i);
   }, [book]);
 
+  // HP shown on the cards follows the playback: a unit keeps its old HP until the entry that hits it plays
+  const hpRef = useRef<{ ver: number; prev: Record<string, number>; cur: Record<string, number> }>({ ver: -1, prev: {}, cur: {} });
+  if (b && hpRef.current.ver !== b.version) {
+    hpRef.current = { ver: b.version, prev: hpRef.current.cur, cur: Object.fromEntries(b.units.map((x) => [x.id, x.hp])) };
+  }
+  const [applied, setApplied] = useState<{ ver: number; ids: string[]; all: boolean }>({ ver: -1, ids: [], all: true });
+
   // turn playback: show each log entry one at a time (attacker lunges, target flinches, caption)
   const playKey = b?.version ?? 0;
   useEffect(() => {
     const entries = b?.log ?? [];
-    if (!entries.length) { setActive(null); return; }
+    if (!entries.length) { setActive(null); setApplied({ ver: playKey, ids: [], all: true }); return; }
     let i = 0;
+    setApplied({ ver: playKey, ids: [], all: false });
     setActive(entries[0]);
     // big moments (crit, ultimate, limit break) hold longer: a short slow-motion beat
     const enemyIds = new Set((b?.units ?? []).filter((x) => x.side === 'enemy').map((x) => x.id));
     const delay = (e: BattleLogEntry) => (e.t === 'crit' || e.t === 'ult' || e.t === 'limit' ? 1150 : (e.ai && enemyIds.has(e.ai)) ? 450 : 650);
     let id: ReturnType<typeof setTimeout>;
-    const next = () => { i += 1; if (i >= entries.length) setActive(null); else { setActive(entries[i]); id = setTimeout(next, delay(entries[i])); } };
+    const next = () => { i += 1; if (i >= entries.length) { setActive(null); setApplied({ ver: playKey, ids: [], all: true }); } else { setActive(entries[i]); id = setTimeout(next, delay(entries[i])); } };
     id = setTimeout(next, delay(entries[0]));
     return () => clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -291,6 +299,13 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     ? (active.t === 'dodge' ? (active.di ?? firstNamed(active.d)?.id) : (active.ai ?? firstNamed(active.a)?.id)) : undefined;
 
   useEffect(() => {
+    if (!active || !b) return;
+    const ids = active.di ? [active.di] : b.units.map((x) => x.id);
+    setApplied((a) => (a.ver === b.version ? { ...a, ids: [...a.ids, ...ids] } : a));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+
+  useEffect(() => {
     if (!active) return;
     audio.battle(active.t, (b?.units ?? []).some((e) => e.side === 'enemy' && e.name === active.a));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -322,8 +337,15 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     <Camp b={b} token={token} state={{ code: state.room.code, v: state.room.state_version }} />
   </>);
 
-  const heroes = b.units.filter((u) => u.side === 'hero');
-  const enemies = b.units.filter((u) => u.side === 'enemy');
+  const shownHp = (u: BattleUnit) => {
+    const prev = hpRef.current.prev[u.id];
+    const playing = applied.ver !== b.version || !applied.all;
+    if (!playing || prev === undefined) return u.hp;
+    return applied.ver === b.version && applied.ids.includes(u.id) ? u.hp : prev;
+  };
+  const shown = b.units.map((u) => ({ ...u, hp: shownHp(u) }));
+  const heroes = shown.filter((u) => u.side === 'hero');
+  const enemies = shown.filter((u) => u.side === 'enemy');
   const aliveEnemies = enemies.filter((e) => e.hp > 0);
   const canAct = b.step === 'input' && !!mine && mine.hp > 0 && !mine.locked;
   const lead = enemies.find((e) => e.name === 'Government') ?? enemies.find((e) => e.name === 'The Collector') ?? enemies.find((e) => e.name === 'The Commissioner') ?? enemies[0];
@@ -549,9 +571,9 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           <div className="rg-hud-hp">
             <div className="rg-hud-name"><b>{myHero.name}</b><span>{myHero.role}</span><em>ULT {mine.ult ?? 0}/6</em></div>
             <div className="rg-hud-bar">
-              <motion.u animate={{ width: `${Math.max(0, Math.min(100, (mine.hp / mine.max_hp) * 100))}%` }} transition={{ duration: 1.2, delay: 0.35 }} />
-              <motion.i animate={{ width: `${Math.max(0, Math.min(100, (mine.hp / mine.max_hp) * 100))}%` }} transition={{ duration: 0.35 }} />
-              <strong>{Math.max(0, mine.hp)} / {mine.max_hp}</strong>
+              <motion.u animate={{ width: `${Math.max(0, Math.min(100, ((heroes.find((x) => x.id === mine.id)?.hp ?? mine.hp) / mine.max_hp) * 100))}%` }} transition={{ duration: 1.2, delay: 0.35 }} />
+              <motion.i animate={{ width: `${Math.max(0, Math.min(100, ((heroes.find((x) => x.id === mine.id)?.hp ?? mine.hp) / mine.max_hp) * 100))}%` }} transition={{ duration: 0.35 }} />
+              <strong>{Math.max(0, heroes.find((x) => x.id === mine.id)?.hp ?? mine.hp)} / {mine.max_hp}</strong>
             </div>
             <div className="rg-hud-sub">{mine.shield ? <span>🛡 {mine.shield}</span> : null}{mine.corruption > 0 ? <span>☠ {mine.corruption}</span> : null}<span>{b.step !== 'input' ? 'Resolving…' : mine.hp <= 0 ? 'Down' : mine.locked ? (msg || 'Locked in') : canAct ? (pend ? `Tap ${needsAlly ? 'an ally' : 'an enemy'}` : 'Your move') : 'Waiting…'}</span></div>
           </div>
