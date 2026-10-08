@@ -1874,3 +1874,9 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .hp-stat span{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden}
 .hp-stat span i{display:block;height:100%;background:linear-gradient(90deg,#fbbf24,#f97316)}
 .hp-stat b{width:14px;text-align:right}
+.hp-mini{display:grid;gap:2px;width:100%;margin-top:6px}
+.hp-mini>span{display:flex;align-items:center;gap:4px;font-size:9px;line-height:1}
+.hp-mini em{font-style:normal;width:22px;text-align:left;opacity:.7}
+.hp-mini>span>span{flex:1;height:4px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+.hp-mini i{display:block;height:100%;background:linear-gradient(90deg,#fbbf24,#f97316)}
+.hp-mini b{width:10px;text-align:right}

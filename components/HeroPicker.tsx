@@ -21,6 +21,9 @@ export function HeroPicker({ value, onPick, taken = {} }: { value: HeroId | null
                 style={{ backgroundImage: `url(${h.art}), radial-gradient(circle at 50% 35%, ${h.color}88, #0a0f1d 75%)` }} />
               <b>{h.name}</b>
               <small className="hp-role">{lock ? `Taken · ${by}` : h.role}</small>
+              <span className="hp-mini">{(Object.keys(h.stats) as (keyof typeof h.stats)[]).map((k) => (
+                <span key={k} title={`${k} ${h.stats[k]}`}><em>{k}</em><span><i style={{ width: `${h.stats[k] * 12.5}%` }} /></span><b>{h.stats[k]}</b></span>
+              ))}</span>
             </motion.button>
           );
         })}
