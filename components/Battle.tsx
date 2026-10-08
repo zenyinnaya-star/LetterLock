@@ -141,6 +141,16 @@ function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3, mine, menu
   );
 }
 
+/** Full-screen "ENCOUNTER CLEARED" flash that fades out by itself. */
+function ClearBanner({ stage }: { stage: number }) {
+  const [on, setOn] = useState(true);
+  useEffect(() => { audio.fanfare(); const id = setTimeout(() => setOn(false), 2300); return () => clearTimeout(id); }, []);
+  if (!on) return null;
+  return (
+    <div className="rg-clear fixed"><div className="rg-clear-flash" /><b>ENCOUNTER {stage} CLEARED</b><small>+{20 + 8 * stage}+ XP · rest at camp</small></div>
+  );
+}
+
 export function Battle({ state, token, act, fallback }: { state: RoomState; token: string | null; act: Act; fallback?: React.ReactNode }) {
   const [b, setB] = useState<BattleState | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -286,6 +296,13 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
 
+  const endSeen = useRef('');
+  useEffect(() => {
+    if (!b || (b.step !== 'won' && b.step !== 'lost') || endSeen.current === b.step) return;
+    endSeen.current = b.step;
+    audio.file(b.step === 'won' ? 'victory' : 'defeat');
+  }, [b]);
+
   const [use3d, setUse3d] = useState(false);
   useEffect(() => { setUse3d(webglOk() && new URLSearchParams(window.location.search).has('3d')); }, []); // 2D cel-shaded sprites by default; ?3d opts into the old 3D stage
   const fxSeq = useRef(0);
@@ -300,7 +317,10 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   if (loaded && !b) return <>{fallback ?? null}</>;
   if (!b) return <div className="center muted">Loading battle…</div>;
 
-  if (b.step === 'camp') return <Camp b={b} token={token} state={{ code: state.room.code, v: state.room.state_version }} />;
+  if (b.step === 'camp') return (<>
+    <ClearBanner key={`cb-${b.stage}`} stage={b.stage} />
+    <Camp b={b} token={token} state={{ code: state.room.code, v: state.room.state_version }} />
+  </>);
 
   const heroes = b.units.filter((u) => u.side === 'hero');
   const enemies = b.units.filter((u) => u.side === 'enemy');
@@ -570,8 +590,9 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           {msg && !mine?.locked && <div className="muted small center">{msg}</div>}
         </div>
       ) : (
-        <div className="rg-result">
-          <h2>{b.step === 'won' ? 'Victory! The Government has fallen.' : 'Defeat… the IRS wins this round.'}</h2>
+        <div className={`rg-result rg-end ${b.step}${active ? " wait" : ""}`}>
+          <div className="rg-end-title">{b.step === 'won' ? 'VICTORY' : 'DEFEAT'}</div>
+          <h2>{b.step === 'won' ? 'The Government has fallen.' : 'Your party was wiped out… the IRS wins this round.'}</h2>
           {result ? (
             <>
               {result.lvl_after > result.lvl_before && <div className="rg-lvlup">LEVEL UP! {result.lvl_before} → {result.lvl_after}</div>}

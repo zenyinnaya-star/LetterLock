@@ -1889,3 +1889,14 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .rg-ban.e{left:auto!important;right:3%!important}
 .rg-ban span{white-space:normal}
 .rg-burst{left:50%;max-width:92%;text-align:center;white-space:nowrap}
+
+/* ===== full-screen victory / defeat ===== */
+.rg-clear.fixed{position:fixed;z-index:200}
+.rg-result.rg-end{position:fixed;inset:0;z-index:150;justify-content:center;border-radius:0;border:0;padding:24px;overflow:auto;animation:endIn .6s ease-out both;background:radial-gradient(circle at 50% 35%,rgba(250,204,21,.28),rgba(5,8,18,.96) 65%)}
+.rg-result.rg-end.lost{background:radial-gradient(circle at 50% 35%,rgba(220,38,38,.35),rgba(5,5,10,.97) 65%)}
+.rg-end-title{font:900 clamp(56px,14vw,160px)/1 var(--font-cinzel,Cinzel,serif);letter-spacing:.12em;color:#fde68a;text-shadow:0 0 40px #f59e0b,0 6px 0 #78350f;animation:endPop .8s cubic-bezier(.2,1.4,.3,1) both}
+.rg-end.lost .rg-end-title{color:#fca5a5;text-shadow:0 0 40px #dc2626,0 6px 0 #450a0a}
+.rg-result.rg-end>*{max-width:min(720px,94vw)}
+@keyframes endIn{from{opacity:0}to{opacity:1}}
+@keyframes endPop{from{scale:2.4;opacity:0}to{scale:1;opacity:1}}
+.rg-end.wait{opacity:0;pointer-events:none;animation:none}
