@@ -1,4 +1,5 @@
 'use client';
+import { HERO_BG } from '@/lib/art';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -45,6 +46,7 @@ export function StoryHeroSelect() {
 
   return (
     <main className="hs-page" style={{ ['--hc' as string]: h.color }}>
+      <div className="hs-bgimg" style={{ backgroundImage: `url(${HERO_BG})` }} />
       <header className="hs-top">
         <Link href="/play" className="play-back"><Icon name="logout" size={18} /> Back</Link>
         <h1>Choose your hero</h1>

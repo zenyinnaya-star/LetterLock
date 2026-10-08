@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
-import { ACT_BG, HERO_SPRITE } from '@/lib/art';
+import { ACT_BG, HERO_SPRITE, MENU_BG } from '@/lib/art';
 import { HEROES, heroById, type HeroId } from '@/lib/heroes';
 import type { RoomState } from '@/lib/types';
 import type { Act } from './phases';
@@ -59,7 +59,7 @@ export function StoryLobby({ state, token, act, onLeave, picks, isHost }: {
 
   return (
     <div className="ul">
-      <div className="ul-bg" style={{ backgroundImage: `url(${ACT_BG[0]})` }} />
+      <div className="ul-bg" style={{ backgroundImage: `url(${MENU_BG})` }} />
       <div className="ul-shade" />
       <div className="ul-embers" aria-hidden>{Array.from({ length: 16 }, (_, i) => <i key={i} style={{ left: `${(i * 41) % 100}%`, animationDelay: `${(i % 7) * 0.9}s`, animationDuration: `${6 + (i % 5)}s` }} />)}</div>
 
@@ -146,7 +146,7 @@ export function StoryLobby({ state, token, act, onLeave, picks, isHost }: {
       <AnimatePresence>
         {going && (
           <motion.div className="ul-load" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7 }}>
-            <div className="ul-load-bg" style={{ backgroundImage: `url(${ACT_BG[0]})` }} />
+            <div className="ul-load-bg" style={{ backgroundImage: `url(${MENU_BG})` }} />
             <span className="ul-load-loc">The Outer Provinces · Act One</span>
             <div className="ul-load-tip"><b>TIP</b><p>{tip}</p><i><u /></i></div>
           </motion.div>

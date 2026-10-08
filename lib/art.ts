@@ -39,10 +39,12 @@ export const ENEMY_SPRITE: Record<string, string> = {
 };
 
 export const ACT_BG = [
-  u('20261007_225137_993ab61a-972a-47b0-a407-b11885513dea'), // Act I
-  u('20261007_225136_b7beb9b3-c613-45e8-b825-3a33cf3de2bd'), // Act II
-  u('20261007_225206_4d9267ac-a714-4572-8685-af0370c473d2'), // Act III
+  u('20261008_063230_a2fc942c-aa7e-4fd8-a762-f4b783fba606'), // Act I · harbor
+  u('20261008_063231_eadd574b-4745-4cb3-8d40-8a18831b54e3'), // Act II · archive fortress
+  u('20261008_063315_05cd6739-2de4-45ea-bc87-3466756ea0e0'), // Act III · citadel
 ];
-export const BOOK_ART = u('20261007_225206_60e61d21-1757-49c8-8d5f-b722da83fa21');
+export const MENU_BG = u('20261008_063255_20876ecb-71fb-47e1-abb5-86be76caf752');
+export const HERO_BG = u('20261008_063230_5d2b88fe-8bdd-4a43-a030-dcad86f63b89');
+export const BOOK_ART = u('20261008_063230_8c35b853-eb22-4ed6-b263-f0377c6d91f3');
 export const actOf = (stage: number) => (stage <= 2 ? 0 : stage <= 4 ? 1 : 2);
 export const ACT_NAME = ['Act I · The Outer Provinces', 'Act II · The Midlands', 'Act III · The Capital'];
