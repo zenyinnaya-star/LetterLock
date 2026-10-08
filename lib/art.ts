@@ -12,9 +12,9 @@ const S2 = {
   Prince: N('20261008_015300_99da7422-382b-41c2-b12b-158e44632523'),
   Government: N('20261008_015328_a02c0825-4ff3-4843-b7fe-6709b5000a89'),
   Auditor: N('20261008_015330_977b7004-0014-417e-ad36-7caa03fa44b6'),
-  Enforcer: N('20261008_014539_a1c5dee7-b5d6-40e3-8fab-f8a77117688b'),
-  Bureaucrat: N('20261008_014538_d9f320b3-3101-448e-96fd-e9c5f775cd41'),
-  Collector: N('20261008_014539_bfab3d5b-3d6a-4a20-9e97-0421d81a27e2'),
+  Enforcer: N('20261008_062731_c86d8429-e9ca-48b6-9564-acee90c1f734'),
+  Bureaucrat: N('20261008_062733_966578a9-9f82-4b18-bf3f-1a924afccddc'),
+  Collector: N('20261008_062735_5e8406af-8a8a-4022-8f5b-f36d09ca2fd1'),
 };
 
 export const HERO_SPRITE: Record<string, string> = {

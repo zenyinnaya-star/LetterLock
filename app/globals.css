@@ -1556,3 +1556,31 @@ h3{font-weight:800}
 .rg-oddsbtn:disabled{animation:none;background:#333;box-shadow:0 0 0 3px #000;cursor:default}
 @keyframes oddsPulse{50%{box-shadow:0 0 0 3px #000,0 0 44px #ff6a7a}}
 .rg-card.sel{outline:3px solid #ffd400;transform:translateY(-6px)}
+
+/* ===== Reference-art pass: Witcher-style HUD, ULDOR dark-glass menus, glowing Book of Wisdom ===== */
+:root{--gold:#c9a45c;--gold2:#f0d28a;--ink:#07090f;--crim:#c4162a;--arcane:#5fd8ee}
+/* party HUD: weathered gold frame, portrait, red life bar, blue charge bar */
+.rg-pc{border:2px solid var(--gold);border-radius:6px;background:linear-gradient(160deg,#1a1f2b,#07090f);box-shadow:0 0 0 1px #000,inset 0 0 14px #000a,0 6px 16px #0009;clip-path:polygon(0 0,100% 0,100% 88%,92% 100%,0 100%)}
+.rg-pc.me{border-color:var(--gold2);box-shadow:0 0 0 1px #000,0 0 16px #f0d28a99}
+.rg-pc-hp{height:8px;background:#2a0509;border-top:1px solid #000}
+.rg-pc-hp i{background:linear-gradient(180deg,#ff5468,#8e0b1b);box-shadow:0 0 8px #e11d48}
+.rg-pc-ult{background:linear-gradient(180deg,#1b6a86,#0b2c3d);border:1px solid var(--arcane);border-radius:3px;color:#d8f7ff}
+.rg-pc-n{font-family:var(--font-barlow,inherit);text-transform:uppercase;letter-spacing:.06em}
+/* command buttons: round gold-ringed medallions */
+.rg-sk{border:3px solid var(--gold);background:radial-gradient(circle at 35% 30%,#3a2a1a,#0a0705);box-shadow:0 0 0 2px #000,inset 0 0 10px #000;font-family:var(--font-barlow,inherit);letter-spacing:.05em}
+.rg-sk.sel{border-color:var(--gold2);box-shadow:0 0 0 2px #000,0 0 18px #f0d28acc}
+/* top chips / banners: dark glass with gold hairline */
+.rg-chip,.rg-obj,.rg-prompt-t{background:rgba(8,10,16,.72);backdrop-filter:blur(6px);border:1px solid rgba(201,164,92,.45);border-radius:4px}
+.rg-prompt-t{font-family:var(--font-barlow,inherit);letter-spacing:.12em;color:var(--gold2)}
+/* odds meter as a crimson blade */
+.rg-mom>span{background:#14070a;border:1px solid var(--gold);height:12px}.rg-mom>span i{background:linear-gradient(90deg,#8e0b1b,#ff3b52)}
+/* Book of Wisdom: glowing arcane eye */
+.rg-bookbox{border:2px solid var(--arcane);background:radial-gradient(circle at 50% 30%,#0c3a4a,#04080f 75%);box-shadow:0 0 50px #5fd8ee55,inset 0 0 40px #000}
+.rg-bookbg{opacity:.55;mix-blend-mode:screen;filter:drop-shadow(0 0 24px #5fd8ee)}
+.rg-bookin h3{color:#bff4ff;text-shadow:0 0 14px #5fd8ee;letter-spacing:.2em;text-transform:uppercase}
+.rg-book{border-color:var(--arcane);box-shadow:0 0 16px #5fd8ee66}
+.rg-card.rare{border-color:var(--gold2)}
+/* hero select cards: dark glass, gold frame, spotlight on the cutout */
+.hc{border:2px solid rgba(201,164,92,.55);border-radius:6px;background-size:contain,contain,cover;background-repeat:no-repeat;background-position:center bottom,center bottom,center}
+.hc.on{border-color:var(--gold2);box-shadow:0 0 0 1px #000,0 0 28px #f0d28a88}
+.hc-role{background:rgba(8,10,16,.8);border:1px solid var(--gold);color:var(--gold2);font-family:var(--font-barlow,inherit);letter-spacing:.14em;text-transform:uppercase}
