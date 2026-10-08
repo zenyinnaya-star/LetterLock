@@ -113,15 +113,15 @@ const EL: Record<string, string> = { fire: '🔥', ice: '❄️', storm: '⚡', 
 
 type Float = { k: string; text: string; cls: string };
 
-function Sprite({ elNow, u, floats, picked, onPick, style, lunge, t3, mine, menu, win, pose }: { pose?: 'strike' | 'cast'; win?: boolean; menu?: React.ReactNode; elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
+function Sprite({ elNow, u, floats, picked, onPick, style, lunge, lungeTo, t3, mine, menu, win, pose }: { lungeTo?: { x: number; y: number }; pose?: 'strike' | 'cast'; win?: boolean; menu?: React.ReactNode; elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
   const pct = Math.max(0, Math.min(100, (u.hp / u.max_hp) * 100));
   const hit = floats.some((f) => f.cls === 'dmg');
   return (
     <div className={`rg-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}${u.name === 'Government' ? ' boss' : ''}${t3 ? ' t3' : ''}${mine ? ' mine' : ''}${menu ? ' lift' : ''}${hit ? ' ouch' : ''}${floats.some((f) => f.text === 'DODGE') ? ' dodged' : ''}${floats.some((f) => f.cls.includes('heal')) ? ' healed' : ''}${floats.some((f) => f.cls.includes('shield')) ? ' shielded' : ''}${lunge ? ' striking' : ''}${win && u.hp > 0 ? ' cheer' : ''}`}
       style={{ ...style, ['--idle' as string]: `${-((u.id.charCodeAt(0) + u.id.charCodeAt(3)) % 17) / 10}s` }} onClick={onPick} role={onPick ? 'button' : undefined}>
       <motion.div key={`${lunge ? 'l' : hit ? 'h' : 'i'}-${floats[0]?.k ?? ''}`}
-        animate={lunge ? { x: [0, u.side === 'hero' ? 90 : -90, 0], scale: [1, 1.12, 1] } : hit ? { x: [0, -10, 10, -6, 0], filter: ['brightness(2.2)', 'brightness(1)'] } : {}}
-        transition={{ duration: lunge ? 0.5 : 0.4 }}>
+        animate={lunge ? (lungeTo ? { x: [0, 0, lungeTo.x, lungeTo.x, 0], y: [0, 0, lungeTo.y, lungeTo.y, 0], scale: [1, 1.05, 1.12, 1.12, 1] } : { x: [0, u.side === 'hero' ? 90 : -90, 0], scale: [1, 1.12, 1] }) : hit ? { x: [0, -10, 10, -6, 0], filter: ['brightness(2.2)', 'brightness(1)'] } : {}}
+        transition={lunge && lungeTo ? { duration: 0.7, times: [0, 0.15, 0.45, 0.62, 1], ease: 'easeInOut' } : { duration: lunge ? 0.5 : 0.4 }}>
         <div className="rg-uc">
           {u.hp > 0 && u.intent && <span className={`rg-intent i-${u.intent}`} title={`Next: ${u.intent}`}>{INTENT_ICON[u.intent] ?? '⚔'}</span>}
           {u.hp > 0 && (u.haste ?? 0) !== 0 && <span className={`rg-haste ${(u.haste ?? 0) > 0 ? 'up' : 'dn'}`} title={(u.haste ?? 0) > 0 ? 'Hasted: acts earlier' : 'Slowed: acts later'}>{(u.haste ?? 0) > 0 ? '⚡' : '🐌'}</span>}
@@ -167,6 +167,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const [showLog, setShowLog] = useState(false);
   const [intro, setIntro] = useState<number | null>(null);
   const seenAct = useRef(-1);
+  const stageEl = useRef<HTMLDivElement | null>(null);
   const stepped = useRef(-1);
   // Book of Wisdom
   const [book, setBook] = useState<{ prompt: string; ends: number } | null>(null);
@@ -381,6 +382,25 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   enemies.forEach((u, i) => { const p = ePos(i, enemies.length); posMap[u.id] = { x: parseFloat(String(p.left)), y: parseFloat(String(p.top)) }; });
   heroes.forEach((u, i) => { const p = hPos(i, heroes.length); posMap[u.id] = { x: parseFloat(String(p.left)), y: parseFloat(String(p.top)) }; });
 
+  // slide the attacker right up to its target so the blow visibly connects
+  const lungeVec = (u: BattleUnit): { x: number; y: number } | undefined => {
+    if (!active || lungeId !== u.id || !['hit', 'crit', 'miss', 'ult', 'limit', 'season', 'sweep', 'mega_sweep', 'e_aoe'].includes(active.t)) return undefined;
+    const me = posMap[u.id]; if (!me) return undefined;
+    const foes = u.side === 'hero' ? enemies : heroes;
+    const tid = active.di ?? (active.d ? firstNamed(active.d)?.id : undefined);
+    const tu = foes.find((f) => f.id === tid);
+    let tx: number, ty: number;
+    if (tu && posMap[tu.id]) { tx = posMap[tu.id].x; ty = posMap[tu.id].y; }
+    else {
+      const ps = foes.filter((f) => f.hp > 0 && posMap[f.id]).map((f) => posMap[f.id]);
+      if (!ps.length) return undefined;
+      tx = ps.reduce((a, p) => a + p.x, 0) / ps.length; ty = ps.reduce((a, p) => a + p.y, 0) / ps.length;
+    }
+    const W = stageEl.current?.clientWidth ?? 800, H = stageEl.current?.clientHeight ?? 450;
+    const k = 0.8; // stop just short so the sprites overlap at the point of contact
+    return { x: ((tx - me.x) / 100) * W * k, y: ((ty - me.y) / 100) * H * k };
+  };
+
   async function doAction(kind: 'attack' | 'guard' | 'ult', tgt: string | null) {
     if (!token || !canAct) return;
     const r = await act(() => rpc.battleSubmit(token, '', kind, tgt));
@@ -477,7 +497,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
   return (
     <div className={`rg${active?.t === 'limit' ? ' lb' : ''}`}>
-      <div className={`rg-stage${use3d ? ' t3' : ''}`} data-boss={lead?.name === 'Government' ? 1 : 0} data-foes={aliveEnemies.length <= 1 ? 1 : 0}>
+      <div ref={stageEl} className={`rg-stage${use3d ? ' t3' : ''}`} data-boss={lead?.name === 'Government' ? 1 : 0} data-foes={aliveEnemies.length <= 1 ? 1 : 0}>
         <div className="rg-bg" style={{ backgroundImage: `url(${PIXEL_BG[ai]})` }} />
         {use3d && <Stage3D act={ai} fx={fx} pos={posMap}
           units={b.units.map((u) => ({ id: u.id, side: u.side, name: u.name, hero: u.hero, dead: u.hp <= 0 }))}
@@ -551,11 +571,11 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         {mine && (mine.afk ?? 0) >= 2 && b.step === 'input' && !mine.locked && <div className="rg-idle">You've been idle, so you're auto-guarding. Cast a word to rejoin. The team won't wait for idle players.</div>}
         {/* units */}
         {enemies.map((u, i) => (
-          <Sprite key={u.id} pose={poseFor(u.id)} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={tgtId === u.id}
+          <Sprite key={u.id} pose={poseFor(u.id)} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} lungeTo={lungeVec(u)} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={tgtId === u.id}
             onPick={canAct && u.hp > 0 ? () => tapEnemy(u.id) : undefined} />
         ))}
         {heroes.map((u, i) => (
-          <Sprite key={u.id} pose={poseFor(u.id)} menu={u.player_id === b.me && mine && b.step === 'input' && canAct && !mine.locked ? <></> : undefined} win={won} mine={u.player_id === b.me} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
+          <Sprite key={u.id} pose={poseFor(u.id)} menu={u.player_id === b.me && mine && b.step === 'input' && canAct && !mine.locked ? <></> : undefined} win={won} mine={u.player_id === b.me} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} lungeTo={lungeVec(u)} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
             onPick={((needsAlly && u.hp > 0) || (needsDown && u.hp <= 0)) && canAct ? () => pickUnit(u.id) : undefined} />
         ))}
 
