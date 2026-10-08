@@ -7,7 +7,7 @@ import { ACT_BG, HERO_SPRITE, MENU_BG } from '@/lib/art';
 import { HEROES, heroById, type HeroId } from '@/lib/heroes';
 import type { RoomState } from '@/lib/types';
 import type { Act } from './phases';
-import { HeroCards } from './HeroCards';
+import { HeroPicker } from './HeroPicker';
 import { rpc } from '@/lib/rpc';
 import { fetchProfile, type ProfileInfo } from '@/lib/profile';
 
@@ -132,7 +132,7 @@ export function StoryLobby({ state, token, act, onLeave, picks, isHost }: {
           <motion.div className="ul-modal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <h2>SELECT HERO</h2>
             <div className="ul-modal-in">
-              <HeroCards value={mine}
+              <HeroPicker value={mine}
                 taken={Object.fromEntries(picks.filter((x) => x.player_id !== me?.id).map((x) => [x.hero, state.players.find((p) => p.id === x.player_id)?.name ?? 'a player']))}
                 onPick={(h) => { if (token) void act(() => rpc.setHero(token, h)); }} />
             </div>

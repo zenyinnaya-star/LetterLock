@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AvatarPicker } from './AvatarPicker';
-import { HeroCards } from './HeroCards';
+import { HeroPicker } from './HeroPicker';
 import { Icon } from './icons';
 import { audio } from '@/lib/audio';
 import { loadAvatar, saveAvatar } from '@/lib/avatar';
@@ -58,7 +58,7 @@ export function StoryHeroSelect() {
           <input className="input" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" autoComplete="nickname" />
         </label>
       </div>
-      <HeroCards value={hero} onPick={(x) => { setHero(x); audio.tick(false); }} />
+      <HeroPicker value={hero} onPick={(x) => { setHero(x); audio.tick(false); }} />
       {err && <div className="note bad">{err}</div>}
       <button type="button" className="sel-lock hs-lock" disabled={busy} onClick={() => void lockIn()}>
         <Icon name="lock" size={18} /> Begin as {h.name}

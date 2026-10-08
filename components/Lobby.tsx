@@ -14,7 +14,7 @@ import { PlayerAvatar } from './PlayerAvatar';
 import { TeamLobby } from './team';
 import type { Act } from './phases';
 import { SettingsButton } from './SettingsPanel';
-import { HeroCards } from './HeroCards';
+import { HeroPicker } from './HeroPicker';
 import { StoryLobby } from './StoryLobby';
 import type { HeroId } from '@/lib/heroes';
 import { softSpring, spring } from './ui';
@@ -178,7 +178,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
 
       {story && (
         <div className="hc-lobby">
-          <HeroCards value={(picks.find((x) => x.player_id === state.me?.id)?.hero as HeroId) ?? null}
+          <HeroPicker value={(picks.find((x) => x.player_id === state.me?.id)?.hero as HeroId) ?? null}
             taken={Object.fromEntries(picks.filter((x) => x.player_id !== state.me?.id).map((x) => [x.hero, state.players.find((p) => p.id === x.player_id)?.name ?? 'a player']))}
             onPick={(h) => token && void act(() => rpc.setHero(token, h))} />
           <div className="muted small center">Pick your hero. Unpicked heroes are assigned automatically when the Story begins.</div>

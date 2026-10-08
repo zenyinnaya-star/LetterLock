@@ -8,7 +8,7 @@ import { AvatarPicker } from '@/components/AvatarPicker';
 import { Game } from '@/components/Game';
 import { loadAvatar, saveAvatar } from '@/lib/avatar';
 import { ClassPicker, Header } from '@/components/ui';
-import { HeroCards } from '@/components/HeroCards';
+import { HeroPicker } from '@/components/HeroPicker';
 import type { HeroId } from '@/lib/heroes';
 import { useRoom } from '@/hooks/useRoom';
 import { audio } from '@/lib/audio';
@@ -125,7 +125,7 @@ function JoinHere({ code, onJoined }: { code: string; onJoined: (token: string) 
         {story ? (
           <>
             <span className="label">Choose your hero</span>
-            <HeroCards value={hero} onPick={setHero} taken={taken} />
+            <HeroPicker value={hero} onPick={setHero} taken={taken} />
           </>
         ) : (
           <>
