@@ -1687,3 +1687,43 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .hs-page{position:relative;isolation:isolate}
 .hs-bgimg{position:fixed;inset:0;z-index:-1;background-size:cover;background-position:center;filter:saturate(1.1) brightness(.62);animation:slpan 50s ease-in-out infinite alternate}
 .hs-bgimg::after{content:"";position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 40%,transparent,rgba(3,5,12,.85)),linear-gradient(to top,#05070f,transparent 45%)}
+
+/* =====================================================================
+   FULL-SCREEN LAYOUT: nothing is boxed into a narrow centered column any more.
+   ===================================================================== */
+:root{--pad:clamp(16px,3.2vw,64px)}
+.shell,.shell.narrow,.landing,.play-shell{max-width:none;width:100%;padding-left:var(--pad);padding-right:var(--pad)}
+.shell{min-height:100dvh}
+.topbar{width:100%}
+.battle,.rg{max-width:none;width:100%;padding:0}
+.rg-stage{min-height:min(74dvh,calc(100dvh - 190px))}
+.hs-page{max-width:none;padding:var(--pad)}
+.sl-in,.st-in,.cp-in,.ul-in{max-width:min(1500px,100%);padding-left:var(--pad);padding-right:var(--pad)}
+.narrow-col,.reveal-list,.feed{max-width:min(900px,100%)}
+.sheet,.recap{max-width:none}
+.dock,.dock-wrap,.bottom-dock{max-width:none}
+
+/* landing: full-bleed hero */
+.landing{max-width:none;justify-content:center}
+.lp-hero{min-height:calc(100dvh - 120px)}
+.lp-art{width:100%;margin:0;height:clamp(300px,58vh,640px)}
+.lp-hero .lp-tiles .tile{width:clamp(34px,5.2vw,84px);height:clamp(40px,5.9vw,96px);font-size:clamp(20px,3.2vw,52px)}
+.lp-tag{font-size:clamp(16px,1.7vw,26px)}
+.lp-cta{max-width:min(520px,90%)}
+
+/* play / mode select: fill the screen, hero panel left, modes scale up */
+@media(min-width:880px){
+  .play-grid{grid-template-columns:minmax(340px,28%) 1fr;gap:clamp(24px,3vw,56px)}
+}
+.play-grid{min-height:calc(100dvh - 190px)}
+.mode-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:clamp(12px,1.4vw,24px)}
+.mode-grid.three{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+.mode-card{min-height:clamp(150px,19vh,220px);padding:clamp(16px,1.6vw,28px)}
+.mode-grid.three .mode-card{min-height:clamp(120px,15vh,170px)}
+.mode-card b{font-size:clamp(17px,1.5vw,24px)}
+.mc-desc{font-size:clamp(12.5px,1vw,16px)}
+.mc-ico{width:clamp(38px,3.4vw,56px);height:clamp(38px,3.4vw,56px)}
+@media(min-width:1500px){.shell{padding-left:clamp(64px,5vw,120px);padding-right:clamp(64px,5vw,120px)}}
+.mode-card{min-height:clamp(150px,24vh,300px)}
+.mode-grid.three .mode-card{min-height:clamp(120px,18vh,220px)}
+.play-modes{gap:clamp(12px,1.6vw,26px)}
