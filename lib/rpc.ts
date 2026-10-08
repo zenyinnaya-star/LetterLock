@@ -35,7 +35,7 @@ export interface BattleState {
 
 export interface CampState {
   gold: number; path: string | null; pbonus: number; ready: boolean; flags: string[]; price_up: boolean; camp_ends: string; stage: number; oath: boolean;
-  ready_count: number; hero_count: number;
+  ready_count: number; hero_count: number; cards?: string[];
   casino: { active: boolean; round: number; wins: number; stake: number; prompt: string | null; ends_at: string | null; closed: boolean; lucky: boolean };
   puzzle: { kind: string; text: string; ends_at: string } | null;
   shop: { id: string; name: string; desc: string; price: number }[];
@@ -45,6 +45,8 @@ export interface CampState {
 export const rpc = {
   getCamp: (token: string) => call<CampState | null>('get_camp', { p_token: token }),
   campBuy: (token: string, item: string) => call<{ ok: boolean; card?: string }>('camp_buy', { p_token: token, p_item: item }),
+  campSell: (token: string, idx: number) => call<{ ok: boolean; gold: number; card: string }>('camp_sell', { p_token: token, p_idx: idx }),
+  casinoRoll: (token: string, stake: number, kind: 'flip' | 'jackpot') => call<{ ok: boolean; win: boolean; payout: number }>('casino_roll', { p_token: token, p_stake: stake, p_kind: kind }),
   campRest: (token: string) => call<{ ok: boolean }>('camp_rest', { p_token: token }),
   campGear: (token: string, slot: string) => call<{ ok: boolean; name: string }>('camp_gear', { p_token: token, p_slot: slot }),
   casinoOpen: (token: string) => call<{ ok: boolean }>('casino_open', { p_token: token }),

@@ -1882,3 +1882,10 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .hp-mini b{width:10px;text-align:right}
 .class-tile.hp-lock{opacity:.45;filter:grayscale(.8)}
 .hp-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:4px 14px;margin-top:8px}
+
+/* ===== effect text centering fix (floats/banners were clipped at the stage edges) ===== */
+.rg-float{left:0!important;width:100%;text-align:center;white-space:nowrap;margin-left:0!important;top:-4%}
+.rg-ban{left:3%!important;max-width:62%}
+.rg-ban.e{left:auto!important;right:3%!important}
+.rg-ban span{white-space:normal}
+.rg-burst{left:50%;max-width:92%;text-align:center;white-space:nowrap}

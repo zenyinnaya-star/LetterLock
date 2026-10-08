@@ -1,0 +1,1 @@
+-- 060/061 (applied via MCP): camp only after stages 2 and 4; per-stage XP (_stage_xp, xp_run); 9 new shop items; camp_sell; casino_roll (flip/jackpot).

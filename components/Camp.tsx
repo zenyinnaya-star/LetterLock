@@ -17,7 +17,7 @@ const PATHS: Record<string, { name: string; glyph: string; perk: string; feature
 };
 const ERR: Record<string, string> = {
   NO_GOLD: 'Not enough gold.', HAND_FULL: 'Your hand is full (4 cards).', MAXED: 'Already maxed.', ALREADY_USED: 'Already used this camp.',
-  BAD_STAKE: 'Stake between 10 and your gold.', HOUSE_CLOSED: 'The house is closed. You won too much.', IN_PROGRESS: 'Already in progress.', PACT_LIMIT: 'You already made two pacts.', CASINO_LOCKED: 'The casino is closed. A Gambler has to open it.', NOT_GAMBLER: 'Only a Gambler can open the casino.',
+  NO_TARGET: 'Nobody has fallen.', BAD_STAKE: 'Stake between 10 and your gold.', HOUSE_CLOSED: 'The house is closed. You won too much.', IN_PROGRESS: 'Already in progress.', PACT_LIMIT: 'You already made two pacts.', CASINO_LOCKED: 'The casino is closed. A Gambler has to open it.', NOT_GAMBLER: 'Only a Gambler can open the casino.',
 };
 const errText = (e: unknown) => { const m = e instanceof Error ? e.message : String(e); const k = Object.keys(ERR).find((x) => m.includes(x)); return k ? ERR[k] : 'That did not work.'; };
 
@@ -120,6 +120,16 @@ export function Camp({ b, token, state }: { b: BattleState; token: string | null
                   <b>Rest by the fire</b><span>Heal yourself 20%</span><em>FREE</em>
                 </button>
               </div>
+              {!!c.cards?.length && (<>
+                <div className="cp-h">💰 SELL · your hand</div>
+                <div className="cp-grid">
+                  {c.cards.map((card, i) => (
+                    <button key={card + i} type="button" className="cp-item" onClick={() => void run(() => rpc.campSell(token, i), (r) => `Sold ${r.card.replace('_', ' ')} for ${r.gold} gold`)}>
+                      <b>{card.replace(/_/g, ' ')}</b><span>Sell this card</span><em>+🪙 {['sweep', 'heal_all', 'cleanse'].includes(card) ? 20 : card.startsWith('sp_') ? 30 : 70}</em>
+                    </button>
+                  ))}
+                </div>
+              </>)}
             </>
           )}
 
@@ -141,6 +151,15 @@ export function Camp({ b, token, state }: { b: BattleState; token: string | null
                     {c.gold >= 10 && <button type="button" className={stake === c.gold ? 'on' : ''} onClick={() => setStake(c.gold)}>All in ({c.gold})</button>}
                   </div>
                   <button type="button" className="btn lg" disabled={c.gold < 10} onClick={() => { setLast(''); void run(() => rpc.casinoStart(token, Math.min(stake, c.gold))); }}>🎰 Place bet · {Math.min(stake, c.gold)}</button>
+                  <div className="cp-h">⚡ QUICK GAMES · same stake</div>
+                  <div className="cp-grid">
+                    <button type="button" className="cp-item" disabled={c.gold < 10} onClick={() => void run(() => rpc.casinoRoll(token, Math.min(stake, c.gold), 'flip'), (r) => (r.win ? `🪙 Heads! You win ${r.payout}` : 'Tails. The house keeps it.'))}>
+                      <b>Coin Flip</b><span>48% to double your stake</span><em>2x</em>
+                    </button>
+                    <button type="button" className="cp-item" disabled={c.gold < 10} onClick={() => void run(() => rpc.casinoRoll(token, Math.min(stake, c.gold), 'jackpot'), (r) => (r.win ? `💎 JACKPOT! You win ${r.payout}` : 'No jackpot this time.'))}>
+                      <b>Jackpot Spin</b><span>17% to win big</span><em>5x</em>
+                    </button>
+                  </div>
                   {c.gold < 10 && <div className="muted small">You need at least 10 gold.</div>}
                   {last && <div className="cp-result">{last}</div>}
                 </div>
