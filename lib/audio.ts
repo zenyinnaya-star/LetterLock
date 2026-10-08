@@ -65,7 +65,29 @@ function noise(start: number, dur: number, vol = 0.4, freq = 1200, q = 1, sweepT
   src.stop(t + dur + 0.02);
 }
 
+const SFX_CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_';
+// Higgsfield-generated combat SFX (mirelo_text_to_audio)
+const SFX: Record<string, string> = {
+  hit: '20261008_070003_20e59aaf-cada-4ba1-8257-d18981c13bf3', crit: '20261008_070003_b1e88a80-bda2-4493-b3ef-154176ee9ee2',
+  dodge: '20261008_070003_e718dc64-7b2b-4ac9-9b6d-a11332d2dc85', guard: '20261008_070027_92f6712c-3705-42e0-9543-5a36acf9686e',
+  heal: '20261008_070027_ea690194-9d78-4b77-9d8c-5e0eb007973f', ult: '20261008_070003_b78e970f-8d0f-40ec-bc2c-38f9ae732a43',
+  limit: '20261008_070003_7fe71d9c-c627-4e58-baaa-f4e79c96c92a', aoe: '20261008_070042_33223399-d8a4-48c0-9a55-d3b7551f5a24',
+};
+const SFX_ALIAS: Record<string, string> = { sweep: 'aoe', mega_sweep: 'aoe', e_aoe: 'aoe', season: 'aoe', e_heal: 'heal', miss: 'dodge' };
+const sfxCache: Record<string, HTMLAudioElement> = {};
+
 export const audio = {
+  /** Play a Higgsfield-made battle SFX; falls back to the synth version if it can't load/play. */
+  battle(t: string, enemyActing = false) {
+    const key = SFX_ALIAS[t] ?? t;
+    const id = SFX[key];
+    if (!id || typeof window === 'undefined' || !getPrefs().sfx || muted) { this.battleSynth(t, enemyActing); return; }
+    try {
+      const a = (sfxCache[key] ??= new Audio(`${SFX_CDN}${id}.mp3`));
+      const c = a.cloneNode(true) as HTMLAudioElement; c.volume = 0.85;
+      void c.play().catch(() => this.battleSynth(t, enemyActing));
+    } catch { this.battleSynth(t, enemyActing); }
+  },
   unlock() { ac(); },
   isMuted() { return muted; },
   setMuted(m: boolean) {
@@ -123,8 +145,8 @@ export const audio = {
   caught() {
     for (let i = 0; i < 3; i++) { tone(880, i * 0.28, 0.14, 'square', 0.22); tone(660, i * 0.28 + 0.14, 0.14, 'square', 0.22); }
   },
-  /** Battle SFX by log type. */
-  battle(t: string, enemyActing = false) {
+  /** Synth battle SFX by log type (fallback). */
+  battleSynth(t: string, enemyActing = false) {
     switch (t) {
       case 'hit': noise(0, 0.14, 0.6, 1100, 0.8, 250); tone(180, 0, 0.25, 'sawtooth', 0.3, 60); if (enemyActing) tone(90, 0.03, 0.3, 'square', 0.25, 45); break;
       case 'crit': noise(0, 0.22, 0.8, 1500, 0.7, 200); tone(260, 0, 0.4, 'sawtooth', 0.4, 50); tone(1318, 0.02, 0.25, 'triangle', 0.3); tone(1760, 0.08, 0.3, 'triangle', 0.25); break;
@@ -137,7 +159,7 @@ export const audio = {
       case 'sweep': case 'mega_sweep': case 'e_aoe': case 'season': noise(0, 0.5, 0.6, 700, 0.8, 120); tone(140, 0, 0.5, 'sawtooth', 0.4, 50); break;
       case 'e_buff': tone(300, 0, 0.4, 'sawtooth', 0.25, 600); break;
       case 'e_debuff': tone(500, 0, 0.4, 'square', 0.22, 150); break;
-      case 'e_heal': this.battle('heal'); break;
+      case 'e_heal': this.battleSynth('heal'); break;
       case 'stage': this.fanfare(); break;
     }
   },

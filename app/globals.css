@@ -1832,3 +1832,12 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .rg-hud .rg-cmb{flex:1 1 0;max-width:150px;min-height:78px;flex-direction:column;justify-content:center;text-align:center;gap:6px;font-size:12px;padding:10px 6px;border-radius:8px}
 .rg-hud .rg-cmb b{font-size:26px;width:auto}
 @media (max-width:900px){.rg-hud{flex-wrap:wrap}.rg-hud-hp{flex-basis:100%}.rg-hud .rg-cm{flex-wrap:wrap}.rg-hud .rg-cmb{min-width:96px}}
+
+/* ===== Higgsfield-generated VFX sprites (black bg removed via screen blend) ===== */
+.rg-slash{height:auto;width:150%;left:-25%;top:-5%;aspect-ratio:1;transform:none;background:url(https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_070117_b324e611-4ac4-4275-8ed4-df0178cbe6c0.png) center/contain no-repeat;box-shadow:none;mix-blend-mode:screen;animation:slashImg .4s ease-out both}
+@keyframes slashImg{0%{opacity:0;scale:.6}30%{opacity:1;scale:1}100%{opacity:0;scale:1.15}}
+.rg-unit.ouch::before{background:url(https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_070144_72200ae6-0b1f-4e6c-8799-44f77ae02cf6.png) center/contain no-repeat;mix-blend-mode:screen;width:170%}
+.rg-unit.healed::before{background:url(https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_070116_d9e1469e-4d34-4621-90cb-65def2daeeaf.png) center/contain no-repeat;mix-blend-mode:screen;width:170%}
+.rg-unit.shielded::before{background:url(https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_070117_a4d48f59-4d3d-4899-bf68-599d4c81d002.png) center/contain no-repeat;mix-blend-mode:screen;width:170%}
+.rg-lbflash{background:url(https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_070116_cff32808-5acd-4b68-b3ea-d43e6253cb21.png) center/cover no-repeat;mix-blend-mode:screen}
+.rg-unit.striking::after{background:url(https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_070116_cff32808-5acd-4b68-b3ea-d43e6253cb21.png) center/contain no-repeat;mix-blend-mode:screen;opacity:.8}
