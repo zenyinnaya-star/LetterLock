@@ -1428,3 +1428,6 @@ kbd{border:1px solid #b8b2a2;border-radius:3px;padding:0 4px;font-size:10px;marg
 .rg-lbflash{position:absolute;inset:0;z-index:58;pointer-events:none;background:radial-gradient(circle,#fff 0,#facc15 25%,#e11d48 60%,#000 100%);mix-blend-mode:screen;animation:lbf 1.3s ease-out forwards}
 @keyframes lbf{0%{opacity:0}15%{opacity:.95}100%{opacity:0}}
 .rg.lb .rg-party,.rg.lb .rg-skills,.rg.lb .rg-hand,.rg.lb .rg-prompt,.rg.lb .rg-turn{opacity:0;transition:opacity .2s}
+
+.rg-lab{display:block;width:100%;font-size:10px;font-weight:800;letter-spacing:.2em;color:#fda4af;text-shadow:0 1px 2px #000;margin:0 0 2px}
+.rg-hand .rg-lab{flex-basis:100%}

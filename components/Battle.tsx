@@ -379,6 +379,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         {/* bottom-right: skills + ultimate */}
         {mine && b.step === 'input' && (
           <div className="rg-skills">
+            <small className="rg-lab">SKILLS</small>
             <button type="button" className={`rg-sk${action === 'attack' ? ' sel' : ''}`} disabled={skillDisabled} onClick={() => { setAction('attack'); setTarget(null); }}><b>⚔</b><em>Strike</em></button>
             <button type="button" className={`rg-sk${action === 'guard' ? ' sel' : ''}`} disabled={skillDisabled} onClick={() => { setAction('guard'); setTarget(null); }}><b>🛡</b><em>Guard</em></button>
             <button type="button" className={`rg-sk${action === 'heal' ? ' sel' : ''}`} disabled={skillDisabled} onClick={() => { setAction('heal'); setTarget(null); }}><b>✚</b><em>Heal</em></button>
@@ -395,6 +396,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
       {/* hand of cards + book */}
       {b.step === 'input' && mine && (
         <div className="rg-hand">
+          <small className="rg-lab">ITEMS</small>
           <button type="button" className="rg-book" disabled={!!b.book_used || mine.hp <= 0} onClick={() => void openBook()}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={BOOK_ART} alt="" draggable={false} />
