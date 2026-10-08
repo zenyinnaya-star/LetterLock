@@ -43,6 +43,11 @@ export const ACT_BG = [
   u('20261008_063231_eadd574b-4745-4cb3-8d40-8a18831b54e3'), // Act II · archive fortress
   u('20261008_063315_05cd6739-2de4-45ea-bc87-3466756ea0e0'), // Act III · citadel
 ];
+export const PIXEL_BG = [
+  'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_131257_851376aa-3c7c-4b25-92af-b27a37825f08.png',
+  'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_131257_d1ae0087-97b5-4bc9-b638-79d33ecdc3b7.png',
+  'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_131258_29ad1a30-0fb6-4b7f-9daf-c078a820e43e.png',
+]; // 16-bit pixel-art battle backdrops, one per act
 export const MENU_BG = u('20261008_063255_20876ecb-71fb-47e1-abb5-86be76caf752');
 export const HERO_BG = u('20261008_063230_5d2b88fe-8bdd-4a43-a030-dcad86f63b89');
 export const BOOK_ART = u('20261008_063230_8c35b853-eb22-4ed6-b263-f0377c6d91f3');

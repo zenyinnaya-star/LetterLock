@@ -4,7 +4,7 @@ import { audio } from '@/lib/audio';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ACT_BG, ACT_NAME, BOOK_ART, ENEMY_SPRITE, HERO_SPRITE, actOf } from '@/lib/art';
+import { ACT_BG, PIXEL_BG, ACT_NAME, BOOK_ART, ENEMY_SPRITE, HERO_SPRITE, actOf } from '@/lib/art';
 import dynamic from 'next/dynamic';
 import { Camp } from './Camp';
 import { webglOk, type StageFx } from './Stage3D';
@@ -471,7 +471,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   return (
     <div className={`rg${active?.t === 'limit' ? ' lb' : ''}`}>
       <div className={`rg-stage${use3d ? ' t3' : ''}`} data-boss={lead?.name === 'Government' ? 1 : 0} data-foes={aliveEnemies.length <= 1 ? 1 : 0}>
-        <div className="rg-bg" style={{ backgroundImage: `url(${ACT_BG[ai]})` }} />
+        <div className="rg-bg" style={{ backgroundImage: `url(${PIXEL_BG[ai]})` }} />
         {use3d && <Stage3D act={ai} fx={fx} pos={posMap}
           units={b.units.map((u) => ({ id: u.id, side: u.side, name: u.name, hero: u.hero, dead: u.hp <= 0 }))}
           pickedId={target} pickableIds={b.units.filter((u) => u.hp > 0 && ((needsEnemy && u.side === 'enemy') || (needsAlly && u.side === 'hero')) && canAct).map((u) => u.id)} />}
@@ -699,7 +699,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
       {/* Act intro */}
       <AnimatePresence>
         {intro !== null && (
-          <motion.div className="rg-intro" style={{ backgroundImage: `url(${ACT_BG[intro]})` }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}>
+          <motion.div className="rg-intro" style={{ backgroundImage: `url(${PIXEL_BG[intro]})` }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}>
             <motion.div initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4, duration: 0.7 }}>
               <small>{['ACT ONE', 'ACT TWO', 'ACT THREE'][intro]}</small>
               <h1>{ACT_NAME[intro].split('· ')[1]}</h1>

@@ -1946,3 +1946,4 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .rg-stage .rg-unit.hero{width:17%;max-width:200px;min-width:110px}
 .rg-stage[data-foes="1"] .rg-unit.enemy{width:26%;max-width:290px;min-width:160px}
 .rg-stage[data-foes="1"] .rg-unit.enemy.boss{width:34%;max-width:360px}
+.rg-bg,.rg-intro{image-rendering:pixelated;background-size:cover;background-position:center bottom}
