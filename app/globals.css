@@ -1727,3 +1727,6 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.78),rgba(4,6,10,.9)),u
 .mode-card{min-height:clamp(150px,24vh,300px)}
 .mode-grid.three .mode-card{min-height:clamp(120px,18vh,220px)}
 .play-modes{gap:clamp(12px,1.6vw,26px)}
+/* landing without the hero line-up: just a glow behind the title */
+.lp-art{height:clamp(120px,22vh,240px)}
+.lp-hero{min-height:calc(100dvh - 140px)}

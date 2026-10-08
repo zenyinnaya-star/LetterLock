@@ -5,7 +5,6 @@ import { motion } from 'motion/react';
 import { Icon } from '@/components/icons';
 import { Header, spring } from '@/components/ui';
 import { useT } from '@/lib/i18n/react';
-import { HEROES } from '@/lib/heroes';
 
 const TITLE = 'LETTERLOCK';
 
@@ -16,13 +15,6 @@ export default function Home() {
       <Header />
       <section className="lp-hero">
         <motion.div className="hero-art lp-art" aria-hidden initial={{ opacity: 0, scale: 1.08 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}>
-          <div className="lp-line">
-            {[HEROES[1], HEROES[2], HEROES[0], HEROES[3], HEROES[4]].map((h, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <motion.img key={h.id} src={h.artFull} alt="" draggable={false} className={`lp-hero-img h${i}`}
-                initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 + i * 0.12, duration: 0.9, ease: [0.22, 1, 0.36, 1] }} />
-            ))}
-          </div>
         </motion.div>
         <h1 className="hero-tiles lp-tiles" aria-label="Letterlock">
           {TITLE.split('').map((c, i) => (
