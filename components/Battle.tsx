@@ -143,6 +143,7 @@ function StageBg({ act }: { act: number }) {
   return (
     <>
       <div className={`rg-bg${act === 0 && i === 0 ? ' paint' : ''}`} style={{ backgroundImage: `url(${url})` }} />
+      <div className="rg-ground" aria-hidden />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={url} alt="" style={{ display: 'none' }} onError={() => setI((n) => Math.min(n + 1, chain.length - 1))} />
     </>
