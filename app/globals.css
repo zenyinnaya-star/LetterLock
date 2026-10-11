@@ -2462,3 +2462,9 @@ html:has(.shell.rpg) body{overflow:hidden}
 .rg-unit.lift{transform:translate(-50%,-50%)!important;filter:none!important}
 .rg-unit.lift .rg-uc,.rg-unit.hero.mine .rg-uc{box-shadow:none!important}
 .rg-unit.hero.mine .rg-uc-tag{box-shadow:none}
+
+/* targeted enemy: red glow only on the ground ring, never on the sprite */
+.rg-unit.picked .rg-img,.rg-unit.pickable .rg-img{filter:none!important}
+.rg-unit.pickable .rg-uc,.rg-unit.picked .rg-uc{box-shadow:none!important;border:0!important}
+.rg-unit.enemy.picked::after{width:116%;height:28px;bottom:-11px;border:2px solid #ef4444;
+  background:radial-gradient(ellipse at center,rgba(239,68,68,.22),rgba(0,0,0,0) 70%);box-shadow:0 0 16px #ef4444bb,inset 0 0 12px #ef444466}
