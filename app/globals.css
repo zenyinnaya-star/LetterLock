@@ -2500,3 +2500,13 @@ html:has(.shell.rpg) body{overflow:hidden}
 
 /* no icon strips or tags floating over the characters */
 .rg-unit .rg-el,.rg-unit .rg-uc-tag{display:none!important}
+
+/* all six commands + hint fit without clipping; stage backdrop shows the horizon band (ship, castle) */
+@media (min-width:761px) and (min-height:521px){
+  .shell.rpg .bx-deck{height:296px}
+  .shell.rpg .rg-stage{height:calc(100dvh - 418px)}
+  .shell.rpg .bx-cmds{gap:3px}
+  .shell.rpg .bx-cmd{min-height:31px;padding:4px 10px;font-size:13px}
+  .shell.rpg .bx-cmd-hint{font-size:10.5px;margin-top:1px}
+}
+.rg-bg.paint{background-position:center 38%}
