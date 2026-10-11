@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import { Camp } from './Camp';
 import { webglOk, type StageFx } from './Stage3D';
 const Stage3D = dynamic(() => import('./Stage3D'), { ssr: false });
+import { SheetSprite } from '@/components/SheetSprite';
 import { heroById, HERO_PORTRAIT, type HeroId } from '@/lib/heroes';
 import { fetchStoryResult, type StoryResult } from '@/lib/profile';
 import { rpc, type BattleLogEntry, type BattleState, type BattleUnit } from '@/lib/rpc';
@@ -18,7 +19,7 @@ import { LetterVfx } from './LetterVfx';
 import { actionFor, lungeTimes } from '@/lib/combat/actions';
 import { BattleTutorial } from './BattleTutorial';
 import { TopBar, CommandDeck, LeftParty, type WordUi, type Cmd, type Chip, type Entry, type PartyRow, type OrderItem } from './BattleHud';
-import { preloadFor } from '@/lib/combat/registry';
+import { preloadFor, SHEETS } from '@/lib/combat/registry';
 import type { Act } from './phases';
 
 type ActionId = 'attack' | 'guard' | 'heal' | 'ult';
@@ -155,7 +156,8 @@ function Sprite({ action, elNow, u, floats, picked, onPick, style, lunge, lungeT
           {u.hp > 0 && u.intent && <span className={`rg-intent i-${u.intent}`} title={`Next: ${u.intent}`}>{INTENT_ICON[u.intent] ?? '⚔'}</span>}
           {u.hp > 0 && (u.haste ?? 0) !== 0 && <span className={`rg-haste ${(u.haste ?? 0) > 0 ? 'up' : 'dn'}`} title={(u.haste ?? 0) > 0 ? 'Hasted: acts earlier' : 'Slowed: acts later'}>{(u.haste ?? 0) > 0 ? '⚡' : '🐌'}</span>}
           <span className="rg-uc-tag">{mine ? 'YOU' : u.side === 'hero' ? (u.hero ?? 'HERO') : u.name === 'Government' ? 'BOSS' : 'FOE'}</span>
-          <KeyedImg className="rg-img" src={sprite(u, win, pose ?? (hit && u.hp > 0 ? 'hurt' : undefined))} alt={u.name} />
+          {(() => { const sh = !pose && !hit && !win && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:IDLE`] : undefined;
+            return sh ? <SheetSprite className="rg-img" url={sh.url} data={sh} /> : <KeyedImg className="rg-img" src={sprite(u, win, pose ?? (hit && u.hp > 0 ? 'hurt' : undefined))} alt={u.name} />; })()}
           <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
           <span className="rg-uc-hp"><span className="rg-ehp"><motion.u animate={{ width: `${pct}%` }} transition={{ duration: 1.1, delay: 0.35 }} /><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.3 }} /></span><b>{u.hp}</b></span>
           {hit && <span className="rg-slash" key={floats[0]?.k} />}
