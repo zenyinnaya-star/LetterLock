@@ -33,8 +33,11 @@ export function StoryHeroSelect() {
     try {
       const r = await rpc.createRoom(name.trim(), 'hero');
       await rpc.updateSettings(r.token, { max_players: 4 });
-      await rpc.setStory(r.token).catch(() => undefined);
-      await rpc.setHero(r.token, hero).catch(() => undefined);
+      // story flag and hero pick are required for this mode to work at all: let a failure here throw
+      // and surface through the catch below, rather than silently entering the room half-configured.
+      await rpc.setStory(r.token);
+      await rpc.setHero(r.token, hero);
+      // avatar is cosmetic only: fine to proceed without it
       if (avatar) await rpc.setAvatar(r.token, avatar).catch(() => undefined);
       await linkProfile(r.token, name.trim());
       saveName(name.trim());

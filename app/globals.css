@@ -1511,7 +1511,7 @@ h3{font-weight:800}
 .banner,.action-banner{border-radius:2px;font-family:var(--impact);font-style:italic;font-weight:900;text-transform:uppercase;letter-spacing:.06em;transform:skewX(-6deg)}
 .divider{opacity:.5}
 .popover,.sheet-backdrop+.sheet{border-radius:4px}
-@media (prefers-reduced-motion:reduce){.mode-card:hover,.class-card:hover,.sel-card:hover,.class-tile:hover,.btn:hover:not(:disabled){transform:skewX(-7deg)}}
+@media (prefers-reduced-motion:reduce){.mode-card:hover,.class-card:hover,.sel-card:hover,.class-tile:hover,.btn:hover:not(:disabled){transform:none}}
 
 /* stats: chosen hero */
 .st-hero{display:grid;grid-template-columns:minmax(110px,34%) 1fr;gap:14px;align-items:end;background:linear-gradient(120deg,color-mix(in srgb,var(--hc) 22%,#0a0d1c),#080a14);border:1px solid #2a3050;border-left:5px solid var(--hc);border-radius:4px;box-shadow:7px 7px 0 rgba(0,0,0,.55);padding:12px 14px 12px 0;overflow:hidden}

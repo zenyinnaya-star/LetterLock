@@ -213,7 +213,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   }
 
   const midGame = phase !== 'lobby' && phase !== 'finished' && !!me && !me.eliminated;
-  const props = { state, token, msLeft, act };
+  const props = { state, token, msLeft, act, offset };
   let main: React.ReactNode;
   switch (phase) {
     case 'lobby': main = <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} />; break;
