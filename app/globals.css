@@ -2288,7 +2288,7 @@ input::placeholder{color:rgba(255,246,216,.6)!important}
 /* desktop/tablet: the whole battle (arena + commands + hero panel) fits the viewport, no page scroll */
 @media (min-width:761px) and (min-height:521px){
   .shell.rpg{min-height:0}
-  .rg-stage{aspect-ratio:auto;height:calc(100dvh - 270px);min-height:320px;max-height:720px}
+  /* .rg-stage height for this breakpoint is set once, below (search "hide the in-stage party cards on desktop") */
   .rg-bottom{gap:10px;margin:8px 0 0;align-items:stretch}
   .rg-cmd{flex:0 0 clamp(220px,22vw,290px);padding:4px 6px 4px 0}
   .rg-cmd .rg-cmb{font-size:17px;padding:7px 18px 10px 14px;margin:0 0 -4px;--r:-1deg}
@@ -2416,7 +2416,7 @@ input::placeholder{color:rgba(255,246,216,.6)!important}
 .shell.rpg .rg-stage{border-radius:0;box-shadow:none;max-height:none;min-height:300px}
 .shell.rpg .bx-top{border-radius:0;border-left:0;border-right:0;margin:0}
 .shell.rpg .bx-deck{padding:10px 12px;background:linear-gradient(180deg,#070a18,#04050d);border-top:1px solid #6b5420}
-@media (min-width:761px) and (min-height:521px){.shell.rpg .rg-stage{height:calc(100dvh - 400px)}}
+/* .shell.rpg .rg-stage height for this breakpoint is set once, below (search "all six commands + hint fit") */
 @media (max-width:760px){.shell.rpg .bx-deck{padding:8px}}
 
 /* RPG mode = its own full-screen view (no site header, scoreboard or page box) */
@@ -2430,7 +2430,7 @@ html:has(.shell.rpg) body{overflow:hidden}
 @media (min-width:761px) and (min-height:521px){
   .shell.rpg .bx-deck{height:268px}
   .shell.rpg .bx-cmds{overflow-y:auto}
-  .shell.rpg .rg-stage{height:calc(100dvh - 390px);min-height:280px}
+  .shell.rpg .rg-stage{min-height:280px}
 }
 
 /* ---- side-on battle line: nameplates above enemies, ground shadow + rings ---- */
