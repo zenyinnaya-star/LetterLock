@@ -584,7 +584,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         turnLabel={active ? (active.a && enemies.some((e) => e.name === active.a) ? 'ENEMY TURN' : 'RESOLVING') : canAct ? 'YOUR TURN' : mine && mine.hp <= 0 ? 'DOWN' : mine?.locked ? 'LOCKED IN' : 'WAITING'}
         turnSub={active ? 'Watch the round play out' : canAct ? 'You can act now' : mine?.locked ? (multi ? 'Waiting for allies' : 'Resolving…') : 'Hold on…'}
         multi={multi} ready={hudHeroes.filter((h) => h.locked).length} readyTotal={hudHeroes.length} waiting={multi && mine?.locked ? waitingNames.slice(0, 3).join(', ') : ''}
-        timer={active || b.step !== 'input' ? '—' : left > 3600 ? 'No timer' : `${left}s`} warn={!active && left <= 5 && b.step === 'input'}
+        timer={active || b.step !== 'input' ? '—' : left > 3600 || left > 30 ? 'No timer' : `Idle ${left}s`} warn={!active && left <= 5 && b.step === 'input'}
         skillsHref={`/skills?from=${encodeURIComponent(`/room/${state.room.code}`)}`} onLog={() => setShowLog((v) => !v)} />
       <div ref={stageEl} className={`rg-stage${use3d ? ' t3' : ''}`} data-boss={lead?.name === 'Government' ? 1 : 0} data-foes={aliveEnemies.length <= 1 ? 1 : 0}>
         <div className="rg-cam" ref={(el) => { dir.camEl.current = el; dir.cam.attach(el); }}>
