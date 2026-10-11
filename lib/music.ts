@@ -1,11 +1,11 @@
-// Background music: the site theme everywhere, the duel track during a 1v1.
+// Background music: the site theme everywhere, the Story/RPG track (story.mp3) during battle/camp, the duel track during a 1v1.
 // Uses plain <audio> elements (streamed, cheap) with volume crossfades.
 import { audio } from './audio';
 import { getPrefs } from './prefs';
 
 export type Track = 'theme' | 'duel' | 'battle' | 'none';
 
-const SRC: Record<Exclude<Track, 'none'>, string> = { theme: '/audio/theme.mp3', duel: '/audio/duel.mp3', battle: '/audio/battle.mp3' };
+const SRC: Record<Exclude<Track, 'none'>, string> = { theme: '/audio/theme.mp3', duel: '/audio/duel.mp3', battle: '/audio/story.mp3' };
 const LEVEL: Record<Exclude<Track, 'none'>, number> = { theme: 0.32, duel: 0.55, battle: 0.5 };
 
 let els: Partial<Record<Exclude<Track, 'none'>, HTMLAudioElement>> = {};
@@ -20,7 +20,7 @@ function el(t: Exclude<Track, 'none'>): HTMLAudioElement {
   if (!a) {
     a = new Audio(SRC[t]);
     a.loop = true;
-    // dedicated RPG track is optional: until /public/audio/battle.mp3 exists, the duel track stands in
+    // dedicated RPG track is optional: if the story track fails to load, the duel track stands in
     if (t === 'battle') a.addEventListener('error', () => { if (!a!.src.endsWith('duel.mp3')) { a!.src = SRC.duel; a!.load(); if (want === 'battle') void a!.play().catch(() => undefined); } }, { once: true });
     a.preload = 'auto';
     a.volume = 0;
