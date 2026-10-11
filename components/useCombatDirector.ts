@@ -78,6 +78,21 @@ export function useCombatDirector(inp: In) {
   useEffect(() => {
     const { active: e, units, pos } = latest.current;
     if (!e) return;
+    // server-authoritative Break meter
+    if (e.t === 'brk' && e.di) {
+      const broke = e.x === true;
+      brkRef.current = { ...brkRef.current, [e.di]: { v: broke ? (e.mx ?? e.n ?? 0) : (e.n ?? 0), broken: broke } };
+      setBreaks(brkRef.current);
+      if (broke) {
+        bus.emit({ type: 'BREAK_TRIGGERED', targetId: e.di, heroSide: true });
+        const t = pos[e.di];
+        setLabel({ key: `${++seq.current}`, big: 'BREAK!', cls: 'brk' });
+        setFlash({ k: ++seq.current, cls: 'brk' });
+        if (t) setFx({ key: `${++seq.current}`, kind: 'shatter', word: 'BREAK', from: t, to: t });
+      }
+      return;
+    }
+    if (e.t === 'stunned') { setLabel({ key: `${++seq.current}`, big: 'STUNNED', cls: 'weak' }); }
     const evs = eventsFor(e, units);
     const has = (t: CombatEvent['type']) => evs.find((x) => x.type === t);
     const hero = evs.some((x) => x.heroSide);
@@ -98,20 +113,6 @@ export function useCombatDirector(inp: In) {
 
     // BREAK meter
     let broke = false;
-    const foe = units.find((u) => u.id === target && u.side === 'enemy');
-    if (foe && hero && has('DAMAGE_DEALT') && (correct || has('CRITICAL_HIT') || has('ULTIMATE_SUCCESS'))) {
-      const pts = 1 + (has('WORD_LONG') ? 1 : 0) + (has('WORD_RARE') ? 1 : 0) + (has('WEAKNESS_HIT') ? 2 : 0) + (has('CRITICAL_HIT') ? 3 : 0) + (has('ULTIMATE_SUCCESS') ? 3 : 0)
-        + prof.breakBonus({ long: !!has('WORD_LONG'), rare: !!has('WORD_RARE'), weak: !!has('WEAKNESS_HIT'), crit: !!has('CRITICAL_HIT'), len: (word ?? '').length });
-      const max = breakMaxOf(foe.name);
-      const cur = brkRef.current[foe.id] ?? { v: 0, broken: false };
-      if (!cur.broken) {
-        const v = Math.min(max, cur.v + pts);
-        broke = v >= max;
-        brkRef.current = { ...brkRef.current, [foe.id]: { v, broken: broke } };
-        setBreaks(brkRef.current);
-        if (broke) bus.emit({ type: 'BREAK_TRIGGERED', actorId: actor, targetId: foe.id, heroSide: true });
-      }
-    }
     evs.forEach((x) => bus.emit(x));
 
     // normal swing for plain hits (bigger presets already fired from the bus)

@@ -41,6 +41,8 @@ const INTENT: Record<string, string> = {
 function logLine(e: BattleLogEntry) {
   switch (e.t) {
     case 'odds': return `${e.a} calls the team's ODDS!`;
+    case 'brk': return e.x === true ? `BREAK! ${e.d} is stunned and will lose its next move!` : `${e.d} Break ${e.n}/${e.mx}`;
+    case 'stunned': return `${e.a} is stunned and can't act!`;
     case 'limit': return `LIMIT BREAK! ${e.a} leads the team for ${e.n} to everyone!`;
     case 'crit': if (e.sp) return `${e.a} uses ${e.sp} on ${e.d} for ${e.n}!`; return `${e.a} CRITS ${e.d} for ${e.n}${e.w ? ` (${e.w})` : ''}!`;
     case 'sweep': return `${e.a} plays Sweep: ${e.n} to every enemy!`;
@@ -286,7 +288,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     setActive(entries[0]);
     // big moments (crit, ultimate, limit break) hold longer: a short slow-motion beat
     const enemyIds = new Set((b?.units ?? []).filter((x) => x.side === 'enemy').map((x) => x.id));
-    const delay = (e: BattleLogEntry) => (e.t === 'ult' || e.t === 'limit' ? 2300 : e.t === 'crit' ? 1250 : (e.ai && enemyIds.has(e.ai)) ? 450 : 650);
+    const delay = (e: BattleLogEntry) => (e.t === 'brk' ? (e.x === true ? 1000 : 150) : e.t === 'stunned' ? 800 : e.t === 'ult' || e.t === 'limit' ? 2300 : e.t === 'crit' ? 1250 : (e.ai && enemyIds.has(e.ai)) ? 450 : 650);
     let id: ReturnType<typeof setTimeout>;
     const next = () => { i += 1; if (i >= entries.length) { setActive(null); setApplied({ ver: playKey, ids: [], all: true }); } else { setActive(entries[i]); id = setTimeout(next, delay(entries[i])); } };
     id = setTimeout(next, delay(entries[0]));
