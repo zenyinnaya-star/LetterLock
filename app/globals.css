@@ -2284,3 +2284,16 @@ input::placeholder{color:rgba(255,246,216,.6)!important}
   .prompt{font-size:clamp(22px,5vh,34px)!important;padding:8px 14px!important;margin:4px 0}
   .tile{width:44px;height:50px;font-size:26px}
 }
+
+/* desktop/tablet: the whole battle (arena + commands + hero panel) fits the viewport, no page scroll */
+@media (min-width:761px) and (min-height:521px){
+  .shell.rpg{min-height:0}
+  .rg-stage{aspect-ratio:auto;height:calc(100dvh - 270px);min-height:320px;max-height:720px}
+  .rg-bottom{gap:10px;margin:8px 0 0;align-items:stretch}
+  .rg-cmd{flex:0 0 clamp(220px,22vw,290px);padding:4px 6px 4px 0}
+  .rg-cmd .rg-cmb{font-size:17px;padding:7px 18px 10px 14px;margin:0 0 -4px;--r:-1deg}
+  .rg-cmd .rg-cmb:nth-child(2){--r:.8deg;--x:6px}.rg-cmd .rg-cmb:nth-child(3){--r:-.8deg;--x:2px}.rg-cmd .rg-cmb:nth-child(4){--r:1.2deg;--x:8px}.rg-cmd .rg-cmb:nth-child(5){--r:-.6deg;--x:4px}.rg-cmd .rg-cmb:nth-child(6){--r:1deg;--x:6px}
+  .rg-cmd-h{margin-bottom:4px}
+  .rg-hud{padding:8px 14px 8px 8px;gap:14px;align-items:center}
+  .rg-hud-hp{flex:1 1 auto}
+}

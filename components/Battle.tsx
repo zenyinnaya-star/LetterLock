@@ -290,7 +290,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     setActive(entries[0]);
     // big moments (crit, ultimate, limit break) hold longer: a short slow-motion beat
     const enemyIds = new Set((b?.units ?? []).filter((x) => x.side === 'enemy').map((x) => x.id));
-    const delay = (e: BattleLogEntry) => (e.t === 'brk' ? (e.x === true ? 1000 : 150) : e.t === 'stunned' ? 800 : e.t === 'ult' || e.t === 'limit' ? 2300 : e.t === 'crit' ? 1250 : (e.ai && enemyIds.has(e.ai)) ? 450 : 650);
+    const delay = (e: BattleLogEntry) => (e.t === 'brk' ? (e.x === true ? 1000 : 150) : e.t === 'stunned' ? 800 : e.t === 'ult' || e.t === 'limit' ? 2300 : e.t === 'crit' ? 1500 : (e.ai && enemyIds.has(e.ai)) ? 800 : 950);
     let id: ReturnType<typeof setTimeout>;
     const next = () => { i += 1; if (i >= entries.length) { setActive(null); setApplied({ ver: playKey, ids: [], all: true }); } else { setActive(entries[i]); id = setTimeout(next, delay(entries[i])); } };
     id = setTimeout(next, delay(entries[0]));
@@ -620,7 +620,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
         <div className={`rg-turn${active ? ' play' : canAct ? ' mine' : ' wait'}`} key={active ? 'p' : canAct ? `m${b.turn}` : 'w'}>
           {active ? (active.a && enemies.some((e) => e.name === active.a) ? '⚔ Enemies attack…' : '⚔ Resolving the turn…')
-            : mine && mine.hp <= 0 ? 'You are down' : canAct ? `YOUR TURN · Turn ${b.turn}` : mine?.locked ? 'Locked in · waiting for the team' : 'Waiting…'}
+            : mine && mine.hp <= 0 ? 'You are down' : canAct ? `YOUR TURN · Turn ${b.turn}` : mine?.locked ? (() => { const w = heroes.filter((h) => h.hp > 0 && !h.locked && h.player_id !== b.me).map((h) => h.hero ?? h.name); return w.length ? `✓ Locked in · waiting for ${w.slice(0, 3).join(', ')}` : '✓ Locked in · resolving…'; })() : 'Waiting…'}
         </div>
 
         {mine && (mine.afk ?? 0) >= 2 && b.step === 'input' && !mine.locked && <div className="rg-idle">You've been idle, so you're auto-guarding. Cast a word to rejoin. The team won't wait for idle players.</div>}
