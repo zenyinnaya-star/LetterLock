@@ -23,3 +23,11 @@ begin
       from battle_units u where u.room_id = me.room_id));
 end
 $fn$;
+
+-- (applied live) a stray get_battle(text) overload created by mistake was renamed and locked down.
+do $$ begin
+  if exists (select 1 from pg_proc where proname = 'get_battle' and pronamespace = 'public'::regnamespace and pg_get_function_identity_arguments(oid) = 'text') then
+    alter function public.get_battle(text) rename to _get_battle_text_dup;
+    revoke execute on function public._get_battle_text_dup(text) from public, anon, authenticated;
+  end if;
+end $$;
