@@ -2418,3 +2418,17 @@ input::placeholder{color:rgba(255,246,216,.6)!important}
 .shell.rpg .bx-deck{padding:10px 12px;background:linear-gradient(180deg,#070a18,#04050d);border-top:1px solid #6b5420}
 @media (min-width:761px) and (min-height:521px){.shell.rpg .rg-stage{height:calc(100dvh - 400px)}}
 @media (max-width:760px){.shell.rpg .bx-deck{padding:8px}}
+
+/* RPG mode = its own full-screen view (no site header, scoreboard or page box) */
+.shell.rpg{position:fixed;inset:0;z-index:60;overflow:hidden auto;background:#04050d;min-height:0;height:100dvh}
+.shell.rpg .rg{min-height:100%}
+.rpg-menu{position:fixed;top:8px;right:8px;z-index:70;display:flex;gap:6px;align-items:center}
+.rpg-menu .textbtn,.rpg-menu button{background:rgba(8,11,26,.85);border:1px solid #6b5420;border-radius:6px;color:#e8e2d0;padding:4px 7px}
+.shell.rpg .bx-top{padding-right:92px}
+html:has(.shell.rpg) .stage-fx{display:none}
+html:has(.shell.rpg) body{overflow:hidden}
+@media (min-width:761px) and (min-height:521px){
+  .shell.rpg .bx-deck{height:268px}
+  .shell.rpg .bx-cmds{overflow-y:auto}
+  .shell.rpg .rg-stage{height:calc(100dvh - 390px);min-height:280px}
+}

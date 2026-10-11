@@ -237,7 +237,16 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   return (
     <MotionConfig reducedMotion="user">
       {stageName && stageName !== 'none' && <div className={`stage-fx stage-${stageName}`} aria-hidden />}
-      <div className={`shell${phase === 'battle' ? ' rpg' : ''}`}>
+      {phase === 'battle' ? (
+        <div className="shell rpg" role="main">
+          {main}
+          <div className="rpg-menu">
+            <SettingsButton state={state} token={token} act={act} />
+            {me && midGame && <button className="textbtn danger" title={t('gm.quit')} aria-label={t('gm.quit')} onClick={() => setConfirmQuit(true)}><Icon name="logout" size={15} /></button>}
+          </div>
+        </div>
+      ) : (
+      <div className="shell">
         <Header
           settings={<SettingsButton state={state} token={token} act={act} />}
           right={
@@ -276,6 +285,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           </AnimatePresence>
         </section>
       </div>
+      )}
       {phase !== 'battle' && <Rack state={state} token={token} act={act} />}
       <Reactions state={state} token={token} />
       <ActionFeed state={state} />
