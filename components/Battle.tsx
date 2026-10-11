@@ -111,8 +111,12 @@ function KeyedImg({ src, className, alt, style }: { src: string; className?: str
 }
 
 const portrait = (u: BattleUnit) => (u.hero ? heroById(u.hero as HeroId)?.artFull : (ENEMY_PIXEL[u.name] ?? ENEMY_SPRITE[u.name])) ?? '';
+// side-profile battle art (matches the target mockup); heroes listed here use it for every pose except hurt
+const HERO_SIDE: Record<string, string> = {
+  Shiro: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261011_053202_832e01db-6edf-4ecd-a03d-d188c922fcdc.png',
+};
 const sprite = (u: BattleUnit, win?: boolean, pose?: 'strike' | 'cast' | 'hurt') => pose === 'hurt' && HURT[u.hero ?? u.name] ? HURT[u.hero ?? u.name] : (u.hero
-  ? ((win ? HERO_WIN[u.hero] : pose === 'cast' ? HERO_CAST[u.hero] : pose === 'strike' ? HERO_STRIKE[u.hero] : undefined) ?? HERO_BACK[u.hero] ?? HERO_SPRITE[u.hero])
+  ? (HERO_SIDE[u.hero] ?? (win ? HERO_WIN[u.hero] : pose === 'cast' ? HERO_CAST[u.hero] : pose === 'strike' ? HERO_STRIKE[u.hero] : undefined) ?? HERO_BACK[u.hero] ?? HERO_SPRITE[u.hero])
   : ((pose ? ENEMY_STRIKE[u.name] : undefined) ?? ENEMY_PIXEL[u.name] ?? ENEMY_SPRITE[u.name])) ?? '';
 
 const INTENT_ICON: Record<string, string> = { attack: '⚔', aoe: '💥', buff: '⬆', debuff: '🐌', heal: '✚', strike: '⚔', red_tape: '🔒', taxes: '☠', tax_season: '💥' };
