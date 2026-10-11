@@ -3,19 +3,26 @@
 // registered here (with `clip`) and everything else (controller, camera, VFX) keeps working unchanged.
 import { ENEMY_PIXEL, ENEMY_SPRITE, ENEMY_STRIKE, HERO_BACK, HERO_CAST, HERO_SPRITE, HERO_STRIKE, HERO_WIN, HURT } from '@/lib/art';
 
-export type AnimState = 'IDLE' | 'READY' | 'ATTACK' | 'HEAVY_ATTACK' | 'CRITICAL_ATTACK' | 'SKILL' | 'GUARD' | 'HURT' | 'DEFEAT' | 'VICTORY' | 'ULTIMATE_INTRO' | 'ULTIMATE_ATTACK' | 'LEVEL_UP' | 'BREAK';
+export type AnimState = 'MISS' | 'DODGE' | 'STAGGER' | 'IDLE' | 'READY' | 'ATTACK' | 'HEAVY_ATTACK' | 'CRITICAL_ATTACK' | 'SKILL' | 'GUARD' | 'HURT' | 'DEFEAT' | 'VICTORY' | 'ULTIMATE_INTRO' | 'ULTIMATE_ATTACK' | 'LEVEL_UP' | 'BREAK';
 export type CameraPreset = 'IDLE' | 'FOCUS_ENEMY' | 'FOCUS_PLAYER' | 'ATTACK_SWING' | 'HEAVY_ATTACK' | 'CRITICAL' | 'BREAK' | 'ULTIMATE_INTRO' | 'ULTIMATE_ATTACK' | 'VICTORY';
+
+/** Sprite-sheet description: frames laid out in a grid, played in order over `duration` seconds. */
+export type AnimationData = { hframes: number; vframes: number; total_frames: number; duration: number };
 
 export type AnimMeta = {
   id: string; character: string; action: AnimState; duration: number; playbackSpeed: number;
   fallback?: AnimState; cameraPreset?: CameraPreset; vfxPreset?: string; sfxPreset?: string; priority: number;
+  sheet?: AnimationData; // optional sprite sheet (same shape as JRPG Builder's animation_data)
   frame?: string; clip?: string; // frame = still pose, clip = optional video (versioned, e.g. kira_attack_v01)
 };
 
-export const PRIORITY: Record<AnimState, number> = { ULTIMATE_INTRO: 9, ULTIMATE_ATTACK: 9, BREAK: 8, CRITICAL_ATTACK: 7, SKILL: 6, HEAVY_ATTACK: 5, ATTACK: 4, GUARD: 3, HURT: 2, LEVEL_UP: 2, VICTORY: 2, DEFEAT: 2, READY: 1, IDLE: 0 };
+export const PRIORITY: Record<AnimState, number> = { ULTIMATE_INTRO: 9, ULTIMATE_ATTACK: 9, BREAK: 8, CRITICAL_ATTACK: 7, SKILL: 6, HEAVY_ATTACK: 5, ATTACK: 4, GUARD: 3, HURT: 2, LEVEL_UP: 2, VICTORY: 2, DEFEAT: 2, MISS: 2, DODGE: 3, STAGGER: 3, READY: 1, IDLE: 0 };
 
 const DEFAULTS: Record<AnimState, Pick<AnimMeta, 'duration' | 'playbackSpeed' | 'fallback' | 'cameraPreset' | 'vfxPreset' | 'sfxPreset'>> = {
   IDLE: { duration: 1200, playbackSpeed: 1 },
+  MISS: { duration: 500, playbackSpeed: 1, fallback: 'IDLE' },
+  DODGE: { duration: 450, playbackSpeed: 1, fallback: 'IDLE', sfxPreset: 'dodge' },
+  STAGGER: { duration: 700, playbackSpeed: 1, fallback: 'HURT' },
   READY: { duration: 400, playbackSpeed: 1, fallback: 'IDLE', cameraPreset: 'FOCUS_PLAYER' },
   ATTACK: { duration: 650, playbackSpeed: 1, fallback: 'IDLE', cameraPreset: 'ATTACK_SWING', vfxPreset: 'slash', sfxPreset: 'hit' },
   HEAVY_ATTACK: { duration: 800, playbackSpeed: 1, fallback: 'ATTACK', cameraPreset: 'HEAVY_ATTACK', vfxPreset: 'slash-heavy', sfxPreset: 'hit' },
@@ -46,6 +53,9 @@ function frameFor(name: string, isHero: boolean, a: AnimState): string | undefin
   }
   return undefined;
 }
+/** Register sprite sheets here as art arrives: SHEETS['Kira:ATTACK'] = { url, hframes, vframes, total_frames, duration }. */
+export const SHEETS: Record<string, AnimationData & { url: string }> = {};
+
 export const heroBack = (name: string) => HERO_BACK[name];
 
 /** Resolve a state to concrete metadata, walking fallbacks until something exists. Never throws, never returns empty. */
@@ -55,7 +65,8 @@ export function resolveAnim(name: string, isHero: boolean, want: AnimState): Ani
     const frame = frameFor(name, isHero, a);
     if (frame || a === 'IDLE') {
       const d = DEFAULTS[want]; // camera/vfx/sfx stay those of the REQUESTED state even when the frame falls back
-      return { id: `${name.toLowerCase()}_${want.toLowerCase()}_v01`, character: name, action: a, priority: PRIORITY[want], frame, ...d };
+      const sh = SHEETS[`${name}:${a}`];
+      return { id: `${name.toLowerCase()}_${want.toLowerCase()}_v01`, character: name, action: a, priority: PRIORITY[want], frame: sh?.url ?? frame, sheet: sh, ...d };
     }
     a = DEFAULTS[a].fallback;
   }
