@@ -2510,3 +2510,10 @@ html:has(.shell.rpg) body{overflow:hidden}
   .shell.rpg .bx-cmd-hint{font-size:10.5px;margin-top:1px}
 }
 .rg-bg.paint{background-position:center 38%}
+
+/* Cast Word: nothing in the detail panel may shrink onto its neighbours; the panel scrolls instead */
+.bx-detail>*{flex-shrink:0}
+.bx-detail .bx-word{flex:0 0 auto;min-height:auto}
+.bx-detail .bx-chips{flex:0 0 auto;min-height:auto}
+.bx-detail .bx-list{flex:0 0 auto;min-height:auto}
+.bx-detail .bx-d-act{margin-top:auto;padding-top:4px}
