@@ -44,7 +44,7 @@ export const ACT_BG = [
   u('20261008_063315_05cd6739-2de4-45ea-bc87-3466756ea0e0'), // Act III · citadel
 ];
 export const PIXEL_BG = [
-  'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_131257_851376aa-3c7c-4b25-92af-b27a37825f08.png',
+  'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261011_051630_d93a9231-6189-4a33-8a8a-463de18b86d8.png',
   'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_131257_d1ae0087-97b5-4bc9-b638-79d33ecdc3b7.png',
   'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_131258_29ad1a30-0fb6-4b7f-9daf-c078a820e43e.png',
 ]; // 16-bit pixel-art battle backdrops, one per act
