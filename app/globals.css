@@ -2432,3 +2432,28 @@ html:has(.shell.rpg) body{overflow:hidden}
   .shell.rpg .bx-cmds{overflow-y:auto}
   .shell.rpg .rg-stage{height:calc(100dvh - 390px);min-height:280px}
 }
+
+/* ---- side-on battle line: nameplates above enemies, ground shadow + rings ---- */
+@media (min-width:761px){
+  .rg-unit.enemy .rg-uc .rg-uname{top:-46px;bottom:auto;font-size:13px;letter-spacing:.04em;text-transform:none;color:#f5e6b8;text-shadow:0 1px 3px #000,0 0 8px #000}
+  .rg-unit.enemy .rg-uc .rg-uc-hp{top:-26px;bottom:auto;left:6%;right:6%}
+  .rg-unit.enemy:not(.boss) .rg-uc-tag{display:none}
+  .rg-unit.hero:not(.mine) .rg-uname,.rg-unit.hero .rg-uc-hp{display:none}
+  .rg-unit.hero .rg-uname{display:none}
+}
+.rg-unit::after{content:'';position:absolute;left:50%;bottom:-8px;width:104%;height:22px;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,.6),rgba(0,0,0,0) 70%);pointer-events:none;z-index:-1}
+.rg-unit.hero.mine::after{width:112%;height:26px;bottom:-10px;border:2px solid #f0c24b;background:radial-gradient(ellipse at center,rgba(240,194,75,.18),rgba(0,0,0,0) 70%);box-shadow:0 0 14px #f0c24b99,inset 0 0 10px #f0c24b55}
+.rg-unit.enemy.picked::before{content:'';position:absolute;left:50%;bottom:-6px;width:36px;height:36px;transform:translateX(-50%) scaleY(.42) rotate(45deg);
+  border:2px solid #ef4444;box-shadow:0 0 12px #ef4444,inset 0 0 8px #ef444488;pointer-events:none;z-index:-1}
+
+/* Party Status in the reference layout: gold portrait, serif name, tall HP and ult bars, status badges on the right */
+.bx-pr{grid-template-columns:48px 1fr auto;gap:10px;padding:6px;border-radius:7px;background:linear-gradient(180deg,#0d1330,#080b1a);border:1px solid #3a4260}
+.bx-pr.me{border-color:#f0c24b;box-shadow:0 0 10px #f0c24b33}
+.bx-pr img{width:48px;height:48px;border:1px solid #b8892f;border-radius:5px}
+.bx-pr-b b{font:700 15px var(--font-cinzel,Cinzel,serif);letter-spacing:.03em;color:#f5e6b8}
+.bx-bar{height:13px;border-radius:3px;margin-top:3px;border:1px solid #1d2442}
+.bx-bar span{font:600 10px/13px system-ui;top:0;left:5px;letter-spacing:.03em}
+.bx-tags{flex-direction:row;gap:5px}
+.bx-tags span{display:inline-flex;align-items:center;gap:3px;padding:3px 5px;border:1px solid #4ade80;border-radius:4px;color:#d1fae5;background:#0a1a14}
+.bx-tags span[title=Corruption]{border-color:#a78bfa;color:#e9d5ff;background:#150f26}

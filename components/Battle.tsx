@@ -425,14 +425,12 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const needsAlly = pend?.kind === 'card' && pend.c === 'sp_heal';
   const needsDown = pend?.kind === 'card' && pend.c === 'revive';
 
-  // enemy field layout: spread across the right half, staggered rows
+  // side-on JRPG line: heroes on the left, enemies on the right, all standing on one dock ground line (slight stagger)
   const ePos = (i: number, n: number): React.CSSProperties => {
-    // one clean row across the upper-right two thirds, evenly spaced
-    const x = n === 1 ? 52 : 40 + (i * 52) / (n - 1);
-    return { left: `${x}%`, top: '40%', zIndex: 10 };
+    const x = n === 1 ? 72 : 56 + (i * 32) / (n - 1);
+    return { left: `${x}%`, top: `${66 + (i % 2) * 5}%`, zIndex: 10 + (i % 2) * 2 };
   };
-  // heroes: one even row along the lower-left, same baseline
-  const hPos = (i: number, n: number): React.CSSProperties => ({ left: `${n === 1 ? 26 : 19 + (i * 30) / (n - 1)}%`, top: '74%', zIndex: 20 });
+  const hPos = (i: number, n: number): React.CSSProperties => ({ left: `${n === 1 ? 26 : 14 + (i * 24) / (n - 1)}%`, top: `${70 + (i % 2) * 5}%`, zIndex: 20 + (i % 2) * 2 });
 
   const posMap: Record<string, { x: number; y: number }> = {};
   enemies.forEach((u, i) => { const p = ePos(i, enemies.length); posMap[u.id] = { x: parseFloat(String(p.left)), y: parseFloat(String(p.top)) }; });
