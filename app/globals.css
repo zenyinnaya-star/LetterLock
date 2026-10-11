@@ -2177,3 +2177,6 @@ input::placeholder{color:rgba(255,246,216,.6)!important}
 @keyframes telegraph{0%,100%{filter:drop-shadow(0 0 0 rgba(225,29,72,0))}50%{filter:drop-shadow(0 0 14px rgba(225,29,72,.85))}}
 .rg-intent{filter:drop-shadow(0 1px 0 #000);font-size:20px}
 @media(prefers-reduced-motion:reduce){.rg-unit.enemy{animation:none!important}}
+
+/* prompt text was gradient-clipped (h1 rule) so a dark background made it invisible: render as solid text */
+.prompt{-webkit-text-fill-color:#fff6d8!important;color:#fff6d8!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;text-shadow:0 2px 0 #000!important}
