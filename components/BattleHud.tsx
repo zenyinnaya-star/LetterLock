@@ -45,9 +45,9 @@ export type WordUi = { prompt: string; locked: string; value: string; onChange: 
 
 export type OrderItem = { id: string; name: string; src: string; side: 'hero' | 'enemy'; cur: boolean; done: boolean; spd: number };
 
-export function TopBar({ location, round, rounds, order, turnLabel, turnSub, pill, ready, readyTotal, waiting, timer, warn, skillsHref, onLog }: {
+export function TopBar({ location, round, rounds, order, turnLabel, turnSub, pill, multi, ready, readyTotal, waiting, timer, warn, skillsHref, onLog }: {
   location: string; round: number; rounds: number; order: OrderItem[]; turnLabel: string; turnSub: string; pill: 'mine' | 'play' | 'wait';
-  ready: number; readyTotal: number; waiting: string; timer: string; warn: boolean; skillsHref: string; onLog: () => void;
+  multi: boolean; ready: number; readyTotal: number; waiting: string; timer: string; warn: boolean; skillsHref: string; onLog: () => void;
 }) {
   return (
     <div className="bx-top">
@@ -64,8 +64,8 @@ export function TopBar({ location, round, rounds, order, turnLabel, turnSub, pil
       </div>
       <div className={`bx-turn ${pill}`}><b>{turnLabel}</b><span>{turnSub}</span></div>
       <div className="bx-mp">
-        <div className="bx-mp-t"><span><Icon n="users" size={14} /> {readyTotal > 1 ? 'MULTIPLAYER' : 'SOLO'}</span><b className={warn ? 'warn' : ''}><Icon n="hourglass" size={12} /> {timer}</b></div>
-        <div className="bx-mp-r">{readyTotal > 1 ? `${ready}/${readyTotal} Ready` : `${ready}/${readyTotal} Ready`}</div>
+        <div className="bx-mp-t"><span><Icon n="users" size={14} /> {multi ? 'MULTIPLAYER' : 'SOLO'}</span><b className={warn ? 'warn' : ''}><Icon n="hourglass" size={12} /> {timer}</b></div>
+        <div className="bx-mp-r">{multi ? `${ready}/${readyTotal} Ready` : pill === 'mine' ? 'Your move' : 'Story run'}</div>
         <div className="bx-mp-w">{waiting ? <><Icon n="hourglass" size={12} /> Waiting for: {waiting}</> : ' '}</div>
         <div className="bx-mp-b"><Link href={skillsHref}>Skills</Link><button type="button" onClick={onLog}>Log</button></div>
       </div>

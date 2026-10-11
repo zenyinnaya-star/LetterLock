@@ -2398,3 +2398,12 @@ input::placeholder{color:rgba(255,246,216,.6)!important}
 .bx-deck>.bx-detail{overflow-y:auto}
 .bx-detail[data-sel=word] .bx-d-stats,.bx-detail[data-sel=word] .bx-d-h span{display:none}
 .bx-detail[data-sel=word] .bx-chip img{height:30px}.bx-detail[data-sel=word] .bx-chip{width:84px}
+
+/* compact combat notifications: never cover the cast, menus or boss bar */
+.rg .rg-ban{left:8px!important;right:auto!important;top:8px!important;transform:none!important;max-width:min(40%,420px)!important;padding:5px 12px!important;border:1px solid #6b5420;border-left:4px solid #e11d48;
+  background:rgba(8,11,26,.92)!important;border-radius:6px;box-shadow:0 4px 14px #000a!important}
+.rg .rg-ban.e{border-left:4px solid #7c3aed;border-right:1px solid #6b5420}
+.rg .rg-ban.crit{border-left-color:#facc15}.rg .rg-ban.ult{border-left-color:#fb923c}
+.rg .rg-ban span{transform:none!important;font:700 13px/1.25 system-ui!important;letter-spacing:.01em!important;text-transform:none!important;white-space:normal}
+.rg .rg-idle{top:auto!important;bottom:10px!important;left:8px!important;transform:none!important;background:rgba(40,26,10,.92)!important;border:1px solid #a16207!important;box-shadow:none!important;border-radius:6px;font:600 12px system-ui!important;padding:5px 10px!important;max-width:46%!important}
+@media (max-width:760px){.rg .rg-ban{max-width:60%!important;top:6px!important}.rg .rg-idle{bottom:6px!important;max-width:70%!important}}

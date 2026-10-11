@@ -560,9 +560,12 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const confirmLabel = pend ? null : sel === 'attack' || sel === 'guard' ? 'Confirm' : sel === 'word' ? 'Cast' : sel === 'book' ? 'Open the Book' : null;
   const confirmDisabled = !canAct || (sel === 'attack' && !tgtId) || (sel === 'word' && (wordText.trim().length < 2 || (wordMode === 'attack' && !tgtId))) || (sel === 'book' && !!b.book_used);
   const onConfirm = () => { if (sel === 'attack') chooseAttack(); else if (sel === 'word') void doWord(); else if (sel === 'guard') void doAction('guard', null); else if (sel === 'book') void openBook(); };
-  const deckStatus = active ? 'Enemy turn…' : mine && mine.hp <= 0 ? 'You are down. Your team fights on.' : mine?.locked ? `${msg || 'Locked in'}. Waiting for the team…` : 'Waiting…';
-  const hudHeroes = heroes.filter((h) => h.hp > 0);
-  const waitingNames = hudHeroes.filter((h) => !h.locked && h.player_id !== b.me).map((h) => h.hero ?? h.name);
+  // solo vs multiplayer comes from the server (real human players), not from how many hero units exist
+  const humans = heroes.filter((h) => h.human && h.hp > 0);
+  const multi = b.units.filter((u) => u.side === 'hero' && u.human).length > 1;
+  const deckStatus = active ? 'Enemy turn…' : mine && mine.hp <= 0 ? 'You are down. Your team fights on.' : mine?.locked ? (multi ? `${msg || 'Locked in'}. Waiting for the team…` : `${msg || 'Locked in'}. Resolving…`) : 'Waiting…';
+  const hudHeroes = multi ? humans : heroes.filter((h) => h.player_id === b.me);
+  const waitingNames = humans.filter((h) => !h.locked && h.player_id !== b.me).map((h) => h.hero ?? h.name);
   const pill: 'mine' | 'play' | 'wait' = active ? 'play' : canAct ? 'mine' : 'wait';
   const logIdx = active ? b.log.indexOf(active) : b.log.length - 1;
   const hudLog = b.log.slice(0, Math.max(0, logIdx + 1)).filter((e) => e.t !== 'brk' || e.x === true).slice(-7).map(logLine);
@@ -575,8 +578,8 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     <div className={`rg${active?.t === 'limit' ? ' lb' : ''}`}>
       <TopBar location={ACT_NAME[ai].split('· ')[1] ?? ACT_NAME[ai]} round={b.turn} rounds={b.stages * 5} order={orderItems} pill={pill}
         turnLabel={active ? (active.a && enemies.some((e) => e.name === active.a) ? 'ENEMY TURN' : 'RESOLVING') : canAct ? 'YOUR TURN' : mine && mine.hp <= 0 ? 'DOWN' : mine?.locked ? 'LOCKED IN' : 'WAITING'}
-        turnSub={active ? 'Watch the round play out' : canAct ? 'You can act now' : mine?.locked ? 'Waiting for allies' : 'Hold on…'}
-        ready={hudHeroes.filter((h) => h.locked).length} readyTotal={hudHeroes.length} waiting={mine?.locked ? waitingNames.slice(0, 3).join(', ') : ''}
+        turnSub={active ? 'Watch the round play out' : canAct ? 'You can act now' : mine?.locked ? (multi ? 'Waiting for allies' : 'Resolving…') : 'Hold on…'}
+        multi={multi} ready={hudHeroes.filter((h) => h.locked).length} readyTotal={hudHeroes.length} waiting={multi && mine?.locked ? waitingNames.slice(0, 3).join(', ') : ''}
         timer={active || b.step !== 'input' ? '—' : `${left}s`} warn={!active && left <= 5 && b.step === 'input'}
         skillsHref={`/skills?from=${encodeURIComponent(`/room/${state.room.code}`)}`} onLog={() => setShowLog((v) => !v)} />
       <div ref={stageEl} className={`rg-stage${use3d ? ' t3' : ''}`} data-boss={lead?.name === 'Government' ? 1 : 0} data-foes={aliveEnemies.length <= 1 ? 1 : 0}>
@@ -650,7 +653,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
             : mine && mine.hp <= 0 ? 'You are down' : canAct ? `YOUR TURN · Turn ${b.turn}` : mine?.locked ? (() => { const w = heroes.filter((h) => h.hp > 0 && !h.locked && h.player_id !== b.me).map((h) => h.hero ?? h.name); return w.length ? `✓ Locked in · waiting for ${w.slice(0, 3).join(', ')}` : '✓ Locked in · resolving…'; })() : 'Waiting…'}
         </div>
 
-        {mine && (mine.afk ?? 0) >= 2 && b.step === 'input' && !mine.locked && <div className="rg-idle">You've been idle, so you're auto-guarding. Cast a word to rejoin. The team won't wait for idle players.</div>}
+        {multi && mine && (mine.afk ?? 0) >= 2 && b.step === 'input' && !mine.locked && <div className="rg-idle">Idle: you are auto-guarding. Act to rejoin; the team will not wait.</div>}
         {/* units */}
         {enemies.map((u, i) => (
           <Sprite action={active?.t} key={u.id} broken={!!dir.breaks[u.id]?.broken && u.hp > 0} pose={poseFor(u.id)} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} lungeTo={lungeVec(u)} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={tgtId === u.id}
