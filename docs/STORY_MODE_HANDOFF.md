@@ -4,6 +4,8 @@ Written 2026-10-11 by Claude (Sonnet 5.5) after a live playtest of https://lette
 (viewport was small, ~501x350, so this is mostly a **phone / short-landscape** pass) plus code and SQL review.
 Repo: https://github.com/zenyinnaya-star/LetterLock (`main`). Read `docs/ROADMAP.md` too. Owner: Zabdiel (terse, voice-dictated).
 
+> **Heads-up:** while this was written, the collaborator merged PR #1 (story battle state sync, solo readiness, story setup fixes) and PR #2 (self-hosted story-battle art, consolidated `.rg-stage` layout rules) into `main`. The playtest ran against the Vercel deploy *before* those. Re-check each item in section 3 against current `main` before fixing, especially B3-B5 (layout) and A1-A3.
+
 ## 0. Rules you must follow
 - Priority order set by the owner: **1) stability + gameplay logic, 2) UI matches the reference, 3) art polish last.**
 - Reference image: `docs/reference/battle-reference.png` (Harbor Ruins battle). Current-state screenshot: `docs/reference/battle-before-2026-10-11.png`. Match the reference 1:1 in structure.
