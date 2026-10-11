@@ -279,18 +279,20 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     const go = allLocked || left <= 0 || !enemiesAlive || !!mine?.locked;
     const key = b.turn * 100000 + (allLocked || left <= 0 || !enemiesAlive ? 99999 : b.version % 99999);
     if (go && stepped.current !== key) {
-      stepped.current = key;
-      const id = setTimeout(() => { void rpc.battleStep(token, b.turn).then(load).catch(() => {}); }, allLocked ? 400 : 300);
+      // mark as sent only when it actually fires: a re-render before the timeout must not swallow the nudge
+      const id = setTimeout(() => { stepped.current = key; void rpc.battleStep(token, b.turn).then(load).catch(() => {}); }, allLocked ? 400 : 300);
       return () => clearTimeout(id);
     }
   }, [b, left, token, load, intro, mine?.locked]);
 
   // timer expired: keep nudging the server until the turn resolves (an early no-op from clock skew must not stall the fight)
   useEffect(() => {
-    if (!b || b.step !== 'input' || !token || intro !== null || left > 0) return;
+    // (no timer now) also keep nudging while I'm locked in and everyone present has acted, so enemies always get their turn
+    const waitingOnServer = !!b && b.units.filter((u) => u.side === 'hero' && u.hp > 0).some((u) => u.player_id === b.me && u.locked);
+    if (!b || b.step !== 'input' || !token || intro !== null || (left > 0 && !waitingOnServer)) return;
     const id = setInterval(() => { void rpc.battleStep(token, b.turn).then(load).catch(() => {}); }, 1500);
     return () => clearInterval(id);
-  }, [b?.step, b?.turn, left, token, load, intro]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [b?.step, b?.turn, b?.version, left > 0, token, load, intro]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // book timer
   useEffect(() => {
