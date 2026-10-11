@@ -2491,3 +2491,9 @@ html:has(.shell.rpg) body{overflow:hidden}
 
 /* clean enemies: no hovering intent/haste emojis and no break-meter pips under them */
 .rg-unit .rg-intent,.rg-unit .rg-haste,.rg-brk{display:none!important}
+
+/* ground rings/shadows sit at the sprite's FEET (the art fills the top 78% of the unit box), not at the box bottom */
+.rg-unit::after{bottom:auto;top:calc(78% - 11px)}
+.rg-unit.hero.mine::after{bottom:auto;top:calc(78% - 13px)}
+.rg-unit.enemy.picked::after{bottom:auto;top:calc(78% - 14px)}
+.rg-unit.enemy.picked::before{bottom:auto;top:calc(78% - 18px)}
