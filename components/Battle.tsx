@@ -134,6 +134,22 @@ const EL_PATH: Record<string, React.ReactNode> = {
   light: <><circle cx="12" cy="12" r="4" fill="currentColor" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></>,
   dark: <path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z" fill="currentColor" />,
 };
+/** Stage backdrop: tries the newest art first and falls back through older backdrops so the stage is never blank. */
+function StageBg({ act }: { act: number }) {
+  const chain = useMemo(() => [PIXEL_BG[act], ACT_BG[act], ...(act !== 0 ? [] : [PIXEL_OLD_HARBOR])].filter(Boolean) as string[], [act]);
+  const [i, setI] = useState(0);
+  useEffect(() => { setI(0); }, [act]);
+  const url = chain[Math.min(i, chain.length - 1)];
+  return (
+    <>
+      <div className={`rg-bg${act === 0 && i === 0 ? ' paint' : ''}`} style={{ backgroundImage: `url(${url})` }} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={url} alt="" style={{ display: 'none' }} onError={() => setI((n) => Math.min(n + 1, chain.length - 1))} />
+    </>
+  );
+}
+const PIXEL_OLD_HARBOR = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_131257_851376aa-3c7c-4b25-92af-b27a37825f08.png';
+
 function ElIcon({ el, size = 14 }: { el: string; size?: number }) {
   return <svg className="rg-elsvg" width={size} height={size} viewBox="0 0 24 24" style={{ color: EL_COL[el] ?? '#fff' }} aria-label={el}>{EL_PATH[el] ?? null}</svg>;
 }
@@ -428,11 +444,15 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const needsDown = pend?.kind === 'card' && pend.c === 'revive';
 
   // side-on JRPG line: heroes on the left, enemies on the right, all standing on one dock ground line (slight stagger)
+  // enemies form a diagonal (back-left to front-right); heroes mirror it (front-left to back-right)
   const ePos = (i: number, n: number): React.CSSProperties => {
-    const x = n === 1 ? 72 : 56 + (i * 32) / (n - 1);
-    return { left: `${x}%`, top: `${66 + (i % 2) * 5}%`, zIndex: 10 + (i % 2) * 2 };
+    const t = n === 1 ? 0.5 : i / (n - 1);
+    return { left: `${n === 1 ? 72 : 54 + t * 34}%`, top: `${n === 1 ? 68 : 60 + t * 13}%`, zIndex: 10 + Math.round(t * 10) };
   };
-  const hPos = (i: number, n: number): React.CSSProperties => ({ left: `${n === 1 ? 26 : 14 + (i * 24) / (n - 1)}%`, top: `${70 + (i % 2) * 5}%`, zIndex: 20 + (i % 2) * 2 });
+  const hPos = (i: number, n: number): React.CSSProperties => {
+    const t = n === 1 ? 0.5 : i / (n - 1);
+    return { left: `${n === 1 ? 26 : 13 + t * 26}%`, top: `${n === 1 ? 72 : 76 - t * 9}%`, zIndex: 30 - Math.round(t * 10) };
+  };
 
   const posMap: Record<string, { x: number; y: number }> = {};
   enemies.forEach((u, i) => { const p = ePos(i, enemies.length); posMap[u.id] = { x: parseFloat(String(p.left)), y: parseFloat(String(p.top)) }; });
@@ -588,7 +608,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         skillsHref={`/skills?from=${encodeURIComponent(`/room/${state.room.code}`)}`} onLog={() => setShowLog((v) => !v)} />
       <div ref={stageEl} className={`rg-stage${use3d ? ' t3' : ''}`} data-boss={lead?.name === 'Government' ? 1 : 0} data-foes={aliveEnemies.length <= 1 ? 1 : 0}>
         <div className="rg-cam" ref={(el) => { dir.camEl.current = el; dir.cam.attach(el); }}>
-        <div className="rg-bg" style={{ backgroundImage: `url(${PIXEL_BG[ai]})` }} />
+        <StageBg act={ai} />
         {use3d && <Stage3D act={ai} fx={fx} pos={posMap}
           units={b.units.map((u) => ({ id: u.id, side: u.side, name: u.name, hero: u.hero, dead: u.hp <= 0 }))}
           pickedId={target} pickableIds={b.units.filter((u) => u.hp > 0 && ((needsEnemy && u.side === 'enemy') || (needsAlly && u.side === 'hero')) && canAct).map((u) => u.id)} />}

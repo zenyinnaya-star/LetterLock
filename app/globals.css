@@ -2487,3 +2487,4 @@ html:has(.shell.rpg) body{overflow:hidden}
 
 /* Shiro: no idle jiggle, plain still until a proper sprite sheet exists */
 .rg-unit[data-u="shiro"] .rg-img{animation:none!important}
+.rg-bg.paint{image-rendering:auto;filter:saturate(1.05) brightness(.95);background-position:center 60%}
