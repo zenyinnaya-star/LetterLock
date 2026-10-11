@@ -2468,3 +2468,19 @@ html:has(.shell.rpg) body{overflow:hidden}
 .rg-unit.pickable .rg-uc,.rg-unit.picked .rg-uc{box-shadow:none!important;border:0!important}
 .rg-unit.enemy.picked::after{width:116%;height:28px;bottom:-11px;border:2px solid #ef4444;
   background:radial-gradient(ellipse at center,rgba(239,68,68,.22),rgba(0,0,0,0) 70%);box-shadow:0 0 16px #ef4444bb,inset 0 0 12px #ef444466}
+
+/* ---- reference-style header: gold-framed hexagon turn pill, bevelled bar, framed turn-order portraits ---- */
+.bx-top{background:linear-gradient(180deg,#101733,#070a18);border:1px solid #8a6a26;box-shadow:inset 0 0 0 1px #000,inset 0 0 0 2px #3a2c0e,0 6px 22px rgba(0,0,0,.6)}
+.bx-turn{position:relative;border:0;border-radius:0;padding:8px 30px;min-width:200px;background:linear-gradient(180deg,#e2bd5e,#7a5a1c);
+  clip-path:polygon(20px 0,calc(100% - 20px) 0,100% 50%,calc(100% - 20px) 100%,20px 100%,0 50%);filter:drop-shadow(0 0 10px rgba(240,194,75,.35))}
+.bx-turn::before{content:'';position:absolute;inset:2px;background:linear-gradient(180deg,#121a3c,#070a18);
+  clip-path:polygon(19px 0,calc(100% - 19px) 0,100% 50%,calc(100% - 19px) 100%,19px 100%,0 50%)}
+.bx-turn>*{position:relative;z-index:1}
+.bx-turn b{font-size:24px;font-variant:small-caps;letter-spacing:.07em;color:#f0c24b;text-shadow:0 0 14px rgba(240,160,40,.7)}
+.bx-turn span{color:#e8e2d0;font-size:12.5px}
+.bx-turn.play b{color:#fca5a5;text-shadow:0 0 12px #b91c1c}.bx-turn.wait b{color:#c3d3f2;text-shadow:none}
+.bx-ord{border-radius:5px;border-width:2px;box-shadow:inset 0 0 0 1px #000}
+.bx-ord.hero{border-color:#8fa3c9}.bx-ord.enemy{border-color:#c0392b}
+.bx-ord.cur{width:58px;height:58px;border:3px solid #f0c24b;box-shadow:0 0 12px #f0c24b99,inset 0 0 0 1px #000}
+@media (max-width:760px){.bx-turn{padding:6px 24px;min-width:0;clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,12px 100%,0 50%)}
+  .bx-turn::before{clip-path:polygon(11px 0,calc(100% - 11px) 0,100% 50%,calc(100% - 11px) 100%,11px 100%,0 50%)}.bx-turn b{font-size:17px}}

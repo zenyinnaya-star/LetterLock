@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import { Camp } from './Camp';
 import { webglOk, type StageFx } from './Stage3D';
 const Stage3D = dynamic(() => import('./Stage3D'), { ssr: false });
-import { heroById, type HeroId } from '@/lib/heroes';
+import { heroById, HERO_PORTRAIT, type HeroId } from '@/lib/heroes';
 import { fetchStoryResult, type StoryResult } from '@/lib/profile';
 import { rpc, type BattleLogEntry, type BattleState, type BattleUnit } from '@/lib/rpc';
 import type { RoomState } from '@/lib/types';
@@ -110,7 +110,7 @@ function KeyedImg({ src, className, alt, style }: { src: string; className?: str
   return <img className={className} src={s} alt={alt} draggable={false} style={style} />;
 }
 
-const portrait = (u: BattleUnit) => (u.hero ? heroById(u.hero as HeroId)?.artFull : (ENEMY_PIXEL[u.name] ?? ENEMY_SPRITE[u.name])) ?? '';
+const portrait = (u: BattleUnit) => (u.hero ? (HERO_PORTRAIT[u.hero] ?? heroById(u.hero as HeroId)?.artFull) : (ENEMY_PIXEL[u.name] ?? ENEMY_SPRITE[u.name])) ?? '';
 // side-profile battle art (matches the target mockup); heroes listed here use it for every pose except hurt
 const HERO_SIDE: Record<string, string> = {
   Shiro: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261011_053202_832e01db-6edf-4ecd-a03d-d188c922fcdc.png',
