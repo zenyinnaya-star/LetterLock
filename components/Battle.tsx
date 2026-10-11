@@ -20,6 +20,7 @@ import { actionFor, lungeTimes } from '@/lib/combat/actions';
 import { BattleTutorial } from './BattleTutorial';
 import { TopBar, CommandDeck, LeftParty, type WordUi, type Cmd, type Chip, type Entry, type PartyRow, type OrderItem } from './BattleHud';
 import { preloadFor, SHEETS } from '@/lib/combat/registry';
+import { useCountdown } from '@/hooks/useCountdown';
 import type { Act } from './phases';
 
 type ActionId = 'attack' | 'guard' | 'heal' | 'ult';
@@ -202,7 +203,7 @@ function ClearBanner({ stage }: { stage: number }) {
   );
 }
 
-export function Battle({ state, token, act, fallback }: { state: RoomState; token: string | null; act: Act; fallback?: React.ReactNode }) {
+export function Battle({ state, token, act, fallback, offset = 0 }: { state: RoomState; token: string | null; act: Act; fallback?: React.ReactNode; offset?: number }) {
   const [b, setB] = useState<BattleState | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [pend, setPend] = useState<{ kind: 'attack' } | { kind: 'ult' } | { kind: 'card'; c: string } | null>(null);
@@ -216,12 +217,19 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const [retrying, setRetrying] = useState(false);
   const [target, setTarget] = useState<string | null>(null);
   const [msg, setMsg] = useState('');
-  const [left, setLeft] = useState(0);
   const [showLog, setShowLog] = useState(false);
   const [intro, setIntro] = useState<number | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const seenAct = useRef(-1);
   const stageEl = useRef<HTMLDivElement | null>(null);
   const stepped = useRef(-1);
+  // battle-fetch coordination: coalesce concurrent calls, reject stale/out-of-order responses (mirrors hooks/useRoom.ts)
+  const bVersionRef = useRef(-1);
+  const inflightRef = useRef(false);
+  const queuedRef = useRef(false);
+  const tokenRef = useRef(token);
+  tokenRef.current = token;
+  useEffect(() => { bVersionRef.current = -1; }, [token]);
   // Book of Wisdom
   const [book, setBook] = useState<{ prompt: string; ends: number } | null>(null);
   const [bookWord, setBookWord] = useState('');
@@ -239,10 +247,27 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   }, [over, token]);
 
   const load = useCallback(async () => {
-    if (!token) return;
-    try { setB(await rpc.getBattle(token)); } catch { /* ignore */ }
-    setLoaded(true);
-  }, [token]);
+    const tk = tokenRef.current;
+    if (!tk) return;
+    if (inflightRef.current) { queuedRef.current = true; return; }
+    inflightRef.current = true;
+    try {
+      const next = await rpc.getBattle(tk);
+      // a token change (new room/session) or a response older than one already applied must not clobber newer state
+      if (tokenRef.current !== tk) { queuedRef.current = true; return; }
+      if (!next || next.version >= bVersionRef.current) {
+        if (next) bVersionRef.current = next.version;
+        setB(next);
+      }
+      setLoadError(null);
+    } catch (e) {
+      setLoadError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setLoaded(true);
+      inflightRef.current = false;
+      if (queuedRef.current) { queuedRef.current = false; void load(); }
+    }
+  }, []);
 
   useEffect(() => { void load(); }, [load, state.room.state_version]);
   useEffect(() => { const i = setInterval(() => void load(), 3000); return () => clearInterval(i); }, [load]);
@@ -264,13 +289,9 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     return () => clearTimeout(id);
   }, [intro]);
 
-  useEffect(() => {
-    if (!b || b.step !== 'input') return;
-    const tick = () => setLeft(Math.max(0, Math.ceil((new Date(b.ends_at).getTime() - Date.now()) / 1000)));
-    tick();
-    const i = setInterval(tick, 250);
-    return () => clearInterval(i);
-  }, [b]);
+  // server-adjusted countdown (matches the offset Game.tsx already applies to every other phase timer)
+  const leftMs = useCountdown(b && b.step === 'input' ? b.ends_at : null, offset);
+  const left = Math.ceil(leftMs / 1000);
 
   useEffect(() => {
     if (!b || b.step !== 'input' || !token || intro !== null) return;
@@ -410,7 +431,9 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   useEffect(() => { if (b) preloadFor((b.units ?? []).filter((x) => x.side === 'hero').map((x) => x.hero ?? x.name), foeNames); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [b?.stage]);
 
-  if (loaded && !b) return <>{fallback ?? null}</>;
+  if (loaded && !b) return loadError
+    ? <div className="center muted"><p className="note bad">Could not load the battle: {loadError}</p><button type="button" className="btn" onClick={() => void load()}>Retry</button></div>
+    : <>{fallback ?? null}</>;
   if (!b) return <div className="center muted">Loading battle…</div>;
 
   if (b.step === 'camp') return (<>
@@ -677,7 +700,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
         <div className={`rg-turn${active ? ' play' : canAct ? ' mine' : ' wait'}`} key={active ? 'p' : canAct ? `m${b.turn}` : 'w'}>
           {active ? (active.a && enemies.some((e) => e.name === active.a) ? '⚔ Enemies attack…' : '⚔ Resolving the turn…')
-            : mine && mine.hp <= 0 ? 'You are down' : canAct ? `YOUR TURN · Turn ${b.turn}` : mine?.locked ? (() => { const w = heroes.filter((h) => h.hp > 0 && !h.locked && h.player_id !== b.me).map((h) => h.hero ?? h.name); return w.length ? `✓ Locked in · waiting for ${w.slice(0, 3).join(', ')}` : '✓ Locked in · resolving…'; })() : 'Waiting…'}
+            : mine && mine.hp <= 0 ? 'You are down' : canAct ? `YOUR TURN · Turn ${b.turn}` : mine?.locked ? (() => { const w = humans.filter((h) => !h.locked && h.player_id !== b.me).map((h) => h.hero ?? h.name); return w.length ? `✓ Locked in · waiting for ${w.slice(0, 3).join(', ')}` : '✓ Locked in · resolving…'; })() : 'Waiting…'}
         </div>
 
         {multi && mine && (mine.afk ?? 0) >= 2 && b.step === 'input' && !mine.locked && <div className="rg-idle">Idle: you are auto-guarding. Act to rejoin; the team will not wait.</div>}
