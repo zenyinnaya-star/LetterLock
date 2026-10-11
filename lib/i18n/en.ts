@@ -45,7 +45,7 @@ const en = {
   'st.max': 'Max players', 'st.fewer': 'Fewer players', 'st.more': 'More players',
   'st.answer': 'Answer time', 'st.guess': 'Guess time', 'st.cards_phase': 'Cards phase', 'st.duel_rounds': 'Duel rounds',
   'st.strikes': 'Strikes to go out', 'st.shrink': 'Answer time shrinks each round', 'st.cards': 'Cards (Attack / Shield / Cleanse)',
-  'st.perks': 'Class perks', 'st.device': 'This device', 'st.music': 'Music', 'st.sfx': 'Sound effects', 'st.voice': 'Announcer voice',
+  'st.perks': 'Class perks', 'st.device': 'This device', 'st.music': 'Music', 'st.sfx': 'Sound effects', 'st.chicken': 'Chicken rage-quit sound', 'st.voice': 'Announcer voice',
   'st.howto': 'How to play (video)', 'st.lang': 'Language', 'st.ui_lang': 'Menus & announcer',
   'st.word_lang': 'Word language', 'st.word_lang_hint': 'Everyone answers in this language. Letters stay A–Z: accents are optional, Japanese is typed in romaji and Chinese in pinyin.',
 

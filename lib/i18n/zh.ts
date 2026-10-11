@@ -47,7 +47,7 @@ const zh: Partial<Record<Key, string>> = {
   'st.max': '人数上限', 'st.fewer': '减少人数', 'st.more': '增加人数',
   'st.answer': '答题时间', 'st.guess': '猜测时间', 'st.cards_phase': '出牌阶段', 'st.duel_rounds': '对决轮次',
   'st.strikes': '出局失误次数', 'st.shrink': '答题时间逐轮缩短', 'st.cards': '卡牌（攻击 / 护盾 / 净化）',
-  'st.perks': '职业技能', 'st.device': '本设备', 'st.music': '音乐', 'st.sfx': '音效', 'st.voice': '播报语音',
+  'st.perks': '职业技能', 'st.device': '本设备', 'st.music': '音乐', 'st.sfx': '音效', 'st.chicken': '鸡叫退出音效', 'st.voice': '播报语音',
   'st.howto': '玩法教学（视频）', 'st.lang': '语言', 'st.ui_lang': '菜单与播报',
   'st.word_lang': '答题语言', 'st.word_lang_hint': '所有人都用这种语言作答。字母仍为 A–Z：重音符号可省略，日语用罗马字输入，中文用拼音输入。',
 

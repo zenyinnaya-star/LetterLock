@@ -241,6 +241,7 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
           <Toggle label={t('st.music')} icon="volume" on={prefs.music} onClick={() => pref('music')} />
           <Toggle label={t('st.sfx')} icon="burst" on={prefs.sfx} onClick={() => pref('sfx')} />
           <Toggle label={t('st.voice')} icon="bulb" on={prefs.voice} onClick={() => pref('voice')} />
+          <Toggle label={t('st.chicken')} icon="feather" on={prefs.chicken} onClick={() => pref('chicken')} />
         </section>
         <a className="btn ghost block" href="/how-to-play" target="_blank" rel="noreferrer"><Icon name="play" size={16} /> {t('st.howto')}</a>
       </motion.div>

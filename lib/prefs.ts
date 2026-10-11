@@ -1,8 +1,8 @@
 // Per-device preferences (music / sound effects / announcer voice).
-export interface Prefs { music: boolean; sfx: boolean; voice: boolean }
+export interface Prefs { music: boolean; sfx: boolean; voice: boolean; chicken: boolean }
 
 const KEY = 'letterlock:prefs';
-let prefs: Prefs = { music: true, sfx: true, voice: true };
+let prefs: Prefs = { music: true, sfx: true, voice: true, chicken: true };
 try {
   const raw = typeof window !== 'undefined' ? window.localStorage.getItem(KEY) : null;
   if (raw) prefs = { ...prefs, ...JSON.parse(raw) };

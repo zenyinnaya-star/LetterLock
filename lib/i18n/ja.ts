@@ -46,7 +46,7 @@ const ja: Partial<Record<Key, string>> = {
   'st.max': '最大人数', 'st.fewer': '人数を減らす', 'st.more': '人数を増やす',
   'st.answer': '回答時間', 'st.guess': '推理時間', 'st.cards_phase': 'カードフェーズ', 'st.duel_rounds': 'デュエルのラウンド',
   'st.strikes': '脱落までのストライク', 'st.shrink': '回答時間が毎ラウンド短くなる', 'st.cards': 'カード（アタック／シールド／クレンズ）',
-  'st.perks': 'クラス特技', 'st.device': 'この端末', 'st.music': 'BGM', 'st.sfx': '効果音', 'st.voice': '実況ボイス',
+  'st.perks': 'クラス特技', 'st.device': 'この端末', 'st.music': 'BGM', 'st.sfx': '効果音', 'st.chicken': 'ニワトリ退出サウンド', 'st.voice': '実況ボイス',
   'st.howto': '遊び方（動画）', 'st.lang': '言語', 'st.ui_lang': 'メニューと実況',
   'st.word_lang': '回答の言語', 'st.word_lang_hint': '全員この言語で答えます。文字は A–Z のまま：アクセントは省略OK、日本語はローマ字、中国語はピンインで入力します。',
 

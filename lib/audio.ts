@@ -174,7 +174,7 @@ export const audio = {
   },
   /** The real chicken (your recording); falls back to the synth cluck if it can't play. */
   chicken() {
-    if (!getPrefs().sfx || muted || typeof window === 'undefined') return;
+    if (!getPrefs().sfx || !getPrefs().chicken || muted || typeof window === 'undefined') return;
     try {
       const a = new Audio('/audio/chicken.mp3');
       a.volume = 0.9;

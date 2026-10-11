@@ -47,7 +47,7 @@ const es: Partial<Record<Key, string>> = {
   'st.max': 'Máx. de jugadores', 'st.fewer': 'Menos jugadores', 'st.more': 'Más jugadores',
   'st.answer': 'Tiempo para responder', 'st.guess': 'Tiempo para adivinar', 'st.cards_phase': 'Fase de cartas', 'st.duel_rounds': 'Rondas del duelo',
   'st.strikes': 'Fallos para quedar fuera', 'st.shrink': 'El tiempo de respuesta baja cada ronda', 'st.cards': 'Cartas (Ataque / Escudo / Limpieza)',
-  'st.perks': 'Poderes de clase', 'st.device': 'Este dispositivo', 'st.music': 'Música', 'st.sfx': 'Efectos de sonido', 'st.voice': 'Voz del presentador',
+  'st.perks': 'Poderes de clase', 'st.device': 'Este dispositivo', 'st.music': 'Música', 'st.sfx': 'Efectos de sonido', 'st.chicken': 'Sonido de gallina (rage quit)', 'st.voice': 'Voz del presentador',
   'st.howto': 'Cómo jugar (video)', 'st.lang': 'Idioma', 'st.ui_lang': 'Menús y presentador',
   'st.word_lang': 'Idioma de las palabras', 'st.word_lang_hint': 'Todos responden en este idioma. Las letras siguen siendo A–Z: los acentos son opcionales, el japonés se escribe en romaji y el chino en pinyin.',
 
