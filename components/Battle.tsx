@@ -175,7 +175,7 @@ function Sprite({ action, elNow, u, floats, picked, onPick, style, lunge, lungeT
           {(() => { const sh = !pose && !hit && !win && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:IDLE`] : undefined;
             return sh ? <SheetSprite className="rg-img" url={sh.url} data={sh} /> : <KeyedImg className="rg-img" src={sprite(u, win, pose ?? (hit && u.hp > 0 ? 'hurt' : undefined))} alt={u.name} />; })()}
           <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
-          <span className="rg-uc-hp"><span className="rg-ehp"><motion.u animate={{ width: `${pct}%` }} transition={{ duration: 1.1, delay: 0.35 }} /><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.3 }} /></span><b>{u.hp}</b></span>
+          <span className="rg-uc-hp"><span className="rg-ehp"><motion.u animate={{ width: `${pct}%` }} transition={{ duration: 1.1, delay: 0.35 }} /><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.3 }} /></span><b>{u.side === 'enemy' ? `HP ${Math.max(0, u.hp)}/${u.max_hp}` : u.hp}</b></span>
           {hit && <span className="rg-slash" key={floats[0]?.k} />}
           {u.side === 'enemy' && (u.weak_el || u.res_el) && u.hp > 0 && <span className="rg-el">{u.weak_el && <b title={`Weak to ${u.weak_el}`} className={u.weak_el === elNow ? 'hot' : ''}><ElIcon el={u.weak_el} />▼</b>}{u.res_el && <i title={`Resists ${u.res_el}`}><ElIcon el={u.res_el} />✕</i>}</span>}
         </div>

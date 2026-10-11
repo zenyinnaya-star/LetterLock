@@ -2517,3 +2517,18 @@ html:has(.shell.rpg) body{overflow:hidden}
 .bx-detail .bx-chips{flex:0 0 auto;min-height:auto}
 .bx-detail .bx-list{flex:0 0 auto;min-height:auto}
 .bx-detail .bx-d-act{margin-top:auto;padding-top:4px}
+
+/* ---- reference: party cards stacked on the left of the stage; enemy nameplate shows "HP x/y" ---- */
+@media (min-width:761px) and (min-height:521px){
+  .rg .rg-party{display:flex;flex-direction:column;left:10px;top:10px;bottom:auto;gap:6px}
+  .rg .rg-pc{width:64px;height:58px;border-radius:5px}
+  .rg .rg-pc>span{font-size:9px}
+  .rg .rg-pc-n{bottom:11px;left:3px;max-width:58px;overflow:hidden;white-space:nowrap}
+  .rg .rg-pc-v{display:none}
+  .rg .rg-pc-hp{height:6px}
+  .rg .rg-pc-ult{top:2px;left:2px;padding:0 4px}
+  .rg-unit.enemy .rg-uc .rg-uc-hp{flex-direction:column;align-items:stretch;gap:1px}
+  .rg-unit.enemy .rg-uc .rg-uc-hp b{text-align:center;min-width:0;font:700 11px/1 var(--font-barlow,system-ui);color:#f5e6b8;letter-spacing:.04em}
+  .rg-unit.enemy .rg-uc .rg-uc-hp{top:-34px}
+  .rg-unit.enemy .rg-uc .rg-uname{top:-54px}
+}
