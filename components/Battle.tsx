@@ -15,6 +15,7 @@ import { rpc, type BattleLogEntry, type BattleState, type BattleUnit } from '@/l
 import type { RoomState } from '@/lib/types';
 import { useCombatDirector, breakMaxOf } from './useCombatDirector';
 import { LetterVfx } from './LetterVfx';
+import { actionFor, lungeTimes } from '@/lib/combat/actions';
 import { BattleTutorial } from './BattleTutorial';
 import { preloadFor } from '@/lib/combat/registry';
 import type { Act } from './phases';
@@ -133,7 +134,7 @@ function ElIcon({ el, size = 14 }: { el: string; size?: number }) {
 
 type Float = { k: string; text: string; cls: string };
 
-function Sprite({ elNow, u, floats, picked, onPick, style, lunge, lungeTo, t3, mine, menu, win, pose, broken }: { broken?: boolean; lungeTo?: { x: number; y: number }; pose?: 'strike' | 'cast' | 'hurt'; win?: boolean; menu?: React.ReactNode; elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
+function Sprite({ action, elNow, u, floats, picked, onPick, style, lunge, lungeTo, t3, mine, menu, win, pose, broken }: { action?: string; broken?: boolean; lungeTo?: { x: number; y: number }; pose?: 'strike' | 'cast' | 'hurt'; win?: boolean; menu?: React.ReactNode; elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
   const pct = Math.max(0, Math.min(100, (u.hp / u.max_hp) * 100));
   const hit = floats.some((f) => f.cls === 'dmg');
   const dmgN = Math.abs(parseInt(floats.find((f) => f.cls.includes('dmg'))?.text ?? '0', 10)) || 0;
@@ -144,7 +145,7 @@ function Sprite({ elNow, u, floats, picked, onPick, style, lunge, lungeTo, t3, m
       style={{ ...style, ['--idle' as string]: `${-((u.id.charCodeAt(0) + u.id.charCodeAt(3)) % 17) / 10}s` }} onClick={onPick} role={onPick ? 'button' : undefined}>
       <motion.div key={`${lunge ? 'l' : hit ? 'h' : 'i'}-${floats[0]?.k ?? ''}`}
         animate={lunge ? (lungeTo ? { x: [0, -Math.sign(lungeTo.x || 1) * 16, lungeTo.x, lungeTo.x, 0], y: [0, 4, lungeTo.y, lungeTo.y, 0], scale: [1, 0.94, 1.12, 1.12, 1] } : { x: [0, u.side === 'hero' ? 90 : -90, 0], scale: [1, 1.12, 1] }) : hit ? { x: [0, -recoil, recoil * 0.6, -recoil * 0.3, 0], filter: ['brightness(2.2)', 'brightness(1)'] } : {}}
-        transition={lunge && lungeTo ? { duration: 0.7, times: [0, 0.2, 0.45, 0.62, 1], ease: 'easeInOut' } : { duration: lunge ? 0.5 : 0.4 }}>
+        transition={lunge && lungeTo ? { ...lungeTimes(actionFor({ t: (action ?? 'hit') } as BattleLogEntry, u.side === 'enemy')), ease: 'easeInOut' } : { duration: lunge ? 0.5 : 0.4 }}>
         <div className="rg-uc">
           {u.hp > 0 && u.intent && <span className={`rg-intent i-${u.intent}`} title={`Next: ${u.intent}`}>{INTENT_ICON[u.intent] ?? '⚔'}</span>}
           {u.hp > 0 && (u.haste ?? 0) !== 0 && <span className={`rg-haste ${(u.haste ?? 0) > 0 ? 'up' : 'dn'}`} title={(u.haste ?? 0) > 0 ? 'Hasted: acts earlier' : 'Slowed: acts later'}>{(u.haste ?? 0) > 0 ? '⚡' : '🐌'}</span>}
@@ -290,7 +291,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     setActive(entries[0]);
     // big moments (crit, ultimate, limit break) hold longer: a short slow-motion beat
     const enemyIds = new Set((b?.units ?? []).filter((x) => x.side === 'enemy').map((x) => x.id));
-    const delay = (e: BattleLogEntry) => (e.t === 'brk' ? (e.x === true ? 1000 : 150) : e.t === 'stunned' ? 800 : e.t === 'ult' || e.t === 'limit' ? 2300 : e.t === 'crit' ? 1500 : (e.ai && enemyIds.has(e.ai)) ? 800 : 950);
+    const delay = (e: BattleLogEntry) => actionFor(e, !!(e.ai && enemyIds.has(e.ai))).hold;
     let id: ReturnType<typeof setTimeout>;
     const next = () => { i += 1; if (i >= entries.length) { setActive(null); setApplied({ ver: playKey, ids: [], all: true }); } else { setActive(entries[i]); id = setTimeout(next, delay(entries[i])); } };
     id = setTimeout(next, delay(entries[0]));
@@ -626,11 +627,11 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         {mine && (mine.afk ?? 0) >= 2 && b.step === 'input' && !mine.locked && <div className="rg-idle">You've been idle, so you're auto-guarding. Cast a word to rejoin. The team won't wait for idle players.</div>}
         {/* units */}
         {enemies.map((u, i) => (
-          <Sprite key={u.id} broken={!!dir.breaks[u.id]?.broken && u.hp > 0} pose={poseFor(u.id)} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} lungeTo={lungeVec(u)} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={tgtId === u.id}
+          <Sprite action={active?.t} key={u.id} broken={!!dir.breaks[u.id]?.broken && u.hp > 0} pose={poseFor(u.id)} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} lungeTo={lungeVec(u)} floats={floatsFor(u)} style={ePos(i, enemies.length)} picked={tgtId === u.id}
             onPick={canAct && u.hp > 0 ? () => tapEnemy(u.id) : undefined} />
         ))}
         {heroes.map((u, i) => (
-          <Sprite key={u.id} pose={poseFor(u.id)} menu={u.player_id === b.me && mine && b.step === 'input' && canAct && !mine.locked ? <></> : undefined} win={won} mine={u.player_id === b.me} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} lungeTo={lungeVec(u)} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
+          <Sprite action={active?.t} key={u.id} pose={poseFor(u.id)} menu={u.player_id === b.me && mine && b.step === 'input' && canAct && !mine.locked ? <></> : undefined} win={won} mine={u.player_id === b.me} elNow={b.element} t3={use3d} u={u} lunge={lungeId === u.id && !(active?.t === 'dodge')} lungeTo={lungeVec(u)} floats={floatsFor(u)} style={hPos(i, heroes.length)} picked={target === u.id}
             onPick={((needsAlly && u.hp > 0) || (needsDown && u.hp <= 0)) && canAct ? () => pickUnit(u.id) : undefined} />
         ))}
 
