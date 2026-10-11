@@ -17,7 +17,7 @@ import { useCombatDirector, breakMaxOf } from './useCombatDirector';
 import { LetterVfx } from './LetterVfx';
 import { actionFor, lungeTimes } from '@/lib/combat/actions';
 import { BattleTutorial } from './BattleTutorial';
-import { TopBar, CommandDeck, type Cmd, type Chip, type Entry, type PartyRow, type OrderItem } from './BattleHud';
+import { TopBar, CommandDeck, LeftParty, type WordUi, type Cmd, type Chip, type Entry, type PartyRow, type OrderItem } from './BattleHud';
 import { preloadFor } from '@/lib/combat/registry';
 import type { Act } from './phases';
 
@@ -184,6 +184,9 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const [loaded, setLoaded] = useState(false);
   const [pend, setPend] = useState<{ kind: 'attack' } | { kind: 'ult' } | { kind: 'card'; c: string } | null>(null);
   const [sel, setSel] = useState<Cmd>('attack');
+  const [wordText, setWordText] = useState('');
+  const [wordMode, setWordMode] = useState<'attack' | 'guard' | 'heal'>('attack');
+  const [wordMsg, setWordMsg] = useState('');
   const [oddsCalled, setOddsCalled] = useState(false);
   const [spOpen, setSpOpen] = useState(false);
   const [itemOpen, setItemOpen] = useState(false);
@@ -224,7 +227,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const mine = b?.units.find((u) => u.player_id === b.me);
   useEffect(() => { if (mine?.hero) { try { localStorage.setItem('letterlock:hero', mine.hero); } catch { /* ignore */ } } }, [mine?.hero]);
   const turn = b?.turn ?? 0;
-  useEffect(() => { setMsg(''); setPend(null); setOddsCalled(false); setSpOpen(false); setItemOpen(false); setSel('attack'); }, [turn]);
+  useEffect(() => { setMsg(''); setPend(null); setOddsCalled(false); setSpOpen(false); setItemOpen(false); setSel('attack'); setWordText(''); setWordMsg(''); }, [turn]);
 
   // Act intro card
   useEffect(() => {
@@ -467,6 +470,15 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     if (!r.ok) setMsg('Invalid.');
     else { setMsg(kind === 'attack' ? 'Attack locked in' : kind === 'guard' ? 'Guarding' : 'Ultimate locked in'); setPend(null); setSel('attack'); void load(); }
   }
+  async function doWord() {
+    if (!token || !canAct) return;
+    const w = wordText.trim().toLowerCase();
+    if (w.length < 2) { setWordMsg('At least 2 letters.'); return; }
+    const r = await act(() => rpc.battleSubmit(token, w, wordMode, wordMode === 'attack' ? tgtId : null));
+    if (!r) return;
+    if (r.ok) { setMsg(`"${w.toUpperCase()}" locked in · ${r.power ?? ''} power`); setWordText(''); setWordMsg(''); setSel('attack'); void load(); return; }
+    setWordMsg(r.reason === 'LOCKED' ? `The letter "${(r.letter ?? '').toUpperCase()}" is locked this round.` : r.reason === 'NOT_A_WORD' ? 'Not a valid word.' : r.reason === 'OFF_TOPIC' ? 'That word does not fit the prompt.' : 'Invalid word.');
+  }
   async function playCard(c: string, tgt: string | null) {
     if (!token) return;
     const r = await act(() => rpc.battlePlay(token, c, tgt));
@@ -543,11 +555,11 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const chipOf = (u: BattleUnit): Chip => ({ id: u.id, name: u.name, src: portrait(u), hp: u.hp, max: u.max_hp, picked: tgtId === u.id || target === u.id, down: u.hp <= 0,
     sub: u.side === 'enemy' && u.weak_el ? `weak ${u.weak_el}` : undefined });
   const pickingAlly = needsAlly || needsDown;
-  const chipMode: 'target' | 'pick' | null = pend && (needsEnemy || pickingAlly) ? 'pick' : sel === 'attack' ? 'target' : null;
+  const chipMode: 'target' | 'pick' | null = pend && (needsEnemy || pickingAlly) ? 'pick' : sel === 'attack' || (sel === 'word' && wordMode === 'attack') ? 'target' : null;
   const chips: Chip[] = chipMode === 'pick' ? (needsEnemy ? aliveEnemies : heroes.filter((h) => (needsDown ? h.hp <= 0 : h.hp > 0))).map(chipOf) : aliveEnemies.map(chipOf);
-  const confirmLabel = pend ? null : sel === 'attack' ? 'Confirm' : sel === 'guard' ? 'Confirm' : sel === 'book' ? 'Open the Book' : null;
-  const confirmDisabled = !canAct || (sel === 'attack' && !tgtId) || (sel === 'book' && !!b.book_used);
-  const onConfirm = () => { if (sel === 'attack') chooseAttack(); else if (sel === 'guard') void doAction('guard', null); else if (sel === 'book') void openBook(); };
+  const confirmLabel = pend ? null : sel === 'attack' || sel === 'guard' ? 'Confirm' : sel === 'word' ? 'Cast' : sel === 'book' ? 'Open the Book' : null;
+  const confirmDisabled = !canAct || (sel === 'attack' && !tgtId) || (sel === 'word' && (wordText.trim().length < 2 || (wordMode === 'attack' && !tgtId))) || (sel === 'book' && !!b.book_used);
+  const onConfirm = () => { if (sel === 'attack') chooseAttack(); else if (sel === 'word') void doWord(); else if (sel === 'guard') void doAction('guard', null); else if (sel === 'book') void openBook(); };
   const deckStatus = active ? 'Enemy turn…' : mine && mine.hp <= 0 ? 'You are down. Your team fights on.' : mine?.locked ? `${msg || 'Locked in'}. Waiting for the team…` : 'Waiting…';
   const hudHeroes = heroes.filter((h) => h.hp > 0);
   const waitingNames = hudHeroes.filter((h) => !h.locked && h.player_id !== b.me).map((h) => h.hero ?? h.name);
@@ -575,6 +587,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           pickedId={target} pickableIds={b.units.filter((u) => u.hp > 0 && ((needsEnemy && u.side === 'enemy') || (needsAlly && u.side === 'hero')) && canAct).map((u) => u.id)} />}
         <div className="rg-vig" />
 
+        <LeftParty rows={partyRows} active={active?.ai} />
         {/* top-left: turn order. Idle: by speed. While a turn plays: the real order, the acting unit lit up */}
         <div className="rg-order" aria-label="Turn order">
           <span className="rg-rd">{b.turn}<small>/{b.stages * 5}</small></span>
@@ -701,7 +714,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
           chips={chips} chipMode={chipMode} chipTitle={pend ? (pickingAlly ? 'Select an ally' : 'Select a target') : 'Select a target'}
           onChip={(id) => { if (pend) pickUnit(id); else { setTarget(id); setMsg(''); } }}
           confirmLabel={confirmLabel} onConfirm={onConfirm} confirmDisabled={confirmDisabled} onCancel={() => { setPend(null); setSel('attack'); setMsg(''); }}
-          skills={skillEntries} items={itemEntries} bookDisabled={!!b.book_used} party={partyRows} log={hudLog} round={b.turn} />
+          word={{ prompt: b.prompt, locked: b.locked, value: wordText, onChange: setWordText, mode: wordMode, onMode: setWordMode, msg: wordMsg } satisfies WordUi} skills={skillEntries} items={itemEntries} bookDisabled={!!b.book_used} party={partyRows} log={hudLog} round={b.turn} />
       )}
 
       {/* hand of cards + book */}
