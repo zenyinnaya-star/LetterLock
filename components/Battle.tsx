@@ -605,7 +605,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
 
         {/* element banner */}
         <div className="rg-prompt">
-          <div className="rg-prompt-t">{b.element ? <><span className="rg-elchip"><ElIcon el={b.element} size={16} /></span> {b.element.toUpperCase()} turn · hit weaknesses for ×1.5</> : 'Choose your move'}</div>
+          <div className="rg-prompt-t">{b.element ? <><span className="rg-elchip"><ElIcon el={b.element} size={16} /></span> {b.element.toUpperCase()} turn<span className="rg-prompt-sub"> · hit weaknesses for ×1.5</span></> : 'Choose your move'}</div>
         </div>
 
         {active && <div className={`rg-ban ${active.t === 'ult' ? 'ult' : active.t === 'crit' ? 'crit' : enemies.some((e) => e.name === active.a) ? 'e' : ''}`} key={`${active.t}-${active.a}-${active.n}-${b.version}`}><span>{logLine(active)}</span></div>}
