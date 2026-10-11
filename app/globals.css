@@ -2497,3 +2497,6 @@ html:has(.shell.rpg) body{overflow:hidden}
 .rg-unit.hero.mine::after{bottom:auto;top:calc(78% - 13px)}
 .rg-unit.enemy.picked::after{bottom:auto;top:calc(78% - 14px)}
 .rg-unit.enemy.picked::before{bottom:auto;top:calc(78% - 18px)}
+
+/* no icon strips or tags floating over the characters */
+.rg-unit .rg-el,.rg-unit .rg-uc-tag{display:none!important}
