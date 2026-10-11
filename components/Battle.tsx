@@ -136,13 +136,15 @@ type Float = { k: string; text: string; cls: string };
 function Sprite({ elNow, u, floats, picked, onPick, style, lunge, lungeTo, t3, mine, menu, win, pose, broken }: { broken?: boolean; lungeTo?: { x: number; y: number }; pose?: 'strike' | 'cast' | 'hurt'; win?: boolean; menu?: React.ReactNode; elNow?: string; t3?: boolean; mine?: boolean; u: BattleUnit; floats: Float[]; picked: boolean; onPick?: () => void; style: React.CSSProperties; lunge?: boolean }) {
   const pct = Math.max(0, Math.min(100, (u.hp / u.max_hp) * 100));
   const hit = floats.some((f) => f.cls === 'dmg');
+  const dmgN = Math.abs(parseInt(floats.find((f) => f.cls.includes('dmg'))?.text ?? '0', 10)) || 0;
+  const recoil = Math.max(8, Math.min(26, 6 + dmgN / 5));
   return (
     <div className={`rg-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}${u.name === 'Government' ? ' boss' : ''}${t3 ? ' t3' : ''}${mine ? ' mine' : ''}${menu ? ' lift' : ''}${hit ? ' ouch' : ''}${floats.some((f) => f.text === 'DODGE') ? ' dodged' : ''}${floats.some((f) => f.cls.includes('heal')) ? ' healed' : ''}${floats.some((f) => f.cls.includes('shield')) ? ' shielded' : ''}${lunge ? ' striking' : ''}${win && u.hp > 0 ? ' cheer' : ''}${broken ? ' broken' : ''}`}
       data-u={(u.hero ?? u.name).toLowerCase().replace(/[^a-z]+/g, '-')}
       style={{ ...style, ['--idle' as string]: `${-((u.id.charCodeAt(0) + u.id.charCodeAt(3)) % 17) / 10}s` }} onClick={onPick} role={onPick ? 'button' : undefined}>
       <motion.div key={`${lunge ? 'l' : hit ? 'h' : 'i'}-${floats[0]?.k ?? ''}`}
-        animate={lunge ? (lungeTo ? { x: [0, 0, lungeTo.x, lungeTo.x, 0], y: [0, 0, lungeTo.y, lungeTo.y, 0], scale: [1, 1.05, 1.12, 1.12, 1] } : { x: [0, u.side === 'hero' ? 90 : -90, 0], scale: [1, 1.12, 1] }) : hit ? { x: [0, -10, 10, -6, 0], filter: ['brightness(2.2)', 'brightness(1)'] } : {}}
-        transition={lunge && lungeTo ? { duration: 0.7, times: [0, 0.15, 0.45, 0.62, 1], ease: 'easeInOut' } : { duration: lunge ? 0.5 : 0.4 }}>
+        animate={lunge ? (lungeTo ? { x: [0, -Math.sign(lungeTo.x || 1) * 16, lungeTo.x, lungeTo.x, 0], y: [0, 4, lungeTo.y, lungeTo.y, 0], scale: [1, 0.94, 1.12, 1.12, 1] } : { x: [0, u.side === 'hero' ? 90 : -90, 0], scale: [1, 1.12, 1] }) : hit ? { x: [0, -recoil, recoil * 0.6, -recoil * 0.3, 0], filter: ['brightness(2.2)', 'brightness(1)'] } : {}}
+        transition={lunge && lungeTo ? { duration: 0.7, times: [0, 0.2, 0.45, 0.62, 1], ease: 'easeInOut' } : { duration: lunge ? 0.5 : 0.4 }}>
         <div className="rg-uc">
           {u.hp > 0 && u.intent && <span className={`rg-intent i-${u.intent}`} title={`Next: ${u.intent}`}>{INTENT_ICON[u.intent] ?? '⚔'}</span>}
           {u.hp > 0 && (u.haste ?? 0) !== 0 && <span className={`rg-haste ${(u.haste ?? 0) > 0 ? 'up' : 'dn'}`} title={(u.haste ?? 0) > 0 ? 'Hasted: acts earlier' : 'Slowed: acts later'}>{(u.haste ?? 0) > 0 ? '⚡' : '🐌'}</span>}

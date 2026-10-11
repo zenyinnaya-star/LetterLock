@@ -113,6 +113,14 @@ export function useCombatDirector(inp: In) {
 
     // BREAK meter
     let broke = false;
+    // hit-stop: a brief freeze on meaningful impacts
+    if (has('CRITICAL_HIT') || has('ULTIMATE_STARTED') || has('WEAKNESS_HIT')) {
+      const r = document.documentElement;
+      if (!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+        r.classList.add('hitstop');
+        later(() => r.classList.remove('hitstop'), has('ULTIMATE_STARTED') ? 110 : has('CRITICAL_HIT') ? 90 : 60);
+      }
+    }
     evs.forEach((x) => bus.emit(x));
 
     // normal swing for plain hits (bigger presets already fired from the bus)
