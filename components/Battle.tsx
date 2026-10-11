@@ -17,6 +17,7 @@ import { useCombatDirector, breakMaxOf } from './useCombatDirector';
 import { LetterVfx } from './LetterVfx';
 import { actionFor, lungeTimes } from '@/lib/combat/actions';
 import { BattleTutorial } from './BattleTutorial';
+import { TopBar, CommandDeck, type Cmd, type Chip, type Entry, type PartyRow, type OrderItem } from './BattleHud';
 import { preloadFor } from '@/lib/combat/registry';
 import type { Act } from './phases';
 
@@ -181,7 +182,8 @@ function ClearBanner({ stage }: { stage: number }) {
 export function Battle({ state, token, act, fallback }: { state: RoomState; token: string | null; act: Act; fallback?: React.ReactNode }) {
   const [b, setB] = useState<BattleState | null>(null);
   const [loaded, setLoaded] = useState(false);
-  const [pend, setPend] = useState<{ kind: 'attack' } | { kind: 'card'; c: string } | null>(null);
+  const [pend, setPend] = useState<{ kind: 'attack' } | { kind: 'ult' } | { kind: 'card'; c: string } | null>(null);
+  const [sel, setSel] = useState<Cmd>('attack');
   const [oddsCalled, setOddsCalled] = useState(false);
   const [spOpen, setSpOpen] = useState(false);
   const [itemOpen, setItemOpen] = useState(false);
@@ -222,7 +224,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const mine = b?.units.find((u) => u.player_id === b.me);
   useEffect(() => { if (mine?.hero) { try { localStorage.setItem('letterlock:hero', mine.hero); } catch { /* ignore */ } } }, [mine?.hero]);
   const turn = b?.turn ?? 0;
-  useEffect(() => { setMsg(''); setPend(null); setOddsCalled(false); setSpOpen(false); setItemOpen(false); }, [turn]);
+  useEffect(() => { setMsg(''); setPend(null); setOddsCalled(false); setSpOpen(false); setItemOpen(false); setSel('attack'); }, [turn]);
 
   // Act intro card
   useEffect(() => {
@@ -412,7 +414,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
   const ultReady = (mine?.ult ?? 0) >= 6;
   const ai = actOf(b.stage);
   const myHero = mine?.hero ? heroById(mine.hero as HeroId) : null;
-  const needsEnemy = !!pend && (pend.kind === 'attack' || pend.c === 'sp_attack');
+  const needsEnemy = !!pend && (pend.kind === 'attack' || pend.kind === 'ult' || (pend.kind === 'card' && pend.c === 'sp_attack'));
   const needsAlly = pend?.kind === 'card' && pend.c === 'sp_heal';
   const needsDown = pend?.kind === 'card' && pend.c === 'revive';
 
@@ -423,7 +425,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     return { left: `${x}%`, top: '40%', zIndex: 10 };
   };
   // heroes: one even row along the lower-left, same baseline
-  const hPos = (i: number, n: number): React.CSSProperties => ({ left: `${n === 1 ? 22 : 10 + (i * 34) / (n - 1)}%`, top: '74%', zIndex: 20 });
+  const hPos = (i: number, n: number): React.CSSProperties => ({ left: `${n === 1 ? 26 : 19 + (i * 30) / (n - 1)}%`, top: '74%', zIndex: 20 });
 
   const posMap: Record<string, { x: number; y: number }> = {};
   enemies.forEach((u, i) => { const p = ePos(i, enemies.length); posMap[u.id] = { x: parseFloat(String(p.left)), y: parseFloat(String(p.top)) }; });
@@ -463,12 +465,12 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     const r = await act(() => rpc.battleSubmit(token, '', kind, tgt));
     if (!r) return;
     if (!r.ok) setMsg('Invalid.');
-    else { setMsg(kind === 'attack' ? 'Attack locked in' : kind === 'guard' ? 'Guarding' : 'Ultimate locked in'); setPend(null); void load(); }
+    else { setMsg(kind === 'attack' ? 'Attack locked in' : kind === 'guard' ? 'Guarding' : 'Ultimate locked in'); setPend(null); setSel('attack'); void load(); }
   }
   async function playCard(c: string, tgt: string | null) {
     if (!token) return;
     const r = await act(() => rpc.battlePlay(token, c, tgt));
-    setPend(null); setSpOpen(false); setItemOpen(false);
+    setPend(null); setSpOpen(false); setItemOpen(false); setSel('attack');
     if (r) void load();
   }
   // tap on a unit while something is waiting for a target
@@ -476,6 +478,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     if (!pend || !canAct) return;
     setTarget(id);
     if (pend.kind === 'attack') void doAction('attack', id);
+    else if (pend.kind === 'ult') void doAction('ult', id);
     else void playCard(pend.c, id);
   }
   // JRPG flow: tap an enemy to target it, then pick a command
@@ -525,35 +528,45 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
     else setBookMsg('Invalid.');
   }
 
-  const cardMenu = mine ? (
-    <div className="rg-cm" onClick={(e) => e.stopPropagation()}>
-      {itemOpen ? (<>
-        {b.cards.filter((c) => ITEM_CARDS.includes(c)).length === 0 && <span className="rg-cm-empty">No items. Buy potions at camp or read the Book of Wisdom.</span>}
-        {b.cards.map((c, i) => ITEM_CARDS.includes(c) && (
-          <button key={c + i} type="button" className={`rg-cmb${pend?.kind === 'card' && pend.c === c ? ' sel' : ''}`} disabled={!canAct || b.card_used} title={CARDS[c]?.hint} onClick={() => chooseCard(c)}><i>▶</i>{c === 'sp_heal' ? 'Healing Potion' : c === 'revive' ? 'Revive Potion' : CARDS[c]?.label ?? c}</button>
-        ))}
-        <button type="button" className="rg-cmb back" onClick={() => { setItemOpen(false); setPend(null); }}><i>◀</i>Back</button>
-      </>) : !spOpen ? (<>
-        <button type="button" className="rg-cmb" data-sub="strike the target" disabled={!canAct} onClick={() => { setSpOpen(false); chooseAttack(); }}><i>▶</i>Attack</button>
-        <button type="button" className="rg-cmb" data-sub="brace for impact" disabled={!canAct} onClick={() => void doAction('guard', null)}><i>▶</i>Guard</button>
-        <button type="button" className="rg-cmb ult" data-sub="limit-break finisher" disabled={!canAct || !ultReady} onClick={() => { if (!tgtId) needTarget(); else void doAction('ult', tgtId); }}><i>▶</i>{ULT_NAME[mine.hero ?? ''] ?? 'Ultimate'}<em>{ultReady ? 'READY' : `${mine.ult ?? 0}/6`}</em></button>
-        <button type="button" className="rg-cmb" data-sub="type to draw a special" disabled={!canAct || !!b.book_used} onClick={() => void openBook()}><i>▶</i>Book of Wisdom</button>
-        <button type="button" className="rg-cmb" data-sub="potions & consumables" disabled={!canAct} onClick={() => setItemOpen(true)}><i>▶</i>Item<em>{b.cards.filter((c) => ITEM_CARDS.includes(c)).length}</em></button>
-        {b.cards.some((c) => !ITEM_CARDS.includes(c)) && <button type="button" className="rg-cmb" disabled={!canAct} onClick={() => setSpOpen(true)}><i>▶</i>Specials<em>{b.cards.filter((c) => !ITEM_CARDS.includes(c)).length}</em></button>}
-        {(b.momentum ?? 0) >= 100 && <button type="button" className="rg-cmb odds" disabled={!canAct || oddsCalled} onClick={() => void callOdds()}><i>★</i>{oddsCalled ? 'Odds locked' : 'Unleash Odds!'}</button>}
-      </>) : (<>
-        {b.cards.map((c, i) => !ITEM_CARDS.includes(c) && (
-          <button key={c + i} type="button" className={`rg-cmb${pend?.kind === 'card' && pend.c === c ? ' sel' : ''}`} disabled={!canAct || b.card_used} onClick={() => chooseCard(c)}><i>▶</i>{CARDS[c]?.label ?? c}</button>
-        ))}
-        <button type="button" className="rg-cmb back" onClick={() => setSpOpen(false)}><i>◀</i>Back</button>
-      </>)}
-    </div>
-  ) : undefined;
+  // ── HUD data (presentation only) ──
+  const itemCards = b.cards.filter((c) => ITEM_CARDS.includes(c));
+  const specialCards = b.cards.filter((c) => !ITEM_CARDS.includes(c));
+  const cardLabel = (c: string) => (c === 'sp_heal' ? 'Healing Potion' : c === 'revive' ? 'Revive Potion' : CARDS[c]?.label ?? c);
+  const toEntry = (c: string, i: number): Entry => ({ key: c + i, label: cardLabel(c), hint: CARDS[c]?.hint ?? '', disabled: !canAct || b.card_used, sel: pend?.kind === 'card' && pend.c === c, onUse: () => chooseCard(c) });
+  const skillEntries: Entry[] = [
+    ...(mine ? [{ key: 'ult', label: ULT_NAME[mine.hero ?? ''] ?? 'Ultimate', hint: ultReady ? 'Limit-break finisher' : `Charging ${mine.ult ?? 0}/6`, disabled: !canAct || !ultReady, ult: true, badge: ultReady ? 'READY' : `${mine.ult ?? 0}/6`, sel: pend?.kind === 'ult',
+      onUse: () => { if (aliveEnemies.length === 1) void doAction('ult', aliveEnemies[0].id); else { setPend({ kind: 'ult' }); setMsg('Pick a target'); } } } as Entry] : []),
+    ...specialCards.map(toEntry),
+    ...((b.momentum ?? 0) >= 100 ? [{ key: 'odds', label: oddsCalled ? 'Odds locked' : 'Unleash Odds!', hint: 'Team finisher', disabled: !canAct || oddsCalled, onUse: () => void callOdds() } as Entry] : []),
+  ];
+  const itemEntries: Entry[] = b.cards.map((c, i) => [c, i] as const).filter(([c]) => ITEM_CARDS.includes(c)).map(([c, i]) => toEntry(c, i));
+  const chipOf = (u: BattleUnit): Chip => ({ id: u.id, name: u.name, src: portrait(u), hp: u.hp, max: u.max_hp, picked: tgtId === u.id || target === u.id, down: u.hp <= 0,
+    sub: u.side === 'enemy' && u.weak_el ? `weak ${u.weak_el}` : undefined });
+  const pickingAlly = needsAlly || needsDown;
+  const chipMode: 'target' | 'pick' | null = pend && (needsEnemy || pickingAlly) ? 'pick' : sel === 'attack' ? 'target' : null;
+  const chips: Chip[] = chipMode === 'pick' ? (needsEnemy ? aliveEnemies : heroes.filter((h) => (needsDown ? h.hp <= 0 : h.hp > 0))).map(chipOf) : aliveEnemies.map(chipOf);
+  const confirmLabel = pend ? null : sel === 'attack' ? 'Confirm' : sel === 'guard' ? 'Confirm' : sel === 'book' ? 'Open the Book' : null;
+  const confirmDisabled = !canAct || (sel === 'attack' && !tgtId) || (sel === 'book' && !!b.book_used);
+  const onConfirm = () => { if (sel === 'attack') chooseAttack(); else if (sel === 'guard') void doAction('guard', null); else if (sel === 'book') void openBook(); };
+  const deckStatus = active ? 'Enemy turn…' : mine && mine.hp <= 0 ? 'You are down. Your team fights on.' : mine?.locked ? `${msg || 'Locked in'}. Waiting for the team…` : 'Waiting…';
+  const hudHeroes = heroes.filter((h) => h.hp > 0);
+  const waitingNames = hudHeroes.filter((h) => !h.locked && h.player_id !== b.me).map((h) => h.hero ?? h.name);
+  const pill: 'mine' | 'play' | 'wait' = active ? 'play' : canAct ? 'mine' : 'wait';
+  const logIdx = active ? b.log.indexOf(active) : b.log.length - 1;
+  const hudLog = b.log.slice(0, Math.max(0, logIdx + 1)).filter((e) => e.t !== 'brk' || e.x === true).slice(-7).map(logLine);
+  const orderItems: OrderItem[] = wheel.map((w) => ({ id: w.u.id, name: w.u.name, src: portrait(w.u), side: w.u.side, cur: w.cur, done: w.done, spd: effSpd(w.u) }));
+  const partyRows: PartyRow[] = heroes.map((u) => ({ id: u.id, name: u.hero ?? u.name, src: portrait(u), hp: u.hp, max: u.max_hp, ult: u.ult ?? 0, me: u.player_id === b.me, locked: u.locked, down: u.hp <= 0, shield: u.shield, corr: u.corruption }));
 
   const skillDisabled = !canAct;
 
   return (
     <div className={`rg${active?.t === 'limit' ? ' lb' : ''}`}>
+      <TopBar location={ACT_NAME[ai].split('· ')[1] ?? ACT_NAME[ai]} round={b.turn} rounds={b.stages * 5} order={orderItems} pill={pill}
+        turnLabel={active ? (active.a && enemies.some((e) => e.name === active.a) ? 'ENEMY TURN' : 'RESOLVING') : canAct ? 'YOUR TURN' : mine && mine.hp <= 0 ? 'DOWN' : mine?.locked ? 'LOCKED IN' : 'WAITING'}
+        turnSub={active ? 'Watch the round play out' : canAct ? 'You can act now' : mine?.locked ? 'Waiting for allies' : 'Hold on…'}
+        ready={hudHeroes.filter((h) => h.locked).length} readyTotal={hudHeroes.length} waiting={mine?.locked ? waitingNames.slice(0, 3).join(', ') : ''}
+        timer={active || b.step !== 'input' ? '—' : `${left}s`} warn={!active && left <= 5 && b.step === 'input'}
+        skillsHref={`/skills?from=${encodeURIComponent(`/room/${state.room.code}`)}`} onLog={() => setShowLog((v) => !v)} />
       <div ref={stageEl} className={`rg-stage${use3d ? ' t3' : ''}`} data-boss={lead?.name === 'Government' ? 1 : 0} data-foes={aliveEnemies.length <= 1 ? 1 : 0}>
         <div className="rg-cam" ref={(el) => { dir.camEl.current = el; dir.cam.attach(el); }}>
         <div className="rg-bg" style={{ backgroundImage: `url(${PIXEL_BG[ai]})` }} />
@@ -683,31 +696,12 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         )}
       </div>
 
-      {mine && myHero && (
-        <div className="rg-bottom">
-        {b.step === 'input' && (
-          <div className={`rg-cmd${canAct ? '' : ' lock'}`}>
-            <div className="rg-cmd-h">{canAct ? (needsAlly || needsDown ? 'Tap an ally' : tgtUnit ? `Target: ${tgtUnit.name}` : 'Tap an enemy to target') : active ? 'Enemy turn…' : mine.hp <= 0 ? 'Down' : mine.locked ? 'Waiting…' : '…'}</div>
-            {cardMenu}
-          </div>
-        )}
-        <div className={`rg-hud${mine.hp <= 0 ? ' down' : ''}`}>
-          <div className="rg-hud-id">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={myHero.artFull} alt="" draggable={false} />
-          </div>
-          <div className="rg-hud-hp">
-            <div className="rg-hud-name"><b>{myHero.name}</b><span>{myHero.role}</span><em>ULT {mine.ult ?? 0}/6</em></div>
-            <div className="rg-hud-bar">
-              <motion.u animate={{ width: `${Math.max(0, Math.min(100, ((heroes.find((x) => x.id === mine.id)?.hp ?? mine.hp) / mine.max_hp) * 100))}%` }} transition={{ duration: 1.2, delay: 0.35 }} />
-              <motion.i animate={{ width: `${Math.max(0, Math.min(100, ((heroes.find((x) => x.id === mine.id)?.hp ?? mine.hp) / mine.max_hp) * 100))}%` }} transition={{ duration: 0.35 }} />
-              <strong>{Math.max(0, heroes.find((x) => x.id === mine.id)?.hp ?? mine.hp)} / {mine.max_hp}</strong>
-            </div>
-            <div className="rg-hud-ult"><em>ULT</em><span><i style={{ width: `${Math.min(100, ((mine.ult ?? 0) / 6) * 100)}%` }} /></span></div>
-            <div className="rg-hud-sub">{mine.shield ? <span>🛡 {mine.shield}</span> : null}{mine.corruption > 0 ? <span>☠ {mine.corruption}</span> : null}<span>{b.step !== 'input' ? 'Resolving…' : mine.hp <= 0 ? 'Down' : mine.locked ? (msg || 'Locked in') : canAct ? (pend ? `Tap ${needsAlly ? 'an ally' : 'an enemy'}` : 'Your command') : 'Waiting…'}</span></div>
-          </div>
-        </div>
-        </div>
+      {mine && myHero && b.step === 'input' && (
+        <CommandDeck sel={sel} setSel={(c) => { setSel(c); setPend(null); setMsg(''); }} canAct={canAct} status={deckStatus} hero={myHero.name} ult={mine.ult ?? 0} ultReady={ultReady}
+          chips={chips} chipMode={chipMode} chipTitle={pend ? (pickingAlly ? 'Select an ally' : 'Select a target') : 'Select a target'}
+          onChip={(id) => { if (pend) pickUnit(id); else { setTarget(id); setMsg(''); } }}
+          confirmLabel={confirmLabel} onConfirm={onConfirm} confirmDisabled={confirmDisabled} onCancel={() => { setPend(null); setSel('attack'); setMsg(''); }}
+          skills={skillEntries} items={itemEntries} bookDisabled={!!b.book_used} party={partyRows} log={hudLog} round={b.turn} />
       )}
 
       {/* hand of cards + book */}
@@ -731,16 +725,7 @@ export function Battle({ state, token, act, fallback }: { state: RoomState; toke
         </div>
       )}
 
-      {b.step === 'input' ? (
-        <div className="rg-panel">
-          {mine && mine.hp <= 0 ? <div className="muted center">You&apos;re down. Your team fights on…</div> : mine?.locked ? (
-            <div className="muted center">{msg || 'Locked in'}. Waiting for the team…</div>
-          ) : (
-            <div className="muted center">{pend ? `Tap ${needsAlly ? 'an ally' : 'an enemy'} to ${pend.kind === 'attack' ? 'attack it' : 'use ' + (CARDS[pend.c]?.label ?? 'it')}` : 'Tap an enemy, then choose a command'}</div>
-          )}
-          {msg && !mine?.locked && <div className="muted small center">{msg}</div>}
-        </div>
-      ) : (
+      {b.step === 'input' ? null : (
         <div className={`rg-result rg-end ${b.step}${active ? " wait" : ""}`}>
           <div className="rg-end-title">{b.step === 'won' ? 'VICTORY' : 'DEFEAT'}</div>
           <h2>{b.step === 'won' ? 'The Government has fallen.' : 'Your party was wiped out… the IRS wins this round.'}</h2>
