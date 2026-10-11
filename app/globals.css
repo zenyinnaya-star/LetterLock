@@ -2248,3 +2248,39 @@ input::placeholder{color:rgba(255,246,216,.6)!important}
   .ul-play.wait{font-size:13px;color:#fff6d8;background:rgba(5,7,12,.9);border:1px solid #d6b878}
   .ul-ally{width:72px;height:92px}
 }
+
+/* =====================================================================
+   PHONE LANDSCAPE: wide + short. Stage fills the height, controls sit in one compact row.
+   (No orientation lock anywhere, so players can rotate freely.)
+   ===================================================================== */
+@media (orientation:landscape) and (max-height:520px){
+  .shell.rpg{padding:4px 8px}
+  .shell.rpg .topbar{display:none}
+  .rg-stage{aspect-ratio:auto;height:calc(100dvh - 128px);min-height:200px;border-radius:10px}
+  .rg-unit,.rg-stage .rg-unit.hero{width:12%;min-width:60px;max-width:96px}
+  .rg-unit.boss,.rg-stage[data-foes="1"] .rg-unit.enemy,.rg-stage[data-foes="1"] .rg-unit.enemy.boss{width:24%;min-width:120px;max-width:200px}
+  .rg-prompt{top:36px;max-width:50%}
+  .rg-prompt-t{font-size:11px;padding:3px 8px}
+  .rg-prompt-sub{display:none}
+  .rg-turn{top:62px;font-size:10px;padding:3px 12px}
+  .rg-ban{top:16%;left:25%!important;right:25%!important;max-width:50%!important}
+  .rg-ban.e{left:25%!important;right:25%!important}
+  .rg-pc{width:44px;height:58px}
+  .rg-party{bottom:4px;left:4px}
+  .bt-tut{top:6px;width:min(60vw,420px)}
+
+  .rg-bottom{flex-direction:row;align-items:stretch;gap:8px;margin:6px 0 0}
+  .rg-cmd{flex:1 1 55%;width:auto}
+  .rg-cmd .rg-cm{grid-template-columns:repeat(3,1fr)}
+  .rg-cmd .rg-cmb{padding:6px 8px 10px 10px;min-height:38px;font-size:12px!important}
+  .rg-cmd-h{display:none}
+  .rg-bottom .rg-hud,.rg-hud{flex:1 1 45%;width:auto;padding:6px 8px;flex-wrap:nowrap}
+  .rg-hud-id{width:44px}
+  .rg-hud-name b{font-size:14px}.rg-hud-name span,.rg-hud-sub{display:none}
+  .rg-hud-bar{height:20px}.rg-hud-bar strong{font-size:12px}
+
+  /* regular (classic) room screens: tighter vertical rhythm in landscape */
+  .stage-body{padding:12px clamp(12px,3vw,28px) 14px;gap:10px}
+  .prompt{font-size:clamp(22px,5vh,34px)!important;padding:8px 14px!important;margin:4px 0}
+  .tile{width:44px;height:50px;font-size:26px}
+}
