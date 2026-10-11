@@ -1,9 +1,8 @@
-// Higgsfield-generated art, hosted on their CDN until self-hosted copies land in /public/art.
-const C = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_';
-const u = (id: string) => `${C}${id}.png`;
+// Higgsfield-generated art, self-hosted as WebP under /public/art (see scripts/fetch-art.mjs for the fallback-to-CDN build step).
+const u = (id: string) => `/art/${id}.webp`;
 
 // v2 cel-shaded sprites (2026-10-08)
-const N = (id: string) => `${C}${id}.png`;
+const N = u;
 const S2 = {
   Shiro: N('20261008_015326_684f5384-e54e-4848-becb-2a1471d0ab6e'),
   Nero: N('20261008_015254_a3d67e43-a3ff-42d7-8e5d-7b2e128d774b'),
@@ -44,9 +43,9 @@ export const ACT_BG = [
   u('20261008_063315_05cd6739-2de4-45ea-bc87-3466756ea0e0'), // Act III · citadel
 ];
 export const PIXEL_BG = [
-  'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261011_051630_d93a9231-6189-4a33-8a8a-463de18b86d8.png',
-  'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_131257_d1ae0087-97b5-4bc9-b638-79d33ecdc3b7.png',
-  'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_131258_29ad1a30-0fb6-4b7f-9daf-c078a820e43e.png',
+  u('20261011_051630_d93a9231-6189-4a33-8a8a-463de18b86d8'),
+  u('20261008_131257_d1ae0087-97b5-4bc9-b638-79d33ecdc3b7'),
+  u('20261008_131258_29ad1a30-0fb6-4b7f-9daf-c078a820e43e'),
 ]; // 16-bit pixel-art battle backdrops, one per act
 export const MENU_BG = u('20261008_063255_20876ecb-71fb-47e1-abb5-86be76caf752');
 export const HERO_BG = u('20261008_063230_5d2b88fe-8bdd-4a43-a030-dcad86f63b89');
