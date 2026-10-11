@@ -3,7 +3,7 @@ const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4d
 const P = (id: string) => `${CDN}${id}.png`;
 // fresh square portraits (class-select style), same characters
 export const HERO_PORTRAIT: Record<string, string> = {
-  Shiro: P('20261008_123836_1ae117da-3ce9-48ab-ac5d-db6c59b90caf'),
+  Shiro: P('20261011_184324_05a5dc5e-c4dd-48ea-8034-7ce25a1f479e'), // fresh close-up (approved)
   Nero: P('20261008_123837_c867849d-c2bb-455c-9367-0b018579d699'),
   Kira: P('20261008_123859_506eb1c5-2b8e-49b5-a5b2-4508f922f429'),
   Mira: P('20261008_123837_7b10d081-f74b-497b-b1e4-f78341f60beb'),
