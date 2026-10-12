@@ -66,6 +66,8 @@ export const SHEETS: Record<string, AnimationData & { url: string }> = {
   'Intern Auditor:IDLE': { url: '/art/wolf_idle_sheet.png', hframes: 4, vframes: 2, total_frames: 8, duration: 1.6, aspect: 1.5, h: 56, top: 24 },
   'Intern Auditor:RUN': { url: '/art/wolf_run_sheet.png', hframes: 4, vframes: 3, total_frames: 12, duration: 0.6, aspect: 1.5, h: 56, top: 24 },
   'Intern Auditor:ATTACK': { url: '/art/wolf_attack_sheet.png', hframes: 6, vframes: 6, total_frames: 36, duration: 1.2, aspect: 1.5, h: 56, top: 24 },
+  'Intern Auditor:HURT': { url: '/art/wolf_hurt_sheet.png', hframes: 8, vframes: 6, total_frames: 48, duration: 0.7, order: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], aspect: 1.5, h: 56, top: 24 },
+  'Intern Auditor:DEATH': { url: '/art/wolf_death_sheet.png', hframes: 6, vframes: 4, total_frames: 24, duration: 1.4, aspect: 1.5, h: 56, top: 24 },
   'Shiro:IDLE': { url: '/art/shiro_idle_sheet.png', hframes: 6, vframes: 2, total_frames: 12, duration: 1.6 },
 };
 
