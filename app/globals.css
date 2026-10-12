@@ -2486,7 +2486,7 @@ html:has(.shell.rpg) body{overflow:hidden}
   .bx-turn::before{clip-path:polygon(11px 0,calc(100% - 11px) 0,100% 50%,calc(100% - 11px) 100%,11px 100%,0 50%)}.bx-turn b{font-size:17px}}
 
 /* Shiro: no idle jiggle, plain still until a proper sprite sheet exists */
-.rg-unit[data-u="shiro"] .rg-img{animation:none!important}
+.rg-unit[data-u="shiro"] img.rg-img{animation:none!important}
 .rg-bg.paint{image-rendering:auto;filter:saturate(1.05) brightness(.95);background-position:center 60%}
 
 /* clean enemies: no hovering intent/haste emojis and no break-meter pips under them */

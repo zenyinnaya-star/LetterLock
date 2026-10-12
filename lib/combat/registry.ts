@@ -54,7 +54,10 @@ function frameFor(name: string, isHero: boolean, a: AnimState): string | undefin
   return undefined;
 }
 /** Register sprite sheets here as art arrives: SHEETS['Kira:ATTACK'] = { url, hframes, vframes, total_frames, duration }. */
-export const SHEETS: Record<string, AnimationData & { url: string }> = {};
+export const SHEETS: Record<string, AnimationData & { url: string }> = {
+  // SpriteForge idle (12 frames, 6x2, square cells, magenta keyed out, feet at 97% of cell)
+  'Shiro:IDLE': { url: '/art/shiro_idle_sheet.png', hframes: 6, vframes: 2, total_frames: 12, duration: 1.6 },
+};
 
 export const heroBack = (name: string) => HERO_BACK[name];
 
