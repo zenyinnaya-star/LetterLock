@@ -2549,3 +2549,6 @@ html:has(.shell.rpg) body{overflow:hidden}
   .rg-unit.enemy .rg-uc .rg-uname{left:50%;right:auto;width:max-content;max-width:190px;transform:translateX(-50%);white-space:nowrap;font-size:12px}
   .rg-unit.enemy .rg-uc .rg-uc-hp{left:50%;right:auto;width:96px;transform:translateX(-50%)}
 }
+
+/* a fallen hero with a death sheet stays fully visible, lying on the quay */
+.rg-unit.hero.down[data-u="shiro"]{opacity:.92;filter:grayscale(.35)}
