@@ -2501,8 +2501,8 @@ html:has(.shell.rpg) body{overflow:hidden}
 
 /* all six commands + hint fit without clipping; stage backdrop shows the horizon band (ship, castle) */
 @media (min-width:761px) and (min-height:521px){
-  .shell.rpg .bx-deck{height:296px}
-  .shell.rpg .rg-stage{height:calc(100dvh - 418px)}
+  .shell.rpg .bx-deck{height:262px}
+  .shell.rpg .rg-stage{height:calc(100dvh - 356px)}
   .shell.rpg .bx-cmds{gap:3px}
   .shell.rpg .bx-cmd{min-height:31px;padding:4px 10px;font-size:13px}
   .shell.rpg .bx-cmd-hint{font-size:10.5px;margin-top:1px}
@@ -2538,7 +2538,7 @@ html:has(.shell.rpg) body{overflow:hidden}
 
 /* units sized to the quay (by stage height) so feet land on the platform */
 @media (min-width:761px) and (min-height:521px){
-  .shell.rpg .rg-unit{width:calc((100dvh - 418px) * var(--us,.29));min-width:64px;max-width:230px}
+  .shell.rpg .rg-unit{width:calc((100dvh - 356px) * var(--us,.29));min-width:64px;max-width:230px}
 }
 
 /* sizing pass 3 (vs reference): heroes ~34% stage height; enemy nameplates never wrap */
@@ -2553,3 +2553,12 @@ html:has(.shell.rpg) body{overflow:hidden}
 
 /* shared colour grade: pulls the clean SpriteForge sprites toward the dark, painted harbor backdrop */
 .rg-unit .rg-uc .rg-img,.rg-unit.pickable .rg-uc .rg-img,.rg-unit.picked .rg-uc .rg-img{filter:saturate(.86) brightness(.92) contrast(1.03) hue-rotate(-4deg) drop-shadow(0 5px 6px rgba(2,6,20,.7))}
+
+/* stage reshape: slimmer header + deck so the stage is taller (reference stage ≈ 53% of screen) */
+@media (min-width:761px) and (min-height:521px){
+  .shell.rpg .bx-top{padding-top:4px;padding-bottom:4px}
+  .shell.rpg .bx-top>*{max-height:66px;min-height:0}
+  .shell.rpg .bx-turn{padding-top:4px;padding-bottom:4px}
+  .shell.rpg .bx-turn b{font-size:clamp(20px,2.4vw,30px)}
+  .shell.rpg .bx-order img,.shell.rpg .bx-ord img{max-height:42px}
+}
