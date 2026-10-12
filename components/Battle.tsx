@@ -112,6 +112,7 @@ function KeyedImg({ src, className, alt, style }: { src: string; className?: str
   return <img className={className} src={s} alt={alt} draggable={false} style={style} />;
 }
 
+export const dn = (n: string) => (n ? n.split('Intern Auditor').join('Shadow Wolf') : n);
 const portrait = (u: BattleUnit) => (u.hero ? (HERO_PORTRAIT[u.hero] ?? heroById(u.hero as HeroId)?.artFull) : (ENEMY_PIXEL[u.name] ?? ENEMY_SPRITE[u.name])) ?? '';
 // side-profile battle art (matches the target mockup); heroes listed here use it for every pose except hurt
 const HERO_SIDE: Record<string, string> = {
@@ -199,7 +200,7 @@ function Sprite({ action, elNow, u, floats, picked, onPick, style, lunge, lungeT
             const back = !!runSh && ph === 'back';
             const flip = (u.side === 'enemy' ? !back : back) ? ' scaleX(-1)' : '';
             return sh ? <SheetSprite key={deadSh ? 'dead' : vicSh ? 'vic' : ultSh ? 'ult' : runSh ? `run${ph}` : atk ? 'atk' : hurtSh ? 'hurt' : 'idle'} className="rg-img" url={sh.url} data={atk && runner ? { ...sh, duration: 0.42 } : sh} loop={!atk && !hurtSh && !deadSh && !ultSh} style={{ position: 'absolute', left: '50%', right: 'auto', top: `${top}%`, height: `${h}%`, width: 'auto', aspectRatio: sh.aspect ? String(sh.aspect) : '1 / 1', transform: `translateX(-50%)${flip}`, imageRendering: 'auto' }} /> : <KeyedImg className="rg-img" src={sprite(u, win, pose ?? (hit && u.hp > 0 ? 'hurt' : undefined))} alt={u.name} />; })()}
-          <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
+          <span className="rg-uname">{dn(u.name)}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
           <span className="rg-uc-hp"><span className="rg-ehp"><motion.u animate={{ width: `${pct}%` }} transition={{ duration: 1.1, delay: 0.35 }} /><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.3 }} /></span><b>{u.side === 'enemy' ? `HP ${Math.max(0, u.hp)}/${u.max_hp}` : u.hp}</b></span>
           {hit && <span className="rg-slash" key={floats[0]?.k} />}
           {u.side === 'enemy' && (u.weak_el || u.res_el) && u.hp > 0 && <span className="rg-el">{u.weak_el && <b title={`Weak to ${u.weak_el}`} className={u.weak_el === elNow ? 'hot' : ''}><ElIcon el={u.weak_el} />▼</b>}{u.res_el && <i title={`Resists ${u.res_el}`}><ElIcon el={u.res_el} />✕</i>}</span>}
@@ -626,7 +627,7 @@ export function Battle({ state, token, act, fallback, offset = 0 }: { state: Roo
     ...((b.momentum ?? 0) >= 100 ? [{ key: 'odds', label: oddsCalled ? 'Odds locked' : 'Unleash Odds!', hint: 'Team finisher', disabled: !canAct || oddsCalled, onUse: () => void callOdds() } as Entry] : []),
   ];
   const itemEntries: Entry[] = b.cards.map((c, i) => [c, i] as const).filter(([c]) => ITEM_CARDS.includes(c)).map(([c, i]) => toEntry(c, i));
-  const chipOf = (u: BattleUnit): Chip => ({ id: u.id, name: u.name, src: portrait(u), hp: u.hp, max: u.max_hp, picked: tgtId === u.id || target === u.id, down: u.hp <= 0,
+  const chipOf = (u: BattleUnit): Chip => ({ id: u.id, name: dn(u.name), src: portrait(u), hp: u.hp, max: u.max_hp, picked: tgtId === u.id || target === u.id, down: u.hp <= 0,
     sub: u.side === 'enemy' && u.weak_el ? `weak ${u.weak_el}` : undefined });
   const pickingAlly = needsAlly || needsDown;
   const chipMode: 'target' | 'pick' | null = pend && (needsEnemy || pickingAlly) ? 'pick' : sel === 'attack' || (sel === 'word' && wordMode === 'attack') ? 'target' : null;
@@ -643,7 +644,7 @@ export function Battle({ state, token, act, fallback, offset = 0 }: { state: Roo
   const pill: 'mine' | 'play' | 'wait' = active ? 'play' : canAct ? 'mine' : 'wait';
   const logIdx = active ? b.log.indexOf(active) : b.log.length - 1;
   const hudLog = b.log.slice(0, Math.max(0, logIdx + 1)).filter((e) => e.t !== 'brk' || e.x === true).slice(-7).map(logLine);
-  const orderItems: OrderItem[] = wheel.map((w) => ({ id: w.u.id, name: w.u.name, src: portrait(w.u), side: w.u.side, cur: w.cur, done: w.done, spd: effSpd(w.u) }));
+  const orderItems: OrderItem[] = wheel.map((w) => ({ id: w.u.id, name: dn(w.u.name), src: portrait(w.u), side: w.u.side, cur: w.cur, done: w.done, spd: effSpd(w.u) }));
   const partyRows: PartyRow[] = heroes.map((u) => ({ id: u.id, name: u.hero ?? u.name, src: portrait(u), hp: u.hp, max: u.max_hp, ult: u.ult ?? 0, me: u.player_id === b.me, locked: u.locked, down: u.hp <= 0, shield: u.shield, corr: u.corruption }));
 
   const skillDisabled = !canAct;
@@ -670,7 +671,7 @@ export function Battle({ state, token, act, fallback, offset = 0 }: { state: Roo
           <span className="rg-rd">{b.turn}<small>/{b.stages * 5}</small></span>
           {wheel.map((w) => (
             <motion.div layout transition={{ type: 'spring', stiffness: 380, damping: 32 }} key={w.u.id}
-              className={`rg-ord ${w.u.side}${w.cur ? ' first' : ''}${w.done ? ' done' : ''}`} title={`${w.u.name} · SPD ${effSpd(w.u)}`}>
+              className={`rg-ord ${w.u.side}${w.cur ? ' first' : ''}${w.done ? ' done' : ''}`} title={`${dn(w.u.name)} · SPD ${effSpd(w.u)}`}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={portrait(w.u)} alt={w.u.name} draggable={false} />
               <i>{effSpd(w.u)}</i>
@@ -681,7 +682,7 @@ export function Battle({ state, token, act, fallback, offset = 0 }: { state: Roo
         {/* top-center: boss bar */}
         {lead && isBoss(lead) && (
           <div className="rg-boss">
-            <div className="rg-boss-name"><b>{lead.name}</b><span>{leadPct}%</span></div>
+            <div className="rg-boss-name"><b>{dn(lead.name)}</b><span>{leadPct}%</span></div>
             <div className="rg-boss-bar"><motion.i animate={{ width: `${leadPct}%` }} transition={{ duration: 0.6 }} /></div>
             <div className="rg-boss-sub">{aliveEnemies.length} enemies · {b.intent !== 'attack' ? `⚠ ${INTENT[b.intent] ?? b.intent}` : 'Preparing…'}
               {b.next_intent !== 'strike' && b.next_intent !== 'attack' ? ` · next: ${INTENT[b.next_intent] ?? b.next_intent}` : ''}</div>
@@ -703,7 +704,7 @@ export function Battle({ state, token, act, fallback, offset = 0 }: { state: Roo
             {b.drain && <span className="bad">The Collector garnishes Power (−20%)</span>}
           </div>
           {tgtUnit && isBoss(tgtUnit) && (() => { const e = tgtUnit; const p = Math.max(0, Math.min(100, (e.hp / e.max_hp) * 100)); return (
-            <div className="rg-tgt"><b>{e.name}</b><span className="rg-tgt-bar"><motion.i animate={{ width: `${p}%` }} transition={{ duration: 0.4 }} /></span><em>{Math.max(0, e.hp)} / {e.max_hp}</em></div>
+            <div className="rg-tgt"><b>{dn(e.name)}</b><span className="rg-tgt-bar"><motion.i animate={{ width: `${p}%` }} transition={{ duration: 0.4 }} /></span><em>{Math.max(0, e.hp)} / {e.max_hp}</em></div>
           ); })()}
         </div>
 
@@ -749,7 +750,7 @@ export function Battle({ state, token, act, fallback, offset = 0 }: { state: Roo
         {dir.label && <div className={`rg-lab ${dir.label.cls}`} key={`lb-${dir.label.key}`}>{dir.label.big && <b>{dir.label.big}</b>}{dir.label.rank && <span className={`rk rk-${dir.label.rank}`}>{dir.label.rank} WORD</span>}{dir.label.tag && <small className="rg-ctag">{dir.label.tag}</small>}</div>}
         {dir.combo.n >= 2 && <div className="rg-combo" key={`cb-${dir.combo.k}`}>WORD COMBO <b>x{dir.combo.n}</b></div>}
         <BattleTutorial />
-        {dir.intro && <div className={`rg-cintro ${dir.intro.kind}`} key={`in-${dir.intro.k}`}><i /><small>{dir.intro.kind === 'boss' ? 'BOSS' : dir.intro.kind === 'elite' ? 'ELITE' : 'BATTLE START'}</small>{dir.intro.kind !== 'normal' && <b>{dir.intro.name}</b>}{dir.intro.kind !== 'normal' && dir.intro.title && <em>{dir.intro.title}</em>}</div>}
+        {dir.intro && <div className={`rg-cintro ${dir.intro.kind}`} key={`in-${dir.intro.k}`}><i /><small>{dir.intro.kind === 'boss' ? 'BOSS' : dir.intro.kind === 'elite' ? 'ELITE' : 'BATTLE START'}</small>{dir.intro.kind !== 'normal' && <b>{dn(dir.intro.name)}</b>}{dir.intro.kind !== 'normal' && dir.intro.title && <em>{dir.intro.title}</em>}</div>}
 
         {/* bottom-left: party cards */}
         <div className="rg-party">
