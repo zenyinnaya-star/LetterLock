@@ -59,6 +59,7 @@ export const SHEETS: Record<string, AnimationData & { url: string }> = {
   'Shiro:ATTACK': { url: '/art/shiro_attack_sheet.png', hframes: 4, vframes: 4, total_frames: 16, duration: 0.9 }, // body drawn ~1.2x smaller in its cells than IDLE: Battle scales it up
   'Shiro:HURT': { url: '/art/shiro_hurt_sheet.png', hframes: 4, vframes: 2, total_frames: 8, duration: 0.7 }, // same scale as IDLE
   'Shiro:DEATH': { url: '/art/shiro_death_sheet.png', hframes: 4, vframes: 2, total_frames: 8, duration: 1.1 }, // plays once, holds the last (lying) frame
+  'Shiro:ULT': { url: '/art/shiro_ult_sheet.png', hframes: 4, vframes: 2, total_frames: 8, duration: 1.3 }, // overhead raise then downward slash; plays once on his ultimate/limit only
   'Shiro:IDLE': { url: '/art/shiro_idle_sheet.png', hframes: 6, vframes: 2, total_frames: 12, duration: 1.6 },
 };
 
