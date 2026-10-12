@@ -2537,3 +2537,8 @@ html:has(.shell.rpg) body{overflow:hidden}
 .rg-ground{position:absolute;left:0;right:0;top:58%;bottom:0;z-index:1;pointer-events:none;
   background:url(https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261012_001236_7404afd4-0322-4032-a715-8df45ef8d521.png) center top / 100% 100% no-repeat;
   -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 8%);mask-image:linear-gradient(180deg,transparent 0,#000 8%)}
+
+/* units sized to the quay (by stage height) so feet land on the platform */
+@media (min-width:761px) and (min-height:521px){
+  .shell.rpg .rg-unit{width:calc((100dvh - 418px) * .32);min-width:72px;max-width:132px}
+}

@@ -473,7 +473,7 @@ export function Battle({ state, token, act, fallback, offset = 0 }: { state: Roo
   // enemies form a diagonal (back-left to front-right); heroes mirror it (front-left to back-right)
   const ePos = (i: number, n: number): React.CSSProperties => {
     const t = n === 1 ? 0.5 : i / (n - 1);
-    return { left: `${n === 1 ? 72 : 54 + t * 34}%`, top: `${n === 1 ? 68 : 60 + t * 13}%`, zIndex: 10 + Math.round(t * 10) };
+    return { left: `${n === 1 ? 72 : 56 + t * 30}%`, top: `${n === 1 ? 70 : 63 + t * 11}%`, zIndex: 10 + Math.round(t * 10) };
   };
   const hPos = (i: number, n: number): React.CSSProperties => {
     const t = n === 1 ? 0.5 : i / (n - 1);
