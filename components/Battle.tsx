@@ -174,8 +174,11 @@ function Sprite({ action, elNow, u, floats, picked, onPick, style, lunge, lungeT
           {u.hp > 0 && u.intent && <span className={`rg-intent i-${u.intent}`} title={`Next: ${u.intent}`}>{INTENT_ICON[u.intent] ?? '⚔'}</span>}
           {u.hp > 0 && (u.haste ?? 0) !== 0 && <span className={`rg-haste ${(u.haste ?? 0) > 0 ? 'up' : 'dn'}`} title={(u.haste ?? 0) > 0 ? 'Hasted: acts earlier' : 'Slowed: acts later'}>{(u.haste ?? 0) > 0 ? '⚡' : '🐌'}</span>}
           <span className="rg-uc-tag">{mine ? 'YOU' : u.side === 'hero' ? (u.hero ?? 'HERO') : u.name === 'Government' ? 'BOSS' : 'FOE'}</span>
-          {(() => { const sh = !pose && !hit && !win && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:IDLE`] : undefined;
-            return sh ? <SheetSprite className="rg-img" url={sh.url} data={sh} style={{ position: 'absolute', left: '50%', right: 'auto', top: '-32%', height: '112%', width: 'auto', aspectRatio: '1 / 1', transform: 'translateX(-50%)', imageRendering: 'auto' }} /> : <KeyedImg className="rg-img" src={sprite(u, win, pose ?? (hit && u.hp > 0 ? 'hurt' : undefined))} alt={u.name} />; })()}
+          {(() => {
+            const atk = pose === 'strike' && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:ATTACK`] : undefined;
+            const sh = atk ?? (!pose && !hit && !win && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:IDLE`] : undefined);
+            const h = atk ? 134 : 112;
+            return sh ? <SheetSprite key={atk ? 'atk' : 'idle'} className="rg-img" url={sh.url} data={sh} loop={!atk} style={{ position: 'absolute', left: '50%', right: 'auto', top: `${80 - h}%`, height: `${h}%`, width: 'auto', aspectRatio: '1 / 1', transform: 'translateX(-50%)', imageRendering: 'auto' }} /> : <KeyedImg className="rg-img" src={sprite(u, win, pose ?? (hit && u.hp > 0 ? 'hurt' : undefined))} alt={u.name} />; })()}
           <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
           <span className="rg-uc-hp"><span className="rg-ehp"><motion.u animate={{ width: `${pct}%` }} transition={{ duration: 1.1, delay: 0.35 }} /><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.3 }} /></span><b>{u.side === 'enemy' ? `HP ${Math.max(0, u.hp)}/${u.max_hp}` : u.hp}</b></span>
           {hit && <span className="rg-slash" key={floats[0]?.k} />}
