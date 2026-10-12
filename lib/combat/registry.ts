@@ -57,6 +57,7 @@ function frameFor(name: string, isHero: boolean, a: AnimState): string | undefin
 export const SHEETS: Record<string, AnimationData & { url: string }> = {
   // SpriteForge idle (12 frames, 6x2, square cells, magenta keyed out, feet at 97% of cell)
   'Shiro:ATTACK': { url: '/art/shiro_attack_sheet.png', hframes: 4, vframes: 4, total_frames: 16, duration: 0.9 }, // body drawn ~1.2x smaller in its cells than IDLE: Battle scales it up
+  'Shiro:HURT': { url: '/art/shiro_hurt_sheet.png', hframes: 4, vframes: 2, total_frames: 8, duration: 0.7 }, // same scale as IDLE
   'Shiro:IDLE': { url: '/art/shiro_idle_sheet.png', hframes: 6, vframes: 2, total_frames: 12, duration: 1.6 },
 };
 
