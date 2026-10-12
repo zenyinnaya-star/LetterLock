@@ -2552,3 +2552,6 @@ html:has(.shell.rpg) body{overflow:hidden}
 
 /* a fallen hero with a death sheet stays fully visible, lying on the quay */
 .rg-unit.hero.down[data-u="shiro"]{opacity:.92;filter:grayscale(.35)}
+
+/* shared colour grade: pulls the clean SpriteForge sprites toward the dark, painted harbor backdrop */
+.rg-unit .rg-uc .rg-img,.rg-unit.pickable .rg-uc .rg-img,.rg-unit.picked .rg-uc .rg-img{filter:saturate(.86) brightness(.92) contrast(1.03) hue-rotate(-4deg) drop-shadow(0 5px 6px rgba(2,6,20,.7))}
