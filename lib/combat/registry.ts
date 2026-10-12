@@ -7,7 +7,7 @@ export type AnimState = 'MISS' | 'DODGE' | 'STAGGER' | 'IDLE' | 'READY' | 'ATTAC
 export type CameraPreset = 'IDLE' | 'FOCUS_ENEMY' | 'FOCUS_PLAYER' | 'ATTACK_SWING' | 'HEAVY_ATTACK' | 'CRITICAL' | 'BREAK' | 'ULTIMATE_INTRO' | 'ULTIMATE_ATTACK' | 'VICTORY';
 
 /** Sprite-sheet description: frames laid out in a grid, played in order over `duration` seconds. */
-export type AnimationData = { hframes: number; vframes: number; total_frames: number; duration: number; order?: number[] };
+export type AnimationData = { hframes: number; vframes: number; total_frames: number; duration: number; order?: number[]; aspect?: number; h?: number; top?: number };
 
 export type AnimMeta = {
   id: string; character: string; action: AnimState; duration: number; playbackSpeed: number;
@@ -62,6 +62,10 @@ export const SHEETS: Record<string, AnimationData & { url: string }> = {
   'Shiro:ULT': { url: '/art/shiro_ult_sheet.png', hframes: 8, vframes: 4, total_frames: 32, duration: 1.7, order: [0, 1, 2, 3, 4, 5, 14, 20, 26, 27, 28, 29, 30, 30, 31] }, // crouch, jump, flip, overhead dive slash, impact. Plays once on ult/limit only
   'Shiro:RUN': { url: '/art/shiro_run_sheet.png', hframes: 8, vframes: 4, total_frames: 32, duration: 0.8 }, // looped while he runs to the target and back
   'Shiro:VICTORY': { url: '/art/shiro_victory_sheet.png', hframes: 9, vframes: 4, total_frames: 36, duration: 4.2 }, // victory dance, loops until the result screen
+  // SpriteForge wolves stand in for the first-round Intern Auditors. Drawn facing right: Battle mirrors enemies. 3:2 cells, feet at the bottom.
+  'Intern Auditor:IDLE': { url: '/art/wolf_idle_sheet.png', hframes: 4, vframes: 2, total_frames: 8, duration: 1.6, aspect: 1.5, h: 56, top: 24 },
+  'Intern Auditor:RUN': { url: '/art/wolf_run_sheet.png', hframes: 4, vframes: 3, total_frames: 12, duration: 0.6, aspect: 1.5, h: 56, top: 24 },
+  'Intern Auditor:ATTACK': { url: '/art/wolf_attack_sheet.png', hframes: 6, vframes: 6, total_frames: 36, duration: 1.2, aspect: 1.5, h: 56, top: 24 },
   'Shiro:IDLE': { url: '/art/shiro_idle_sheet.png', hframes: 6, vframes: 2, total_frames: 12, duration: 1.6 },
 };
 
@@ -89,6 +93,6 @@ export function preloadFor(heroes: string[], enemies: string[]) {
   heroes.forEach((n) => add(n, true, ['IDLE', 'ATTACK', 'HURT']));
   enemies.forEach((n) => add(n, false, ['IDLE', 'HURT', 'ATTACK']));
   heroes.forEach((n) => add(n, true, ['SKILL', 'VICTORY']));
-  heroes.forEach((n) => Object.keys(SHEETS).filter((k) => k.startsWith(n + ':')).forEach((k) => { if (!urls.includes(SHEETS[k].url)) urls.push(SHEETS[k].url); }));
+  [...heroes, ...enemies].forEach((n) => Object.keys(SHEETS).filter((k) => k.startsWith(n + ':')).forEach((k) => { if (!urls.includes(SHEETS[k].url)) urls.push(SHEETS[k].url); }));
   urls.forEach((src) => { const i = new Image(); i.src = src; });
 }

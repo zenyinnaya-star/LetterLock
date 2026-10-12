@@ -163,7 +163,8 @@ function Sprite({ action, elNow, u, floats, picked, onPick, style, lunge, lungeT
   const hit = floats.some((f) => f.cls === 'dmg');
   const dmgN = Math.abs(parseInt(floats.find((f) => f.cls.includes('dmg'))?.text ?? '0', 10)) || 0;
   const recoil = Math.max(8, Math.min(26, 6 + dmgN / 5));
-  const runner = !!(u.hero && SHEETS[`${u.hero}:RUN`] && lungeTo && (action === 'hit' || action === 'crit' || action === 'miss'));
+  const sk = u.hero ?? u.name;
+  const runner = !!(SHEETS[`${sk}:RUN`] && lungeTo && (action === 'hit' || action === 'crit' || action === 'miss'));
   const [ph, setPh] = useState<'run' | 'swing' | 'back'>('run');
   useEffect(() => {
     setPh('run');
@@ -185,17 +186,19 @@ function Sprite({ action, elNow, u, floats, picked, onPick, style, lunge, lungeT
           {u.hp > 0 && (u.haste ?? 0) !== 0 && <span className={`rg-haste ${(u.haste ?? 0) > 0 ? 'up' : 'dn'}`} title={(u.haste ?? 0) > 0 ? 'Hasted: acts earlier' : 'Slowed: acts later'}>{(u.haste ?? 0) > 0 ? '⚡' : '🐌'}</span>}
           <span className="rg-uc-tag">{mine ? 'YOU' : u.side === 'hero' ? (u.hero ?? 'HERO') : u.name === 'Government' ? 'BOSS' : 'FOE'}</span>
           {(() => {
-            const runSh = runner && lunge && pose === 'strike' && u.hp > 0 && ph !== 'swing' ? SHEETS[`${u.hero}:RUN`] : undefined;
-            const atk = pose === 'strike' && u.hp > 0 && u.hero && !runSh && (!runner || ph === 'swing') ? SHEETS[`${u.hero}:ATTACK`] : undefined;
-            const hurtSh = !pose && hit && !win && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:HURT`] : undefined;
-            const deadSh = u.hp <= 0 && u.hero ? SHEETS[`${u.hero}:DEATH`] : undefined;
-            const ultSh = pose === 'cast' && (action === 'ult' || action === 'limit') && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:ULT`] : undefined;
-            const vicSh = win && !pose && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:VICTORY`] : undefined;
-            const sh = deadSh ?? ultSh ?? runSh ?? atk ?? vicSh ?? hurtSh ?? (!pose && !hit && !win && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:IDLE`] : undefined);
-            const h = ultSh ? 133 : runSh ? 117 : atk ? 134 : 112;
-            const top = ultSh ? -50 : runSh ? -37 : 80 - h;
-            const flip = runSh && ph === 'back' ? ' scaleX(-1)' : '';
-            return sh ? <SheetSprite key={deadSh ? 'dead' : vicSh ? 'vic' : ultSh ? 'ult' : runSh ? `run${ph}` : atk ? 'atk' : hurtSh ? 'hurt' : 'idle'} className="rg-img" url={sh.url} data={atk && runner ? { ...sh, duration: 0.42 } : sh} loop={!atk && !hurtSh && !deadSh && !ultSh} style={{ position: 'absolute', left: '50%', right: 'auto', top: `${top}%`, height: `${h}%`, width: 'auto', aspectRatio: '1 / 1', transform: `translateX(-50%)${flip}`, imageRendering: 'auto' }} /> : <KeyedImg className="rg-img" src={sprite(u, win, pose ?? (hit && u.hp > 0 ? 'hurt' : undefined))} alt={u.name} />; })()}
+            const runSh = runner && lunge && pose === 'strike' && u.hp > 0 && (ph !== 'swing' || !SHEETS[`${sk}:ATTACK`]) ? SHEETS[`${sk}:RUN`] : undefined;
+            const atk = pose === 'strike' && u.hp > 0 && !runSh && (!runner || ph === 'swing') ? SHEETS[`${sk}:ATTACK`] : undefined;
+            const hurtSh = !pose && hit && !win && u.hp > 0 ? SHEETS[`${sk}:HURT`] : undefined;
+            const deadSh = u.hp <= 0 ? SHEETS[`${sk}:DEATH`] : undefined;
+            const ultSh = pose === 'cast' && (action === 'ult' || action === 'limit') && u.hp > 0 ? SHEETS[`${sk}:ULT`] : undefined;
+            const vicSh = win && !pose && u.hp > 0 ? SHEETS[`${sk}:VICTORY`] : undefined;
+            const idleSh = SHEETS[`${sk}:IDLE`];
+            const sh = deadSh ?? ultSh ?? runSh ?? atk ?? vicSh ?? hurtSh ?? idleSh;
+            const h = sh?.h ?? (ultSh ? 133 : runSh ? 117 : atk ? 134 : 112);
+            const top = sh?.top ?? (ultSh ? -50 : runSh ? -37 : 80 - h);
+            const back = !!runSh && ph === 'back';
+            const flip = (u.side === 'enemy' ? !back : back) ? ' scaleX(-1)' : '';
+            return sh ? <SheetSprite key={deadSh ? 'dead' : vicSh ? 'vic' : ultSh ? 'ult' : runSh ? `run${ph}` : atk ? 'atk' : hurtSh ? 'hurt' : 'idle'} className="rg-img" url={sh.url} data={atk && runner ? { ...sh, duration: 0.42 } : sh} loop={!atk && !hurtSh && !deadSh && !ultSh} style={{ position: 'absolute', left: '50%', right: 'auto', top: `${top}%`, height: `${h}%`, width: 'auto', aspectRatio: sh.aspect ? String(sh.aspect) : '1 / 1', transform: `translateX(-50%)${flip}`, imageRendering: 'auto' }} /> : <KeyedImg className="rg-img" src={sprite(u, win, pose ?? (hit && u.hp > 0 ? 'hurt' : undefined))} alt={u.name} />; })()}
           <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
           <span className="rg-uc-hp"><span className="rg-ehp"><motion.u animate={{ width: `${pct}%` }} transition={{ duration: 1.1, delay: 0.35 }} /><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.3 }} /></span><b>{u.side === 'enemy' ? `HP ${Math.max(0, u.hp)}/${u.max_hp}` : u.hp}</b></span>
           {hit && <span className="rg-slash" key={floats[0]?.k} />}
@@ -362,7 +365,7 @@ export function Battle({ state, token, act, fallback, offset = 0 }: { state: Roo
     setActive(entries[0]);
     // big moments (crit, ultimate, limit break) hold longer: a short slow-motion beat
     const enemyIds = new Set((b?.units ?? []).filter((x) => x.side === 'enemy').map((x) => x.id));
-    const runnerIds = new Set((b?.units ?? []).filter((x) => x.hero && SHEETS[`${x.hero}:RUN`]).map((x) => x.id));
+    const runnerIds = new Set((b?.units ?? []).filter((x) => SHEETS[`${x.hero ?? x.name}:RUN`]).map((x) => x.id));
     const delay = (e: BattleLogEntry) => actionFor(e, !!(e.ai && enemyIds.has(e.ai)), !!(e.ai && runnerIds.has(e.ai))).hold;
     let id: ReturnType<typeof setTimeout>;
     const next = () => { i += 1; if (i >= entries.length) { setActive(null); setApplied({ ver: playKey, ids: [], all: true }); } else { setActive(entries[i]); id = setTimeout(next, delay(entries[i])); } };
