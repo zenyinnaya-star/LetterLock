@@ -2542,3 +2542,10 @@ html:has(.shell.rpg) body{overflow:hidden}
 @media (min-width:761px) and (min-height:521px){
   .shell.rpg .rg-unit{width:calc((100dvh - 418px) * var(--us,.29));min-width:64px;max-width:150px}
 }
+
+/* sizing pass 3 (vs reference): heroes ~34% stage height; enemy nameplates never wrap */
+@media (min-width:761px) and (min-height:521px){
+  .shell.rpg .rg-unit.hero{--us:.35}
+  .rg-unit.enemy .rg-uc .rg-uname{left:50%;right:auto;width:max-content;max-width:190px;transform:translateX(-50%);white-space:nowrap;font-size:12px}
+  .rg-unit.enemy .rg-uc .rg-uc-hp{left:50%;right:auto;width:96px;transform:translateX(-50%)}
+}
