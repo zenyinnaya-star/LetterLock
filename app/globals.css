@@ -2540,5 +2540,5 @@ html:has(.shell.rpg) body{overflow:hidden}
 
 /* units sized to the quay (by stage height) so feet land on the platform */
 @media (min-width:761px) and (min-height:521px){
-  .shell.rpg .rg-unit{width:calc((100dvh - 418px) * .32);min-width:72px;max-width:132px}
+  .shell.rpg .rg-unit{width:calc((100dvh - 418px) * var(--us,.29));min-width:64px;max-width:150px}
 }
