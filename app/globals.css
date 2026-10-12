@@ -2535,7 +2535,7 @@ html:has(.shell.rpg) body{overflow:hidden}
 
 /* ---- ground: approved side-on 3D harbor quay (Higgsfield job 7404afd4, 2026-10-12) replaces the earlier CSS band ---- */
 .rg-ground{position:absolute;left:0;right:0;top:58%;bottom:0;z-index:1;pointer-events:none;
-  background:url(https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261012_001236_7404afd4-0322-4032-a715-8df45ef8d521.png) center top / 100% 100% no-repeat;
+  background:url(https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261012_003359_223eb124-d4d7-4712-86e1-0ccd52ca8e1e.png) center top / 100% 100% no-repeat;
   -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 8%);mask-image:linear-gradient(180deg,transparent 0,#000 8%)}
 
 /* units sized to the quay (by stage height) so feet land on the platform */
