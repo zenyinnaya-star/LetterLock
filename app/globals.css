@@ -2533,18 +2533,7 @@ html:has(.shell.rpg) body{overflow:hidden}
   .rg-unit.enemy .rg-uc .rg-uname{top:-54px}
 }
 
-/* ---- the dock: weathered stone quay (interim CSS version until a painted ground plate is approved) ---- */
-.rg-ground{position:absolute;left:0;right:0;top:62%;bottom:0;z-index:1;pointer-events:none;
-  background:
-    radial-gradient(ellipse 60% 40% at 50% 0,rgba(180,200,220,.14),transparent 70%),
-    repeating-linear-gradient(90deg,rgba(10,14,24,.55) 0 2px,transparent 2px 120px),
-    repeating-linear-gradient(180deg,rgba(10,14,24,.5) 0 2px,transparent 2px 58px),
-    repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 37px,rgba(0,0,0,.05) 37px 83px),
-    linear-gradient(180deg,#6f7a86 0,#58626e 18%,#3f4853 55%,#242b35 100%);
-  box-shadow:inset 0 3px 0 #a9b6c4,inset 0 -30px 40px rgba(0,0,0,.45);
-  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 5%);mask-image:linear-gradient(180deg,transparent 0,#000 5%)}
-
-/* painted stone quay plate (generated 2026-10-11); the CSS stone above stays underneath as a fallback */
-.rg-ground{background-image:url(https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261011_201447_34c7f5be-a724-4a91-b7e9-166ac66ddbde.png),
-  linear-gradient(180deg,#6f7a86 0,#58626e 18%,#3f4853 55%,#242b35 100%);
-  background-size:cover,100% 100%;background-position:center top,0 0;box-shadow:inset 0 3px 0 rgba(169,182,196,.5),inset 0 -30px 40px rgba(0,0,0,.35)}
+/* ---- ground: approved side-on 3D harbor quay (Higgsfield job 7404afd4, 2026-10-12) replaces the earlier CSS band ---- */
+.rg-ground{position:absolute;left:0;right:0;top:58%;bottom:0;z-index:1;pointer-events:none;
+  background:url(https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261012_001236_7404afd4-0322-4032-a715-8df45ef8d521.png) center top / 100% 100% no-repeat;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 8%);mask-image:linear-gradient(180deg,transparent 0,#000 8%)}
