@@ -163,26 +163,38 @@ function Sprite({ action, elNow, u, floats, picked, onPick, style, lunge, lungeT
   const hit = floats.some((f) => f.cls === 'dmg');
   const dmgN = Math.abs(parseInt(floats.find((f) => f.cls.includes('dmg'))?.text ?? '0', 10)) || 0;
   const recoil = Math.max(8, Math.min(26, 6 + dmgN / 5));
+  const runner = !!(u.hero && SHEETS[`${u.hero}:RUN`] && lungeTo && (action === 'hit' || action === 'crit' || action === 'miss'));
+  const [ph, setPh] = useState<'run' | 'swing' | 'back'>('run');
+  useEffect(() => {
+    setPh('run');
+    if (!(lunge && runner)) return;
+    const d = actionFor({ t: action ?? 'hit' } as BattleLogEntry, false, true);
+    const t1 = setTimeout(() => setPh('swing'), Math.max(0, d.anticipate + d.strike - 300));
+    const t2 = setTimeout(() => setPh('back'), d.anticipate + d.strike + 120);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [lunge, runner, action]);
   return (
     <div className={`rg-unit ${u.side}${u.hp <= 0 ? ' down' : ''}${picked ? ' picked' : ''}${onPick ? ' pickable' : ''}${u.name === 'Government' ? ' boss' : ''}${t3 ? ' t3' : ''}${mine ? ' mine' : ''}${menu ? ' lift' : ''}${hit ? ' ouch' : ''}${floats.some((f) => f.text === 'DODGE') ? ' dodged' : ''}${floats.some((f) => f.cls.includes('heal')) ? ' healed' : ''}${floats.some((f) => f.cls.includes('shield')) ? ' shielded' : ''}${lunge ? ' striking' : ''}${win && u.hp > 0 ? ' cheer' : ''}${broken ? ' broken' : ''}`}
       data-u={(u.hero ?? u.name).toLowerCase().replace(/[^a-z]+/g, '-')}
       style={{ ...style, ['--idle' as string]: `${-((u.id.charCodeAt(0) + u.id.charCodeAt(3)) % 17) / 10}s` }} onClick={onPick} role={onPick ? 'button' : undefined}>
       <motion.div key={`${lunge ? 'l' : hit ? 'h' : 'i'}-${floats[0]?.k ?? ''}`}
         animate={lunge ? (lungeTo ? { x: [0, -Math.sign(lungeTo.x || 1) * 16, lungeTo.x, lungeTo.x, 0], y: [0, 4, lungeTo.y, lungeTo.y, 0], scale: [1, 0.94, 1.12, 1.12, 1] } : { x: [0, u.side === 'hero' ? 90 : -90, 0], scale: [1, 1.12, 1] }) : hit ? { x: [0, -recoil, recoil * 0.6, -recoil * 0.3, 0], filter: ['brightness(2.2)', 'brightness(1)'] } : {}}
-        transition={lunge && lungeTo ? { ...lungeTimes(actionFor({ t: (action ?? 'hit') } as BattleLogEntry, u.side === 'enemy')), ease: 'easeInOut' } : { duration: lunge ? 0.5 : 0.4 }}>
+        transition={lunge && lungeTo ? { ...lungeTimes(actionFor({ t: (action ?? 'hit') } as BattleLogEntry, u.side === 'enemy', runner)), ease: 'easeInOut' } : { duration: lunge ? 0.5 : 0.4 }}>
         <div className="rg-uc">
           {u.hp > 0 && u.intent && <span className={`rg-intent i-${u.intent}`} title={`Next: ${u.intent}`}>{INTENT_ICON[u.intent] ?? '⚔'}</span>}
           {u.hp > 0 && (u.haste ?? 0) !== 0 && <span className={`rg-haste ${(u.haste ?? 0) > 0 ? 'up' : 'dn'}`} title={(u.haste ?? 0) > 0 ? 'Hasted: acts earlier' : 'Slowed: acts later'}>{(u.haste ?? 0) > 0 ? '⚡' : '🐌'}</span>}
           <span className="rg-uc-tag">{mine ? 'YOU' : u.side === 'hero' ? (u.hero ?? 'HERO') : u.name === 'Government' ? 'BOSS' : 'FOE'}</span>
           {(() => {
-            const atk = pose === 'strike' && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:ATTACK`] : undefined;
+            const runSh = runner && lunge && pose === 'strike' && u.hp > 0 && ph !== 'swing' ? SHEETS[`${u.hero}:RUN`] : undefined;
+            const atk = pose === 'strike' && u.hp > 0 && u.hero && !runSh && (!runner || ph === 'swing') ? SHEETS[`${u.hero}:ATTACK`] : undefined;
             const hurtSh = !pose && hit && !win && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:HURT`] : undefined;
             const deadSh = u.hp <= 0 && u.hero ? SHEETS[`${u.hero}:DEATH`] : undefined;
             const ultSh = pose === 'cast' && (action === 'ult' || action === 'limit') && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:ULT`] : undefined;
-            const sh = deadSh ?? ultSh ?? atk ?? hurtSh ?? (!pose && !hit && !win && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:IDLE`] : undefined);
-            const h = ultSh ? 133 : atk ? 134 : 112;
-            const top = ultSh ? -50 : 80 - h;
-            return sh ? <SheetSprite key={deadSh ? 'dead' : ultSh ? 'ult' : atk ? 'atk' : hurtSh ? 'hurt' : 'idle'} className="rg-img" url={sh.url} data={sh} loop={!atk && !hurtSh && !deadSh && !ultSh} style={{ position: 'absolute', left: '50%', right: 'auto', top: `${top}%`, height: `${h}%`, width: 'auto', aspectRatio: '1 / 1', transform: 'translateX(-50%)', imageRendering: 'auto' }} /> : <KeyedImg className="rg-img" src={sprite(u, win, pose ?? (hit && u.hp > 0 ? 'hurt' : undefined))} alt={u.name} />; })()}
+            const sh = deadSh ?? ultSh ?? runSh ?? atk ?? hurtSh ?? (!pose && !hit && !win && u.hp > 0 && u.hero ? SHEETS[`${u.hero}:IDLE`] : undefined);
+            const h = ultSh ? 133 : runSh ? 117 : atk ? 134 : 112;
+            const top = ultSh ? -50 : runSh ? -37 : 80 - h;
+            const flip = runSh && ph === 'back' ? ' scaleX(-1)' : '';
+            return sh ? <SheetSprite key={deadSh ? 'dead' : ultSh ? 'ult' : runSh ? `run${ph}` : atk ? 'atk' : hurtSh ? 'hurt' : 'idle'} className="rg-img" url={sh.url} data={atk && runner ? { ...sh, duration: 0.42 } : sh} loop={!atk && !hurtSh && !deadSh && !ultSh} style={{ position: 'absolute', left: '50%', right: 'auto', top: `${top}%`, height: `${h}%`, width: 'auto', aspectRatio: '1 / 1', transform: `translateX(-50%)${flip}`, imageRendering: 'auto' }} /> : <KeyedImg className="rg-img" src={sprite(u, win, pose ?? (hit && u.hp > 0 ? 'hurt' : undefined))} alt={u.name} />; })()}
           <span className="rg-uname">{u.name}{u.corruption > 0 ? ` ☠${u.corruption}` : ''}</span>
           <span className="rg-uc-hp"><span className="rg-ehp"><motion.u animate={{ width: `${pct}%` }} transition={{ duration: 1.1, delay: 0.35 }} /><motion.i animate={{ width: `${pct}%` }} transition={{ duration: 0.3 }} /></span><b>{u.side === 'enemy' ? `HP ${Math.max(0, u.hp)}/${u.max_hp}` : u.hp}</b></span>
           {hit && <span className="rg-slash" key={floats[0]?.k} />}
@@ -349,7 +361,8 @@ export function Battle({ state, token, act, fallback, offset = 0 }: { state: Roo
     setActive(entries[0]);
     // big moments (crit, ultimate, limit break) hold longer: a short slow-motion beat
     const enemyIds = new Set((b?.units ?? []).filter((x) => x.side === 'enemy').map((x) => x.id));
-    const delay = (e: BattleLogEntry) => actionFor(e, !!(e.ai && enemyIds.has(e.ai))).hold;
+    const runnerIds = new Set((b?.units ?? []).filter((x) => x.hero && SHEETS[`${x.hero}:RUN`]).map((x) => x.id));
+    const delay = (e: BattleLogEntry) => actionFor(e, !!(e.ai && enemyIds.has(e.ai)), !!(e.ai && runnerIds.has(e.ai))).hold;
     let id: ReturnType<typeof setTimeout>;
     const next = () => { i += 1; if (i >= entries.length) { setActive(null); setApplied({ ver: playKey, ids: [], all: true }); } else { setActive(entries[i]); id = setTimeout(next, delay(entries[i])); } };
     id = setTimeout(next, delay(entries[0]));

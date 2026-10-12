@@ -40,8 +40,10 @@ export const ACTIONS: Record<string, ActionDef> = {
 const FALLBACK: ActionDef = { id: 'generic', target: 'none', ...phases(150, 200, 250), hold: 950, hitstop: 0, events: [] };
 
 /** Timing for one log entry. Enemy attacks (hit by an enemy) are quicker than hero attacks. */
-export function actionFor(e: BattleLogEntry, enemyActor = false): ActionDef {
+export function actionFor(e: BattleLogEntry, enemyActor = false, runner = false): ActionDef {
   const base = ACTIONS[e.t] ?? FALLBACK;
+  // heroes with a run-cycle sheet really run to the target (longer approach, swing at contact, run back)
+  if (runner && (e.t === 'hit' || e.t === 'crit' || e.t === 'miss')) return { ...base, ...phases(100, 480, 420), hold: e.t === 'crit' ? 1700 : 1300 };
   if (enemyActor && (e.t === 'hit' || e.t === 'crit' || e.t === 'miss')) return { ...base, hold: Math.round(base.hold * 0.85) };
   return base;
 }
