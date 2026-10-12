@@ -8,16 +8,18 @@ import type { AnimationData } from '@/lib/combat/registry';
  * loop={false} plays once and holds the last frame (attack/hit clips).
  */
 export function SheetSprite({ url, data, loop = true, className, style }: { url: string; data: AnimationData; loop?: boolean; className?: string; style?: CSSProperties }) {
-  const { hframes, vframes, total_frames, duration } = data;
-  const name = useMemo(() => `sh${Math.abs([...`${url}${hframes}${vframes}${total_frames}`].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7))}`, [url, hframes, vframes, total_frames]);
+  const { hframes, vframes, duration } = data;
+  const seq = data.order ?? Array.from({ length: data.total_frames }, (_, i) => i);
+  const total_frames = seq.length;
+  const name = useMemo(() => `sh${Math.abs([...`${url}${hframes}${vframes}${seq.join('.')}`].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7))}`, [url, hframes, vframes, seq.join(',')]); // eslint-disable-line react-hooks/exhaustive-deps
   const css = useMemo(() => {
     const pos = (i: number) => {
       const col = i % hframes, row = Math.floor(i / hframes);
       return `${hframes > 1 ? (col / (hframes - 1)) * 100 : 0}% ${vframes > 1 ? (row / (vframes - 1)) * 100 : 0}%`;
     };
-    const steps = Array.from({ length: total_frames }, (_, i) => `${(i / total_frames) * 100}%{background-position:${pos(i)}}`).join('');
-    return `@keyframes ${name}{${steps}100%{background-position:${pos(total_frames - 1)}}}`;
-  }, [name, hframes, vframes, total_frames]);
+    const steps = seq.map((f, i) => `${(i / total_frames) * 100}%{background-position:${pos(f)}}`).join('');
+    return `@keyframes ${name}{${steps}100%{background-position:${pos(seq[total_frames - 1])}}}`;
+  }, [name, hframes, vframes, seq.join(',')]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <>
       <style>{css}</style>

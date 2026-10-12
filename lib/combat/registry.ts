@@ -7,7 +7,7 @@ export type AnimState = 'MISS' | 'DODGE' | 'STAGGER' | 'IDLE' | 'READY' | 'ATTAC
 export type CameraPreset = 'IDLE' | 'FOCUS_ENEMY' | 'FOCUS_PLAYER' | 'ATTACK_SWING' | 'HEAVY_ATTACK' | 'CRITICAL' | 'BREAK' | 'ULTIMATE_INTRO' | 'ULTIMATE_ATTACK' | 'VICTORY';
 
 /** Sprite-sheet description: frames laid out in a grid, played in order over `duration` seconds. */
-export type AnimationData = { hframes: number; vframes: number; total_frames: number; duration: number };
+export type AnimationData = { hframes: number; vframes: number; total_frames: number; duration: number; order?: number[] };
 
 export type AnimMeta = {
   id: string; character: string; action: AnimState; duration: number; playbackSpeed: number;
@@ -59,7 +59,7 @@ export const SHEETS: Record<string, AnimationData & { url: string }> = {
   'Shiro:ATTACK': { url: '/art/shiro_attack_sheet.png', hframes: 4, vframes: 4, total_frames: 16, duration: 0.9 }, // body drawn ~1.2x smaller in its cells than IDLE: Battle scales it up
   'Shiro:HURT': { url: '/art/shiro_hurt_sheet.png', hframes: 4, vframes: 2, total_frames: 8, duration: 0.7 }, // same scale as IDLE
   'Shiro:DEATH': { url: '/art/shiro_death_sheet.png', hframes: 4, vframes: 2, total_frames: 8, duration: 1.1 }, // plays once, holds the last (lying) frame
-  'Shiro:ULT': { url: '/art/shiro_ult_sheet.png', hframes: 4, vframes: 2, total_frames: 8, duration: 1.3 }, // overhead raise then downward slash; plays once on his ultimate/limit only
+  'Shiro:ULT': { url: '/art/shiro_ult_sheet.png', hframes: 8, vframes: 4, total_frames: 32, duration: 1.7, order: [0, 1, 2, 3, 4, 5, 14, 20, 26, 27, 28, 29, 30, 30, 31] }, // crouch, jump, flip, overhead dive slash, impact. Plays once on ult/limit only
   'Shiro:IDLE': { url: '/art/shiro_idle_sheet.png', hframes: 6, vframes: 2, total_frames: 12, duration: 1.6 },
 };
 
