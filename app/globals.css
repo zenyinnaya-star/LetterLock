@@ -2562,3 +2562,11 @@ html:has(.shell.rpg) body{overflow:hidden}
   .shell.rpg .bx-turn b{font-size:clamp(20px,2.4vw,30px)}
   .shell.rpg .bx-order img,.shell.rpg .bx-ord img{max-height:42px}
 }
+
+/* header top-right multiplayer/solo card: fit its rows inside the slimmer header */
+@media (min-width:761px) and (min-height:521px){
+  .shell.rpg .bx-top>.bx-mp{max-height:68px;padding-top:3px;padding-bottom:3px;gap:1px;justify-content:center}
+  .shell.rpg .bx-mp .bx-mp-t,.shell.rpg .bx-mp .bx-mp-r,.shell.rpg .bx-mp .bx-mp-w{line-height:1.15;margin:0}
+  .shell.rpg .bx-mp .bx-mp-b{margin-top:2px;line-height:1}
+  .shell.rpg .bx-mp .bx-mp-b button,.shell.rpg .bx-mp .bx-mp-b .btn{padding-top:2px;padding-bottom:2px;font-size:11px}
+}
