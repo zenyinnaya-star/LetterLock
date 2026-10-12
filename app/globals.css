@@ -1944,8 +1944,6 @@ body{background-image:linear-gradient(180deg,rgba(4,6,10,.7),rgba(4,6,10,.88)),u
 .rg-hud-ult i{display:block;height:100%;background:linear-gradient(90deg,#f59e0b,#fde047);box-shadow:0 0 8px #f59e0b}
 /* composition: big foe centered in frame, heroes large in the foreground */
 .rg-stage .rg-unit.hero{width:17%;max-width:200px;min-width:110px}
-.rg-stage[data-foes="1"] .rg-unit.enemy{width:26%;max-width:290px;min-width:160px}
-.rg-stage[data-foes="1"] .rg-unit.enemy.boss{width:34%;max-width:360px}
 .rg-bg,.rg-intro{image-rendering:pixelated;background-size:cover;background-position:center bottom}
 .rg-unit.cheer .rg-img{animation:cheerHop .7s ease-in-out infinite alternate}
 @keyframes cheerHop{from{transform:translateY(0)}to{transform:translateY(-14px)}}
@@ -2193,7 +2191,7 @@ input::placeholder{color:rgba(255,246,216,.6)!important}
   .rg-stage{aspect-ratio:auto;height:min(60dvh,540px);min-height:380px;border-radius:12px}
   .rg-unit{width:26%;min-width:74px;max-width:110px}
   .rg-stage .rg-unit.hero{width:24%;min-width:70px;max-width:104px}
-  .rg-unit.boss,.rg-stage[data-foes="1"] .rg-unit.enemy,.rg-stage[data-foes="1"] .rg-unit.enemy.boss{width:56%;min-width:150px;max-width:230px}
+  .rg-unit.boss{width:56%;min-width:150px;max-width:230px}
 
   /* top chips + banners: one tidy stack, never overlapping the units */
   .rg-prompt{top:46px;max-width:94%;width:max-content}
@@ -2258,7 +2256,7 @@ input::placeholder{color:rgba(255,246,216,.6)!important}
   .shell.rpg .topbar{display:none}
   .rg-stage{aspect-ratio:auto;height:calc(100dvh - 128px);min-height:200px;border-radius:10px}
   .rg-unit,.rg-stage .rg-unit.hero{width:12%;min-width:60px;max-width:96px}
-  .rg-unit.boss,.rg-stage[data-foes="1"] .rg-unit.enemy,.rg-stage[data-foes="1"] .rg-unit.enemy.boss{width:24%;min-width:120px;max-width:200px}
+  .rg-unit.boss{width:24%;min-width:120px;max-width:200px}
   .rg-prompt{top:36px;max-width:50%}
   .rg-prompt-t{font-size:11px;padding:3px 8px}
   .rg-prompt-sub{display:none}
@@ -2540,12 +2538,12 @@ html:has(.shell.rpg) body{overflow:hidden}
 
 /* units sized to the quay (by stage height) so feet land on the platform */
 @media (min-width:761px) and (min-height:521px){
-  .shell.rpg .rg-unit{width:calc((100dvh - 418px) * var(--us,.29));min-width:64px;max-width:150px}
+  .shell.rpg .rg-unit{width:calc((100dvh - 418px) * var(--us,.29));min-width:64px;max-width:175px}
 }
 
 /* sizing pass 3 (vs reference): heroes ~34% stage height; enemy nameplates never wrap */
 @media (min-width:761px) and (min-height:521px){
-  .shell.rpg .rg-unit.hero{--us:.35}
+  .shell.rpg .rg-unit.hero{--us:.40}
   .rg-unit.enemy .rg-uc .rg-uname{left:50%;right:auto;width:max-content;max-width:190px;transform:translateX(-50%);white-space:nowrap;font-size:12px}
   .rg-unit.enemy .rg-uc .rg-uc-hp{left:50%;right:auto;width:96px;transform:translateX(-50%)}
 }
