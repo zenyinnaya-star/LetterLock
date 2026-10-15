@@ -2619,3 +2619,8 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .mm-board { padding-left: 0; list-style: none; border-top: 1px solid rgba(255,255,255,.1); padding-top: 10px; }
 .mm-board li { display: flex; justify-content: space-between; }
 .mm-hp { text-align: center; font-size: 22px; color: var(--lock); letter-spacing: 4px; }
+
+/* spectator live words */
+.spec-drafts { max-width: 620px; margin: 8px auto; width: 100%; display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 14px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
+.spec-row { display: flex; justify-content: space-between; gap: 10px; }
+.spec-row b { font-family: var(--display); letter-spacing: .08em; }

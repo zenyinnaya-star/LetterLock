@@ -43,6 +43,8 @@ export interface CampState {
   gear_shop?: { slot: string; tier: number; have: string | null; next: { name: string; desc: string; price: number } | null }[];
 }
 export const rpc = {
+  setDraft: (token: string, text: string) => call<void>('set_draft', { p_token: token, p_text: text }),
+  getDrafts: (token: string) => call<{ player_id: string; word: string }[]>('get_drafts', { p_token: token }),
   getCamp: (token: string) => call<CampState | null>('get_camp', { p_token: token }),
   campBuy: (token: string, item: string) => call<{ ok: boolean; card?: string }>('camp_buy', { p_token: token, p_item: item }),
   campSell: (token: string, idx: number) => call<{ ok: boolean; gold: number; card: string }>('camp_sell', { p_token: token, p_idx: idx }),

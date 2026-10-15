@@ -115,6 +115,13 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
   const hasBanned = letters.some(isBad);
   const canPlay = !!me && !me.eliminated && !!token;
 
+  const draftT = useRef<number | null>(null);
+  function sendDraft(v: string) {
+    if (!token) return;
+    if (draftT.current) window.clearTimeout(draftT.current);
+    draftT.current = window.setTimeout(() => { void rpc.setDraft(token, v).catch(() => undefined); }, 500);
+  }
+
   async function submit() {
     if (!token || !prepared.send || busy) return;
     setBusy(true);
@@ -155,12 +162,13 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
           <Icon name="terminal" size={16} /> {me.can_trace ? t('ph.hacked_trace') : t('ph.hacked')}
         </motion.div>
       )}
+      {!!me?.eliminated && !!token && <SpectatorDrafts state={state} token={token} />}
       {canPlay ? (
         <div className="narrow-col">
           <form className="col" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
             <input ref={inputRef} className="input word" value={word} maxLength={30} autoCapitalize="off" autoComplete="off"
               autoCorrect="off" spellCheck={false} placeholder={t('ph.type')} lang={lang}
-              onChange={(e) => setWord(e.target.value)} aria-label={t('ph.your_answer')} />
+              onChange={(e) => { setWord(e.target.value); sendDraft(e.target.value); }} aria-label={t('ph.your_answer')} />
             {(lang === 'ja' || lang === 'zh' || lang === 'es' || lang === 'fr' || lang === 'de') && (
               <div className="muted small input-hint">{lang === 'ja' ? t('ph.input_ja') : lang === 'zh' ? t('ph.input_zh') : t('ph.input_accents')}</div>
             )}
@@ -749,5 +757,28 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
         </div>
       </div>
     </motion.div>
+  );
+}
+
+
+/** Eliminated players watch everyone else's words as they type (polled; server only serves this to eliminated players). */
+function SpectatorDrafts({ state, token }: { state: RoomState; token: string }) {
+  const [drafts, setDrafts] = useState<{ player_id: string; word: string }[]>([]);
+  useEffect(() => {
+    let live = true;
+    const load = () => { void rpc.getDrafts(token).then((d) => { if (live) setDrafts(d); }).catch(() => undefined); };
+    load();
+    const id = window.setInterval(load, 900);
+    return () => { live = false; window.clearInterval(id); };
+  }, [token, state.room.round]);
+  const rows = state.players.filter((p) => !p.eliminated);
+  return (
+    <div className="spec-drafts">
+      <div className="label"><Icon name="eye" size={14} /> Live words</div>
+      {rows.map((p) => {
+        const w = drafts.find((d) => d.player_id === p.id)?.word ?? '';
+        return <div key={p.id} className="spec-row"><span>{p.name}{p.answered ? ' ✓' : ''}</span><b>{w ? w.toUpperCase() : '…'}</b></div>;
+      })}
+    </div>
   );
 }
