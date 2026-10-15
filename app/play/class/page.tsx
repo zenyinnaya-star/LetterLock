@@ -20,6 +20,7 @@ import { rpc } from '@/lib/rpc';
 import { loadName, saveName, saveSession } from '@/lib/session';
 import type { PlayerClass, RoomSettings } from '@/lib/types';
 import { StoryHeroSelect } from '@/components/StoryHeroSelect';
+import { pveUnlocked } from '@/lib/pveGate';
 
 type Kind = 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory' | 'join';
 const META: Record<Kind, { icon: IconName; k: string }> = {
@@ -193,7 +194,12 @@ function Select() {
 
 function Router() {
   const sp = useSearchParams();
-  return sp.get('mode') === 'story' ? <StoryHeroSelect /> : <Select />;
+  const rt = useRouter();
+  const story = sp.get('mode') === 'story';
+  const [ok, setOk] = useState<boolean | null>(null);
+  useEffect(() => { const u = pveUnlocked(); setOk(u); if (story && !u) rt.replace('/play'); }, [story, rt]);
+  if (story) return ok ? <StoryHeroSelect /> : null;
+  return <Select />;
 }
 
 export default function ClassSelect() {

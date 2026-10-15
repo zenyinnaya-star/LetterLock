@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { pveUnlocked, tryUnlockPve } from '@/lib/pveGate';
 import { Icon, type IconName } from '@/components/icons';
 import { Header, spring } from '@/components/ui';
 import { audio } from '@/lib/audio';
@@ -37,6 +38,15 @@ export default function Play() {
   const router = useRouter();
   const t = useT();
   const [code, setCode] = useState('');
+  const [unlocked, setUnlocked] = useState(false);
+  const [askPw, setAskPw] = useState(false);
+  const [pw, setPw] = useState('');
+  const [pwErr, setPwErr] = useState(false);
+  useEffect(() => { setUnlocked(pveUnlocked()); }, []);
+  async function submitPw() {
+    if (await tryUnlockPve(pw)) { setUnlocked(true); setAskPw(false); setPw(''); setPwErr(false); router.push('/play/class?mode=story'); }
+    else setPwErr(true);
+  }
 
   function go(kind: Kind | 'join') {
     audio.unlock();
@@ -46,10 +56,10 @@ export default function Play() {
   const card = (m: Mode, i: number) => (
     <motion.button key={m.kind} className={`mode-card tone-${m.tone}${BG[m.kind] ? ' has-bg' : ''}`} style={BG[m.kind] ? ({ ['--bg' as string]: BG[m.kind] } as React.CSSProperties) : undefined} 
       initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.05 + i * 0.05 }}
-      whileHover={{ y: -3 }} whileTap={{ scale: 0.97 }} onClick={() => go(m.kind)}>
-      <span className="mc-ico"><Icon name={m.icon} size={22} /></span>
-      <b>{t(`pl.${m.k}` as Key)}</b>
-      <span className="mc-desc">{t(`pl.${m.k}_d` as Key)}</span>
+      whileHover={{ y: -3 }} whileTap={{ scale: 0.97 }} onClick={() => (m.kind === 'story' && !unlocked ? (audio.unlock(), setAskPw(true)) : go(m.kind))}>
+      <span className="mc-ico"><Icon name={m.kind === 'story' && !unlocked ? 'lock' : m.icon} size={22} /></span>
+      <b>XX</b>
+      <span className="mc-desc">{m.kind === 'story' && !unlocked ? 'Coming soon — locked' : t(`pl.${m.k}_d` as Key)}</span>
     </motion.button>
   );
 
@@ -83,6 +93,20 @@ export default function Play() {
           </div>
         </section>
       </div>
+      {askPw && (
+        <div className="pve-lock" role="dialog" aria-modal="true" onClick={() => setAskPw(false)}>
+          <form onClick={(e) => e.stopPropagation()} onSubmit={(e) => { e.preventDefault(); void submitPw(); }}>
+            <h2>Story Mode — Coming Soon</h2>
+            <p>This mode is locked for now. Enter the password to get in early.</p>
+            <input className="input" type="password" autoFocus autoComplete="off" value={pw} placeholder="Password" onChange={(e) => { setPw(e.target.value); setPwErr(false); }} />
+            {pwErr && <div className="note bad">Wrong password.</div>}
+            <div className="row">
+              <button type="button" className="btn" onClick={() => setAskPw(false)}>Cancel</button>
+              <button type="submit" className="btn lg" disabled={!pw.trim()}>Unlock</button>
+            </div>
+          </form>
+        </div>
+      )}
     </main>
   );
 }
