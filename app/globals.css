@@ -2629,3 +2629,13 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .mastery-list { display: flex; flex-direction: column; gap: 8px; }
 .mastery-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
 .tier-badge { margin-left: 6px; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 700; background: rgba(255,200,60,.18); color: #ffd36b; border: 1px solid rgba(255,200,60,.4); vertical-align: middle; }
+
+/* mastery tier flair: a burst behind the action banner, richer at higher tiers */
+.tier-fx { position: fixed; left: 50%; top: 38%; width: 360px; height: 360px; margin: -180px 0 0 -180px; border-radius: 50%; pointer-events: none; z-index: 60;
+  background: radial-gradient(circle, var(--fx, #ffd36b) 0%, transparent 62%); filter: blur(2px); mix-blend-mode: screen; }
+.tier-fx.t4 { box-shadow: 0 0 80px 20px var(--fx, #ffd36b); }
+.tier-fx.t5 { width: 520px; height: 520px; margin: -260px 0 0 -260px; box-shadow: 0 0 140px 50px var(--fx, #ffd36b), inset 0 0 90px var(--fx, #ffd36b); }
+.tier-fx.c-gambler { --fx: #ffcc33; } .tier-fx.c-villain { --fx: #9b2cff; } .tier-fx.c-ninja { --fx: #29d3ff; }
+.tier-fx.c-hero { --fx: #ff8c1a; } .tier-fx.c-hacker { --fx: #2cff7a; } .tier-fx.c-mimic { --fx: #ff5bd0; }
+.tier-fx.c-thief { --fx: #b9c2d6; } .tier-fx.c-parasite { --fx: #7dff2c; } .tier-fx.c-oracle { --fx: #7aa6ff; }
+.tier-fx.c-wildcard { --fx: #ff4d4d; } .tier-fx.c-jester { --fx: #ff7ad9; } .tier-fx.c-mastermind { --fx: #4dffd2; }

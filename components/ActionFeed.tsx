@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { announcer } from '@/lib/announcer';
 import { narrator } from '@/lib/narrator';
 import { audio } from '@/lib/audio';
+import { fetchRoomTiers } from '@/lib/profile';
 import { CHAOS_INFO, CLASSES } from '@/lib/classes';
 import { t as tr } from '@/lib/i18n';
 import { Rich, useT } from '@/lib/i18n/react';
@@ -44,7 +45,12 @@ const ARROW_TYPES = ['attack', 'hack', 'block', 'absorb', 'caught', 'trace_miss'
  * Big "who did what to whom" banners with a sound for every attack, hack, block, cleanse and rage quit.
  * Driven by the server's action feed, so every screen in the room sees the same thing.
  */
-export function ActionFeed({ state }: { state: RoomState }) {
+export function ActionFeed({ state, token }: { state: RoomState; token?: string | null }) {
+  const tiers = useRef<Record<string, number>>({});
+  useEffect(() => {
+    if (!token) return;
+    void fetchRoomTiers(token).then((x) => { tiers.current = x; });
+  }, [token, state.room.round, state.players.length]);
   const seen = useRef<number | null>(null);
   const [queue, setQueue] = useState<FeedItem[]>([]);
   const [current, setCurrent] = useState<FeedItem | null>(null);
@@ -88,6 +94,8 @@ export function ActionFeed({ state }: { state: RoomState }) {
     else if (next.type === 'chaos') { audio.file('siren'); narrator.say('chaos', { delay: 500 }); }
     else if (next.type === 'latch' || next.type === 'drain') audio.file('squelch');
     else LOOK[next.type].sfx();
+    const flairTier = next.from ? tiers.current[next.from] ?? 0 : 0;
+    if (flairTier >= 3 && next.from_class && next.type !== 'block' && next.type !== 'caught') audio.flair(next.from_class, flairTier);
     const name = (id?: string | null) => playersRef.current.find((p) => p.id === id)?.name
       ?? (id === next.from && next.from_class ? tr('an.The', { cls: CLASSES[next.from_class].name }) : undefined);
     if (next.type === 'chicken') announcer.say(tr('an.chicken', { name: next.name ?? name(next.from) ?? tr('an.someone') }), { hype: true, delay: 900 });
@@ -127,6 +135,10 @@ export function ActionFeed({ state }: { state: RoomState }) {
     <div className="action-feed" aria-live="polite">
       <AnimatePresence>
         {current && <Banner key={current.id} item={current} state={state} meId={meId} />}
+        {current && current.from_class && (tiers.current[current.from ?? ''] ?? 0) >= 3 && current.type !== 'block' && current.type !== 'caught' && (
+          <motion.div key={`fx-${current.id}`} className={`tier-fx t${tiers.current[current.from ?? '']} c-${current.from_class}`} aria-hidden
+            initial={{ opacity: 0, scale: 0.4 }} animate={{ opacity: [0, 1, 0], scale: [0.4, 1.15, 1.5] }} transition={{ duration: 1.3, ease: 'easeOut' }} />
+        )}
       </AnimatePresence>
     </div>
   );

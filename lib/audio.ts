@@ -212,6 +212,27 @@ export const audio = {
   /** Mystic shimmer: the Oracle sees ahead. */
   mystic() { [523, 659, 831, 1047, 1319].forEach((f, i) => tone(f, i * 0.09, 0.8, 'sine', 0.14)); },
   /** Whoosh-whoosh: the Jester swaps racks. */
+  /** Mastery flair: extra layers on a class ability for tier 3-5 players (cosmetic only). */
+  flair(cls: string, tier: number) {
+    if (tier < 3) return;
+    const big = tier >= 5, mid = tier >= 4;
+    const sig: Record<string, () => void> = {
+      gambler: () => { const n = 3 + (tier - 3) * 3; for (let i = 0; i < n; i++) tone(2200 + (i % 4) * 330, 0.05 + i * 0.05, 0.12, 'triangle', 0.18); if (big) [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.3 + i * 0.09, 0.5, 'square', 0.12)); },
+      villain: () => { tone(55, 0, 0.9, 'sawtooth', 0.35, 40); noise(0, 0.5, 0.5, 200, 0.8, 80); if (mid) tone(82, 0.1, 1.1, 'square', 0.18, 41); if (big) { tone(98, 0.2, 1.4, 'sawtooth', 0.2, 49); noise(0.3, 0.6, 0.5, 120, 1, 60); } },
+      ninja: () => { noise(0, 0.18, 0.5, 4000, 1.4, 900); if (mid) noise(0.12, 0.18, 0.5, 5000, 1.4, 1000); if (big) { noise(0.24, 0.2, 0.5, 6000, 1.4, 1200); tone(1760, 0.3, 0.4, 'sine', 0.12); } },
+      hero: () => { [392, 523, 659].forEach((f, i) => tone(f, i * 0.08, 0.4, 'triangle', 0.2)); if (mid) tone(784, 0.28, 0.6, 'triangle', 0.2); if (big) [1047, 1319].forEach((f, i) => tone(f, 0.4 + i * 0.1, 0.8, 'sine', 0.16)); },
+      mastermind: () => { [330, 440, 554].forEach((f, i) => tone(f, i * 0.12, 0.5, 'sine', 0.18)); if (big) tone(660, 0.4, 1, 'sine', 0.16); },
+      hacker: () => { for (let i = 0; i < 6 + tier * 2; i++) tone(900 + ((i * 337) % 1200), i * 0.04, 0.04, 'square', 0.12); if (big) tone(200, 0.5, 0.3, 'sawtooth', 0.2, 1200); },
+      mimic: () => { for (let i = 0; i < 4 + tier; i++) tone(300 + i * 110, i * 0.05, 0.15, 'sine', 0.16, 700 - i * 40); },
+      thief: () => { noise(0, 0.15, 0.4, 1500, 1.2, 4000); for (let i = 0; i < tier - 1; i++) tone(2500 + i * 250, 0.12 + i * 0.06, 0.1, 'triangle', 0.16); },
+      parasite: () => { tone(110, 0, 0.5, 'sawtooth', 0.25, 50); noise(0.05, 0.4, 0.4, 300, 5, 120); if (big) tone(70, 0.3, 0.7, 'sine', 0.3, 35); },
+      oracle: () => { [523, 659, 784, 988, 1175].slice(0, tier).forEach((f, i) => tone(f, i * 0.1, 1, 'sine', 0.14)); },
+      wildcard: () => { for (let i = 0; i < 5 + tier; i++) tone(400 + ((i * 523) % 900), i * 0.05, 0.12, 'square', 0.14); },
+      jester: () => { [523, 659, 523, 784, 659, 1047].slice(0, 3 + tier - 2).forEach((f, i) => tone(f, i * 0.07, 0.12, 'square', 0.14)); },
+    };
+    (sig[cls] ?? sig.hero)();
+    if (big) tone(60, 0, 0.5, 'sine', 0.4, 36);   // tier 5: a sub-bass hit under everything
+  },
   whoosh() { noise(0, 0.3, 0.4, 300, 1, 3000); noise(0.3, 0.3, 0.4, 3000, 1, 300); },
   /** Prize-wheel spin then a stinger: Wildcard chaos. */
   wheel() {

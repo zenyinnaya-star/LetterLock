@@ -290,7 +290,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
       )}
       {phase !== 'battle' && <Rack state={state} token={token} act={act} />}
       <Reactions state={state} token={token} />
-      <ActionFeed state={state} />
+      <ActionFeed state={state} token={token} />
       <AnimatePresence>
         {confirmQuit && (
           <motion.div className="sheet-backdrop" onClick={() => setConfirmQuit(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>

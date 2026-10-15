@@ -115,3 +115,6 @@ export async function equipBadge(badge: string | null): Promise<boolean> {
 export async function fetchRoomBadges(token: string): Promise<Record<string, string>> {
   try { return await call<Record<string, string>>('room_badges', { p_token: token }); } catch { return {}; }
 }
+export async function fetchRoomTiers(token: string): Promise<Record<string, number>> {
+  try { return await call<Record<string, number>>('room_tiers', { p_token: token }); } catch { return {}; }
+}
