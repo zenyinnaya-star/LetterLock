@@ -11,7 +11,7 @@ import { audio } from '@/lib/audio';
 import { useT } from '@/lib/i18n/react';
 import type { Key } from '@/lib/i18n';
 
-type Kind = 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory';
+type Kind = 'mastermind' | 'jester' | 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory';
 interface Mode { kind: Kind; icon: IconName; k: string; tone: string }
 // Scene art per mode (local file wins once self-hosted; CDN copy until then).
 const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_';
@@ -32,6 +32,8 @@ const LAB: Mode[] = [
   { kind: 'reverse', icon: 'swap', k: 'reverse', tone: 'green' },
   { kind: 'chaos', icon: 'dice', k: 'chaos', tone: 'pink' },
   { kind: 'memory', icon: 'eye', k: 'memory', tone: 'blue' },
+  { kind: 'mastermind', icon: 'bulb', k: 'mastermind', tone: 'amber' },
+  { kind: 'jester', icon: 'skull', k: 'jester', tone: 'pink' },
 ];
 
 export default function Play() {
@@ -56,10 +58,10 @@ export default function Play() {
   const card = (m: Mode, i: number) => (
     <motion.button key={m.kind} className={`mode-card tone-${m.tone}${BG[m.kind] ? ' has-bg' : ''}`} style={BG[m.kind] ? ({ ['--bg' as string]: BG[m.kind] } as React.CSSProperties) : undefined} 
       initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.05 + i * 0.05 }}
-      whileHover={{ y: -3 }} whileTap={{ scale: 0.97 }} onClick={() => (m.kind === 'story' && !unlocked ? (audio.unlock(), setAskPw(true)) : go(m.kind))}>
+      whileHover={{ y: -3 }} whileTap={{ scale: 0.97 }} onClick={() => (m.kind === 'mastermind' || m.kind === 'jester' ? undefined : m.kind === 'story' && !unlocked ? (audio.unlock(), setAskPw(true)) : go(m.kind))}>
       <span className="mc-ico"><Icon name={m.kind === 'story' && !unlocked ? 'lock' : m.icon} size={22} /></span>
       <b>{t(`pl.${m.k}` as Key)}</b>
-      <span className="mc-desc">{m.kind === 'story' && !unlocked ? 'Coming soon — locked' : t(`pl.${m.k}_d` as Key)}</span>
+      <span className="mc-desc">{m.kind === 'story' && !unlocked ? 'Coming soon — locked' : m.kind === 'mastermind' || m.kind === 'jester' ? `Coming soon · ${t(`pl.${m.k}_d` as Key)}` : t(`pl.${m.k}_d` as Key)}</span>
     </motion.button>
   );
 
