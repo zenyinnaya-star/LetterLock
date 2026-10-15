@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import type { Mastery } from './mastery';
 
 export interface ProfileInfo {
   name: string; xp: number; level: number; title: string; level_floor: number; level_next: number;
@@ -99,4 +100,18 @@ export async function heroUpgrade(hero: string, node: string): Promise<HeroProg>
 export async function heroRespec(hero: string): Promise<HeroProg> {
   const s = getStored(); if (!s) throw new Error('NO_PROFILE');
   return call<HeroProg>('hero_respec', { p_secret: s.secret, p_hero: hero });
+}
+
+export async function fetchMastery(): Promise<Mastery | null> {
+  const s = getStored();
+  if (!s) return null;
+  try { return await call<Mastery>('profile_mastery', { p_secret: s.secret }); } catch { return null; }
+}
+export async function equipBadge(badge: string | null): Promise<boolean> {
+  const s = getStored();
+  if (!s) return false;
+  try { await call<void>('profile_equip', { p_secret: s.secret, p_badge: badge }); return true; } catch { return false; }
+}
+export async function fetchRoomBadges(token: string): Promise<Record<string, string>> {
+  try { return await call<Record<string, string>>('room_badges', { p_token: token }); } catch { return {}; }
 }

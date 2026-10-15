@@ -2624,3 +2624,8 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .spec-drafts { max-width: 620px; margin: 8px auto; width: 100%; display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 14px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
 .spec-row { display: flex; justify-content: space-between; gap: 10px; }
 .spec-row b { font-family: var(--display); letter-spacing: .08em; }
+
+/* class mastery */
+.mastery-list { display: flex; flex-direction: column; gap: 8px; }
+.mastery-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
+.tier-badge { margin-left: 6px; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 700; background: rgba(255,200,60,.18); color: #ffd36b; border: 1px solid rgba(255,200,60,.4); vertical-align: middle; }

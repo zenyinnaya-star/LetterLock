@@ -6,7 +6,9 @@ import { Header } from '@/components/ui';
 import { Icon } from '@/components/icons';
 import { ACHIEVEMENTS } from '@/lib/achievements';
 import { useT } from '@/lib/i18n/react';
-import { fetchProfile, getStored, restoreProfile, titleKey, type ProfileInfo } from '@/lib/profile';
+import { CLASSES } from '@/lib/classes';
+import { badgeLabel, nextTierXp, tierName, TIER_XP, type Mastery } from '@/lib/mastery';
+import { equipBadge, fetchMastery, fetchProfile, getStored, restoreProfile, titleKey, type ProfileInfo } from '@/lib/profile';
 
 export default function ProfilePage() {
   const t = useT();
@@ -15,8 +17,9 @@ export default function ProfilePage() {
   const [code, setCode] = useState('');
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [m, setM] = useState<Mastery | null>(null);
 
-  const load = () => { void fetchProfile().then((x) => { setP(x); setReady(true); }); };
+  const load = () => { void fetchProfile().then((x) => { setP(x); setReady(true); }); void fetchMastery().then(setM); };
   useEffect(() => { if (getStored()) load(); else setReady(true); }, []);
 
   async function restore() {
@@ -51,6 +54,36 @@ export default function ProfilePage() {
               <div><b>{p.best_streak}</b><span>{t('pf.streak')}</span></div>
               <div><b>{p.fastest_ms == null ? '—' : `${(p.fastest_ms / 1000).toFixed(1)}s`}</b><span>{t('pf.fastest')}</span></div>
             </div>
+            {m && (
+              <>
+                <div className="pp-grid">
+                  <div><b>{m.classes[0] ? CLASSES[m.classes[0].class].name : '—'}</b><span>Favorite class</span></div>
+                  <div><b>{m.longest_word ? m.longest_word.toUpperCase() : '—'}</b><span>Longest word</span></div>
+                  <div><b>{m.win_streak}</b><span>Win streak (best {m.best_win_streak})</span></div>
+                  <div><b>{Object.entries(m.modes).sort((a, b) => b[1] - a[1])[0]?.[0] ?? '—'}</b><span>Top mode</span></div>
+                </div>
+                <span className="label">Class mastery</span>
+                <div className="mastery-list">
+                  {m.classes.length === 0 && <span className="muted small">Finish a game to start ranking up a class.</span>}
+                  {m.classes.map((c) => {
+                    const nx = nextTierXp(c.xp);
+                    const worn = m.badge === `${c.class}:${c.tier}`;
+                    return (
+                      <div key={c.class} className="mastery-row">
+                        <span><b>{CLASSES[c.class].name}</b> · {tierName(c.class, c.tier)}<br />
+                          <span className="muted small">{c.xp} XP{nx ? ` / ${nx}` : ' · max'} · {c.games} games · {c.wins} wins</span></span>
+                        {c.tier >= 2 && (
+                          <button className={`btn sm ${worn ? '' : 'ghost'}`} onClick={() => void equipBadge(worn ? null : `${c.class}:${c.tier}`).then(() => fetchMastery().then(setM))}>
+                            {worn ? 'Wearing' : 'Wear badge'}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                {m.badge && <span className="muted small">Shown beside your name in lobbies: {badgeLabel(m.badge)}</span>}
+              </>
+            )}
             <span className="label">{t('pf.ach')} · {earned.size}/{ACHIEVEMENTS.length}</span>
             <div className="ach-grid">
               {ACHIEVEMENTS.map((a) => (

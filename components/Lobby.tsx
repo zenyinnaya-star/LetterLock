@@ -8,6 +8,8 @@ import { WORD_LANGS } from '@/lib/i18n';
 import { useT } from '@/lib/i18n/react';
 import type { RoomState } from '@/lib/types';
 import { CLASSES } from '@/lib/classes';
+import { badgeLabel } from '@/lib/mastery';
+import { fetchRoomBadges } from '@/lib/profile';
 import { ClassIcon, Icon } from './icons';
 import { AvatarPicker } from './AvatarPicker';
 import { PlayerAvatar } from './PlayerAvatar';
@@ -35,6 +37,11 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
   useEffect(() => {
     if (!token) return;
     rpc.storyInfo(token).then((i) => { if (i.story) setStory(true); setPicks(i.picks); }).catch(() => undefined);
+  }, [token, state.room.state_version]);
+  const [badges, setBadges] = useState<Record<string, string>>({});
+  useEffect(() => {
+    if (!token) return;
+    void fetchRoomBadges(token).then(setBadges);
   }, [token, state.room.state_version]);
   const me = state.me;
   const isHost = !!me && me.id === state.room.host_id;
@@ -95,7 +102,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
                 <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }} transition={softSpring}>
                   <PlayerAvatar p={p} size={56} />
                 </motion.div>
-                <b>{p.name}{bots.includes(p.id) && <span className="bot-tag">{t('solo.tag')}</span>}{p.is_host && <span style={{ color: 'var(--accent)' }} title={t('lb.host')}><Icon name="crown" size={14} /></span>}</b>
+                <b>{p.name}{badges[p.id] && <span className="tier-badge" title="Class mastery">{badgeLabel(badges[p.id])}</span>}{bots.includes(p.id) && <span className="bot-tag">{t('solo.tag')}</span>}{p.is_host && <span style={{ color: 'var(--accent)' }} title={t('lb.host')}><Icon name="crown" size={14} /></span>}</b>
                 {bots.includes(p.id) && botInfo?.[p.id] && (() => {
                   const bi = botInfo[p.id];
                   const cycle = (l: number, s: number) => token && void act(() => rpc.setBot(token, p.id, l, s).then(() => pingBots?.()));
