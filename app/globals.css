@@ -921,7 +921,7 @@ input { font: inherit; }
 .play-grid { grid-template-columns: 1fr !important; }
 
 /* ───────── class select ───────── */
-.selpage { min-height: 100dvh; display: flex; flex-direction: column; padding: 12px 14px 0; gap: 10px; position: relative; overflow: hidden;
+.selpage { min-height: 100dvh; display: flex; flex-direction: column; padding: 12px 14px 0; gap: 10px; position: relative; overflow: clip;
   background: radial-gradient(ellipse 70% 60% at 50% 30%, color-mix(in srgb, var(--ca) 16%, #0a0c1c), #070816 75%); transition: background .4s; }
 .sel-top { display: flex; align-items: center; gap: 14px; position: relative; z-index: 3; }
 .sel-top h1 { font-family: var(--display); font-weight: 400; font-size: clamp(18px, 4.6vw, 26px); margin: 0; letter-spacing: .5px; }
@@ -2569,4 +2569,19 @@ html:has(.shell.rpg) body{overflow:hidden}
   .shell.rpg .bx-mp .bx-mp-t,.shell.rpg .bx-mp .bx-mp-r,.shell.rpg .bx-mp .bx-mp-w{line-height:1.15;margin:0}
   .shell.rpg .bx-mp .bx-mp-b{margin-top:2px;line-height:1}
   .shell.rpg .bx-mp .bx-mp-b button,.shell.rpg .bx-mp .bx-mp-b .btn{padding-top:2px;padding-bottom:2px;font-size:11px}
+}
+
+/* mobile class select: keep class cards + lock-in button pinned at the bottom (overflow:hidden on .selpage had killed sticky) and make taps easy */
+@media (max-width:760px){
+  .sel-strip{position:sticky;bottom:0;padding-top:8px}
+  .sel-card{min-height:92px;width:76px;touch-action:manipulation}
+  .sel-card.on{transform:none}
+  .sel-lock{min-height:52px}
+  .sel-cards{scroll-padding:0 14px;-webkit-overflow-scrolling:touch}
+}
+/* body/html overflow-x:hidden turns them into scroll containers, which stops sticky; clip instead on the class-select page */
+html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
+@media (max-width:760px){
+  .sel-strip{background:linear-gradient(transparent,rgba(7,8,22,.96) 18%)!important}
+  .sel-card b{font-size:10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
