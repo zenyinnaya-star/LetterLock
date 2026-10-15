@@ -58,10 +58,10 @@ export default function Play() {
   const card = (m: Mode, i: number) => (
     <motion.button key={m.kind} className={`mode-card tone-${m.tone}${BG[m.kind] ? ' has-bg' : ''}`} style={BG[m.kind] ? ({ ['--bg' as string]: BG[m.kind] } as React.CSSProperties) : undefined} 
       initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.05 + i * 0.05 }}
-      whileHover={{ y: -3 }} whileTap={{ scale: 0.97 }} onClick={() => (m.kind === 'mastermind' || m.kind === 'jester' ? undefined : m.kind === 'story' && !unlocked ? (audio.unlock(), setAskPw(true)) : go(m.kind))}>
+      whileHover={{ y: -3 }} whileTap={{ scale: 0.97 }} onClick={() => (m.kind === 'mastermind' ? router.push('/mastermind') : m.kind === 'jester' ? undefined : m.kind === 'story' && !unlocked ? (audio.unlock(), setAskPw(true)) : go(m.kind))}>
       <span className="mc-ico"><Icon name={m.kind === 'story' && !unlocked ? 'lock' : m.icon} size={22} /></span>
       <b>{t(`pl.${m.k}` as Key)}</b>
-      <span className="mc-desc">{m.kind === 'story' && !unlocked ? 'Coming soon — locked' : m.kind === 'mastermind' || m.kind === 'jester' ? `Coming soon · ${t(`pl.${m.k}_d` as Key)}` : t(`pl.${m.k}_d` as Key)}</span>
+      <span className="mc-desc">{m.kind === 'story' && !unlocked ? 'Coming soon — locked' : m.kind === 'jester' ? `Coming soon · ${t(`pl.${m.k}_d` as Key)}` : t(`pl.${m.k}_d` as Key)}</span>
     </motion.button>
   );
 
