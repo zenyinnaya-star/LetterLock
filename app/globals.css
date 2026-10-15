@@ -2602,3 +2602,20 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .coach-row{display:flex;align-items:center;gap:8px;justify-content:flex-end}
 .coach-count{margin-right:auto;font-size:12px;color:#8e98b8}
 @media (max-width:760px){.coach{bottom:76px}.coach-face{width:48px;height:48px}.coach-face svg{width:40px;height:40px}}
+
+/* Mastermind mode */
+.mm-page { display: flex; flex-direction: column; gap: 12px; }
+.mm-title { font-family: var(--display); font-size: 32px; margin: 0; }
+.mm-top { display: flex; justify-content: space-between; align-items: center; }
+.mm-row { display: flex; gap: 8px; } .mm-row .input { flex: 1; min-width: 0; } .mm-row.wrap { flex-wrap: wrap; }
+.mm-toggle { display: flex; gap: 8px; align-items: center; font-size: 14px; }
+.mm-or { text-align: center; opacity: .6; font-size: 13px; }
+.mm-err { color: var(--lock); margin: 0; font-size: 14px; }
+.mm-clock { font-family: var(--display); font-size: 40px; text-align: center; }
+.mm-word { padding: 12px; border-radius: 14px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); text-align: center; font-size: 18px; }
+.mm-word b { font-family: var(--display); font-size: 26px; letter-spacing: .06em; text-transform: uppercase; }
+.mm-clues, .mm-guesses, .mm-list, .mm-board { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.mm-guesses, .mm-list { list-style: none; padding-left: 0; }
+.mm-board { padding-left: 0; list-style: none; border-top: 1px solid rgba(255,255,255,.1); padding-top: 10px; }
+.mm-board li { display: flex; justify-content: space-between; }
+.mm-hp { text-align: center; font-size: 22px; color: var(--lock); letter-spacing: 4px; }
