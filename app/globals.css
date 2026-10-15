@@ -2592,3 +2592,13 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .pve-lock h2{margin:0;font-family:var(--display);font-weight:400;font-size:22px;color:#e8d6a0}
 .pve-lock p{margin:0;color:#aab3d0;font-size:14px}
 .pve-lock .row{display:flex;gap:10px;justify-content:flex-end}
+
+/* Tutorial mode coach: the chosen class speaks via text bubbles beside its own icon */
+.coach{position:fixed;left:12px;bottom:12px;z-index:60;display:flex;align-items:flex-end;gap:10px;max-width:min(520px,calc(100vw - 24px));pointer-events:none}
+.coach>*{pointer-events:auto}
+.coach-face{flex:0 0 auto;width:64px;height:64px;border-radius:50%;border:2px solid #c9a45c;background:#0a0e20;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.6)}
+.coach-card{order:2;background:linear-gradient(180deg,#101733,#070a18);border:1px solid #8a6a26;border-radius:12px;padding:12px 14px;color:#e8e2d0;font-size:14px;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.65)}
+.coach-card p{margin:0 0 10px}
+.coach-row{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.coach-count{margin-right:auto;font-size:12px;color:#8e98b8}
+@media (max-width:760px){.coach{bottom:76px}.coach-face{width:48px;height:48px}.coach-face svg{width:40px;height:40px}}

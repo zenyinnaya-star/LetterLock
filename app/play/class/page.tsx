@@ -99,6 +99,7 @@ function Select() {
       await linkProfile(r.token, name.trim());
       saveName(name.trim());
       saveSession(r.code, { token: r.token, playerId: r.player_id });
+      if (kind === 'solo') { try { sessionStorage.setItem(`letterlock:tutorial:${r.code}`, '1'); } catch { /* ignore */ } }
       if (kind === 'story') { try { sessionStorage.setItem(`letterlock:story:${r.code}`, '1'); } catch { /* ignore */ } }
       router.push(`/room/${r.code}`);
     } catch (e) {

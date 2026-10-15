@@ -1,5 +1,6 @@
 'use client';
 
+import { TutorialCoach } from './TutorialCoach';
 import Link from 'next/link';
 import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -236,6 +237,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
 
   return (
     <MotionConfig reducedMotion="user">
+      <TutorialCoach state={state} />
       {stageName && stageName !== 'none' && <div className={`stage-fx stage-${stageName}`} aria-hidden />}
       {phase === 'battle' ? (
         <div className="shell rpg" role="main">
