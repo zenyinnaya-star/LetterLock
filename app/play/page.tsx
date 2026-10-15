@@ -58,7 +58,7 @@ export default function Play() {
       initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.05 + i * 0.05 }}
       whileHover={{ y: -3 }} whileTap={{ scale: 0.97 }} onClick={() => (m.kind === 'story' && !unlocked ? (audio.unlock(), setAskPw(true)) : go(m.kind))}>
       <span className="mc-ico"><Icon name={m.kind === 'story' && !unlocked ? 'lock' : m.icon} size={22} /></span>
-      <b>XX</b>
+      <b>{t(`pl.${m.k}` as Key)}</b>
       <span className="mc-desc">{m.kind === 'story' && !unlocked ? 'Coming soon — locked' : t(`pl.${m.k}_d` as Key)}</span>
     </motion.button>
   );
