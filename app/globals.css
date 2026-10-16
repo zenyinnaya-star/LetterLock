@@ -2747,3 +2747,6 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .mm-glass { background-image: url('/art/mm-glass.jpg'), linear-gradient(135deg, rgba(190,220,255,.10), rgba(190,220,255,.03) 45%, rgba(190,220,255,.10)); background-size: cover, auto; }
 .mm-room { background-size: 100% auto, auto, auto; background-position: center top, center, center; background-color: #05060c; padding-top: 104px; }
 .mm-room::before { display: none; }
+
+/* Mastermind: keep the painted room phone-shaped on wide screens so the art and live elements stay aligned */
+.mm-room { width: 100%; max-width: 560px; margin-left: auto; margin-right: auto; }
