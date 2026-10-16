@@ -20,7 +20,6 @@ import { Icon } from './icons';
 import { Lobby } from './Lobby';
 import { Battle } from './Battle';
 import { Reactions } from './Reactions';
-import { RingKO } from './RingKO';
 import { ActionFeed } from './ActionFeed';
 import { DuelHud } from './DuelHud';
 import { TeamHud, teamLabel } from './team';
@@ -235,7 +234,6 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
     return () => { delete el.dataset.stage; };
   }, [stageName]);
   const timed = !!state.room.phase_ends_at && phase !== 'lobby' && phase !== 'finished';
-  const ringOn = (state.room.duel || state.room.settings?.mode === 'duel') && ['answer', 'reveal', 'guess', 'react'].includes(phase);
 
   return (
     <MotionConfig reducedMotion="user">
@@ -250,7 +248,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           </div>
         </div>
       ) : (
-      <div className={`shell${ringOn ? ' ring' : ''}`}>
+      <div className="shell">
         <Header
           settings={<SettingsButton state={state} token={token} act={act} />}
           right={
@@ -262,7 +260,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
             </>
           } />
         {phase !== 'lobby' && (state.room.settings?.mode === 'team' ? <TeamHud state={state} /> : state.room.duel && phase !== 'finished' && state.players.filter((p) => !p.eliminated).length === 2
-          ? <DuelHud state={state} msLeft={msLeft} total={total} />
+          ? <DuelHud state={state} />
           : <Hud state={state} meId={me?.id ?? null} />)}
         <AnimatePresence>
           {me?.eliminated && phase !== 'finished' && (
@@ -291,7 +289,6 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
       </div>
       )}
       {phase !== 'battle' && <Rack state={state} token={token} act={act} />}
-      <RingKO state={state} />
       <Reactions state={state} token={token} />
       <ActionFeed state={state} token={token} />
       <AnimatePresence>
