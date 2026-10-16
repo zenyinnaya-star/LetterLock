@@ -212,6 +212,16 @@ export const audio = {
   /** Mystic shimmer: the Oracle sees ahead. */
   mystic() { [523, 659, 831, 1047, 1319].forEach((f, i) => tone(f, i * 0.09, 0.8, 'sine', 0.14)); },
   /** Whoosh-whoosh: the Jester swaps racks. */
+  /** Mastermind: an index card gets pinned to the board. */
+  pin() { noise(0, 0.05, 0.5, 2500, 2, 900); tone(180, 0, 0.12, 'sine', 0.5, 90); tone(1400, 0.02, 0.05, 'triangle', 0.14); },
+  /** Mastermind: soft clock tick for the last seconds. */
+  clockTick(low = false) { tone(low ? 700 : 950, 0, 0.04, 'square', 0.12); },
+  /** Mastermind: wrong guess slams shut. */
+  slam() { tone(95, 0, 0.35, 'sawtooth', 0.45, 48); noise(0, 0.18, 0.55, 600, 0.8, 140); tone(160, 0.05, 0.2, 'square', 0.2, 80); },
+  /** Mastermind: case cracked. */
+  cracked() { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.09, 0.35, 'triangle', 0.28)); tone(1568, 0.38, 0.7, 'sine', 0.22); noise(0.3, 0.3, 0.2, 5000, 2, 9000); },
+  /** Mastermind: case goes cold (time ran out). */
+  cold() { [392, 349, 294].forEach((f, i) => tone(f, i * 0.2, 0.5, 'sine', 0.22)); },
   /** Mastery flair: extra layers on a class ability for tier 3-5 players (cosmetic only). */
   flair(cls: string, tier: number) {
     if (tier < 3) return;

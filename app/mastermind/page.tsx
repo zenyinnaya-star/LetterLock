@@ -24,16 +24,20 @@ export default function MastermindHome() {
   return (
     <main className="shell narrow">
       <Header />
-      <div className="sheet mm-page">
+      <div className="mm-room">
         <h1 className="mm-title">Mastermind</h1>
-        <p className="muted">One player secretly holds a word and gives up to 3 clues. Everyone else races to guess it. Wrong guesses cost HP.</p>
-        <input className="input" placeholder="Your name" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} />
-        <label className="mm-toggle"><input type="checkbox" checked={quick} onChange={(e) => setQuick(e.target.checked)} /> Quick Match (3 short rounds)</label>
-        <button className="btn lg" disabled={busy || !name.trim()} onClick={() => go(() => mm.create(name.trim(), quick))}>Create room</button>
-        <div className="mm-or">or join a friend</div>
-        <div className="mm-row">
-          <input className="input" placeholder="CODE" maxLength={4} value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} />
-          <button className="btn ghost" disabled={busy || !name.trim() || code.length < 4} onClick={() => go(() => mm.join(code, name.trim()))}>Join</button>
+        <p className="mm-sub">One of you holds the secret word. Three clues. Everyone else races to crack it.</p>
+        <div className="mm-folder" data-tab="Open a case">
+          <input className="input" placeholder="Detective name" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} />
+          <label className="mm-toggle"><input type="checkbox" checked={quick} onChange={(e) => setQuick(e.target.checked)} /> Quick case (3 short rounds)</label>
+          <button className="btn lg" disabled={busy || !name.trim()} onClick={() => go(() => mm.create(name.trim(), quick))}>Open the case</button>
+        </div>
+        <div className="mm-or">or join an investigation</div>
+        <div className="mm-folder" data-tab="Join">
+          <div className="mm-row">
+            <input className="input" placeholder="CODE" maxLength={4} value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} />
+            <button className="btn ghost" disabled={busy || !name.trim() || code.length < 4} onClick={() => go(() => mm.join(code, name.trim()))}>Join</button>
+          </div>
         </div>
         {err && <p className="mm-err">{err}</p>}
       </div>
