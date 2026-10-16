@@ -212,6 +212,8 @@ export const audio = {
   /** Mystic shimmer: the Oracle sees ahead. */
   mystic() { [523, 659, 831, 1047, 1319].forEach((f, i) => tone(f, i * 0.09, 0.8, 'sine', 0.14)); },
   /** Whoosh-whoosh: the Jester swaps racks. */
+  /** Duel knockout: bell, heavy punch, crowd roar. */
+  ko() { tone(52, 0, 0.6, 'sine', 0.7, 30); noise(0, 0.14, 0.7, 700, 0.7, 180); tone(120, 0.02, 0.25, 'square', 0.3, 60); noise(0.2, 0.9, 0.22, 900, 0.6, 400); [880, 1175].forEach((f, i) => tone(f, 0.35 + i * 0.4, 0.9, 'sine', 0.3)); },
   /** Mastermind: an index card gets pinned to the board. */
   pin() { noise(0, 0.05, 0.5, 2500, 2, 900); tone(180, 0, 0.12, 'sine', 0.5, 90); tone(1400, 0.02, 0.05, 'triangle', 0.14); },
   /** Mastermind: soft clock tick for the last seconds. */

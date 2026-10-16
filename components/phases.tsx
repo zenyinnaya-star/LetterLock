@@ -274,6 +274,9 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
   const canPlay = !!me && !me.eliminated && !!token;
 
   useEffect(() => { setTarget(null); setLetter(null); }, [state.room.round]);
+  // 1v1: there is only one opponent, so aim at them automatically
+  const soleTarget = state.room.duel && targets.length === 1 ? targets[0].id : null;
+  useEffect(() => { if (soleTarget) setTarget(soleTarget); }, [soleTarget, state.room.round]);
 
   return (
     <>
@@ -281,6 +284,15 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
       <h2 className="stage-title">{t('ph.crack')}</h2>
       <p className="muted center" style={{ margin: 0 }}>{t('ph.crack_sub')}</p>
       <Hints state={state} />
+      {state.room.duel && tp && (
+        <div className="ring-lock" aria-label="Opponent's lock">
+          <span className="kicker">{tp.name}&apos;s lock</span>
+          <div className="slots">
+            {tp.revealed.map((l) => <span key={l} className="slot hit">{l}</span>)}
+            {Array.from({ length: Math.max(0, tp.letter_count - tp.revealed.length) }, (_, i) => <span key={`u${i}`} className="slot">_</span>)}
+          </div>
+        </div>
+      )}
       {!canPlay ? (
         <Spectating text={t('ph.spec_guess')} />
       ) : me.guess ? (
