@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Header } from '@/components/ui';
 import { mm, mmError, saveToken } from '@/lib/mastermind';
 import { loadName, saveName } from '@/lib/session';
+import { mmArtVars } from '@/lib/mmArt';
+import './mastermind.css';
 
 export default function MastermindHome() {
   const router = useRouter();
@@ -24,7 +26,8 @@ export default function MastermindHome() {
   return (
     <main className="shell narrow">
       <Header />
-      <div className="mm-room">
+      <div className="mm-room simple" style={mmArtVars}>
+        <div className="mm-center">
         <h1 className="mm-title">Mastermind</h1>
         <p className="mm-sub">One of you holds the secret word. Three clues. Everyone else races to crack it.</p>
         <div className="mm-folder" data-tab="Open a case">
@@ -40,6 +43,7 @@ export default function MastermindHome() {
           </div>
         </div>
         {err && <p className="mm-err">{err}</p>}
+        </div>
       </div>
     </main>
   );

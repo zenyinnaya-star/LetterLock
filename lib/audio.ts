@@ -221,6 +221,16 @@ export const audio = {
   /** Mastermind: case cracked. */
   cracked() { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.09, 0.35, 'triangle', 0.28)); tone(1568, 0.38, 0.7, 'sine', 0.22); noise(0.3, 0.3, 0.2, 5000, 2, 9000); },
   /** Mastermind: case goes cold (time ran out). */
+  /** Mastermind: the lamp buzzes and stutters on a wrong guess. */
+  flicker() { [0, 0.07, 0.16].forEach((t) => noise(t, 0.04, 0.16, 120, 6, 90)); tone(60, 0, 0.3, 'sawtooth', 0.06); },
+  /** Mastermind: a letter lights up on the table. */
+  reveal() { tone(880, 0, 0.12, 'triangle', 0.22); tone(1320, 0.08, 0.3, 'sine', 0.2); noise(0.02, 0.1, 0.12, 6000, 3, 9000); },
+  /** Mastermind: rubber stamp hits the page. */
+  stamp() { tone(70, 0, 0.18, 'sine', 0.7, 35); noise(0, 0.09, 0.6, 900, 0.7, 200); },
+  /** Mastermind: typewriter key while a clue types out. */
+  key() { noise(0, 0.025, 0.25, 3200, 4, 1800); },
+  /** Mastermind: emoji reaction pop. */
+  pop() { tone(660, 0, 0.07, 'sine', 0.2, 990); },
   cold() { [392, 349, 294].forEach((f, i) => tone(f, i * 0.2, 0.5, 'sine', 0.22)); },
   /** Mastery flair: extra layers on a class ability for tier 3-5 players (cosmetic only). */
   flair(cls: string, tier: number) {
