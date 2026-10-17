@@ -49,17 +49,9 @@ function ClueCard({ text, n, fresh }: { text: string; n: number; fresh: boolean 
 
 type Float = { id: number; emoji: string; x: number; name: string };
 
-// Separate memoized component with constant animation props: the page re-renders 4x/second for the clock,
-// and fresh keyframe arrays on every render would keep restarting the animation.
-const FLOAT_INITIAL = { y: 0, opacity: 0, scale: 0.4 };
-const FLOAT_ANIMATE = { y: -320, opacity: [0, 1, 1, 0], scale: [0.4, 1.3, 1, 1] };
-const FLOAT_TRANSITION = { duration: 2.6, ease: 'easeOut' } as const;
+// Pure CSS animation: immune to the page's 4x/second clock re-renders.
 const FloatEmoji = memo(function FloatEmoji({ f }: { f: Float }) {
-  return (
-    <motion.div className="mm-float" style={{ left: `${f.x}%`, rotate: (f.x % 20) - 10 }} initial={FLOAT_INITIAL} animate={FLOAT_ANIMATE} transition={FLOAT_TRANSITION}>
-      {f.emoji}<span>{f.name}</span>
-    </motion.div>
-  );
+  return <div className="mm-float" style={{ left: `${f.x}%`, ['--rot' as string]: `${(f.x % 20) - 10}deg` }}>{f.emoji}<span>{f.name}</span></div>;
 });
 
 export default function MastermindRoom({ params }: { params: Promise<{ code: string }> }) {
