@@ -91,7 +91,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
       </div>
 
       {teamMode ? (
-        <TeamLobby state={state} token={token} act={act} />
+        <TeamLobby state={state} token={token} act={act} bots={bots} isHost={isHost} onRemoveBot={(id) => token && void act(() => rpc.removeBot(token, id).then(() => pingBots?.()))} />
       ) : duelMode ? (
         <div className="duel-lobby">
           <DuelSeat p={state.players[0]} meId={me?.id} side="left" west={west} />
@@ -157,7 +157,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
         </div>
       )}
 
-      {isHost && !teamMode && (
+      {isHost && (
         <div className="bot-row">
           <span className="label">{t('solo.add')}</span>
           <span className="bot-styles" role="group" aria-label={t('solo.style')}>
@@ -166,7 +166,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
             ))}
           </span>
           {([1, 2, 3] as const).map((lv) => (
-            <button key={lv} className="btn sm ghost" disabled={count >= max || (duelMode && count >= 2)}
+            <button key={lv} className="btn sm ghost" disabled={count >= (teamMode ? teamSize * 2 : max) || (duelMode && count >= 2)}
               onClick={() => token && void act(() => rpc.addBot(token, lv, botStyle).then(() => pingBots?.()))}>
               + {t(lv === 1 ? 'solo.easy' : lv === 2 ? 'solo.medium' : 'solo.hard')}
             </button>

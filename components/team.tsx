@@ -81,7 +81,7 @@ export function TeamHud({ state }: { state: RoomState }) {
 }
 
 /* ───────── lobby: two team cards ───────── */
-export function TeamLobby({ state, token, act }: { state: RoomState; token: string | null; act: Act }) {
+export function TeamLobby({ state, token, act, bots = [], isHost = false, onRemoveBot }: { state: RoomState; token: string | null; act: Act; bots?: string[]; isHost?: boolean; onRemoveBot?: (id: string) => void }) {
   const t = useT();
   const me = state.me;
   const size = state.room.settings.team_size ?? 2;
@@ -94,15 +94,16 @@ export function TeamLobby({ state, token, act }: { state: RoomState; token: stri
             <motion.span className="dl-vs tl-vs" initial={{ scale: 3, opacity: 0, rotate: -20 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 500, damping: 16, delay: 0.2 }}>{t('tm.vs')}</motion.span>
           )}
-          <TeamCard team={tm} members={state.players.filter((p) => p.team_id === tm.id)} size={size} state={state} token={token} act={act} meId={me?.id} />
+          <TeamCard team={tm} members={state.players.filter((p) => p.team_id === tm.id)} size={size} state={state} token={token} act={act} meId={me?.id} bots={bots} isHost={isHost} onRemoveBot={onRemoveBot} />
         </div>
       ))}
     </div>
   );
 }
 
-function TeamCard({ team, members, size, state, token, act, meId }: {
+function TeamCard({ team, members, size, state, token, act, meId, bots = [], isHost = false, onRemoveBot }: {
   team: Team; members: PublicPlayer[]; size: number; state: RoomState; token: string | null; act: Act; meId?: string;
+  bots?: string[]; isHost?: boolean; onRemoveBot?: (id: string) => void;
 }) {
   const t = useT();
   const isLeader = !!meId && team.leader_id === meId;
@@ -161,10 +162,14 @@ function TeamCard({ team, members, size, state, token, act, meId }: {
                   {p.name}
                   {team.leader_id === p.id && <span className="tc-crown" title={t('tm.leader')}><Icon name="crown" size={14} /></span>}
                   {p.is_host && <span className="muted small">· {t('lb.host')}</span>}
+                  {bots.includes(p.id) && <span className="bot-tag">{t('solo.tag')}</span>}
                 </b>
                 {p.class && <span className="muted small">{CLASSES[p.class].name}</span>}
               </div>
-              {isLeader && p.id !== meId && (
+              {isHost && bots.includes(p.id) && onRemoveBot && (
+                <button className="btn sm ghost" style={{ marginLeft: 'auto' }} aria-label={t('solo.remove')} onClick={() => onRemoveBot(p.id)}><Icon name="x" size={12} /></button>
+              )}
+              {isLeader && p.id !== meId && !bots.includes(p.id) && (
                 <button className="btn sm ghost" style={{ marginLeft: 'auto' }} onClick={() => token && void act(() => rpc.teamLeader(token, p.id))}>
                   {t('tm.make_leader')}
                 </button>
