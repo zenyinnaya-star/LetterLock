@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { memo, use, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header } from '@/components/ui';
@@ -48,6 +48,19 @@ function ClueCard({ text, n, fresh }: { text: string; n: number; fresh: boolean 
 }
 
 type Float = { id: number; emoji: string; x: number; name: string };
+
+// Separate memoized component with constant animation props: the page re-renders 4x/second for the clock,
+// and fresh keyframe arrays on every render would keep restarting the animation.
+const FLOAT_INITIAL = { y: 0, opacity: 0, scale: 0.4 };
+const FLOAT_ANIMATE = { y: -320, opacity: [0, 1, 1, 0], scale: [0.4, 1.3, 1, 1] };
+const FLOAT_TRANSITION = { duration: 2.6, ease: 'easeOut' } as const;
+const FloatEmoji = memo(function FloatEmoji({ f }: { f: Float }) {
+  return (
+    <motion.div className="mm-float" style={{ left: `${f.x}%`, rotate: (f.x % 20) - 10 }} initial={FLOAT_INITIAL} animate={FLOAT_ANIMATE} transition={FLOAT_TRANSITION}>
+      {f.emoji}<span>{f.name}</span>
+    </motion.div>
+  );
+});
 
 export default function MastermindRoom({ params }: { params: Promise<{ code: string }> }) {
   const { code: raw } = use(params);
@@ -180,7 +193,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
     }));
   }, []);
   const clueCount = s?.clues.length ?? 0;
-  useLayoutEffect(() => { const id = window.setTimeout(measure, 450); return () => window.clearTimeout(id); }, [measure, clueCount, s?.room.status, s?.room.round, s?.players.length]);
+  useLayoutEffect(() => { const a = window.setTimeout(measure, 450), b = window.setTimeout(measure, 1200); return () => { window.clearTimeout(a); window.clearTimeout(b); }; }, [measure, clueCount, s?.room.status, s?.room.round, s?.players.length]);
   useEffect(() => {
     const ro = new ResizeObserver(() => measure());
     if (corkRef.current) ro.observe(corkRef.current);
@@ -285,10 +298,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
         <div className="mm-floats" aria-hidden>
           <AnimatePresence>
             {floats.map((f) => (
-              <motion.div key={f.id} className="mm-float" style={{ left: `${f.x}%` }} initial={{ y: 0, opacity: 0, scale: 0.4 }}
-                animate={{ y: -320, opacity: [0, 1, 1, 0], scale: [0.4, 1.3, 1, 1], rotate: (f.x % 20) - 10 }} transition={{ duration: 2.6, ease: 'easeOut' }}>
-                {f.emoji}<span>{f.name}</span>
-              </motion.div>
+              <FloatEmoji key={f.id} f={f} />
             ))}
           </AnimatePresence>
         </div>
