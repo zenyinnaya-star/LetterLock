@@ -59,7 +59,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   const phase = state.room.phase;
   const me = state.me;
   // 1v1 duels play out on the full-screen western street
-  const west = state.room.duel && state.players.filter((p) => !p.eliminated).length === 2
+  const west = state.room.settings?.mode === 'duel' && state.room.duel && state.players.filter((p) => !p.eliminated).length === 2
     && ['duel_intro', 'answer', 'reveal', 'guess', 'react'].includes(phase);
   const westLobby = phase === 'lobby' && state.room.settings?.mode === 'duel';
   const westEnd = phase === 'finished' && state.room.settings?.mode === 'duel' && state.players.length === 2 && !!state.room.winner_id;
@@ -71,7 +71,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   // classic mode is a vault heist: every player a safe, every lock a tumbler
   const classic = (state.room.settings?.mode ?? 'classic') === 'classic';
   const [storyLobby, setStoryLobby] = useState(false);
-  const vault = classic && !west && ['answer', 'reveal', 'guess', 'react'].includes(phase);
+  const vault = classic && !west && ['duel_intro', 'answer', 'reveal', 'guess', 'react'].includes(phase);
   const vaultLobby = classic && phase === 'lobby' && !storyLobby;
   const vaultEnd = classic && phase === 'finished' && !westEnd;
 
@@ -139,7 +139,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   const duel = state.room.duel;
   const duelMode = state.room.settings?.mode === 'duel';
   useEffect(() => {
-    if (phase === 'duel_intro' || (duel && phase !== 'lobby' && phase !== 'finished') || (phase === 'lobby' && duelMode)) { music.play('duel'); return; }
+    if (duelMode && (phase === 'duel_intro' || (duel && phase !== 'lobby' && phase !== 'finished') || phase === 'lobby')) { music.play('duel'); return; }
     if (phase === 'battle') { music.play('battle'); return; }
     if (phase === 'finished') {
       music.play('none'); // let the fanfare + announcer land, then bring the theme back
@@ -382,7 +382,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
                 : <button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> {t('gm.leave')}</button>}
             </>
           } />
-        {phase !== 'lobby' && (state.room.settings?.mode === 'team' ? <TeamHud state={state} /> : state.room.duel && phase !== 'finished' && state.players.filter((p) => !p.eliminated).length === 2
+        {phase !== 'lobby' && (state.room.settings?.mode === 'team' ? <TeamHud state={state} /> : state.room.settings?.mode === 'duel' && state.room.duel && phase !== 'finished' && state.players.filter((p) => !p.eliminated).length === 2
           ? <DuelHud state={state} />
           : <Hud state={state} meId={me?.id ?? null} />)}
         <AnimatePresence>
