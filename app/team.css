@@ -20,7 +20,7 @@
 @media (max-width: 560px) { .tf-panel { grid-template-columns: 1fr; } }
 
 /* team voice dock */
-.tv-dock { position: fixed; left: 12px; top: 120px; z-index: 30; width: 210px; display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 14px;
+.tv-dock { position: fixed; left: 12px; bottom: 16px; z-index: 30; width: 210px; display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 14px;
   background: rgba(10,13,32,.88); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 10px 28px rgba(0,0,0,.45); backdrop-filter: blur(8px); font-size: 12px; }
 .tv-dock.on { border-color: rgba(120,220,160,.45); }
 .tv-head { display: flex; align-items: center; gap: 6px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; font-size: 11px; color: #cfd6ff; }
@@ -40,4 +40,5 @@
 .tv-ptt:disabled { opacity: .4; }
 .tv-hint { font-size: 10px; opacity: .65; }
 .tv-err { font-size: 11px; color: #ff9aa8; }
+@media (max-width: 1320px) { .tv-dock { bottom: 120px; } }
 @media (max-width: 720px) { .tv-dock { top: auto; bottom: 200px; left: 8px; width: 180px; padding: 8px; } .tv-hint { display: none; } }

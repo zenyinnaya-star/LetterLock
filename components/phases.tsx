@@ -287,7 +287,7 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
     <>
       <StageHead state={state} label={t('ph.guess')} msLeft={msLeft} />
       <h2 className="stage-title">{t('ph.crack')}</h2>
-      <p className="muted center" style={{ margin: 0 }}>{t('ph.crack_sub')}</p>
+      {!(teamMode && tx) && <p className="muted center" style={{ margin: 0 }}>{t('ph.crack_sub')}</p>}
       <Hints state={state} />
       {canPlay && teamMode && tx && <TeamCalls state={state} tx={tx} meId={me.id} canBack={!me.guess && !myCall} onBack={fire} alone={teamAlive < 2} />}
       {!canPlay ? (
