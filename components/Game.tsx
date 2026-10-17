@@ -22,6 +22,8 @@ import { Battle } from './Battle';
 import { Reactions } from './Reactions';
 import { ActionFeed } from './ActionFeed';
 import { DuelHud } from './DuelHud';
+import { DuelWest } from './DuelWest';
+import '@/app/west.css';
 import { TeamHud, teamLabel } from './team';
 import { SettingsButton } from './SettingsPanel';
 import { AnswerPhase, DuelIntro, Finished, GuessPhase, Rack, ReactPhase, RevealPhase, type Act } from './phases';
@@ -47,6 +49,9 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   const msLeft = useCountdown(state.room.phase_ends_at, offset);
   const phase = state.room.phase;
   const me = state.me;
+  // 1v1 duels play out on the full-screen western street
+  const west = state.room.duel && state.players.filter((p) => !p.eliminated).length === 2
+    && ['duel_intro', 'answer', 'reveal', 'guess', 'react'].includes(phase);
 
   const act: Act = useCallback(async (fn, okMsg) => {
     audio.unlock();
@@ -77,9 +82,9 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
     const p = prev.current;
     if (p) {
       if (cur.phase !== p.phase) {
-        if (cur.phase === 'duel_intro') audio.fight();
+        if (cur.phase === 'duel_intro') { if (!west) audio.fight(); }
         else if (cur.phase === 'answer') {
-          audio.gong();
+          if (west) audio.bell(true); else audio.gong();
           const tw = state.room.settings?.twist;
           const last = state.room.round >= (state.room.settings?.rounds ?? 99) && state.room.settings?.mode !== 'classic';
           if (state.room.round === 1) narrator.say(tw === 'reverse' ? 'reverse' : tw === 'memory' ? 'memory' : 'round', { delay: 500 });
@@ -96,17 +101,17 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
         }
       }
       if (cur.eliminated && !p.eliminated) { audio.elimination(); narrator.say('eliminated', { delay: 400 }); }
-      else if (cur.strikes > p.strikes) audio.buzzer();
+      else if (cur.strikes > p.strikes) { if (west) audio.hammer(); else audio.buzzer(); }
       else if (cur.answerKey && cur.answerKey !== p.answerKey) {
         if (me?.answer?.valid) audio.success(); else if (!audio.file('nope')) audio.buzzer();
       }
-      if (cur.guessKey && cur.guessKey !== p.guessKey) {
+      if (cur.guessKey && cur.guessKey !== p.guessKey && !west) {
         if (me?.guess?.correct) { if (!audio.file('correct')) audio.chime(); } else audio.tick(false);
       }
-      if (cur.phase === 'answer' && p.phase !== 'answer' && cur.letters > p.letters) audio.attack();
+      if (cur.phase === 'answer' && p.phase !== 'answer' && cur.letters > p.letters && !west) audio.attack();
     }
     prev.current = cur;
-  }, [phase, me]);
+  }, [phase, me, west]);
 
   // music: site theme in the lobby, quieter under gameplay, the duel track for a 1v1
   const duel = state.room.duel;
@@ -247,6 +252,20 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
             {me && midGame && <button className="textbtn danger" title={t('gm.quit')} aria-label={t('gm.quit')} onClick={() => setConfirmQuit(true)}><Icon name="logout" size={15} /></button>}
           </div>
         </div>
+      ) : west ? (
+        <div className="shell west-shell">
+          <Header
+            settings={<SettingsButton state={state} token={token} act={act} />}
+            right={
+              <>
+                <span className="room-chip">{state.room.code}</span>
+                {!me ? <Link className="textbtn" href="/">{t('gm.home')}</Link>
+                  : midGame ? <button className="textbtn danger" onClick={() => setConfirmQuit(true)}><Icon name="logout" size={15} /> {t('gm.quit')}</button>
+                  : <button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> {t('gm.leave')}</button>}
+              </>
+            } />
+          <DuelWest {...props} />
+        </div>
       ) : (
       <div className="shell">
         <Header
@@ -288,7 +307,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
         </section>
       </div>
       )}
-      {phase !== 'battle' && <Rack state={state} token={token} act={act} />}
+      {phase !== 'battle' && <div className={west ? 'west-rack' : undefined}><Rack state={state} token={token} act={act} /></div>}
       <Reactions state={state} token={token} />
       <ActionFeed state={state} token={token} />
       <AnimatePresence>

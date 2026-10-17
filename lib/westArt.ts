@@ -1,0 +1,25 @@
+// Generated Western duel art (Higgsfield), served through Vercel's image optimizer (resized + cached).
+import { img } from './mmArt';
+
+const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/';
+const src = {
+  streetTall: CDN + 'hf_20261017_052647_8c56afcb-1669-4e81-8a53-ffb06af63264.png',
+  streetWide: CDN + 'hf_20261017_052706_15c3469a-00af-45db-b955-36269b48365e.png',
+  poster: CDN + 'hf_20261017_052811_29db68db-fe18-4778-aff8-8eb2c90ae65f.png', // background removed
+  note: CDN + 'hf_20261017_052647_1cab985c-ad39-46e3-8020-2bab97fed529.png',
+  clock: CDN + 'hf_20261017_052647_5b16cb21-e5a6-4cf3-b366-7cfa54e8ca52.png',
+  leather: CDN + 'hf_20261017_052706_32989f88-42a6-4f85-8855-aa976f669c76.png',
+  portrait: CDN + 'hf_20261017_052706_0812edf5-6e1a-4efa-8e69-1818b7f07282.png',
+};
+const css = (u: string, w: number) => `url("${img(u, w)}")`;
+
+/** CSS custom properties consumed by app/west.css */
+export const westArtVars = {
+  '--w-street-tall': css(src.streetTall, 1080),
+  '--w-street-wide': css(src.streetWide, 2048),
+  '--w-poster': css(src.poster, 640),
+  '--w-note': css(src.note, 640),
+  '--w-clock': css(src.clock, 256),
+  '--w-leather': css(src.leather, 1200),
+  '--w-portrait': css(src.portrait, 256),
+} as React.CSSProperties;

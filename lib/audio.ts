@@ -221,6 +221,14 @@ export const audio = {
   /** Mastermind: case cracked. */
   cracked() { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.09, 0.35, 'triangle', 0.28)); tone(1568, 0.38, 0.7, 'sine', 0.22); noise(0.3, 0.3, 0.2, 5000, 2, 9000); },
   /** Mastermind: case goes cold (time ran out). */
+  /** Western duel: one sharp revolver shot with a short canyon echo. */
+  gunshot() { noise(0, 0.09, 0.9, 2600, 0.6, 400); tone(70, 0, 0.32, 'sine', 0.8, 32); noise(0.02, 0.5, 0.25, 900, 0.5, 120); noise(0.32, 0.35, 0.08, 700, 0.6, 150); },
+  /** Western duel: hammer falls on an empty chamber. */
+  hammer() { noise(0, 0.018, 0.55, 4200, 6, 3000); noise(0.07, 0.022, 0.4, 2600, 6, 1800); },
+  /** Western duel: cylinder spins a few clicks. */
+  spin() { [0, 0.045, 0.09, 0.14, 0.2, 0.27].forEach((t, i) => noise(t, 0.012, 0.3 - i * 0.035, 3800, 7, 2600)); },
+  /** Western duel: far-off church bell for the countdown. */
+  bell(low = false) { const f = low ? 196 : 262; tone(f, 0, 1.6, 'sine', 0.35); tone(f * 2.76, 0, 0.9, 'sine', 0.08); tone(f * 5.4, 0, 0.4, 'sine', 0.04); },
   /** Mastermind: the lamp buzzes and stutters on a wrong guess. */
   flicker() { [0, 0.07, 0.16].forEach((t) => noise(t, 0.04, 0.16, 120, 6, 90)); tone(60, 0, 0.3, 'sawtooth', 0.06); },
   /** Mastermind: a letter lights up on the table. */

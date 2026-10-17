@@ -1,0 +1,154 @@
+/* ===== 1v1 Duel: spaghetti-western showdown (full screen) =====
+   Column layout follows the approved mockup: portraits + revolver cylinders + town clock on top, the Wanted poster
+   nailed to the centre post, a parchment clue note pinned below it, the leather-and-brass DRAW bar at the bottom. */
+
+.west-shell { max-width: none !important; padding: 0 !important; gap: 0 !important; }
+.west-shell .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 40; padding: 10px 16px; border-image: none; border-bottom: 0;
+  background: linear-gradient(180deg, rgba(20,10,4,.75), rgba(20,10,4,0)); }
+
+.west { --ink: #2b1d10; --paper: #e9d6ad; --brass: #c99a45; --brass-hi: #f3d58b; --rust: #8a2b14; --dust: #f2c98a;
+  position: fixed; inset: 0; z-index: 1; isolation: isolate; overflow-x: hidden; overflow-y: auto; color: #f4e6c8;
+  background: #2a1608 var(--w-street-tall) center top / cover no-repeat;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 56px 12px calc(var(--rack-h, 0px) + 10px); font-family: var(--body); }
+.west::after { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(30,14,4,.35), transparent 22%, transparent 70%, rgba(20,9,3,.55)); }
+@media (min-width: 900px) and (min-aspect-ratio: 1/1) {
+  .west { background-image: var(--w-street-wide); background-position: center 38%; }
+}
+
+/* atmosphere */
+.w-vignette, .w-dust, .w-flash { position: fixed; inset: 0; pointer-events: none; }
+.w-vignette { z-index: 0; background: radial-gradient(ellipse 75% 70% at 50% 45%, transparent 55%, rgba(18,8,2,.7)); transition: background .6s; }
+.west.tense .w-vignette { background: radial-gradient(ellipse 70% 62% at 50% 45%, transparent 40%, rgba(40,6,2,.82)); }
+.w-flash { z-index: 50; background: radial-gradient(circle at 50% 42%, #fff8e6, rgba(255,240,200,.6) 40%, rgba(255,230,180,0) 75%); }
+.w-dust { z-index: 0; overflow: hidden; }
+.w-dust i { position: absolute; left: calc(var(--i) * 6.3%); top: calc(48% + (var(--i) * 2.7%)); width: 3px; height: 3px; border-radius: 50%;
+  background: rgba(255,214,150,.55); filter: blur(.6px); animation: w-drift calc(11s + var(--i) * .9s) linear infinite; animation-delay: calc(var(--i) * -1.7s); }
+.west > :not(.w-vignette):not(.w-dust):not(.w-flash) { position: relative; z-index: 2; }
+
+/* ---------- top: gunslingers + clock ---------- */
+.w-top { width: min(600px, 100%); display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 6px; }
+.w-gun { display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; align-items: center; gap: 2px 6px; }
+.w-gun.left { justify-self: start; }
+.w-gun.right { justify-self: end; }
+.w-gun.right .w-portrait { order: 2; } .w-gun.right .w-cyl { order: 1; } .w-gun .w-name { order: 3; }
+.w-gun .w-name { grid-column: 1 / -1; display: flex; flex-direction: column; line-height: 1.1; text-shadow: 0 2px 4px #000, 0 0 10px rgba(0,0,0,.7); }
+.w-gun.right .w-name { text-align: right; }
+.w-name b { font: 700 15px 'Cinzel', Georgia, serif; letter-spacing: .06em; color: #fff2d8; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.w-name span { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dust); opacity: .9; }
+.w-portrait { width: 76px; height: 76px; border-radius: 50%; overflow: hidden; background: #2a1a0c;
+  box-shadow: 0 0 0 3px #3b2610, 0 0 0 5px var(--brass), 0 0 0 7px #4a3014, 0 8px 18px rgba(0,0,0,.6); }
+.w-portrait img, .w-portrait-fallback { display: block; width: 100%; height: 100%; object-fit: cover; }
+.w-portrait-fallback { background: var(--w-portrait) center 30% / cover; }
+.w-gun.me .w-portrait { box-shadow: 0 0 0 3px #3b2610, 0 0 0 5px var(--brass-hi), 0 0 0 7px #4a3014, 0 0 22px rgba(255,200,110,.55), 0 8px 18px rgba(0,0,0,.6); }
+.w-portrait.hit { animation: w-shake .45s; }
+.w-cyl { width: 50px; height: 50px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.6)); }
+
+.w-clock { position: relative; width: 112px; height: 112px; border-radius: 50%; background: var(--w-clock) center / 111% no-repeat;
+  box-shadow: 0 10px 22px rgba(0,0,0,.65); }
+.w-clock svg { position: absolute; inset: 0; }
+.w-clock .hand { stroke: #2b2014; stroke-linecap: round; transform-origin: 50px 50px; transition: transform .3s ease; }
+.w-clock .hand.min { stroke-width: 3; opacity: .55; } .w-clock .hand.sec { stroke-width: 1.4; stroke: #6d1b0d; opacity: .7; }
+.w-time { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-46%); text-align: center;
+  font: 700 26px 'Cinzel', Georgia, serif; color: #1d140a; letter-spacing: .02em; text-shadow: 0 0 6px rgba(240,226,196,.95), 0 0 2px #efe2c4; }
+.w-clock.urgent .w-time { color: #8a1c0c; animation: w-pulse 1s ease-in-out infinite; }
+
+/* ---------- centre: wanted poster + clue note ---------- */
+.w-post { position: relative; width: clamp(190px, min(76vw, calc((100dvh - var(--rack-h, 0px) - 384px) * .75)), 330px); display: flex; flex-direction: column; align-items: center; margin-top: 4px; }
+.w-poster { position: relative; width: 100%; aspect-ratio: 3 / 4; background: var(--w-poster) center / contain no-repeat;
+  filter: drop-shadow(0 14px 18px rgba(0,0,0,.55)); }
+.w-poster.jolt { animation: w-jolt .45s ease-out; }
+.w-poster-body { position: absolute; left: 13%; right: 13%; top: 31%; bottom: 33%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; }
+.w-wanted-name { font: 700 clamp(13px, 3.6vw, 16px) 'Cinzel', Georgia, serif; color: var(--ink); letter-spacing: .1em; text-transform: uppercase; text-align: center;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.w-reward { font: 600 11px 'Cinzel', Georgia, serif; letter-spacing: .16em; text-transform: uppercase; color: rgba(43,29,16,.75); }
+.w-nobounty { font: italic 600 14px Georgia, serif; color: rgba(43,29,16,.7); padding: 10px 0; }
+.w-count { position: absolute; inset: -10% -4%; display: grid; place-items: center; font: 900 clamp(54px, 16vw, 90px) 'Cinzel', Georgia, serif; color: #6d1b0d;
+  text-shadow: 0 2px 0 rgba(255,240,210,.5); text-transform: uppercase; letter-spacing: .04em; }
+
+.w-tiles { display: flex; gap: 4px; justify-content: center; flex-wrap: nowrap; }
+.w-tile { position: relative; flex: none; width: clamp(26px, 7.4vw, 34px); aspect-ratio: .82; display: grid; place-items: center;
+  font: 800 clamp(18px, 5vw, 24px) 'Cinzel', Georgia, serif; color: #23180c; background: linear-gradient(180deg, #2b2016, #16100a);
+  border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.6), inset 0 2px 5px rgba(0,0,0,.7), 0 1px 0 rgba(255,240,210,.35); }
+.w-tiles.bounty .w-tile.on { background: linear-gradient(180deg, #cdb689, #a98f5f); box-shadow: inset 0 0 0 1px rgba(60,40,15,.6), 0 1px 0 rgba(255,240,210,.35); }
+.w-bullet { position: absolute; width: 9px; height: 9px; right: 3px; top: 3px; border-radius: 50%; background: radial-gradient(circle, #050302 30%, #3a2410 55%, transparent 70%); opacity: .9; }
+.w-tile.holed { animation: w-holed .5s ease-out; }
+
+.w-note { position: relative; margin-top: -24%; width: 70%; min-height: 96px; padding: 26px 16px 18px; text-align: center; color: var(--ink);
+  background: var(--w-note) 49% 35% / 165% 125% no-repeat; filter: drop-shadow(0 8px 10px rgba(0,0,0,.45));
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transform-origin: 50% 8%; }
+.w-note-big { font: italic 600 clamp(18px, 5vw, 22px)/1.15 Georgia, 'Times New Roman', serif; }
+.w-note-mid { font: italic 600 15px/1.25 Georgia, serif; }
+.w-note-mid.ok { color: #1f5a1d; } .w-note-mid.bad { color: var(--rust); }
+.w-note small { font: 600 11px/1.3 Georgia, serif; opacity: .8; }
+.w-shows { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.w-show { display: grid; grid-template-columns: auto 1fr; grid-template-areas: "who word" "who why"; align-items: baseline; gap: 0 8px; text-align: left; }
+.w-show span { grid-area: who; font: 700 10px 'Cinzel', serif; letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
+.w-show b { grid-area: word; font: 800 17px 'Cinzel', Georgia, serif; letter-spacing: .06em; }
+.w-show em { grid-area: why; font: italic 600 11px Georgia, serif; color: #1f5a1d; }
+.w-show.bad b { color: var(--rust); text-decoration: line-through; } .w-show.bad em { color: var(--rust); }
+.w-lines { margin: 0; padding: 0; list-style: none; font: italic 600 13px/1.3 Georgia, serif; display: flex; flex-direction: column; gap: 3px; }
+
+/* ---------- bottom: leather & brass bar ---------- */
+.w-bar { position: relative; width: min(560px, 100%); margin-top: auto; padding: 26px 30px 20px;
+  background: #3a2414 var(--w-leather) 50% 50% / 106% 130% no-repeat; border-radius: 14px; filter: drop-shadow(0 12px 18px rgba(0,0,0,.6)); }
+.w-plate { position: absolute; left: 50%; top: -13px; transform: translateX(-50%); padding: 4px 18px; white-space: nowrap;
+  font: 700 12px 'Cinzel', Georgia, serif; letter-spacing: .18em; text-transform: uppercase; color: #2b1d10;
+  background: linear-gradient(180deg, #f6dc98, #c99a45 55%, #8f6625); border-radius: 4px; box-shadow: 0 2px 0 #4a3014, 0 4px 10px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.6); }
+.w-answer { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.w-tiles.typing { position: relative; cursor: text; flex-wrap: wrap; }
+.w-tiles.typing .w-tile { color: #f5e4bf; background: linear-gradient(180deg, #1b130b, #0e0905); box-shadow: inset 0 0 0 1px rgba(201,154,69,.35), inset 0 2px 6px rgba(0,0,0,.8); }
+.w-tiles.typing .w-tile.on { box-shadow: inset 0 0 0 1px rgba(243,213,139,.7), inset 0 2px 6px rgba(0,0,0,.8), 0 0 10px rgba(243,213,139,.18); }
+.w-tiles.typing .w-tile.bad { color: #ff9a7e; box-shadow: inset 0 0 0 1px #c0391b, 0 0 10px rgba(192,57,27,.5); }
+.w-tiles.typing .w-tile.caret::after { content: ''; position: absolute; bottom: 6px; width: 50%; height: 2px; background: var(--brass-hi); animation: w-blink 1s steps(1) infinite; }
+.w-tiles.typing:not(:focus-within) .w-tile.caret::after { display: none; }
+.w-hidden-input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; border: 0; padding: 0; font-size: 16px; color: transparent; background: transparent; caret-color: transparent; }
+.w-bar-foot { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.w-bar-foot.center { flex-direction: column; text-align: center; }
+.w-status { flex: 1; min-width: 0; font: italic 600 13px Georgia, serif; color: #e8cfa0; text-shadow: 0 1px 2px #000; }
+.w-status.ok { color: #b9e39a; } .w-status.bad { color: #ff9a7e; }
+.w-draw { min-width: 170px; padding: 11px 28px; border: 0; border-radius: 999px; cursor: pointer;
+  font: 800 18px 'Cinzel', Georgia, serif; letter-spacing: .2em; text-transform: uppercase; color: #2b1d10;
+  background: radial-gradient(ellipse at 50% 20%, #fbe7b0, #d8b065 50%, #9c7230);
+  box-shadow: 0 0 0 2px #5b3d17, 0 0 0 4px #c99a45, 0 6px 14px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.7); transition: transform .1s, filter .15s; }
+.w-draw:hover:not(:disabled) { filter: brightness(1.08); } .w-draw:active:not(:disabled) { transform: translateY(1px) scale(.98); }
+.w-draw:disabled { opacity: .45; cursor: default; filter: saturate(.5); }
+.w-bar-msg { text-align: center; font: italic 600 15px Georgia, serif; color: #f1ddb2; padding: 6px 0; text-shadow: 0 1px 2px #000; }
+.w-bar-msg.ok { color: #c3ea9f; } .w-bar-msg.bad { color: #ffa48b; }
+.w-keys { display: grid; grid-template-columns: repeat(13, 1fr); gap: 4px; width: 100%; }
+.w-key { aspect-ratio: .9; border: 0; border-radius: 4px; cursor: pointer; font: 800 clamp(13px, 3.4vw, 16px) 'Cinzel', Georgia, serif; color: #f5e4bf;
+  background: linear-gradient(180deg, #2a1c10, #120c06); box-shadow: inset 0 0 0 1px rgba(201,154,69,.4); transition: transform .08s; }
+.w-key:hover:not(:disabled) { box-shadow: inset 0 0 0 1px var(--brass-hi); }
+.w-key.sel { color: #2b1d10; background: radial-gradient(ellipse at 50% 25%, #fbe7b0, #c99a45); box-shadow: 0 0 12px rgba(243,213,139,.6); transform: translateY(-2px); }
+.w-key:disabled { opacity: .25; cursor: default; text-decoration: line-through; }
+
+/* rack restyled as a saddlebag under the street */
+.west-rack .rack-inner { max-width: 900px; flex-wrap: nowrap; background: linear-gradient(180deg, #4a2f17, #2c1b0c); border-color: #8f6625;
+  box-shadow: 0 -8px 24px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,230,180,.15); }
+
+/* keep the reactions button clear of the DRAW bar */
+body:has(.west) .rx-dock { top: 168px; bottom: auto !important; right: 6px; transform: scale(.82); transform-origin: top right; }
+@media (min-width: 900px) { body:has(.west) .rx-dock { top: auto; bottom: 110px !important; right: 18px; transform: none; } }
+
+/* ---------- phones ---------- */
+@media (max-width: 480px) {
+  .west { padding-top: 54px; gap: 6px; }
+  .w-portrait { width: 58px; height: 58px; }
+  .w-cyl { width: 38px; height: 38px; }
+  .w-clock { width: 92px; height: 92px; }
+  .w-time { font-size: 21px; }
+  .w-name b { font-size: 13px; max-width: 110px; }
+  .w-bar { padding: 22px 16px 14px; }
+  .w-draw { min-width: 120px; padding: 10px 18px; font-size: 16px; }
+  .w-keys { grid-template-columns: repeat(9, 1fr); }
+}
+@media (max-width: 700px) { .west-rack .rack-inner { flex-wrap: wrap; } }
+
+@keyframes w-drift { 0% { transform: translate(0, 0); opacity: 0; } 12% { opacity: .8; } 88% { opacity: .5; } 100% { transform: translate(120px, -40px); opacity: 0; } }
+@keyframes w-shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-3px); } }
+@keyframes w-jolt { 0% { transform: none; } 30% { transform: rotate(-1.6deg) translateY(3px); } 65% { transform: rotate(1deg); } 100% { transform: none; } }
+@keyframes w-holed { 0% { transform: scale(1.25); filter: brightness(1.6); } 100% { transform: none; } }
+@keyframes w-pulse { 50% { transform: translateY(-46%) scale(1.08); } }
+@keyframes w-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .west *, .w-flash { animation: none !important; } .w-dust { display: none; } }

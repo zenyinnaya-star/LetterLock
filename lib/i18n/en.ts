@@ -399,6 +399,13 @@ const en = {
   'er.NOT_TEAM_MODE': 'This room isn’t in team mode.', 'er.TEAM_NOT_FOUND': 'That team doesn’t exist.',
   'an.team_hit': 'Attack on {team}!',
   'tm.hint': 'Your team shares its banned letters. Score points, no strikes — crack the other team’s letters and hit them with cards.',
+  // western duel
+  'wst.wanted_for': 'Wanted: {name}', 'wst.bounty': '{n} locked letters', 'wst.no_bounty': 'No bounty yet',
+  'wst.your_word': 'Your word', 'wst.call_letter': 'Call a letter', 'wst.hold': 'Hold your fire', 'wst.draw': 'Draw',
+  'wst.showdown': 'Showdown', 'wst.high_noon': 'High noon', 'wst.locked': 'Locked in · +{n}', 'wst.hit': 'Hit. {name} is locked out of “{l}”.',
+  'wst.miss': 'Missed. {name} isn’t locked out of “{l}”.', 'wst.aim': 'Call one of {name}’s locked letters.', 'wst.waiting': 'Waiting on {name}…',
+  'wst.no_answer': 'no word', 'wst.strike': 'strike', 'wst.ready': 'Holstered', 'wst.quiet': 'Quiet out here. Nobody fired.',
+  'wst.missed': '{name} fired and missed.', 'wst.you': 'You', 'wst.spectating': 'Watching from the saloon',
 } as const;
 
 export type Key = keyof typeof en;
