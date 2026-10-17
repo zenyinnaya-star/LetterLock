@@ -103,6 +103,14 @@
   animation: s-raise 2.6s ease-out forwards; }
 .s-shields i:nth-child(2) { animation-delay: .06s; } .s-shields i:nth-child(3) { animation-delay: .12s; } .s-shields i:nth-child(4) { animation-delay: .18s; }
 
+/* each castle flies its team's banner */
+.s-castle-flag { position: absolute; bottom: 100%; left: 50%; translate: -50% 0; display: flex; align-items: flex-start; pointer-events: none; z-index: 1; }
+.s-wall.right .s-castle-flag { flex-direction: row-reverse; }
+.s-castle-flag .s-pole { height: 84px; }
+.s-castle-flag .s-flag { width: 52px; margin-top: 6px; }
+.s-wall { margin-top: 84px; }
+@media (max-width: 600px) { .s-castle-flag .s-pole { height: 50px; } .s-castle-flag .s-flag { width: 34px; padding: 4px 4px 10px; } .s-wall { margin-top: 50px; } }
+
 /* middle: the scroll + phase panels */
 .s-mid { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; }
 .s-scroll { width: min(520px, 100%); min-height: 96px; display: grid; place-items: center; text-align: center; padding: 22px 46px;

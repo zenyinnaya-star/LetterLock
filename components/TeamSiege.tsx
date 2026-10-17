@@ -93,9 +93,11 @@ function Hourglass({ msLeft, total }: { msLeft: number; total: number }) {
 }
 
 /** A castle wall: one stone per locked letter. Known letters are engraved; revealed ones are cracked. */
-function Wall({ stones, side, shattered, shields }: { stones: { l: string | null; revealed: boolean }[]; side: 'left' | 'right'; shattered: string | null; shields: number }) {
+function Wall({ stones, side, shattered, shields, team }: { stones: { l: string | null; revealed: boolean }[]; side: 'left' | 'right'; shattered: string | null; shields: number; team: Team }) {
   return (
     <div className={`s-wall ${side}`} key={`w${shields}`}>
+      {/* the castle flies its own team's banner (their uploaded image) */}
+      <div className="s-castle-flag" aria-hidden><i className="s-pole" /><div className={`s-flag c${team.idx}`}><Crest team={team} /></div></div>
       {shields > 0 && <div className="s-shields" aria-hidden>{Array.from({ length: 4 }, (_, i) => <i key={i} />)}</div>}
       <div className="s-stones" style={{ ['--cols' as string]: Math.min(6, Math.max(4, stones.length)) }}>
         {stones.map((s, i) => (
@@ -345,7 +347,7 @@ export function TeamSiege({ state, token, msLeft, act }: PhaseProps) {
       </div>
 
       <div className="s-field">
-        <div ref={lWall} className="s-wall-slot left"><Wall stones={ourStones} side="left" shattered={shatterL} shields={shieldL} /></div>
+        <div ref={lWall} className="s-wall-slot left"><Wall stones={ourStones} side="left" shattered={shatterL} shields={shieldL} team={myTeam} /></div>
         <div className="s-mid">
           <motion.div className="s-scroll" key={`${phase}-${state.room.round}`} initial={{ scaleX: 0.2, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 180, damping: 18 }}>
             {scroll}
@@ -397,7 +399,7 @@ export function TeamSiege({ state, token, msLeft, act }: PhaseProps) {
             </ul>
           )}
         </div>
-        <div ref={rWall} className="s-wall-slot right"><Wall stones={theirStones} side="right" shattered={shatterR} shields={shieldR} /></div>
+        <div ref={rWall} className="s-wall-slot right"><Wall stones={theirStones} side="right" shattered={shatterR} shields={shieldR} team={enemy} /></div>
       </div>
 
       <div className="s-bar">
