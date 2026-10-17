@@ -399,6 +399,17 @@ const en = {
   'er.NOT_TEAM_MODE': 'This room isn’t in team mode.', 'er.TEAM_NOT_FOUND': 'That team doesn’t exist.',
   'an.team_hit': 'Attack on {team}!',
   'tm.hint': 'Your team shares its banned letters. Score points, no strikes — crack the other team’s letters and hit them with cards.',
+  // team v2: focus fire, split knowledge, voice
+  'fd.focus': '**{a}**’s team focused fire on **{b}**',
+  'tf.called': 'You called “{l}”. It only cracks if a teammate calls it too.',
+  'tf.backup': 'Back it up', 'tf.calls': 'Your team’s calls', 'tf.no_calls': 'No calls yet. Agree on a letter.',
+  'tf.waiting': 'waiting for backup', 'tf.cracked': 'cracked', 'tf.missed': 'missed',
+  'tf.intel': 'Your clue', 'tf.suspects': 'One of these is locked on their rack:', 'tf.clean': 'These are NOT locked on their rack:',
+  'tf.share': 'Only you can see this. Tell your team.', 'tf.rule': 'Focus fire: a letter only cracks when two of you call it.',
+  'tf.solo': 'You’re the last one standing on your team, so your call fires alone.',
+  'tv.title': 'Team voice', 'tv.join': 'Join team voice', 'tv.hold': 'Hold to talk', 'tv.talking': 'Talking…', 'tv.mute': 'Mute', 'tv.unmute': 'Unmute',
+  'tv.leave': 'Leave voice', 'tv.denied': 'Microphone blocked. Allow it in your browser to talk.', 'tv.private': 'Only your team can hear you.',
+  'tv.key': 'Hold V to talk', 'tv.connecting': 'connecting…', 'tv.in': 'in voice',
   // western duel
   'wst.wanted_for': 'Wanted: {name}', 'wst.bounty': '{n} locked letters', 'wst.no_bounty': 'No bounty yet',
   'wst.your_word': 'Your word', 'wst.call_letter': 'Call a letter', 'wst.hold': 'Hold your fire', 'wst.draw': 'Draw',

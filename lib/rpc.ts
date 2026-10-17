@@ -12,6 +12,11 @@ export interface GameStat {
   best_streak: number; fastest_ms: number | null; bonus: number; hits: number; shots: number;
   xp_gained: number; xp_after: number | null; new_ach: string[]; bot: boolean; linked: boolean;
 }
+export interface TeamExtra {
+  team_id: string; voice_key: string; round: number;
+  calls: { caller_id: string; letter: string; target_id: string; resolved: boolean; correct: boolean | null }[];
+  intel: { kind: 'suspects' | 'clean'; letters: string[] } | null;
+}
 export interface JoinResult { code: string; player_id: string; token: string }
 
 export interface Recap {
@@ -99,6 +104,7 @@ export const rpc = {
     call<Record<string, unknown>>('use_perk', { p_token: token, p_target_id: targetId }),
   useUltimate: (token: string, targetId: string | null, kind: string | null = null) =>
     call<Record<string, unknown>>('use_ultimate', { p_token: token, p_target_id: targetId, p_kind: kind }),
+  teamExtra: (token: string) => call<TeamExtra | null>('team_extra', { p_token: token }),
   reactReady: (token: string) => call<void>('react_ready', { p_token: token }),
   advance: (code: string) => call<{ ok: boolean; phase?: string; reason?: string }>('advance_phase', { p_code: code }),
   playAgain: (token: string) => call<void>('play_again', { p_token: token }),

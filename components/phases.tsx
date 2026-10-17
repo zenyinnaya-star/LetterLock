@@ -7,6 +7,7 @@ import { REASONS } from '@/lib/errors';
 import { prepareAnswer } from '@/lib/answer';
 import { Rich, useT } from '@/lib/i18n/react';
 import { rpc } from '@/lib/rpc';
+import { useTeamExtra } from '@/hooks/useTeamExtra';
 import { narrator } from '@/lib/narrator';
 import type { RoomState } from '@/lib/types';
 import { CLASS_COLORS, CardIcon, ClassIcon, Icon } from './icons';
@@ -270,8 +271,15 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
   const [target, setTarget] = useState<string | null>(null);
   const [letter, setLetter] = useState<string | null>(null);
   const targets = state.players.filter((p) => !p.eliminated && p.id !== me?.id && !(state.room.settings.mode === 'team' && p.team_id === me?.team_id));
-  const tp = targets.find((p) => p.id === target);
   const canPlay = !!me && !me.eliminated && !!token;
+  const teamMode = state.room.settings.mode === 'team';
+  const tx = useTeamExtra(token, teamMode && canPlay);
+  // in team mode the rack is shared, so any enemy works as the target
+  const effTarget = teamMode && !target ? targets[0]?.id ?? null : target;
+  const tp = targets.find((p) => p.id === effTarget);
+  const myCall = tx?.calls.find((c) => c.caller_id === me?.id && !c.resolved);
+  const teamAlive = teamMode ? state.players.filter((p) => p.team_id === me?.team_id && !p.eliminated && !p.quit).length : 0;
+  const fire = (l: string) => effTarget && token && void act(() => rpc.guess(token, effTarget, l));
 
   useEffect(() => { setTarget(null); setLetter(null); }, [state.room.round]);
 
@@ -281,8 +289,13 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
       <h2 className="stage-title">{t('ph.crack')}</h2>
       <p className="muted center" style={{ margin: 0 }}>{t('ph.crack_sub')}</p>
       <Hints state={state} />
+      {canPlay && teamMode && tx && <TeamCalls state={state} tx={tx} meId={me.id} canBack={!me.guess && !myCall} onBack={fire} alone={teamAlive < 2} />}
       {!canPlay ? (
         <Spectating text={t('ph.spec_guess')} />
+      ) : myCall && !me.guess ? (
+        <motion.div className="note info" style={{ maxWidth: 560, margin: '0 auto' }} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={spring}>
+          <Icon name="target" size={18} /> <span>{t('tf.called', { l: myCall.letter })}</span>
+        </motion.div>
       ) : me.guess ? (
         <motion.div className={`note ${me.guess.correct ? 'ok' : 'bad'}`} style={{ maxWidth: 560, margin: '0 auto' }}
           initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={spring}>
@@ -293,7 +306,7 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
         </motion.div>
       ) : (
         <div className="narrow-col">
-          <div className="targets">
+          {!teamMode && <div className="targets">
             {targets.map((p, i) => (
               <motion.button key={p.id} className={`target${target === p.id ? ' sel' : ''}`} onClick={() => setTarget(p.id)}
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={stagger(i, 0.05)} whileTap={{ scale: 0.95 }}>
@@ -301,7 +314,7 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
                 <span className="muted small" style={{ display: 'inline-flex', gap: 3, alignItems: 'center' }}><Icon name="lock" size={12} />{p.letter_count}</span>
               </motion.button>
             ))}
-          </div>
+          </div>}
           <div className="kbd">
             {ALPHABET.map((l, i) => (
               <motion.button key={l} className={`key${letter === l ? ' sel' : ''}`} disabled={!tp || tp.revealed.includes(l)}
@@ -309,13 +322,47 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
                 transition={{ ...spring, delay: i * 0.012 }} whileTap={{ scale: 0.9 }}>{l}</motion.button>
             ))}
           </div>
-          <button className="btn lg block" disabled={!target || !letter}
-            onClick={() => target && letter && token && void act(() => rpc.guess(token, target, letter))}>
-            <Icon name="target" size={20} /> {tp && letter ? t('ph.guess_btn', { l: letter, name: tp.name }) : t('ph.pick')}
+          <button className="btn lg block" disabled={!effTarget || !letter}
+            onClick={() => letter && fire(letter)}>
+            <Icon name="target" size={20} /> {tp && letter ? t('ph.guess_btn', { l: letter, name: teamMode ? tn(state, t, tp.id) : tp.name }) : t('ph.pick')}
           </button>
         </div>
       )}
     </>
+  );
+}
+
+/** Team mode: my private clue + my team's calls this round (backing a call fires focus fire). */
+function TeamCalls({ state, tx, meId, canBack, onBack, alone }: {
+  state: RoomState; tx: NonNullable<ReturnType<typeof useTeamExtra>>; meId: string; canBack: boolean; onBack: (l: string) => void; alone: boolean;
+}) {
+  const t = useT();
+  return (
+    <div className="tf-panel">
+      <div className="tf-rule"><Icon name="target" size={15} /> {alone ? t('tf.solo') : t('tf.rule')}</div>
+      {tx.intel && (
+        <motion.div className={`tf-intel ${tx.intel.kind}`} initial={{ rotateX: 80, opacity: 0 }} animate={{ rotateX: 0, opacity: 1 }} transition={spring}>
+          <span className="label">{t('tf.intel')}</span>
+          <span>{tx.intel.kind === 'suspects' ? t('tf.suspects') : t('tf.clean')}</span>
+          <div className="tf-letters">{tx.intel.letters.map((l) => <b key={l} className={tx.intel!.kind}>{l}</b>)}</div>
+          <em>{t('tf.share')}</em>
+        </motion.div>
+      )}
+      {!alone && (
+        <div className="tf-calls">
+          <span className="label">{t('tf.calls')}</span>
+          {tx.calls.length === 0 && <span className="muted small">{t('tf.no_calls')}</span>}
+          {tx.calls.map((c) => (
+            <div key={c.caller_id} className={`tf-call${c.resolved ? (c.correct ? ' ok' : ' bad') : ''}`}>
+              <b className="tf-l">{c.letter}</b>
+              <span>{c.caller_id === meId ? t('du.you') : nameOf(state, c.caller_id)}</span>
+              <em>{c.resolved ? (c.correct ? t('tf.cracked') : t('tf.missed')) : t('tf.waiting')}</em>
+              {canBack && !c.resolved && c.caller_id !== meId && <button className="btn sm" onClick={() => onBack(c.letter)}>{t('tf.backup')}</button>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 

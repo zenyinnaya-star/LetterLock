@@ -22,9 +22,11 @@ import { Battle } from './Battle';
 import { Reactions } from './Reactions';
 import { ActionFeed } from './ActionFeed';
 import { DuelHud } from './DuelHud';
+import { TeamVoice } from './TeamVoice';
 import { DuelWest, WestFinale } from './DuelWest';
 import { westArtVars } from '@/lib/westArt';
 import '@/app/west.css';
+import '@/app/team.css';
 import { TeamHud, teamLabel } from './team';
 import { SettingsButton } from './SettingsPanel';
 import { AnswerPhase, DuelIntro, Finished, GuessPhase, Rack, ReactPhase, RevealPhase, type Act } from './phases';
@@ -324,6 +326,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
       )}
       {phase !== 'battle' && <div className={west ? 'west-rack' : undefined}><Rack state={state} token={token} act={act} /></div>}
       <Reactions state={state} token={token} />
+      {state.room.settings?.mode === 'team' && <TeamVoice state={state} token={token} />}
       <ActionFeed state={state} token={token} />
       <AnimatePresence>
         {confirmQuit && (

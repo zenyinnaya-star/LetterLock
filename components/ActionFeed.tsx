@@ -37,9 +37,11 @@ const LOOK: Record<FeedItem['type'], { icon: IconName; tone: string; sfx: () => 
   legend: { icon: 'sparkle', tone: 'gold', sfx: () => audio.cashout() },
   chaos: { icon: 'dice', tone: 'chaos', sfx: () => audio.wheel() },
   ult: { icon: 'bolt', tone: 'gold', sfx: () => audio.whoosh() },
+  focus_fire: { icon: 'target', tone: 'hit', sfx: () => audio.attack() },
 };
+const LOOK_FALLBACK = { icon: 'sparkle' as IconName, tone: 'gold', sfx: () => audio.whoosh() };
 
-const ARROW_TYPES = ['attack', 'hack', 'block', 'absorb', 'caught', 'trace_miss', 'steal', 'drop', 'latch', 'drain', 'host_down', 'mimic', 'swap'];
+const ARROW_TYPES = ['focus_fire', 'attack', 'hack', 'block', 'absorb', 'caught', 'trace_miss', 'steal', 'drop', 'latch', 'drain', 'host_down', 'mimic', 'swap'];
 
 /**
  * Big "who did what to whom" banners with a sound for every attack, hack, block, cleanse and rage quit.
@@ -93,7 +95,7 @@ export function ActionFeed({ state, token }: { state: RoomState; token?: string 
     else if (next.type === 'swap') audio.file('boing');
     else if (next.type === 'chaos') { audio.file('siren'); narrator.say('chaos', { delay: 500 }); }
     else if (next.type === 'latch' || next.type === 'drain') audio.file('squelch');
-    else LOOK[next.type].sfx();
+    else (LOOK[next.type] ?? LOOK_FALLBACK).sfx();
     const flairTier = next.from ? tiers.current[next.from] ?? 0 : 0;
     if (flairTier >= 3 && next.from_class && next.type !== 'block' && next.type !== 'caught') audio.flair(next.from_class, flairTier);
     const name = (id?: string | null) => playersRef.current.find((p) => p.id === id)?.name
@@ -149,7 +151,7 @@ function Banner({ item, state, meId }: { item: FeedItem; state: RoomState; meId:
   const p = (id?: string | null) => state.players.find((x) => x.id === id);
   const from = p(item.from);
   const to = p(item.to);
-  const look = LOOK[item.type];
+  const look = LOOK[item.type] ?? LOOK_FALLBACK;
   const nm = (x: ReturnType<typeof p>, fallback: string) => (x ? (x.id === meId ? t('fd.you') : x.name) : fallback);
   // classic mode hides who did it — you only learn the class ("The Ninja attacked Ava")
   const actor: string = from ? nm(from, '?') : item.from_class ? t('fd.the', { cls: CLASSES[item.from_class].name }) : t('fd.someone');
@@ -181,6 +183,7 @@ function Banner({ item, state, meId }: { item: FeedItem; state: RoomState; meId:
     case 'oracle': text = R('fd.oracle', <em>{t('fd.oracle_sub')}</em>); break;
     case 'swap': text = R('fd.swap', <em>{t('fd.switcheroo')}</em>); break;
     case 'legend': text = <><b>{item.name ?? t('fd.someone')}</b> <Rich k="fd.legend" vars={{}} /></>; break;
+    case 'focus_fire': text = R('fd.focus', <em>“{item.what ?? ''}”</em>); break;
     case 'ult': text = R('fd.ult', <em>{CLASSES[item.what as PlayerClass]?.name ?? ''}</em>); break;
     case 'chaos': text = <><b>{t('fd.wildcard')}</b> {CHAOS_INFO[item.what ?? '']?.name ?? 'chaos'}<em>{CHAOS_INFO[item.what ?? '']?.text}</em></>; break;
   }
