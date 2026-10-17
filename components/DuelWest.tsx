@@ -276,7 +276,7 @@ export function DuelWest({ state, token, msLeft, act }: PhaseProps) {
           ))}
         </div>
         <div className="w-bar-foot">
-          <span className="w-status">{pick ? `“${pick}” → ${target.name}` : t('ph.pick')}</span>
+          <span className="w-status">{pick ? `“${pick}” → ${target.name}` : t('wst.pick')}</span>
           <button className="w-draw" disabled={!pick || busy} onClick={() => void fire()}>{t('wst.draw')}</button>
         </div>
       </div>

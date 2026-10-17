@@ -59,7 +59,7 @@
 .w-poster { position: relative; width: 100%; aspect-ratio: 3 / 4; background: var(--w-poster) center / contain no-repeat;
   filter: drop-shadow(0 14px 18px rgba(0,0,0,.55)); }
 .w-poster.jolt { animation: w-jolt .45s ease-out; }
-.w-poster-body { position: absolute; left: 13%; right: 13%; top: 31%; bottom: 33%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; }
+.w-poster-body { position: absolute; left: 12%; right: 12%; top: 35.5%; bottom: 30%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; }
 .w-wanted-name { font: 700 clamp(13px, 3.6vw, 16px) 'Cinzel', Georgia, serif; color: var(--ink); letter-spacing: .1em; text-transform: uppercase; text-align: center;
   max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .w-reward { font: 600 11px 'Cinzel', Georgia, serif; letter-spacing: .16em; text-transform: uppercase; color: rgba(43,29,16,.75); }
@@ -71,6 +71,7 @@
 .w-tile { position: relative; flex: none; width: clamp(26px, 7.4vw, 34px); aspect-ratio: .82; display: grid; place-items: center;
   font: 800 clamp(18px, 5vw, 24px) 'Cinzel', Georgia, serif; color: #23180c; background: linear-gradient(180deg, #2b2016, #16100a);
   border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.6), inset 0 2px 5px rgba(0,0,0,.7), 0 1px 0 rgba(255,240,210,.35); }
+.w-tiles.bounty .w-tile { width: clamp(28px, 8vw, 40px); font-size: clamp(20px, 5.6vw, 28px); }
 .w-tiles.bounty .w-tile.on { background: linear-gradient(180deg, #cdb689, #a98f5f); box-shadow: inset 0 0 0 1px rgba(60,40,15,.6), 0 1px 0 rgba(255,240,210,.35); }
 .w-bullet { position: absolute; width: 9px; height: 9px; right: 3px; top: 3px; border-radius: 50%; background: radial-gradient(circle, #050302 30%, #3a2410 55%, transparent 70%); opacity: .9; }
 .w-tile.holed { animation: w-holed .5s ease-out; }
@@ -96,7 +97,7 @@
 .w-plate { position: absolute; left: 50%; top: -13px; transform: translateX(-50%); padding: 4px 18px; white-space: nowrap;
   font: 700 12px 'Cinzel', Georgia, serif; letter-spacing: .18em; text-transform: uppercase; color: #2b1d10;
   background: linear-gradient(180deg, #f6dc98, #c99a45 55%, #8f6625); border-radius: 4px; box-shadow: 0 2px 0 #4a3014, 0 4px 10px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.6); }
-.w-answer { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.w-answer { display: flex; flex-direction: column; gap: 10px; align-items: center; }
 .w-tiles.typing { position: relative; cursor: text; flex-wrap: wrap; }
 .w-tiles.typing .w-tile { color: #f5e4bf; background: linear-gradient(180deg, #1b130b, #0e0905); box-shadow: inset 0 0 0 1px rgba(201,154,69,.35), inset 0 2px 6px rgba(0,0,0,.8); }
 .w-tiles.typing .w-tile.on { box-shadow: inset 0 0 0 1px rgba(243,213,139,.7), inset 0 2px 6px rgba(0,0,0,.8), 0 0 10px rgba(243,213,139,.18); }
@@ -117,7 +118,7 @@
 .w-bar-msg { text-align: center; font: italic 600 15px Georgia, serif; color: #f1ddb2; padding: 6px 0; text-shadow: 0 1px 2px #000; }
 .w-bar-msg.ok { color: #c3ea9f; } .w-bar-msg.bad { color: #ffa48b; }
 .w-keys { display: grid; grid-template-columns: repeat(13, 1fr); gap: 4px; width: 100%; }
-.w-key { aspect-ratio: .9; border: 0; border-radius: 4px; cursor: pointer; font: 800 clamp(13px, 3.4vw, 16px) 'Cinzel', Georgia, serif; color: #f5e4bf;
+.w-key { aspect-ratio: 1.25; border: 0; border-radius: 4px; cursor: pointer; font: 800 clamp(13px, 3.4vw, 16px) 'Cinzel', Georgia, serif; color: #f5e4bf;
   background: linear-gradient(180deg, #2a1c10, #120c06); box-shadow: inset 0 0 0 1px rgba(201,154,69,.4); transition: transform .08s; }
 .w-key:hover:not(:disabled) { box-shadow: inset 0 0 0 1px var(--brass-hi); }
 .w-key.sel { color: #2b1d10; background: radial-gradient(ellipse at 50% 25%, #fbe7b0, #c99a45); box-shadow: 0 0 12px rgba(243,213,139,.6); transform: translateY(-2px); }
@@ -142,6 +143,7 @@ body:has(.west) .rx-dock { top: 168px; bottom: auto !important; right: 6px; tran
   .w-bar { padding: 22px 16px 14px; }
   .w-draw { min-width: 120px; padding: 10px 18px; font-size: 16px; }
   .w-keys { grid-template-columns: repeat(9, 1fr); }
+  .w-key { aspect-ratio: 1; }
 }
 @media (max-width: 700px) { .west-rack .rack-inner { flex-wrap: wrap; } }
 
