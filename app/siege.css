@@ -76,7 +76,16 @@
 /* ---------- the field: wall | middle | wall ---------- */
 .s-field { width: min(1240px, 100%); flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px; align-items: center; min-height: 0; }
 .s-wall-slot { display: flex; justify-content: center; transition: filter .5s; }
-.siege.rally-l .s-wall-slot.left, .siege.rally-r .s-wall-slot.right { filter: drop-shadow(0 0 18px rgba(255,200,80,.9)) brightness(1.15) sepia(.25); }
+.siege.rally-l .s-wall-slot.left, .siege.rally-r .s-wall-slot.right { filter: drop-shadow(0 0 14px rgba(255,200,80,.95)) drop-shadow(0 0 34px rgba(255,170,40,.7)) brightness(1.2) sepia(.35); }
+/* the rallying side of the field glows gold */
+.siege::before { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .8s; }
+.siege.rally-l::before { opacity: 1; background: radial-gradient(ellipse 45% 70% at 12% 55%, rgba(255,190,70,.38), transparent 70%); animation: s-glowpulse 2.4s ease-in-out infinite; }
+.siege.rally-r::before { opacity: 1; background: radial-gradient(ellipse 45% 70% at 88% 55%, rgba(255,190,70,.38), transparent 70%); animation: s-glowpulse 2.4s ease-in-out infinite; }
+.siege.rally-l.rally-r::before { background: radial-gradient(ellipse 45% 70% at 12% 55%, rgba(255,190,70,.38), transparent 70%), radial-gradient(ellipse 45% 70% at 88% 55%, rgba(255,190,70,.38), transparent 70%); }
+@media (max-width: 899px), (max-aspect-ratio: 1/1) {
+  .siege.rally-l::before { background: radial-gradient(ellipse 80% 40% at 50% 80%, rgba(255,190,70,.38), transparent 70%); }
+  .siege.rally-r::before { background: radial-gradient(ellipse 80% 40% at 50% 22%, rgba(255,190,70,.38), transparent 70%); }
+}
 .s-wall { position: relative; padding: 18px 12px 12px; }
 .s-wall::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 18px;  /* crenellations */
   background: linear-gradient(90deg, #4a4550 0 14%, transparent 14% 28%, #4a4550 28% 42%, transparent 42% 58%, #4a4550 58% 72%, transparent 72% 86%, #4a4550 86%);
@@ -310,6 +319,7 @@ body:has(.siege) .tv-ptt.live { background: radial-gradient(ellipse at 50% 20%, 
 @keyframes s-blink { 50% { opacity: .35; } }
 @keyframes s-tremble { 0%,100% { rotate: 0deg; } 25% { rotate: -2deg; } 75% { rotate: 2deg; } }
 @keyframes s-glow { 50% { box-shadow: 0 0 22px rgba(255,200,80,.7); } }
+@keyframes s-glowpulse { 50% { filter: brightness(1.35); } }
 @keyframes s-hurt { 0% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes s-shatter { 0% { transform: none; } 20% { transform: scale(1.18) rotate(-4deg); filter: brightness(1.4); } 50% { transform: translate(3px, 2px) rotate(3deg); } 100% { transform: none; } }
 @keyframes s-debris { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(46px) scale(.4); opacity: 0; } }

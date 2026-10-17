@@ -41,7 +41,7 @@ export function Crest({ team }: { team: Team }) {
   return (
     <svg className="s-crest-svg" viewBox="0 0 60 70" aria-hidden>
       <path d="M30 3 L56 12 L52 44 Q48 60 30 67 Q12 60 8 44 L4 12 Z" fill={team.idx === 0 ? '#1d3f7a' : '#7a1d24'} stroke="#e8c46a" strokeWidth="3" />
-      <text x="30" y="44" textAnchor="middle" fontFamily="Cinzel, Georgia, serif" fontWeight="900" fontSize="28" fill="#f3dc9a">{(team.name || '?').trim().charAt(0).toUpperCase()}</text>
+      <text x="30" y="44" textAnchor="middle" fontFamily="Cinzel, Georgia, serif" fontWeight="900" fontSize="28" fill="#f3dc9a">{(/^Team [AB]$/.test(team.name) ? team.name.slice(-1) : (team.name || '?').trim().charAt(0)).toUpperCase()}</text>
     </svg>
   );
 }
@@ -323,6 +323,9 @@ export function TeamSiege({ state, token, msLeft, act }: PhaseProps) {
     bar = <div className="s-bar-msg">{t('sg.words_in')}</div>;
   }
 
+  // focus fire gives every caller a guess row; show each breach once
+  const breaches = state.guess_results.filter((g, i, all) => g.correct && all.findIndex((x) => x.correct && x.letter === g.letter
+    && state.players.find((p) => p.id === x.target_id)?.team_id === state.players.find((p) => p.id === g.target_id)?.team_id) === i);
   const reveal = (id: string) => state.reveal.find((r) => r.player_id === id);
 
   return (
@@ -393,9 +396,9 @@ export function TeamSiege({ state, token, msLeft, act }: PhaseProps) {
           )}
           {phase === 'react' && (
             <ul className="s-log">
-              {state.guess_results.filter((g) => g.correct).map((g, i) => <li key={`g${i}`}>{t('sg.log_breach', { team: teamLabel(t, teams.find((x) => x.id === state.players.find((p) => p.id === g.target_id)?.team_id)), l: g.letter ?? '' })}</li>)}
+              {breaches.map((g, i) => <li key={`g${i}`}>{t('sg.log_breach', { team: teamLabel(t, teams.find((x) => x.id === state.players.find((p) => p.id === g.target_id)?.team_id)), l: g.letter ?? '' })}</li>)}
               {state.pending.map((p) => <li key={`p${p.id}`}>{t('sg.log_catapult', { n: p.amount, team: teamLabel(t, teams.find((x) => x.id === state.players.find((q) => q.id === p.target_id)?.team_id)) })}{p.status === 'blocked' ? ` · ${t('sg.blocked')}` : ''}</li>)}
-              {state.guess_results.filter((g) => g.correct).length === 0 && state.pending.length === 0 && <li>{t('sg.quiet')}</li>}
+              {breaches.length === 0 && state.pending.length === 0 && <li>{t('sg.quiet')}</li>}
             </ul>
           )}
         </div>
