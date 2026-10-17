@@ -244,6 +244,22 @@ export const audio = {
   /** Mastermind: case cracked. */
   cracked() { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.09, 0.35, 'triangle', 0.28)); tone(1568, 0.38, 0.7, 'sine', 0.22); noise(0.3, 0.3, 0.2, 5000, 2, 9000); },
   /** Mastermind: case goes cold (time ran out). */
+  /** Siege: war horn (King's Rally / push-to-talk). */
+  horn(short = false) { const d = short ? 0.35 : 1.4; tone(147, 0, d, 'sawtooth', 0.22, short ? 147 : 165); tone(220, 0.02, d, 'sawtooth', 0.12, short ? 220 : 247); tone(294, 0.05, d * 0.9, 'triangle', 0.08); noise(0, d * 0.6, 0.04, 400, 0.5); },
+  /** Siege: arrow volley (focus fire). */
+  volley() { for (let i = 0; i < 7; i++) noise(i * 0.045, 0.32, 0.16, 2600 - i * 120, 2.5, 700); tone(900, 0.3, 0.06, 'triangle', 0.1); },
+  /** Siege: catapult creak + launch. */
+  catapult() { noise(0, 0.25, 0.25, 260, 3, 160); tone(110, 0.22, 0.12, 'square', 0.18, 60); noise(0.3, 0.5, 0.12, 900, 0.8, 300); },
+  /** Siege: boulder lands on a wall. */
+  boulder() { tone(55, 0, 0.6, 'sine', 0.85, 30); noise(0, 0.35, 0.7, 500, 0.6, 120); noise(0.08, 0.6, 0.25, 1800, 1, 400); },
+  /** Siege: a wall stone shatters. */
+  shatter() { noise(0, 0.08, 0.7, 3200, 1, 900); noise(0.04, 0.5, 0.35, 900, 0.7, 200); tone(80, 0, 0.3, 'sine', 0.5, 40); [0.12, 0.2, 0.31].forEach((t) => noise(t, 0.05, 0.2, 2200, 3)); },
+  /** Siege: war drums for a new round. */
+  drums() { [0, 0.22, 0.44, 0.8].forEach((t, i) => { tone(i === 3 ? 60 : 75, t, 0.35, 'sine', 0.6, 40); noise(t, 0.08, 0.3, 300, 1); }); },
+  /** Siege: victory fanfare on the horns. */
+  siegeWin() { [[262, 0], [330, 0.25], [392, 0.5], [523, 0.8]].forEach(([f, t]) => { tone(f, t, 0.5, 'sawtooth', 0.12); tone(f * 1.5, t, 0.45, 'triangle', 0.06); }); tone(523, 1.3, 1.2, 'sawtooth', 0.14); tone(659, 1.3, 1.2, 'triangle', 0.08); },
+  /** Siege: defeat, a low drum and a falling horn. */
+  siegeLose() { tone(60, 0, 0.8, 'sine', 0.7, 35); tone(196, 0.5, 1.4, 'sawtooth', 0.12, 131); noise(0.4, 2.2, 0.06, 420, 0.5, 260); },
   /** Western duel: the lone standoff whistle (rising, falling, held). */
   standoff() { whistleNote(880, 0, 0.55, 0.2, 1175); whistleNote(1175, 0.6, 0.5, 0.2, 880); whistleNote(660, 1.2, 1.1, 0.18); noise(0, 2.4, 0.05, 500, 0.4, 300); },
   /** Western duel: a dry gust of wind. */

@@ -27,6 +27,9 @@ import { DuelWest, WestFinale } from './DuelWest';
 import { westArtVars } from '@/lib/westArt';
 import '@/app/west.css';
 import '@/app/team.css';
+import '@/app/siege.css';
+import { SiegeFinale, TeamSiege } from './TeamSiege';
+import { siegeArtVars } from '@/lib/siegeArt';
 import { TeamHud, teamLabel } from './team';
 import { SettingsButton } from './SettingsPanel';
 import { AnswerPhase, DuelIntro, Finished, GuessPhase, Rack, ReactPhase, RevealPhase, type Act } from './phases';
@@ -57,6 +60,11 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
     && ['duel_intro', 'answer', 'reveal', 'guess', 'react'].includes(phase);
   const westLobby = phase === 'lobby' && state.room.settings?.mode === 'duel';
   const westEnd = phase === 'finished' && state.room.settings?.mode === 'duel' && state.players.length === 2 && !!state.room.winner_id;
+  // team mode is a siege: two castles across a field at dusk
+  const teamOn = state.room.settings?.mode === 'team' && (state.teams ?? []).length === 2;
+  const siege = teamOn && ['answer', 'reveal', 'guess', 'react'].includes(phase);
+  const siegeLobby = phase === 'lobby' && state.room.settings?.mode === 'team';
+  const siegeEnd = teamOn && phase === 'finished';
 
   const act: Act = useCallback(async (fn, okMsg) => {
     audio.unlock();
@@ -89,7 +97,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
       if (cur.phase !== p.phase) {
         if (cur.phase === 'duel_intro') { if (!west) audio.fight(); }
         else if (cur.phase === 'answer') {
-          if (west) audio.bell(true); else audio.gong();
+          if (west) audio.bell(true); else if (!siege) audio.gong();
           const tw = state.room.settings?.twist;
           const last = state.room.round >= (state.room.settings?.rounds ?? 99) && state.room.settings?.mode !== 'classic';
           if (state.room.round === 1) narrator.say(tw === 'reverse' ? 'reverse' : tw === 'memory' ? 'memory' : 'round', { delay: 500 });
@@ -100,8 +108,8 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           const teamWin = state.room.settings?.mode === 'team'
             ? (me && state.room.winner_team != null ? (state.teams?.find((x) => x.idx === state.room.winner_team)?.id === me.team_id ? 'won' : 'lost') : null)
             : (me && state.room.winner_id ? (state.room.winner_id === me.id ? 'won' : 'lost') : null);
-          if (teamWin === 'won') { if (!westEnd) audio.file('victory'); narrator.say('victory', { delay: 700 }); }
-          else if (teamWin === 'lost') { if (!westEnd) audio.file('defeat'); narrator.say('defeat', { delay: 700 }); }
+          if (teamWin === 'won') { if (!westEnd && !siegeEnd) audio.file('victory'); narrator.say('victory', { delay: 700 }); }
+          else if (teamWin === 'lost') { if (!westEnd && !siegeEnd) audio.file('defeat'); narrator.say('defeat', { delay: 700 }); }
           else audio.fanfare();
         }
       }
@@ -116,7 +124,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
       if (cur.phase === 'answer' && p.phase !== 'answer' && cur.letters > p.letters && !west) audio.attack();
     }
     prev.current = cur;
-  }, [phase, me, west, westEnd]);
+  }, [phase, me, west, westEnd, siege, siegeEnd]);
 
   // music: site theme in the lobby, quieter under gameplay, the duel track for a 1v1
   const duel = state.room.duel;
@@ -269,6 +277,33 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
             </div>
           </div>
         </div>
+      ) : siegeLobby ? (
+        <div className="shell siege-shell">
+          <Header
+            settings={<SettingsButton state={state} token={token} act={act} />}
+            right={<><span className="room-chip">{state.room.code}</span><button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> {t('gm.leave')}</button></>} />
+          <div className="siege p-lobby" style={siegeArtVars}>
+            <div className="s-embers" aria-hidden>{Array.from({ length: 18 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>
+            <div className="s-vignette" aria-hidden />
+            <div className="s-lobby">
+              <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} siege />
+            </div>
+          </div>
+        </div>
+      ) : siege || siegeEnd ? (
+        <div className="shell siege-shell">
+          <Header
+            settings={<SettingsButton state={state} token={token} act={act} />}
+            right={
+              <>
+                <span className="room-chip">{state.room.code}</span>
+                {!me ? <Link className="textbtn" href="/">{t('gm.home')}</Link>
+                  : midGame ? <button className="textbtn danger" onClick={() => setConfirmQuit(true)}><Icon name="logout" size={15} /> {t('gm.quit')}</button>
+                  : <button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> {t('gm.leave')}</button>}
+              </>
+            } />
+          {siegeEnd ? <SiegeFinale state={state} token={token} act={act} /> : <TeamSiege {...props} />}
+        </div>
       ) : west || westEnd ? (
         <div className="shell west-shell">
           <Header
@@ -324,7 +359,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
         </section>
       </div>
       )}
-      {phase !== 'battle' && <div className={west ? 'west-rack' : undefined}><Rack state={state} token={token} act={act} /></div>}
+      {phase !== 'battle' && <div className={west ? 'west-rack' : siege ? 'siege-rack' : undefined}><Rack state={state} token={token} act={act} /></div>}
       <Reactions state={state} token={token} />
       {state.room.settings?.mode === 'team' && <TeamVoice state={state} token={token} />}
       <ActionFeed state={state} token={token} />

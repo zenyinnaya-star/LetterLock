@@ -23,8 +23,8 @@ import { softSpring, spring } from './ui';
 
 const STYLE_KEYS = ['solo.s0', 'solo.s1', 'solo.s2', 'solo.s3'] as const;
 
-export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots, west = false }: {
-  state: RoomState; token: string | null; act: Act; onLeave: () => void; bots?: string[]; botInfo?: Record<string, { l: number; s: number }>; pingBots?: () => Promise<void>; west?: boolean;
+export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots, west = false, siege = false }: {
+  state: RoomState; token: string | null; act: Act; onLeave: () => void; bots?: string[]; botInfo?: Record<string, { l: number; s: number }>; pingBots?: () => Promise<void>; west?: boolean; siege?: boolean;
 }) {
   const t = useT();
   const [copied, setCopied] = useState(false);
@@ -72,8 +72,12 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
   return (
     <>
       <div className="col" style={{ alignItems: 'center', gap: 10 }}>
-        <span className="label">{t('lb.code')}</span>
-        {west ? (
+        <span className="label">{siege ? t('sg.code') : t('lb.code')}</span>
+        {siege ? (
+          <motion.div className="s-war-banner" initial={{ y: -90, rotate: -4 }} animate={{ y: 0, rotate: [-4, 2, -1, 0] }} transition={{ duration: 1.3 }}>
+            <span>{state.room.code}</span>
+          </motion.div>
+        ) : west ? (
           <motion.div className="w-sign" initial={{ y: -80, rotate: -6 }} animate={{ y: 0, rotate: [-6, 3, -1.5, 0] }} transition={{ duration: 1.2 }}>
             <span>{state.room.code}</span>
           </motion.div>
@@ -91,7 +95,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
       </div>
 
       {teamMode ? (
-        <TeamLobby state={state} token={token} act={act} bots={bots} isHost={isHost} onRemoveBot={(id) => token && void act(() => rpc.removeBot(token, id).then(() => pingBots?.()))} />
+        <TeamLobby state={state} token={token} act={act} bots={bots} isHost={isHost} siege={siege} onRemoveBot={(id) => token && void act(() => rpc.removeBot(token, id).then(() => pingBots?.()))} />
       ) : duelMode ? (
         <div className="duel-lobby">
           <DuelSeat p={state.players[0]} meId={me?.id} side="left" west={west} />
@@ -209,7 +213,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
             ) : (
               <>
             <button className="btn lg block" disabled={teamMode ? !teamsReady : count < 2} onClick={() => token && void act(() => rpc.start(token))}>
-              {teamMode ? (teamsReady ? t('tm.start', { n: count }) : t('tm.need_full')) : count < 2 ? (duelMode ? t('lb.wait_challenger') : t('lb.wait_more')) : duelMode ? (west ? t('wst.start') : t('lb.fight')) : t('lb.start', { n: count })}
+              {teamMode ? (teamsReady ? (siege ? t('sg.start') : t('tm.start', { n: count })) : t('tm.need_full')) : count < 2 ? (duelMode ? t('lb.wait_challenger') : t('lb.wait_more')) : duelMode ? (west ? t('wst.start') : t('lb.fight')) : t('lb.start', { n: count })}
             </button>
               </>
             )}

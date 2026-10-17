@@ -399,6 +399,16 @@ const en = {
   'er.NOT_TEAM_MODE': 'This room isn’t in team mode.', 'er.TEAM_NOT_FOUND': 'That team doesn’t exist.',
   'an.team_hit': 'Attack on {team}!',
   'tm.hint': 'Your team shares its banned letters. Score points, no strikes — crack the other team’s letters and hit them with cards.',
+  // siege (team mode look)
+  'fd.rally': 'King **{a}** sounds the Rally', 'fd.rally_sub': 'their words score double this round',
+  'sg.words_in': 'The words are in', 'sg.call_two': 'Call a letter. It only breaks their wall if two of you call it.', 'sg.brace': 'Brace the walls',
+  'sg.war_council': 'War council', 'sg.your_word': 'Your word', 'sg.seal': 'Seal it', 'sg.sealed': 'Sealed · +{n}',
+  'sg.rally': 'Rally', 'sg.rally_tip': 'Once per game: your team’s words score double this round.', 'sg.rally_on': 'Rally! Double points',
+  'sg.call': 'Call a letter', 'sg.fire': 'Fire', 'sg.aim': '“{l}” at {team}', 'sg.breach': 'Breach! Their wall gave up “{l}”.', 'sg.held': 'Their wall held. No “{l}”.',
+  'sg.hold': 'Hold the line', 'sg.log_breach': '{team}’s wall breached: “{l}”', 'sg.log_catapult': 'Catapult at {team} · +{n}', 'sg.blocked': 'shields up',
+  'sg.quiet': 'The field is quiet.', 'sg.victory': 'Victory', 'sg.defeat': 'Defeat', 'sg.flag': '{team} raise their flag over the enemy keep.',
+  'sg.ruins': 'Your castle lies in ruins. {team} hold the field.', 'sg.again_q': 'Rebuild and ride out?', 'sg.retake': 'Retake the field', 'sg.again': 'New siege',
+  'sg.code': 'War banner', 'sg.throne': 'King', 'sg.start': 'March to battle', 'sg.horn': 'Hold the horn to talk',
   // team v2: focus fire, split knowledge, voice
   'fd.focus': '**{a}**’s team focused fire on **{b}**',
   'tf.called': 'You called “{l}”. It only cracks if a teammate calls it too.',

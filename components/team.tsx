@@ -11,6 +11,7 @@ import { Icon } from './icons';
 import { PlayerAvatar } from './PlayerAvatar';
 import type { Act } from './phases';
 import { softSpring, spring } from './ui';
+import { Crest, Crown } from './TeamSiege';
 
 type Tr = ReturnType<typeof useT>;
 
@@ -81,30 +82,32 @@ export function TeamHud({ state }: { state: RoomState }) {
 }
 
 /* ───────── lobby: two team cards ───────── */
-export function TeamLobby({ state, token, act, bots = [], isHost = false, onRemoveBot }: { state: RoomState; token: string | null; act: Act; bots?: string[]; isHost?: boolean; onRemoveBot?: (id: string) => void }) {
+export function TeamLobby({ state, token, act, bots = [], isHost = false, siege = false, onRemoveBot }: { state: RoomState; token: string | null; act: Act; bots?: string[]; isHost?: boolean; siege?: boolean; onRemoveBot?: (id: string) => void }) {
   const t = useT();
   const me = state.me;
   const size = state.room.settings.team_size ?? 2;
   const teams = state.teams ?? [];
   return (
-    <div className="team-lobby">
+    <div className={`team-lobby${siege ? ' s-camp' : ''}`}>
       {teams.map((tm, i) => (
         <div key={tm.id} style={{ display: 'contents' }}>
           {i === 1 && (
             <motion.span className="dl-vs tl-vs" initial={{ scale: 3, opacity: 0, rotate: -20 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 500, damping: 16, delay: 0.2 }}>{t('tm.vs')}</motion.span>
           )}
-          <TeamCard team={tm} members={state.players.filter((p) => p.team_id === tm.id)} size={size} state={state} token={token} act={act} meId={me?.id} bots={bots} isHost={isHost} onRemoveBot={onRemoveBot} />
+          <TeamCard team={tm} members={state.players.filter((p) => p.team_id === tm.id)} size={size} state={state} token={token} act={act} meId={me?.id} bots={bots} isHost={isHost} siege={siege} onRemoveBot={onRemoveBot} />
         </div>
       ))}
     </div>
   );
 }
 
-function TeamCard({ team, members, size, state, token, act, meId, bots = [], isHost = false, onRemoveBot }: {
+function TeamCard({ team, members: raw, size, state, token, act, meId, bots = [], isHost = false, siege = false, onRemoveBot }: {
   team: Team; members: PublicPlayer[]; size: number; state: RoomState; token: string | null; act: Act; meId?: string;
-  bots?: string[]; isHost?: boolean; onRemoveBot?: (id: string) => void;
+  bots?: string[]; isHost?: boolean; siege?: boolean; onRemoveBot?: (id: string) => void;
 }) {
+  // in the war tent the king takes the throne at the head of the table
+  const members = siege ? [...raw].sort((a, b) => (a.id === team.leader_id ? -1 : b.id === team.leader_id ? 1 : 0)) : raw;
   const t = useT();
   const isLeader = !!meId && team.leader_id === meId;
   const mine = members.some((p) => p.id === meId);
@@ -131,7 +134,11 @@ function TeamCard({ team, members, size, state, token, act, meId, bots = [], isH
     <motion.div className={`team-card ${team.idx === 0 ? 'a' : 'b'}${mine ? ' mine' : ''}`}
       initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={spring}>
       <div className="tc-head">
-        <TeamImage team={team} size={72} />
+        {siege ? (
+          <motion.div className={`s-flag hang c${team.idx}`} initial={{ y: -60, rotate: -8 }} animate={{ y: 0, rotate: [-8, 4, -2, 0] }} transition={{ duration: 1.4 }}>
+            <Crest team={team} />
+          </motion.div>
+        ) : <TeamImage team={team} size={72} />}
         {isLeader ? (
           <div className="tc-edit">
             <input className="input" maxLength={20} value={name} aria-label={t('tm.name_ph')} placeholder={t('tm.name_ph')}
@@ -154,10 +161,13 @@ function TeamCard({ team, members, size, state, token, act, meId, bots = [], isH
       <div className="tc-members">
         <AnimatePresence initial={false}>
           {members.map((p) => (
-            <motion.div key={p.id} layout className={`tc-member${p.id === meId ? ' me' : ''}`}
+            <motion.div key={p.id} layout className={`tc-member${p.id === meId ? ' me' : ''}${siege && team.leader_id === p.id ? ' throne' : ''}`}
               initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.7 }} transition={spring}>
-              <PlayerAvatar p={p} size={40} />
+              {siege && team.leader_id === p.id ? (
+                <span className="s-throne-av"><Crown size={22} /><PlayerAvatar p={p} size={46} /></span>
+              ) : <PlayerAvatar p={p} size={40} />}
               <div className="col" style={{ gap: 1, minWidth: 0 }}>
+                {siege && team.leader_id === p.id && <span className="s-king-tag">{t('sg.throne')}</span>}
                 <b className="tc-pn">
                   {p.name}
                   {team.leader_id === p.id && <span className="tc-crown" title={t('tm.leader')}><Icon name="crown" size={14} /></span>}

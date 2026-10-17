@@ -37,7 +37,8 @@ const LOOK: Record<FeedItem['type'], { icon: IconName; tone: string; sfx: () => 
   legend: { icon: 'sparkle', tone: 'gold', sfx: () => audio.cashout() },
   chaos: { icon: 'dice', tone: 'chaos', sfx: () => audio.wheel() },
   ult: { icon: 'bolt', tone: 'gold', sfx: () => audio.whoosh() },
-  focus_fire: { icon: 'target', tone: 'hit', sfx: () => audio.attack() },
+  focus_fire: { icon: 'target', tone: 'hit', sfx: () => audio.volley() },
+  rally: { icon: 'crown', tone: 'gold', sfx: () => audio.horn() },
 };
 const LOOK_FALLBACK = { icon: 'sparkle' as IconName, tone: 'gold', sfx: () => audio.whoosh() };
 
@@ -183,6 +184,7 @@ function Banner({ item, state, meId }: { item: FeedItem; state: RoomState; meId:
     case 'oracle': text = R('fd.oracle', <em>{t('fd.oracle_sub')}</em>); break;
     case 'swap': text = R('fd.swap', <em>{t('fd.switcheroo')}</em>); break;
     case 'legend': text = <><b>{item.name ?? t('fd.someone')}</b> <Rich k="fd.legend" vars={{}} /></>; break;
+    case 'rally': text = R('fd.rally', <em>{t('fd.rally_sub')}</em>); break;
     case 'focus_fire': text = R('fd.focus', <em>“{item.what ?? ''}”</em>); break;
     case 'ult': text = R('fd.ult', <em>{CLASSES[item.what as PlayerClass]?.name ?? ''}</em>); break;
     case 'chaos': text = <><b>{t('fd.wildcard')}</b> {CHAOS_INFO[item.what ?? '']?.name ?? 'chaos'}<em>{CHAOS_INFO[item.what ?? '']?.text}</em></>; break;

@@ -24,6 +24,18 @@ function iceServers(): RTCIceServer[] {
   return list;
 }
 
+/** A war horn: push-to-talk in the siege. */
+function Horn({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden className="tv-horn-ico">
+      <path d="M3 22 Q10 21 18 12 L23 6 Q27 8 27 14 Q27 22 19 26 Q11 28 4 25 Z" fill="#c99a52" stroke="#4a2f12" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M23 6 Q27 8 27 14" fill="none" stroke="#f2d79b" strokeWidth="1.4" />
+      <path d="M9 20.5 L11 25.5 M14 17 L16.5 24" stroke="#6b4a1e" strokeWidth="1.6" />
+      <path d="M3 22 L1.5 23.5 L4 25" fill="#e8c46a" stroke="#4a2f12" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
 type Sig = { from: string; to: string; kind: 'offer' | 'answer' | 'ice'; data: unknown };
 type Peer = { pc: RTCPeerConnection; audio: HTMLAudioElement; sender: RTCRtpSender | null };
 
@@ -188,7 +200,7 @@ export function TeamVoice({ state, token }: { state: RoomState; token: string | 
   return (
     <div className={`tv-dock${joined ? ' on' : ''}`} role="region" aria-label={t('tv.title')}>
       <div className="tv-head">
-        <Icon name="users" size={14} /> {t('tv.title')}
+        <Horn size={16} /> {t('tv.title')}
         <span className="tv-lock" title={t('tv.private')}><Icon name="lock" size={11} /></span>
       </div>
       <div className="tv-mates">
@@ -201,14 +213,14 @@ export function TeamVoice({ state, token }: { state: RoomState; token: string | 
         ))}
       </div>
       {!joined ? (
-        <button className="btn sm" onClick={() => void join()}><Icon name="users" size={14} /> {t('tv.join')}</button>
+        <button className="btn sm" onClick={() => void join()}><Horn size={16} /> {t('tv.join')}</button>
       ) : (
         <div className="tv-ctrl">
           <motion.button className={`tv-ptt${talking ? ' live' : ''}`} disabled={deaf}
             onPointerDown={(e) => { e.preventDefault(); (e.target as HTMLElement).setPointerCapture?.(e.pointerId); ptt(true); }}
             onPointerUp={() => ptt(false)} onPointerCancel={() => ptt(false)} onContextMenu={(e) => e.preventDefault()}
             animate={talking ? { scale: [1, 1.06, 1] } : { scale: 1 }} transition={talking ? { repeat: Infinity, duration: 0.9 } : {}}>
-            {talking ? t('tv.talking') : t('tv.hold')}
+            <Horn size={20} /> {talking ? t('tv.talking') : t('tv.hold')}
           </motion.button>
           <button className={`btn sm ghost${deaf ? ' on' : ''}`} onClick={() => setDeaf((v) => !v)} aria-pressed={deaf}>{deaf ? t('tv.unmute') : t('tv.mute')}</button>
           <button className="btn sm ghost" onClick={leave} aria-label={t('tv.leave')}><Icon name="x" size={13} /></button>
