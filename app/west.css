@@ -171,7 +171,7 @@
 .w-hole { position: absolute; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%;
   background: radial-gradient(circle, #050302 34%, #2a180a 52%, rgba(60,36,14,.6) 62%, transparent 72%); box-shadow: 0 0 0 1px rgba(240,220,180,.25); }
 .w-hole.sm { width: 11px; height: 11px; margin: -5px 0 0 -5px; }
-.w-stamp.lost { color: rgba(60,58,62,.9); }
+.w-stamp.lost { color: rgba(38,26,22,.95); background: rgba(240,222,186,.28); }
 @keyframes w-dusk { from { opacity: 0; } to { opacity: 1; } }
 
 /* spectators: who has drawn */
@@ -224,8 +224,8 @@
   box-shadow: 0 -8px 24px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,230,180,.15); }
 
 /* keep the reactions button clear of the DRAW bar */
-body:has(.west) .rx-dock { top: 168px; bottom: auto !important; right: 6px; transform: scale(.82); transform-origin: top right; }
-@media (min-width: 900px) { body:has(.west) .rx-dock { top: auto; bottom: 110px !important; right: 18px; transform: none; } }
+body:has(.west:not(.p-lobby)) .rx-dock { top: 168px; bottom: auto !important; right: 6px; transform: scale(.82); transform-origin: top right; }
+@media (min-width: 900px) { body:has(.west:not(.p-lobby)) .rx-dock { top: auto; bottom: 110px !important; right: 18px; transform: none; } }
 
 /* ---------- phones ---------- */
 @media (max-width: 480px) {
@@ -237,8 +237,14 @@ body:has(.west) .rx-dock { top: 168px; bottom: auto !important; right: 6px; tran
   .w-name b { font-size: 13px; max-width: 110px; }
   .w-bar { padding: 22px 16px 14px; }
   .w-draw { min-width: 120px; padding: 10px 18px; font-size: 16px; }
-  .w-keys { grid-template-columns: repeat(9, 1fr); }
-  .w-key { aspect-ratio: 1; }
+  .w-keys { grid-template-columns: repeat(9, 1fr); gap: 3px; }
+  .w-key { aspect-ratio: 1.35; }
+  .west-rack .rack-pts, .west-rack .rack .sect-label { display: none; }
+  .west-rack .rack-inner { flex-wrap: nowrap; padding: 8px 10px; gap: 8px; }
+  .west-rack .rack .tile { width: 32px; height: 36px; font-size: 17px; }
+  .west.p-guess .w-post { width: clamp(150px, 52vw, 210px); }
+  .west.p-guess .w-note { min-height: 70px; padding: 18px 12px 12px; }
+  .west.p-guess .w-note-mid { font-size: 13px; }
 }
 @media (max-width: 700px) { .west-rack .rack-inner { flex-wrap: wrap; } }
 
