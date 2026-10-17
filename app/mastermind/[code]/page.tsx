@@ -105,6 +105,13 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
     if (!s) return;
     const p = prev.current;
     const { room, me } = s;
+    if (!p.status) {
+      // first poll after (re)loading: sync silently so old clues/guesses/reactions don't replay
+      Object.assign(p, { round: room.round, clues: s.clues.length, guesses: s.guesses.length, status: room.status,
+        slots: (s.slots ?? []).map((x) => x ?? '_').join(''), react: Math.max(0, ...(s.reacts ?? []).map((r) => r.id)),
+        points: Object.fromEntries(s.players.map((x) => [x.id, x.points])) });
+      return;
+    }
     if (room.round !== p.round) {
       p.round = room.round; p.clues = 0; p.guesses = 0; p.slots = '';
       p.points = Object.fromEntries(s.players.map((x) => [x.id, x.points]));
