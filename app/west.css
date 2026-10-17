@@ -186,9 +186,12 @@
 @media (min-width: 900px) and (min-aspect-ratio: 1/1) { .west.p-lobby { background-image: var(--w-saloon-wide); background-position: center 40%; } }
 .w-lobby { width: min(760px, 100%); display: flex; flex-direction: column; gap: 16px; padding-bottom: 20px; color: #f4e6c8; }
 .w-lobby .label { font-family: 'Cinzel', Georgia, serif; color: var(--brass-hi); letter-spacing: .2em; text-shadow: 0 1px 3px #000; }
-.w-sign { position: relative; width: min(340px, 82vw); aspect-ratio: 16 / 9; background: var(--w-sign) center / cover no-repeat; mix-blend-mode: normal;
-  display: grid; place-items: center; transform-origin: 50% 0; filter: drop-shadow(0 12px 14px rgba(0,0,0,.6)); }
-.w-sign span { margin-top: 12%; font: 900 clamp(38px, 11vw, 60px) 'Cinzel', Georgia, serif; letter-spacing: .28em; padding-left: .28em; color: #2a190b;
+.w-sign { position: relative; width: min(330px, 80vw); aspect-ratio: 2.65; margin-top: 34px; background: var(--w-sign) 50% 67.6% / 106.4% auto no-repeat;
+  display: grid; place-items: center; transform-origin: 50% -34px; filter: drop-shadow(0 12px 14px rgba(0,0,0,.6)); border-radius: 4px; }
+.w-sign::before, .w-sign::after { content: ''; position: absolute; top: -34px; width: 3px; height: 38px;
+  background: repeating-linear-gradient(180deg, #4b3a2a 0 5px, #1d150e 5px 7px); border-radius: 2px; }
+.w-sign::before { left: 16%; } .w-sign::after { right: 16%; }
+.w-sign span { margin-top: 0; font: 900 clamp(38px, 11vw, 60px) 'Cinzel', Georgia, serif; letter-spacing: .28em; padding-left: .28em; color: #2a190b;
   text-shadow: 0 1px 0 rgba(255,235,200,.35), 0 -1px 0 rgba(0,0,0,.4); }
 .w-lobby .duel-lobby { background: none !important; border: 0 !important; box-shadow: none !important; display: flex; justify-content: center; align-items: center; gap: clamp(10px, 4vw, 36px); padding: 4px 0; }
 .w-lobby .duel-lobby::before, .w-lobby .duel-lobby::after { display: none !important; }
@@ -213,6 +216,8 @@
 .w-lobby .muted { color: #d9c29a !important; }
 .w-lobby .class-chosen { background: rgba(0,0,0,.25); border-color: rgba(201,154,69,.35); }
 .p-lobby .w-lobby { margin-top: 6px; }
+.w-lobby .chip, .w-lobby .bot-styles button { font-family: 'Cinzel', Georgia, serif; color: #f0dcb4; background: rgba(0,0,0,.3); border: 1px solid rgba(201,154,69,.4); border-radius: 6px; }
+.w-lobby .chip.on { color: #2b1d10; background: radial-gradient(ellipse at 50% 25%, #fbe7b0, #c99a45); border-color: #8f6625; }
 
 /* rack restyled as a saddlebag under the street */
 .west-rack .rack-inner { max-width: 900px; flex-wrap: nowrap; background: linear-gradient(180deg, #4a2f17, #2c1b0c); border-color: #8f6625;

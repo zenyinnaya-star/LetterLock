@@ -410,6 +410,7 @@ const en = {
   'wst.defeated': 'Defeated', 'wst.you_lost': '{name} drew faster. You fell.', 'wst.reward_lost': 'Reward claimed by {name}',
   'wst.standing': 'still standing', 'wst.fell': 'fell in the dust', 'wst.rematch_q': 'Another round?', 'wst.revenge': 'Settle the score',
   'wst.drawn': 'has drawn', 'wst.thinking': 'hand on the holster…',
+  'wst.start': 'Step into the street',
   'wst.pick': 'Pick a letter, then draw.', 'wst.missed': '{name} fired and missed.', 'wst.you': 'You', 'wst.spectating': 'Watching from the saloon',
 } as const;
 
