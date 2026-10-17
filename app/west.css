@@ -128,13 +128,15 @@
 .w-post.finale { margin-top: 10px; }
 .w-mug { width: 58%; aspect-ratio: 1; border-radius: 4px; overflow: hidden; filter: sepia(.6) contrast(1.05) brightness(.95); box-shadow: inset 0 0 0 2px rgba(43,29,16,.6); }
 .w-mug img, .w-mug .w-portrait-fallback { width: 100%; height: 100%; object-fit: cover; display: block; }
-.w-stamp { position: absolute; left: 50%; top: 60%; translate: -50% -50%; padding: 4px 18px; border: 5px double currentColor; border-radius: 8px;
-  font: 900 clamp(30px, 9vw, 46px) 'Cinzel', Georgia, serif; letter-spacing: .14em; text-transform: uppercase; color: rgba(150,22,12,.88); mix-blend-mode: multiply; pointer-events: none;
+.w-stamp { position: absolute; left: 50%; top: 66%; translate: -50% -50%; padding: 4px 18px; border: 5px double currentColor; border-radius: 8px;
+  font: 900 clamp(30px, 9vw, 46px) 'Cinzel', Georgia, serif; letter-spacing: .14em; text-transform: uppercase; color: rgba(160,26,14,.92); pointer-events: none; background: rgba(240,222,186,.18);
   -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -2.2 1.6'/></filter><rect width='300' height='120' filter='url(%23n)'/></svg>");
   mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -2.2 1.6'/></filter><rect width='300' height='120' filter='url(%23n)'/></svg>"); }
 .w-link { background: none; border: 0; cursor: pointer; font: italic 600 13px Georgia, serif; color: var(--brass-hi); text-decoration: underline; text-underline-offset: 3px; }
 .w-stats { width: min(900px, 100%); padding: 14px; border-radius: 12px; background: rgba(30,16,6,.88); border: 1px solid rgba(201,154,69,.35); }
 .p-finished .w-bar { margin-top: 18px; }
+.finale .w-note { margin-top: -12%; width: 78%; }
+.p-finished .w-show.bad b { text-decoration: none; color: var(--ink); opacity: .7; }
 
 /* rack restyled as a saddlebag under the street */
 .west-rack .rack-inner { max-width: 900px; flex-wrap: nowrap; background: linear-gradient(180deg, #4a2f17, #2c1b0c); border-color: #8f6625;
