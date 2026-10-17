@@ -21,7 +21,8 @@
   animation: mm-hum 7s infinite; }
 .mm-light[data-flicker] { animation: mm-stutter .9s steps(1) 1, mm-hum 7s .9s infinite; }
 .mm-vignette { z-index: 0; background: radial-gradient(ellipse 80% 75% at 50% 45%, transparent 55%, rgba(0,0,0,.72)); transition: background .6s; }
-.mm-room.tense .mm-vignette { animation: mm-redpulse 1s ease-in-out infinite; }
+.mm-vignette::after { content: ''; position: absolute; inset: 0; opacity: 0; background: radial-gradient(ellipse 75% 70% at 50% 45%, transparent 38%, rgba(190,14,14,.55) 75%, rgba(120,0,0,.85)); }
+.mm-room.tense .mm-vignette::after { animation: mm-redbeat 1s ease-out infinite; }
 .mm-room.tense .mm-light { filter: saturate(1.4) hue-rotate(-12deg); }
 .mm-dust { z-index: 0; }
 .mm-dust i { position: absolute; left: calc(40% + (var(--i) * 1.47%)); top: calc(14% + (var(--i) * 3.1%) % 40%); width: 3px; height: 3px; border-radius: 50%;
@@ -246,6 +247,7 @@
 @keyframes mm-hum { 0%, 100% { opacity: 1; } 47% { opacity: .92; } 48% { opacity: .7; } 49% { opacity: 1; } 83% { opacity: .95; } }
 @keyframes mm-stutter { 0% { opacity: .15; } 12% { opacity: 1; } 22% { opacity: .1; } 34% { opacity: .9; } 46% { opacity: .25; } 60% { opacity: 1; } }
 @keyframes mm-redpulse { 0%, 100% { background: radial-gradient(ellipse 80% 75% at 50% 45%, transparent 45%, rgba(40,0,0,.8)); } 50% { background: radial-gradient(ellipse 80% 75% at 50% 45%, transparent 35%, rgba(150,10,10,.75)); } }
+@keyframes mm-redbeat { 0% { opacity: .35; } 12% { opacity: 1; } 24% { opacity: .55; } 36% { opacity: .95; } 100% { opacity: .3; } }
 @keyframes mm-mote { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: .9; } 85% { opacity: .6; } 100% { transform: translate(30px, 160px); opacity: 0; } }
 @keyframes mm-glow { 0% { transform: scale(1.35); box-shadow: 0 0 60px rgba(255,200,90,1); } 100% { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .mm-room *, .mm-light, .mm-vignette { animation: none !important; } .mm-dust { display: none; } }

@@ -359,7 +359,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
             )}
 
             <AnimatePresence>
-              {stamp && room.status !== 'round' && (
+              {stamp && room.status === 'between' && (
                 <motion.div key={stamp.k} className={`mm-stamp ${stamp.kind}`} initial={{ scale: 3.2, opacity: 0, rotate: -24 }} animate={{ scale: 1, opacity: 1, rotate: -12 }} exit={{ opacity: 0 }} transition={{ type: 'spring', stiffness: 520, damping: 22 }}>
                   {stamp.kind === 'good' ? 'Cracked' : 'Cold case'}
                 </motion.div>
