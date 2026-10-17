@@ -254,6 +254,16 @@ export const audio = {
   boulder() { tone(55, 0, 0.6, 'sine', 0.85, 30); noise(0, 0.35, 0.7, 500, 0.6, 120); noise(0.08, 0.6, 0.25, 1800, 1, 400); },
   /** Siege: a wall stone shatters. */
   shatter() { noise(0, 0.08, 0.7, 3200, 1, 900); noise(0.04, 0.5, 0.35, 900, 0.7, 200); tone(80, 0, 0.3, 'sine', 0.5, 40); [0.12, 0.2, 0.31].forEach((t) => noise(t, 0.05, 0.2, 2200, 3)); },
+  /** Vault: a tumbler clicks into place (a letter cracked). */
+  tumbler() { noise(0, 0.025, 0.6, 4200, 4); tone(1900, 0, 0.05, 'square', 0.08, 1400); noise(0.07, 0.03, 0.45, 2600, 5); tone(520, 0.07, 0.12, 'triangle', 0.18, 380); },
+  /** Vault: the combination dial spins (new round). */
+  dial() { for (let i = 0; i < 9; i++) noise(i * 0.045, 0.018, 0.28 - i * 0.02, 3600 - i * 120, 6); tone(180, 0.42, 0.18, 'sine', 0.3, 120); },
+  /** Vault: alarm klaxon (a strike, or the heist fails). */
+  alarm(long = false) { const n = long ? 4 : 1; for (let i = 0; i < n; i++) { tone(880, i * 0.5, 0.24, 'square', 0.08, 660); tone(660, i * 0.5 + 0.25, 0.24, 'square', 0.08, 880); } },
+  /** Vault: heavy bolts retract and the door swings open. */
+  vaultOpen() { [0, 0.12, 0.24, 0.36].forEach((t) => { noise(t, 0.06, 0.5, 1800, 3); tone(140, t, 0.1, 'square', 0.15, 90); }); tone(70, 0.6, 1.6, 'sawtooth', 0.12, 45); noise(0.6, 1.6, 0.12, 300, 0.6, 120); [[523, 1.9], [659, 2.05], [784, 2.2], [1047, 2.4]].forEach(([f, t]) => tone(f, t, 0.9, 'triangle', 0.12)); },
+  /** Vault: guards lock the doors (lose). */
+  vaultLose() { this.alarm(true); tone(110, 0.2, 0.6, 'sawtooth', 0.15, 55); noise(1.6, 0.4, 0.5, 900, 1, 120); tone(60, 1.6, 0.6, 'sine', 0.6, 30); },
   /** Siege: war drums for a new round. */
   drums() { [0, 0.22, 0.44, 0.8].forEach((t, i) => { tone(i === 3 ? 60 : 75, t, 0.35, 'sine', 0.6, 40); noise(t, 0.08, 0.3, 300, 1); }); },
   /** Siege: victory fanfare on the horns. */

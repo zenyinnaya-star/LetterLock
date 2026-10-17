@@ -1,0 +1,23 @@
+// Generated vault-heist art (Higgsfield), served through Vercel's image optimizer.
+import { img } from './mmArt';
+
+const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/';
+const src = {
+  officeWide: CDN + 'hf_20261017_232726_36c0d679-51eb-477c-9092-641e43961dde.png',
+  officeTall: CDN + 'hf_20261017_232726_c72f1e45-8600-4e20-abfc-a350fa7c30fa.png',
+  vaultWide: CDN + 'hf_20261017_232754_af7f01b4-86a8-4ed5-bccd-3bde7404c66e.png',
+  vaultTall: CDN + 'hf_20261017_232726_81833ec4-2743-42c3-886b-3fb9ad329149.png',
+  gold: CDN + 'hf_20261017_232726_6dc70e60-59f4-4d10-ab19-c71d9eee3f68.png',
+  alarm: CDN + 'hf_20261017_232754_ac66b277-e87d-4dcc-af7e-e68bb8238570.png',
+};
+const css = (u: string, w: number) => `url("${img(u, w)}")`;
+
+/** CSS custom properties consumed by app/vault.css */
+export const vaultArtVars = {
+  '--v-office-wide': css(src.officeWide, 2048),
+  '--v-office-tall': css(src.officeTall, 1080),
+  '--v-vault-wide': css(src.vaultWide, 2048),
+  '--v-vault-tall': css(src.vaultTall, 1080),
+  '--v-gold': css(src.gold, 2048),
+  '--v-alarm': css(src.alarm, 2048),
+} as React.CSSProperties;

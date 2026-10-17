@@ -23,8 +23,8 @@ import { softSpring, spring } from './ui';
 
 const STYLE_KEYS = ['solo.s0', 'solo.s1', 'solo.s2', 'solo.s3'] as const;
 
-export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots, west = false, siege = false }: {
-  state: RoomState; token: string | null; act: Act; onLeave: () => void; bots?: string[]; botInfo?: Record<string, { l: number; s: number }>; pingBots?: () => Promise<void>; west?: boolean; siege?: boolean;
+export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots, west = false, siege = false, vault = false, onStory }: {
+  state: RoomState; token: string | null; act: Act; onLeave: () => void; bots?: string[]; botInfo?: Record<string, { l: number; s: number }>; pingBots?: () => Promise<void>; west?: boolean; siege?: boolean; vault?: boolean; onStory?: (v: boolean) => void;
 }) {
   const t = useT();
   const [copied, setCopied] = useState(false);
@@ -67,13 +67,20 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
     } catch { /* cancelled */ }
   }
 
+  useEffect(() => { onStory?.(story && !teamMode && !duelMode); }, [story, teamMode, duelMode, onStory]);
   if (story && !teamMode && !duelMode) return <StoryLobby state={state} token={token} act={act} onLeave={onLeave} picks={picks} isHost={isHost} />;
 
   return (
     <>
       <div className="col" style={{ alignItems: 'center', gap: 10 }}>
-        <span className="label">{siege ? t('sg.code') : t('lb.code')}</span>
-        {siege ? (
+        <span className="label">{siege ? t('sg.code') : vault ? t('vt.code') : t('lb.code')}</span>
+        {vault ? (
+          <motion.div className="v-case" initial={{ y: -40, rotate: -8, opacity: 0 }} animate={{ y: 0, rotate: -3, opacity: 1 }} transition={{ type: 'spring', stiffness: 220, damping: 16 }}>
+            <em>{t('vt.case')}</em>
+            <span>{state.room.code}</span>
+            <b className="v-stamp">{t('vt.classified')}</b>
+          </motion.div>
+        ) : siege ? (
           <motion.div className="s-war-banner" initial={{ y: -90, rotate: -4 }} animate={{ y: 0, rotate: [-4, 2, -1, 0] }} transition={{ duration: 1.3 }}>
             <span>{state.room.code}</span>
           </motion.div>
@@ -213,7 +220,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
             ) : (
               <>
             <button className="btn lg block" disabled={teamMode ? !teamsReady : count < 2} onClick={() => token && void act(() => rpc.start(token))}>
-              {teamMode ? (teamsReady ? (siege ? t('sg.start') : t('tm.start', { n: count })) : t('tm.need_full')) : count < 2 ? (duelMode ? t('lb.wait_challenger') : t('lb.wait_more')) : duelMode ? (west ? t('wst.start') : t('lb.fight')) : t('lb.start', { n: count })}
+              {teamMode ? (teamsReady ? (siege ? t('sg.start') : t('tm.start', { n: count })) : t('tm.need_full')) : count < 2 ? (duelMode ? t('lb.wait_challenger') : t('lb.wait_more')) : duelMode ? (west ? t('wst.start') : t('lb.fight')) : vault ? t('vt.start', { n: count }) : t('lb.start', { n: count })}
             </button>
               </>
             )}

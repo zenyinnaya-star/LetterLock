@@ -30,6 +30,9 @@ import '@/app/team.css';
 import '@/app/siege.css';
 import { SiegeFinale, TeamSiege } from './TeamSiege';
 import { siegeArtVars } from '@/lib/siegeArt';
+import '@/app/vault.css';
+import { VaultFinale, VaultHeist } from './VaultHeist';
+import { vaultArtVars } from '@/lib/vaultArt';
 import { TeamHud, teamLabel } from './team';
 import { SettingsButton } from './SettingsPanel';
 import { AnswerPhase, DuelIntro, Finished, GuessPhase, Rack, ReactPhase, RevealPhase, type Act } from './phases';
@@ -65,6 +68,12 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   const siege = teamOn && ['answer', 'reveal', 'guess', 'react'].includes(phase);
   const siegeLobby = phase === 'lobby' && state.room.settings?.mode === 'team';
   const siegeEnd = teamOn && phase === 'finished';
+  // classic mode is a vault heist: every player a safe, every lock a tumbler
+  const classic = (state.room.settings?.mode ?? 'classic') === 'classic';
+  const [storyLobby, setStoryLobby] = useState(false);
+  const vault = classic && !west && ['answer', 'reveal', 'guess', 'react'].includes(phase);
+  const vaultLobby = classic && phase === 'lobby' && !storyLobby;
+  const vaultEnd = classic && phase === 'finished' && !westEnd;
 
   const act: Act = useCallback(async (fn, okMsg) => {
     audio.unlock();
@@ -97,7 +106,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
       if (cur.phase !== p.phase) {
         if (cur.phase === 'duel_intro') { if (!west) audio.fight(); }
         else if (cur.phase === 'answer') {
-          if (west) audio.bell(true); else if (!siege) audio.gong();
+          if (west) audio.bell(true); else if (!siege && !vault) audio.gong();
           const tw = state.room.settings?.twist;
           const last = state.room.round >= (state.room.settings?.rounds ?? 99) && state.room.settings?.mode !== 'classic';
           if (state.room.round === 1) narrator.say(tw === 'reverse' ? 'reverse' : tw === 'memory' ? 'memory' : 'round', { delay: 500 });
@@ -108,13 +117,13 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           const teamWin = state.room.settings?.mode === 'team'
             ? (me && state.room.winner_team != null ? (state.teams?.find((x) => x.idx === state.room.winner_team)?.id === me.team_id ? 'won' : 'lost') : null)
             : (me && state.room.winner_id ? (state.room.winner_id === me.id ? 'won' : 'lost') : null);
-          if (teamWin === 'won') { if (!westEnd && !siegeEnd) audio.file('victory'); narrator.say('victory', { delay: 700 }); }
-          else if (teamWin === 'lost') { if (!westEnd && !siegeEnd) audio.file('defeat'); narrator.say('defeat', { delay: 700 }); }
+          if (teamWin === 'won') { if (!westEnd && !siegeEnd && !vaultEnd) audio.file('victory'); narrator.say('victory', { delay: 700 }); }
+          else if (teamWin === 'lost') { if (!westEnd && !siegeEnd && !vaultEnd) audio.file('defeat'); narrator.say('defeat', { delay: 700 }); }
           else audio.fanfare();
         }
       }
       if (cur.eliminated && !p.eliminated) { audio.elimination(); narrator.say('eliminated', { delay: 400 }); }
-      else if (cur.strikes > p.strikes) { if (west) audio.hammer(); else audio.buzzer(); }
+      else if (cur.strikes > p.strikes) { if (west) audio.hammer(); else if (!vault) audio.buzzer(); }
       else if (cur.answerKey && cur.answerKey !== p.answerKey) {
         if (me?.answer?.valid) audio.success(); else if (!audio.file('nope')) audio.buzzer();
       }
@@ -124,7 +133,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
       if (cur.phase === 'answer' && p.phase !== 'answer' && cur.letters > p.letters && !west) audio.attack();
     }
     prev.current = cur;
-  }, [phase, me, west, westEnd, siege, siegeEnd]);
+  }, [phase, me, west, westEnd, siege, siegeEnd, vault]);
 
   // music: site theme in the lobby, quieter under gameplay, the duel track for a 1v1
   const duel = state.room.duel;
@@ -235,7 +244,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   const props = { state, token, msLeft, act, offset };
   let main: React.ReactNode;
   switch (phase) {
-    case 'lobby': main = <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} />; break;
+    case 'lobby': main = <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} vault={vaultLobby} onStory={setStoryLobby} />; break;
     case 'answer': main = <AnswerPhase {...props} />; break;
     case 'reveal': main = <RevealPhase {...props} />; break;
     case 'guess': main = <GuessPhase {...props} />; break;
@@ -304,6 +313,49 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
             } />
           {siegeEnd ? <SiegeFinale state={state} token={token} act={act} /> : <TeamSiege {...props} />}
         </div>
+      ) : vaultLobby ? (
+        <div className="shell vault-shell">
+          <Header
+            settings={<SettingsButton state={state} token={token} act={act} />}
+            right={
+              <>
+                <span className="room-chip">{state.room.code}</span>
+                {!me ? <Link className="textbtn" href="/">{t('gm.home')}</Link>
+                  : midGame ? <button className="textbtn danger" onClick={() => setConfirmQuit(true)}><Icon name="logout" size={15} /> {t('gm.quit')}</button>
+                  : <button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> {t('gm.leave')}</button>}
+              </>
+            } />
+          <div className="vault p-lobby" style={vaultArtVars}>
+            <div className="v-shade" aria-hidden />
+            <div className="v-lobby">{main}</div>
+          </div>
+        </div>
+      ) : vault || vaultEnd ? (
+        <div className="shell vault-shell">
+          <Header
+            settings={<SettingsButton state={state} token={token} act={act} />}
+            right={
+              <>
+                <span className="room-chip">{state.room.code}</span>
+                {!me ? <Link className="textbtn" href="/">{t('gm.home')}</Link>
+                  : midGame ? <button className="textbtn danger" onClick={() => setConfirmQuit(true)}><Icon name="logout" size={15} /> {t('gm.quit')}</button>
+                  : <button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> {t('gm.leave')}</button>}
+              </>
+            } />
+          {vaultEnd ? <VaultFinale state={state}>{main}</VaultFinale> : (
+            <VaultHeist state={state} msLeft={msLeft}>
+              {me?.eliminated && <div className="banner out"><Icon name="skull" size={18} /> {t('gm.out')}</div>}
+              {!me && <div className="banner info"><Icon name="eye" size={18} /> {t('gm.spectator')}</div>}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div key={`${phase}-${state.room.round}`} className="stage-body"
+                  initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -14 }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}>
+                  {main}
+                </motion.div>
+              </AnimatePresence>
+            </VaultHeist>
+          )}
+        </div>
       ) : west || westEnd ? (
         <div className="shell west-shell">
           <Header
@@ -359,7 +411,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
         </section>
       </div>
       )}
-      {phase !== 'battle' && <div className={west ? 'west-rack' : siege ? 'siege-rack' : undefined}><Rack state={state} token={token} act={act} /></div>}
+      {phase !== 'battle' && <div className={west ? 'west-rack' : siege ? 'siege-rack' : vault || vaultEnd ? 'vault-rack' : undefined}><Rack state={state} token={token} act={act} /></div>}
       <Reactions state={state} token={token} />
       {state.room.settings?.mode === 'team' && <TeamVoice state={state} token={token} />}
       <ActionFeed state={state} token={token} />

@@ -399,6 +399,10 @@ const en = {
   'er.NOT_TEAM_MODE': 'This room isn’t in team mode.', 'er.TEAM_NOT_FOUND': 'That team doesn’t exist.',
   'an.team_hit': 'Attack on {team}!',
   'tm.hint': 'Your team shares its banned letters. Score points, no strikes — crack the other team’s letters and hit them with cards.',
+  // vault heist (classic mode look)
+  'vt.code': 'Crew hideout', 'vt.case': 'Case file', 'vt.classified': 'Classified', 'vt.start': 'Start the heist · {n} in the crew',
+  'vt.ready': 'Ready', 'vt.busted': 'Busted', 'vt.alarm': 'Alarm', 'vt.caught': '{name} walked out with the gold.', 'vt.nobody': 'Nobody got away.',
+  'vt.you_cracked': 'You cracked the vault', 'vt.cracked_by': '{name} cracked the vault',
   // siege (team mode look)
   'fd.rally': 'King **{a}** sounds the Rally', 'fd.rally_sub': 'their words score double this round',
   'sg.words_in': 'The words are in', 'sg.call_two': 'Call a letter. It only breaks their wall if two of you call it.', 'sg.brace': 'Brace the walls',
