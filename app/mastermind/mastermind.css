@@ -38,7 +38,7 @@
   grid-template-columns: minmax(170px, 1fr) minmax(0, 960px) minmax(170px, 1fr);
   grid-template-rows: minmax(0, 1fr) auto auto;
   grid-template-areas: "left wall right" "left table right" "dock dock dock"; }
-.mm-room.stage > * { position: relative; z-index: 2; }
+.mm-room.stage > :where(.mm-hud, .mm-wall, .mm-tabletop, .mm-dock, .mm-side) { position: relative; z-index: 2; }
 .mm-hud { position: static !important; }
 .mm-casetag { position: fixed; top: 62px; left: 22px; z-index: 5; display: flex; flex-direction: column; line-height: 1.05; text-shadow: 0 2px 6px #000; }
 .mm-casetag span { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; opacity: .75; }
@@ -169,6 +169,7 @@
 .mm-folder .btn { background: linear-gradient(180deg, #3b2a17, #20150a); color: #ffd99a; border: 1px solid #7a5527; font-family: var(--display); letter-spacing: .12em; text-transform: uppercase; }
 .mm-folder.shake { animation: mm-shake .45s; }
 .mm-row { display: flex; gap: 10px; } .mm-row .input { flex: 1; min-width: 0; } .mm-row.wrap { flex-wrap: wrap; justify-content: center; }
+.mm-hint .hearts { color: #c4231d; font-size: 15px; letter-spacing: 2px; }
 .mm-hint { margin: 0; font: 600 12px 'Courier New', ui-monospace, monospace; color: #5a3d19; letter-spacing: .04em; }
 .mm-reveal { align-self: flex-start; background: rgba(60,38,12,.12); border: 1px dashed #7a5527; color: #3a2610; border-radius: 8px; padding: 6px 12px; font: 700 13px 'Courier New', ui-monospace, monospace; cursor: pointer; }
 .mm-reveal small { font-weight: 400; opacity: .75; }

@@ -180,7 +180,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
     }));
   }, []);
   const clueCount = s?.clues.length ?? 0;
-  useLayoutEffect(() => { const id = window.setTimeout(measure, 450); return () => window.clearTimeout(id); }, [measure, clueCount, s?.room.status, s?.room.round]);
+  useLayoutEffect(() => { const id = window.setTimeout(measure, 450); return () => window.clearTimeout(id); }, [measure, clueCount, s?.room.status, s?.room.round, s?.players.length]);
   useEffect(() => {
     const ro = new ResizeObserver(() => measure());
     if (corkRef.current) ro.observe(corkRef.current);
@@ -436,7 +436,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
                 <input className="input" placeholder="Type the word" maxLength={unknownLen ? 20 : slots.length} value={text} autoCapitalize="off" autoComplete="off" spellCheck={false} onChange={(e) => setText(e.target.value)} />
                 <button className="btn" disabled={busy || !text.trim()}>Accuse</button>
               </div>
-              <p className="mm-hint">{'❤'.repeat(Math.max(0, me.hp))}{'♡'.repeat(Math.max(0, 3 - me.hp))} · a wrong accusation costs a heart</p>
+              <p className="mm-hint"><span className="hearts">{'❤'.repeat(Math.max(0, me.hp))}{'♡'.repeat(Math.max(0, 3 - me.hp))}</span> · a wrong accusation costs a heart</p>
             </form>
           )}
 
