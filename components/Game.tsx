@@ -22,7 +22,7 @@ import { Battle } from './Battle';
 import { Reactions } from './Reactions';
 import { ActionFeed } from './ActionFeed';
 import { DuelHud } from './DuelHud';
-import { DuelWest } from './DuelWest';
+import { DuelWest, WestFinale } from './DuelWest';
 import '@/app/west.css';
 import { TeamHud, teamLabel } from './team';
 import { SettingsButton } from './SettingsPanel';
@@ -52,6 +52,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   // 1v1 duels play out on the full-screen western street
   const west = state.room.duel && state.players.filter((p) => !p.eliminated).length === 2
     && ['duel_intro', 'answer', 'reveal', 'guess', 'react'].includes(phase);
+  const westEnd = phase === 'finished' && state.room.settings?.mode === 'duel' && state.players.length === 2 && !!state.room.winner_id;
 
   const act: Act = useCallback(async (fn, okMsg) => {
     audio.unlock();
@@ -252,7 +253,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
             {me && midGame && <button className="textbtn danger" title={t('gm.quit')} aria-label={t('gm.quit')} onClick={() => setConfirmQuit(true)}><Icon name="logout" size={15} /></button>}
           </div>
         </div>
-      ) : west ? (
+      ) : west || westEnd ? (
         <div className="shell west-shell">
           <Header
             settings={<SettingsButton state={state} token={token} act={act} />}
@@ -264,7 +265,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
                   : <button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> {t('gm.leave')}</button>}
               </>
             } />
-          <DuelWest {...props} />
+          {westEnd ? <WestFinale state={state} token={token} act={act} /> : <DuelWest {...props} />}
         </div>
       ) : (
       <div className="shell">

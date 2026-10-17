@@ -405,6 +405,8 @@ const en = {
   'wst.showdown': 'Showdown', 'wst.high_noon': 'High noon', 'wst.locked': 'Locked in · +{n}', 'wst.hit': 'Hit. {name} is locked out of “{l}”.',
   'wst.miss': 'Missed. {name} isn’t locked out of “{l}”.', 'wst.aim': 'Call one of {name}’s locked letters.', 'wst.waiting': 'Waiting on {name}…',
   'wst.no_answer': 'no word', 'wst.strike': 'strike', 'wst.ready': 'Holstered', 'wst.quiet': 'Quiet out here. Nobody fired.',
+  'wst.reward': 'Reward: {n} pts', 'wst.winner': 'Winner', 'wst.you_won': 'You’re the last one standing.', 'wst.they_won': '{name} is the last one standing.',
+  'wst.stats': 'Full stats', 'wst.hide_stats': 'Hide stats', 'wst.again': 'Ride again',
   'wst.pick': 'Pick a letter, then draw.', 'wst.missed': '{name} fired and missed.', 'wst.you': 'You', 'wst.spectating': 'Watching from the saloon',
 } as const;
 

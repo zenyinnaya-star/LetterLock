@@ -13,6 +13,7 @@ import type { PublicPlayer, RoomState } from '@/lib/types';
 import { westArtVars } from '@/lib/westArt';
 import type { PhaseProps } from './phases';
 import { nameOf } from './ui';
+import { GameSummary } from './GameSummary';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const PHASE_SECS: Record<string, number> = { reveal: 6, guess: 20, react: 8, duel_intro: 6 };
@@ -334,6 +335,59 @@ export function DuelWest({ state, token, msLeft, act }: PhaseProps) {
         <div className="w-plate">{barLabel}</div>
         {bar}
       </div>
+    </div>
+  );
+}
+
+/* ───────── finale: the winner's poster ───────── */
+export function WestFinale({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
+  const t = useT();
+  const [stats, setStats] = useState(false);
+  const winner = state.players.find((p) => p.id === state.room.winner_id) ?? null;
+  const loser = state.players.find((p) => p.id !== state.room.winner_id) ?? null;
+  const isHost = state.me?.id === state.room.host_id;
+  const iWon = !!state.me && state.me.id === winner?.id;
+  useEffect(() => { const id = window.setTimeout(() => audio.gunshot(), 450); return () => window.clearTimeout(id); }, []);
+  return (
+    <div className="west p-finished" style={westArtVars}>
+      <div className="w-dust" aria-hidden>{Array.from({ length: 16 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>
+      <div className="w-vignette" aria-hidden />
+      <div className="w-post finale">
+        <motion.div className="w-poster" initial={{ y: -40, rotate: -4, opacity: 0 }} animate={{ y: 0, rotate: -1, opacity: 1 }} transition={{ type: 'spring', stiffness: 160, damping: 16 }}>
+          <div className="w-poster-body">
+            <div className="w-wanted-name">{winner ? (iWon ? t('wst.you') : winner.name) : '—'}</div>
+            <div className="w-mug">{winner?.avatar_url
+              // eslint-disable-next-line @next/next/no-img-element
+              ? <img src={winner.avatar_url} alt="" /> : <span className="w-portrait-fallback" />}</div>
+            <div className="w-reward">{t('wst.reward', { n: winner?.points ?? 0 })}</div>
+          </div>
+          <motion.div className="w-stamp" initial={{ scale: 2.6, opacity: 0, rotate: -26 }} animate={{ scale: 1, opacity: 1, rotate: -14 }} transition={{ delay: 0.6, type: 'spring', stiffness: 500, damping: 22 }}>
+            {t('wst.winner')}
+          </motion.div>
+        </motion.div>
+        <motion.div className="w-note" initial={{ rotate: -6, y: -14, opacity: 0 }} animate={{ rotate: -1.5, y: 0, opacity: 1 }} transition={{ delay: 0.9, type: 'spring', stiffness: 260, damping: 18 }}>
+          <span className="w-note-mid">{iWon ? t('wst.you_won') : winner ? t('wst.they_won', { name: winner.name }) : t('an.over')}</span>
+          <div className="w-shows">
+            {[winner, loser].filter(Boolean).map((p) => (
+              <div key={p!.id} className={`w-show${p === loser ? ' bad' : ''}`}>
+                <span>{p!.id === state.me?.id ? t('wst.you') : p!.name}</span>
+                <b>{t('du.pts', { n: p!.points })}</b>
+                <em>{t('wst.bounty', { n: p!.letter_count })}</em>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+      <div className="w-bar">
+        <div className="w-plate">{t('wst.showdown')}</div>
+        <div className="w-bar-foot">
+          <button type="button" className="w-link" onClick={() => setStats((v) => !v)}>{stats ? t('wst.hide_stats') : t('wst.stats')}</button>
+          {isHost && token
+            ? <button className="w-draw" onClick={() => void act(() => rpc.playAgain(token))}>{t('wst.again')}</button>
+            : <span className="w-status">{t('fn.wait')}</span>}
+        </div>
+      </div>
+      {stats && <div className="w-stats"><GameSummary state={state} /></div>}
     </div>
   );
 }
