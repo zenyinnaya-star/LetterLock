@@ -39,6 +39,29 @@ function tone(freq: number, start: number, dur: number, type: OscillatorType = '
   osc.stop(t + dur + 0.05);
 }
 
+/** Breathy whistle note with vibrato (western standoff melody). */
+function whistleNote(freq: number, start: number, dur: number, vol = 0.22, slideTo?: number) {
+  if (!getPrefs().sfx) return;
+  const c = ac();
+  if (!c || !master) return;
+  const t = c.currentTime + start;
+  const osc = c.createOscillator();
+  const lfo = c.createOscillator();
+  const lfoGain = c.createGain();
+  const g = c.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, t);
+  if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, t + dur * 0.85);
+  lfo.frequency.value = 5.5; lfoGain.gain.value = freq * 0.012;
+  lfo.connect(lfoGain).connect(osc.frequency);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.08);
+  g.gain.setValueAtTime(vol, t + dur * 0.7);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(g).connect(master);
+  osc.start(t); lfo.start(t); osc.stop(t + dur + 0.05); lfo.stop(t + dur + 0.05);
+}
+
 /** Short burst of filtered noise (impacts, whooshes, static). */
 function noise(start: number, dur: number, vol = 0.4, freq = 1200, q = 1, sweepTo?: number) {
   if (!getPrefs().sfx) return;
@@ -221,6 +244,26 @@ export const audio = {
   /** Mastermind: case cracked. */
   cracked() { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.09, 0.35, 'triangle', 0.28)); tone(1568, 0.38, 0.7, 'sine', 0.22); noise(0.3, 0.3, 0.2, 5000, 2, 9000); },
   /** Mastermind: case goes cold (time ran out). */
+  /** Western duel: the lone standoff whistle (rising, falling, held). */
+  standoff() { whistleNote(880, 0, 0.55, 0.2, 1175); whistleNote(1175, 0.6, 0.5, 0.2, 880); whistleNote(660, 1.2, 1.1, 0.18); noise(0, 2.4, 0.05, 500, 0.4, 300); },
+  /** Western duel: a dry gust of wind. */
+  wind() { noise(0, 1.8, 0.09, 420, 0.5, 900); noise(0.4, 1.4, 0.05, 1600, 0.8, 700); },
+  /** Western duel: spurs jingle (someone steps into the street). */
+  spurs() { [0, 0.09, 0.42, 0.5].forEach((t, i) => { tone(3200 + i * 140, t, 0.12, 'triangle', 0.06); tone(4700, t + 0.01, 0.08, 'sine', 0.04); }); },
+  /** Western duel: bullet whines off something. */
+  ricochet() { tone(2600, 0, 0.42, 'sine', 0.18, 700); noise(0, 0.05, 0.35, 3000, 1, 1500); },
+  /** Western duel: bullet bites into the wooden post / poster. */
+  thunk() { tone(140, 0, 0.12, 'sine', 0.55, 70); noise(0, 0.07, 0.45, 1100, 1.4, 400); noise(0.03, 0.2, 0.12, 2400, 2, 3500); },
+  /** Western duel: shield block, steel clang. */
+  clang() { [1760, 2350, 3130].forEach((f, i) => tone(f, 0, 0.7 - i * 0.15, 'sine', 0.14)); noise(0, 0.04, 0.4, 5000, 2, 3000); },
+  /** Western duel: hammer cocked back. */
+  cock() { noise(0, 0.02, 0.45, 3400, 6, 2200); noise(0.11, 0.025, 0.5, 2000, 6, 1300); },
+  /** Western duel: saloon register bell for points. */
+  register() { tone(2093, 0, 0.6, 'sine', 0.16); tone(3136, 0.02, 0.45, 'sine', 0.08); noise(0, 0.03, 0.2, 4000, 3); },
+  /** Western duel: victory phrase on the whistle. */
+  westWin() { whistleNote(660, 0, 0.3); whistleNote(880, 0.32, 0.3); whistleNote(1047, 0.64, 0.3); whistleNote(1319, 0.98, 1.0, 0.22, 1319); },
+  /** Western duel: defeat, a slow falling whistle and wind. */
+  westLose() { whistleNote(784, 0, 0.7, 0.18, 659); whistleNote(587, 0.75, 1.3, 0.16, 440); noise(0.4, 2.2, 0.06, 450, 0.5, 260); },
   /** Western duel: one sharp revolver shot with a short canyon echo. */
   gunshot() { noise(0, 0.09, 0.9, 2600, 0.6, 400); tone(70, 0, 0.32, 'sine', 0.8, 32); noise(0.02, 0.5, 0.25, 900, 0.5, 120); noise(0.32, 0.35, 0.08, 700, 0.6, 150); },
   /** Western duel: hammer falls on an empty chamber. */

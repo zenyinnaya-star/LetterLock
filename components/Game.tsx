@@ -23,6 +23,7 @@ import { Reactions } from './Reactions';
 import { ActionFeed } from './ActionFeed';
 import { DuelHud } from './DuelHud';
 import { DuelWest, WestFinale } from './DuelWest';
+import { westArtVars } from '@/lib/westArt';
 import '@/app/west.css';
 import { TeamHud, teamLabel } from './team';
 import { SettingsButton } from './SettingsPanel';
@@ -52,6 +53,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   // 1v1 duels play out on the full-screen western street
   const west = state.room.duel && state.players.filter((p) => !p.eliminated).length === 2
     && ['duel_intro', 'answer', 'reveal', 'guess', 'react'].includes(phase);
+  const westLobby = phase === 'lobby' && state.room.settings?.mode === 'duel';
   const westEnd = phase === 'finished' && state.room.settings?.mode === 'duel' && state.players.length === 2 && !!state.room.winner_id;
 
   const act: Act = useCallback(async (fn, okMsg) => {
@@ -96,8 +98,8 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           const teamWin = state.room.settings?.mode === 'team'
             ? (me && state.room.winner_team != null ? (state.teams?.find((x) => x.idx === state.room.winner_team)?.id === me.team_id ? 'won' : 'lost') : null)
             : (me && state.room.winner_id ? (state.room.winner_id === me.id ? 'won' : 'lost') : null);
-          if (teamWin === 'won') { audio.file('victory'); narrator.say('victory', { delay: 700 }); }
-          else if (teamWin === 'lost') { audio.file('defeat'); narrator.say('defeat', { delay: 700 }); }
+          if (teamWin === 'won') { if (!westEnd) audio.file('victory'); narrator.say('victory', { delay: 700 }); }
+          else if (teamWin === 'lost') { if (!westEnd) audio.file('defeat'); narrator.say('defeat', { delay: 700 }); }
           else audio.fanfare();
         }
       }
@@ -112,7 +114,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
       if (cur.phase === 'answer' && p.phase !== 'answer' && cur.letters > p.letters && !west) audio.attack();
     }
     prev.current = cur;
-  }, [phase, me, west]);
+  }, [phase, me, west, westEnd]);
 
   // music: site theme in the lobby, quieter under gameplay, the duel track for a 1v1
   const duel = state.room.duel;
@@ -251,6 +253,18 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           <div className="rpg-menu">
             <SettingsButton state={state} token={token} act={act} />
             {me && midGame && <button className="textbtn danger" title={t('gm.quit')} aria-label={t('gm.quit')} onClick={() => setConfirmQuit(true)}><Icon name="logout" size={15} /></button>}
+          </div>
+        </div>
+      ) : westLobby ? (
+        <div className="shell west-shell">
+          <Header
+            settings={<SettingsButton state={state} token={token} act={act} />}
+            right={<><span className="room-chip">{state.room.code}</span><button className="textbtn" onClick={() => void leave()}><Icon name="logout" size={15} /> {t('gm.leave')}</button></>} />
+          <div className="west p-lobby" style={westArtVars}>
+            <div className="w-dust" aria-hidden>{Array.from({ length: 12 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>
+            <div className="w-lobby">
+              <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} west />
+            </div>
           </div>
         </div>
       ) : west || westEnd ? (

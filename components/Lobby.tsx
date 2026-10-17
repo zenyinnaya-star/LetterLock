@@ -23,8 +23,8 @@ import { softSpring, spring } from './ui';
 
 const STYLE_KEYS = ['solo.s0', 'solo.s1', 'solo.s2', 'solo.s3'] as const;
 
-export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots }: {
-  state: RoomState; token: string | null; act: Act; onLeave: () => void; bots?: string[]; botInfo?: Record<string, { l: number; s: number }>; pingBots?: () => Promise<void>;
+export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots, west = false }: {
+  state: RoomState; token: string | null; act: Act; onLeave: () => void; bots?: string[]; botInfo?: Record<string, { l: number; s: number }>; pingBots?: () => Promise<void>; west?: boolean;
 }) {
   const t = useT();
   const [copied, setCopied] = useState(false);
@@ -73,12 +73,18 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
     <>
       <div className="col" style={{ alignItems: 'center', gap: 10 }}>
         <span className="label">{t('lb.code')}</span>
+        {west ? (
+          <motion.div className="w-sign" initial={{ y: -80, rotate: -6 }} animate={{ y: 0, rotate: [-6, 3, -1.5, 0] }} transition={{ duration: 1.2 }}>
+            <span>{state.room.code}</span>
+          </motion.div>
+        ) : (
         <div className="lobby-code">
           {state.room.code.split('').map((c, i) => (
             <motion.span key={i} className="tile" initial={{ y: -60, rotate: -20, opacity: 0 }} animate={{ y: 0, rotate: 0, opacity: 1 }}
               transition={{ ...spring, delay: i * 0.08 }}>{c}</motion.span>
           ))}
         </div>
+        )}
         <button className="btn sm ghost" onClick={copy}>
           <Icon name={copied ? 'check' : 'link'} size={15} /> {copied ? t('lb.copied') : t('lb.share')}
         </button>
@@ -88,10 +94,10 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
         <TeamLobby state={state} token={token} act={act} />
       ) : duelMode ? (
         <div className="duel-lobby">
-          <DuelSeat p={state.players[0]} meId={me?.id} side="left" />
+          <DuelSeat p={state.players[0]} meId={me?.id} side="left" west={west} />
           <motion.span className="dl-vs" initial={{ scale: 3, opacity: 0, rotate: -20 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 16, delay: 0.3 }}>VS</motion.span>
-          <DuelSeat p={state.players[1]} meId={me?.id} side="right" />
+            transition={{ type: 'spring', stiffness: 500, damping: 16, delay: 0.3 }}>{west ? 'vs' : 'VS'}</motion.span>
+          <DuelSeat p={state.players[1]} meId={me?.id} side="right" west={west} />
         </div>
       ) : (
       <div className="seats">
@@ -222,8 +228,23 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
   );
 }
 
-function DuelSeat({ p, meId, side }: { p: RoomState['players'][number] | undefined; meId: string | undefined; side: 'left' | 'right' }) {
+function DuelSeat({ p, meId, side, west = false }: { p: RoomState['players'][number] | undefined; meId: string | undefined; side: 'left' | 'right'; west?: boolean }) {
   const t = useT();
+  if (west) {
+    return (
+      <motion.div className={`w-seat ${side}${p ? '' : ' empty'}${p && p.id === meId ? ' me' : ''}`}
+        initial={{ y: -50, rotate: side === 'left' ? -8 : 8, opacity: 0 }} animate={{ y: 0, rotate: side === 'left' ? -2.5 : 2.5, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 220, damping: 16 }}>
+        <div className="w-seat-body">
+          <div className="w-mug">{p?.avatar_url
+            // eslint-disable-next-line @next/next/no-img-element
+            ? <img src={p.avatar_url} alt="" /> : <span className={p ? 'w-portrait-fallback' : 'w-mug-q'}>{p ? '' : '?'}</span>}</div>
+          <b>{p ? p.name : t('lb.wait_challenger')}</b>
+          <small>{p ? (p.id === meId ? t('lb.your_secret') : t('lb.secret_class')) : t('lb.share_code')}</small>
+        </div>
+      </motion.div>
+    );
+  }
   if (!p) {
     return (
       <motion.div className={`dl-seat empty ${side}`} animate={{ opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1.8 }}>

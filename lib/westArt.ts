@@ -10,6 +10,9 @@ const src = {
   clock: CDN + 'hf_20261017_052647_5b16cb21-e5a6-4cf3-b366-7cfa54e8ca52.png',
   leather: CDN + 'hf_20261017_052706_32989f88-42a6-4f85-8855-aa976f669c76.png',
   portrait: CDN + 'hf_20261017_052706_0812edf5-6e1a-4efa-8e69-1818b7f07282.png',
+  saloonWide: CDN + 'hf_20261017_054629_bbccb949-dea6-4901-b60c-1bc39a2cf68b.png',
+  saloonTall: CDN + 'hf_20261017_054629_98881217-f92a-43ac-a96d-986cb9b5d421.png',
+  sign: CDN + 'hf_20261017_054630_f7d08f39-416f-4732-b2b9-54bc32b6f0ae.png',
 };
 const css = (u: string, w: number) => `url("${img(u, w)}")`;
 
@@ -22,4 +25,7 @@ export const westArtVars = {
   '--w-clock': css(src.clock, 256),
   '--w-leather': css(src.leather, 1200),
   '--w-portrait': css(src.portrait, 256),
+  '--w-saloon-wide': css(src.saloonWide, 2048),
+  '--w-saloon-tall': css(src.saloonTall, 1080),
+  '--w-sign': css(src.sign, 640),
 } as React.CSSProperties;

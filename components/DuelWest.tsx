@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { prepareAnswer } from '@/lib/answer';
 import { audio } from '@/lib/audio';
 import { CHAOS_INFO } from '@/lib/classes';
@@ -54,12 +54,12 @@ function Cylinder({ lives, max, flip }: { lives: number; max: number; flip?: boo
   );
 }
 
-function Gunslinger({ p, side, me, max, hit }: { p: PublicPlayer; side: 'left' | 'right'; me: boolean; max: number; hit: number }) {
+function Gunslinger({ p, side, me, max, hit, portraitRef }: { p: PublicPlayer; side: 'left' | 'right'; me: boolean; max: number; hit: number; portraitRef: React.RefObject<HTMLDivElement | null> }) {
   const t = useT();
   const lives = Math.max(0, max - p.strikes);
   return (
     <div className={`w-gun ${side}${me ? ' me' : ''}`}>
-      <div className={`w-portrait${hit ? ' hit' : ''}`} key={`p${hit}`}>
+      <div ref={portraitRef} className={`w-portrait${hit ? ' hit' : ''}`} key={`p${hit}`}>
         {p.avatar_url
           // eslint-disable-next-line @next/next/no-img-element
           ? <img src={p.avatar_url} alt="" draggable={false} />
@@ -98,6 +98,33 @@ function bountySlots(count: number, revealed: string[]): (string | null)[] {
   }
   return out;
 }
+
+
+/* ───────── VFX: muzzle flash, tracer, smoke, splinters, sparks, dust ───────── */
+type Pt = { x: number; y: number };
+type Fx = { id: number; from: Pt; to: Pt; kind: 'hit' | 'miss' | 'block' };
+function center(el: Element | null | undefined, dy = 0): Pt | null {
+  if (!el) return null;
+  const r = el.getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 + dy * r.height };
+}
+const FxShot = memo(function FxShot({ fx }: { fx: Fx }) {
+  const miss = fx.kind === 'miss';
+  // a miss sails past the target and off at an angle
+  const to = miss ? { x: fx.to.x + (fx.to.x - fx.from.x) * 0.35 + 40, y: fx.to.y + 70 } : fx.to;
+  const dx = to.x - fx.from.x, dy = to.y - fx.from.y;
+  const len = Math.hypot(dx, dy), ang = (Math.atan2(dy, dx) * 180) / Math.PI;
+  return (
+    <>
+      <i className="w-muzzle" style={{ left: fx.from.x, top: fx.from.y }} />
+      <i className="w-smoke" style={{ left: fx.from.x, top: fx.from.y }} />
+      <i className="w-tracer" style={{ left: fx.from.x, top: fx.from.y, width: len, transform: `rotate(${ang}deg)` }} />
+      {fx.kind === 'hit' && <span className="w-splinters" style={{ left: to.x, top: to.y }}>{Array.from({ length: 9 }, (_, i) => <i key={i} style={{ ['--a' as string]: `${i * 40 + 10}deg` }} />)}</span>}
+      {fx.kind === 'block' && <span className="w-sparks" style={{ left: to.x, top: to.y }}>{Array.from({ length: 10 }, (_, i) => <i key={i} style={{ ['--a' as string]: `${i * 36}deg` }} />)}</span>}
+      {miss && <i className="w-dustpuff" style={{ left: to.x, top: Math.min(to.y, (typeof window !== 'undefined' ? window.innerHeight : 800) - 60) }} />}
+    </>
+  );
+});
 
 /* ───────── main ───────── */
 
@@ -161,28 +188,76 @@ export function DuelWest({ state, token, msLeft, act }: PhaseProps) {
     return () => window.removeEventListener('keydown', onKey);
   });
 
-  /* event effects: shots, misses, strikes */
+  /* event effects: shots, misses, strikes, cards */
   const [shot, setShot] = useState(0);        // white flash
   const [jolt, setJolt] = useState(0);        // poster jolt (CSS animation, restarted via key)
   const [hole, setHole] = useState<string | null>(null);
   const [hitL, setHitL] = useState(0), [hitR, setHitR] = useState(0);
-  const prev = useRef<{ oppRev: number; myRev: number; strikesL: number; strikesR: number; guessKey: string } | null>(null);
+  const [hurt, setHurt] = useState(0);        // red pulse when I get hit
+  const [fxs, setFxs] = useState<Fx[]>([]);
+  const lRef = useRef<HTMLDivElement>(null), rRef = useRef<HTMLDivElement>(null), posterRef = useRef<HTMLDivElement>(null);
+  const portraitOf = (id: string | null | undefined) => (id && id === left?.id ? lRef.current : id && id === right?.id ? rRef.current : null);
+  function fireFx(fromId: string | null | undefined, to: Pt | null, kind: Fx['kind'], delay = 0) {
+    const from = center(portraitOf(fromId));
+    if (!from || !to) return;
+    window.setTimeout(() => {
+      const f = { id: Date.now() + Math.random(), from, to, kind };
+      setFxs((v) => [...v.slice(-6), f]);
+      window.setTimeout(() => setFxs((v) => v.filter((x) => x.id !== f.id)), 1400);
+    }, delay);
+  }
+  const prev = useRef<{ oppRev: number; myRev: number; strikesL: number; strikesR: number; guessKey: string; phase: string; pend: string; pts: number } | null>(null);
   useEffect(() => {
     if (!left || !right) return;
-    const cur = { oppRev: right.revealed.length, myRev: left.revealed.length, strikesL: left.strikes, strikesR: right.strikes, guessKey: me?.guess ? `${me.guess.letter}${me.guess.correct}` : '' };
+    const pendKey = state.pending.map((p) => `${p.id}:${p.status}`).join(',');
+    const cur = { oppRev: right.revealed.length, myRev: left.revealed.length, strikesL: left.strikes, strikesR: right.strikes,
+      guessKey: me?.guess ? `${me.guess.letter}${me.guess.correct}` : '', phase, pend: pendKey, pts: left.points };
     const p = prev.current;
     prev.current = cur;
     if (!p) return;
-    if (cur.oppRev > p.oppRev) { audio.gunshot(); setShot(Date.now()); setJolt(Date.now()); setHole(right.revealed[right.revealed.length - 1]); }
-    else if (cur.guessKey && cur.guessKey !== p.guessKey && me?.guess && !me.guess.correct) audio.hammer();
-    if (cur.myRev > p.myRev) { window.setTimeout(() => audio.gunshot(), 120); setHitL(Date.now()); }
-    if (cur.strikesL > p.strikesL) setHitL(Date.now());
+    const posterPt = center(posterRef.current, -0.08);
+    // my shot at their poster
+    if (cur.guessKey && cur.guessKey !== p.guessKey && me?.guess) {
+      const ok = me.guess.correct;
+      audio.cock();
+      window.setTimeout(() => { audio.gunshot(); if (ok) { audio.thunk(); setShot(Date.now()); setJolt(Date.now()); } else audio.ricochet(); }, 220);
+      fireFx(left.id, posterPt, ok ? 'hit' : 'miss', 220);
+      if (ok) setHole(me.guess.letter);
+    } else if (cur.oppRev > p.oppRev) {
+      audio.thunk(); setJolt(Date.now()); setHole(right.revealed[right.revealed.length - 1]);
+    }
+    // they cracked one of my letters
+    if (cur.myRev > p.myRev) {
+      window.setTimeout(() => { audio.gunshot(); audio.thunk(); }, 120);
+      fireFx(right.id, center(lRef.current), 'hit', 120); setHitL(Date.now()); setHurt(Date.now());
+    }
+    // their misses show up once the guesses are tallied
+    if (cur.phase === 'react' && p.phase !== 'react') {
+      state.guess_results.filter((g) => g.guesser_id !== left.id && !g.correct && g.target_id === left.id).forEach((_, i) => {
+        window.setTimeout(() => { audio.gunshot(); audio.ricochet(); }, 300 + i * 500);
+        fireFx(right.id, center(lRef.current), 'miss', 300 + i * 500);
+      });
+    }
+    // cards: attacks fly, shields clang
+    if (cur.pend !== p.pend) {
+      const before = new Map(p.pend.split(',').filter(Boolean).map((x) => x.split(':') as [string, string]));
+      state.pending.forEach((pd) => {
+        const was = before.get(String(pd.id));
+        const toPt = center(portraitOf(pd.target_id));
+        if (!was) { audio.gunshot(); fireFx(pd.source_id, toPt, 'hit'); if (pd.target_id === left.id) { setHitL(Date.now()); setHurt(Date.now()); } else setHitR(Date.now()); }
+        else if (was !== 'blocked' && pd.status === 'blocked') { audio.clang(); fireFx(pd.source_id, toPt, 'block'); }
+      });
+    }
+    if (cur.strikesL > p.strikesL) { setHitL(Date.now()); setHurt(Date.now()); }
     if (cur.strikesR > p.strikesR) setHitR(Date.now());
-  }, [left, right, me?.guess]);
+    if (cur.pts > p.pts && cur.phase === 'reveal') audio.register();
+  }, [left, right, me?.guess, phase, state.pending, state.guess_results]);
 
   /* countdown bell for the standoff */
+  useEffect(() => { if (phase === 'duel_intro') { audio.standoff(); audio.spurs(); } }, [phase]);
   useEffect(() => {
     if (phase !== 'duel_intro') return;
+    if (secs === 4) audio.wind();
     if (secs === 3 || secs === 2 || secs === 1) audio.bell(secs !== 1);
     if (secs === 3) narrator.say('three'); else if (secs === 2) narrator.say('two'); else if (secs === 1) narrator.say('one');
     if (secs <= 0) { audio.gunshot(); setShot(Date.now()); setJolt(Date.now()); }
@@ -241,7 +316,18 @@ export function DuelWest({ state, token, msLeft, act }: PhaseProps) {
   let barLabel = t('wst.showdown');
   let bar: React.ReactNode = <div className="w-bar-msg">{phase === 'duel_intro' ? t('wst.high_noon') : t('wst.showdown')}…</div>;
   if (!canPlay) {
-    bar = <div className="w-bar-msg">{t('wst.spectating')}</div>;
+    barLabel = t('wst.spectating');
+    const done = (p: PublicPlayer) => (phase === 'answer' ? p.answered : phase === 'guess' ? p.guessed : phase === 'react' ? p.react_ready : true);
+    bar = (
+      <div className="w-spec">
+        {[left, right].map((p) => (
+          <div key={p.id} className={`w-spec-row${done(p) ? ' done' : ''}`}>
+            <b>{p.name}</b>
+            <span>{phase === 'answer' || phase === 'guess' || phase === 'react' ? (done(p) ? t('wst.drawn') : t('wst.thinking')) : t('du.pts', { n: p.points })}</span>
+          </div>
+        ))}
+      </div>
+    );
   } else if (phase === 'answer') {
     barLabel = t('wst.your_word');
     const boxes = Math.max(7, typed.length + (typed.length < 12 ? 1 : 0));
@@ -297,16 +383,18 @@ export function DuelWest({ state, token, msLeft, act }: PhaseProps) {
     <div ref={rootRef} className={`west p-${phase}${secs <= 5 && secs > 0 && (phase === 'answer' || phase === 'guess') ? ' tense' : ''}`} style={westArtVars}>
       <div className="w-dust" aria-hidden>{Array.from({ length: 16 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>
       <div className="w-vignette" aria-hidden />
+      <div className="w-fx" aria-hidden>{fxs.map((f) => <FxShot key={f.id} fx={f} />)}</div>
+      {hurt > 0 && <div key={`hurt${hurt}`} className="w-hurt" aria-hidden />}
       <AnimatePresence>{shot > 0 && <motion.div key={shot} className="w-flash" initial={{ opacity: 0.85 }} animate={{ opacity: 0 }} transition={{ duration: 0.5 }} onAnimationComplete={() => setShot(0)} />}</AnimatePresence>
 
       <div className="w-top">
-        <Gunslinger p={left} side="left" me={left.id === me?.id} max={max} hit={hitL} />
+        <Gunslinger p={left} side="left" me={left.id === me?.id} max={max} hit={hitL} portraitRef={lRef} />
         <TownClock msLeft={msLeft} total={total} />
-        <Gunslinger p={right} side="right" me={right.id === me?.id} max={max} hit={hitR} />
+        <Gunslinger p={right} side="right" me={right.id === me?.id} max={max} hit={hitR} portraitRef={rRef} />
       </div>
 
       <div className="w-post">
-        <div className={`w-poster${jolt ? ' jolt' : ''}`} key={`poster${jolt}`}>
+        <div ref={posterRef} className={`w-poster${jolt ? ' jolt' : ''}`} key={`poster${jolt}`}>
           <div className="w-poster-body">
             <div className="w-wanted-name">{t('wst.wanted_for', { name: target.id === me?.id ? t('wst.you') : target.name })}</div>
             {slots.length > 0 ? (
@@ -347,43 +435,52 @@ export function WestFinale({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
   const loser = state.players.find((p) => p.id !== state.room.winner_id) ?? null;
   const isHost = state.me?.id === state.room.host_id;
   const iWon = !!state.me && state.me.id === winner?.id;
-  useEffect(() => { const id = window.setTimeout(() => audio.gunshot(), 450); return () => window.clearTimeout(id); }, []);
+  const iLost = !!state.me && !!loser && state.me.id === loser.id;
+  const face = iLost ? loser! : winner; // a loser sees their own poster, shot through
+  useEffect(() => {
+    const a = window.setTimeout(() => { audio.gunshot(); if (iLost) audio.thunk(); }, 450);
+    const b = window.setTimeout(() => (iLost ? audio.westLose() : audio.westWin()), 1300);
+    return () => { window.clearTimeout(a); window.clearTimeout(b); };
+  }, [iLost]);
   return (
-    <div className="west p-finished" style={westArtVars}>
+    <div className={`west p-finished${iLost ? ' lost' : ' won'}`} style={westArtVars}>
       <div className="w-dust" aria-hidden>{Array.from({ length: 16 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>
       <div className="w-vignette" aria-hidden />
+      {iLost && <div className="w-dusk" aria-hidden />}
       <div className="w-post finale">
-        <motion.div className="w-poster" initial={{ y: -40, rotate: -4, opacity: 0 }} animate={{ y: 0, rotate: -1, opacity: 1 }} transition={{ type: 'spring', stiffness: 160, damping: 16 }}>
+        <motion.div className="w-poster" initial={{ y: -40, rotate: -4, opacity: 0 }} animate={{ y: 0, rotate: iLost ? 3 : -1, opacity: 1 }} transition={{ type: 'spring', stiffness: 160, damping: 16 }}>
           <div className="w-poster-body">
-            <div className="w-wanted-name">{winner ? (iWon ? t('wst.you') : winner.name) : '—'}</div>
-            <div className="w-mug">{winner?.avatar_url
+            <div className="w-wanted-name">{face ? (face.id === state.me?.id ? t('wst.you') : face.name) : '—'}</div>
+            <div className={`w-mug${iLost ? ' shot' : ''}`}>{face?.avatar_url
               // eslint-disable-next-line @next/next/no-img-element
-              ? <img src={winner.avatar_url} alt="" /> : <span className="w-portrait-fallback" />}</div>
-            <div className="w-reward">{t('wst.reward', { n: winner?.points ?? 0 })}</div>
+              ? <img src={face.avatar_url} alt="" /> : <span className="w-portrait-fallback" />}
+              {iLost && <><i className="w-hole" style={{ left: '38%', top: '34%' }} /><i className="w-hole sm" style={{ left: '64%', top: '58%' }} /></>}
+            </div>
+            <div className="w-reward">{iLost ? t('wst.reward_lost', { name: winner?.name ?? '' }) : t('wst.reward', { n: winner?.points ?? 0 })}</div>
           </div>
-          <motion.div className="w-stamp" initial={{ scale: 2.6, opacity: 0, rotate: -26 }} animate={{ scale: 1, opacity: 1, rotate: -14 }} transition={{ delay: 0.6, type: 'spring', stiffness: 500, damping: 22 }}>
-            {t('wst.winner')}
+          <motion.div className={`w-stamp${iLost ? ' lost' : ''}`} initial={{ scale: 2.6, opacity: 0, rotate: -26 }} animate={{ scale: 1, opacity: 1, rotate: iLost ? 10 : -14 }} transition={{ delay: 0.6, type: 'spring', stiffness: 500, damping: 22 }}>
+            {iLost ? t('wst.defeated') : t('wst.winner')}
           </motion.div>
         </motion.div>
         <motion.div className="w-note" initial={{ rotate: -6, y: -14, opacity: 0 }} animate={{ rotate: -1.5, y: 0, opacity: 1 }} transition={{ delay: 0.9, type: 'spring', stiffness: 260, damping: 18 }}>
-          <span className="w-note-mid">{iWon ? t('wst.you_won') : winner ? t('wst.they_won', { name: winner.name }) : t('an.over')}</span>
+          <span className="w-note-mid">{iWon ? t('wst.you_won') : iLost ? t('wst.you_lost', { name: winner?.name ?? '' }) : winner ? t('wst.they_won', { name: winner.name }) : t('an.over')}</span>
           <div className="w-shows">
             {[winner, loser].filter(Boolean).map((p) => (
               <div key={p!.id} className={`w-show${p === loser ? ' bad' : ''}`}>
                 <span>{p!.id === state.me?.id ? t('wst.you') : p!.name}</span>
                 <b>{t('du.pts', { n: p!.points })}</b>
-                <em>{t('wst.bounty', { n: p!.letter_count })}</em>
+                <em>{p === winner ? t('wst.standing') : t('wst.fell')}</em>
               </div>
             ))}
           </div>
         </motion.div>
       </div>
       <div className="w-bar">
-        <div className="w-plate">{t('wst.showdown')}</div>
+        <div className="w-plate">{iLost ? t('wst.rematch_q') : t('wst.showdown')}</div>
         <div className="w-bar-foot">
           <button type="button" className="w-link" onClick={() => setStats((v) => !v)}>{stats ? t('wst.hide_stats') : t('wst.stats')}</button>
           {isHost && token
-            ? <button className="w-draw" onClick={() => void act(() => rpc.playAgain(token))}>{t('wst.again')}</button>
+            ? <button className="w-draw" onClick={() => void act(() => rpc.playAgain(token))}>{iLost ? t('wst.revenge') : t('wst.again')}</button>
             : <span className="w-status">{t('fn.wait')}</span>}
         </div>
       </div>
