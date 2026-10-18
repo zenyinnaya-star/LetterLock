@@ -332,3 +332,7 @@
   .mm-invite.on-board .mm-plate { width: 100%; }
   .mm-lobby-board { padding: 0; }
 }
+.mm-room.s-finished .mm-wall { padding-top: 34px; }
+.mm-room.s-finished .mm-podium { padding-top: 96px; }
+.mm-room.s-finished .mm-podium .mm-photo { width: 104px; } .mm-room.s-finished .mm-podium .block { width: 150px; }
+@media (max-height: 760px) { .mm-room.s-finished .mm-podium { padding-top: 84px; } .mm-room.s-finished .mm-podium .p1 .block { height: 84px; } .mm-room.s-finished .mm-podium .p2 .block { height: 62px; } }
