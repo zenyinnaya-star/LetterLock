@@ -299,19 +299,9 @@ body:has(.vault.p-lobby) .rx-dock { top: auto !important; bottom: 10px !importan
 .drawer-body .narrow-col .label { text-align: left; }
 .drawer-bar b { flex: none; }
 
-/* Classic upgrade (from combined mockup): CCTV wall at left, blueprint sheet at right of the hideout lobby */
+/* Classic v3: generated CCTV wall and blueprint sheet flank the hideout lobby */
 @media (min-width: 1100px) {
-  .vault.p-lobby::before, .vault.p-lobby::after { content: ''; position: fixed; z-index: 1; pointer-events: none; }
-  .vault.p-lobby::before { left: 24px; top: 96px; width: 270px; height: 230px;
-    background:
-      linear-gradient(135deg, rgba(120,200,230,.0) 40%, rgba(120,200,230,.28)),
-      repeating-linear-gradient(180deg, rgba(0,0,0,.25) 0 2px, transparent 2px 4px),
-      linear-gradient(#0d2a36, #06161e);
-    background-size: 50% 50%, 50% 50%, 50% 50%; background-repeat: space; border: 3px solid #1a2128; box-shadow: 0 0 0 1px #3b4856, 0 0 30px rgba(80,180,220,.25), inset 0 0 20px rgba(80,180,220,.25); opacity: .85; }
-  .vault.p-lobby::after { right: 24px; top: 180px; width: 280px; height: 300px; border: 1px solid rgba(110,170,255,.5);
-    background:
-      radial-gradient(circle at 50% 40%, transparent 0 34px, rgba(120,170,255,.6) 35px 36px, transparent 37px 62px, rgba(120,170,255,.45) 63px 64px, transparent 65px),
-      repeating-linear-gradient(0deg, rgba(120,170,255,.18) 0 1px, transparent 1px 22px),
-      repeating-linear-gradient(90deg, rgba(120,170,255,.18) 0 1px, transparent 1px 22px),
-      linear-gradient(160deg, rgba(20,48,110,.75), rgba(8,22,60,.8)); box-shadow: 0 0 26px rgba(80,130,255,.25), 0 12px 24px rgba(0,0,0,.5); transform: rotate(1.5deg); opacity: .9; }
+  .vault.p-lobby::before, .vault.p-lobby::after { content: ''; position: fixed; z-index: 1; pointer-events: none; background-repeat: no-repeat; }
+  .vault.p-lobby::before { left: 24px; top: 96px; width: 290px; aspect-ratio: 1.18; background: var(--v-cctv) 50% 50% / 185% 122%; filter: drop-shadow(0 0 24px rgba(80,200,220,.35)); }
+  .vault.p-lobby::after { right: 24px; top: 170px; width: 250px; aspect-ratio: .68; background: var(--v-blueprint) 50% 50% / 131% 119%; filter: drop-shadow(0 12px 22px rgba(0,0,0,.55)); }
 }

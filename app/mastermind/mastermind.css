@@ -286,3 +286,12 @@
 .mm-lobby-board { margin-top: 6px; }
 .mm-invite.on-board .mm-invite-txt .btn { font-size: 11px; padding: 6px 10px; }
 .mm-invite.on-board .mm-qr svg { width: 96px; height: 96px; }
+
+/* Mastermind v3: generated brass room-code plate and engraved plaque behind the QR */
+.mm-plate { width: 220px; aspect-ratio: 2.75; justify-content: center; border: 0; border-radius: 0; box-shadow: none; filter: drop-shadow(0 8px 10px rgba(0,0,0,.55));
+  background: var(--art-brass) 50% 50% / 171% 263% no-repeat; }
+.mm-plate span { color: #4a3510; font-weight: 700; }
+.mm-plate b { color: #2a1c05; text-shadow: 0 1px 0 rgba(255,240,190,.5); }
+.mm-invite.on-board { width: 176px; aspect-ratio: .64; justify-content: center; padding: 22px 16px; border-radius: 0; box-shadow: none; filter: drop-shadow(0 10px 14px rgba(0,0,0,.6));
+  background: var(--art-plaque) 50% 49% / 139% 123% no-repeat; }
+.mm-invite.on-board .mm-plate { filter: none; width: 100%; }

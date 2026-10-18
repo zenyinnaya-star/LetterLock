@@ -3,6 +3,8 @@ import { img } from './mmArt';
 
 const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/';
 const src = {
+  cctv: CDN + 'hf_20261018_161525_c1a6509b-137b-492d-9511-d7fe1e6e6ac7.png',
+  blueprint: CDN + 'hf_20261018_161526_02f92cb2-6a29-498b-beda-5e18319d2909.png',
   officeWide: CDN + 'hf_20261017_232726_36c0d679-51eb-477c-9092-641e43961dde.png',
   officeTall: CDN + 'hf_20261017_232726_c72f1e45-8600-4e20-abfc-a350fa7c30fa.png',
   vaultWide: CDN + 'hf_20261017_232754_af7f01b4-86a8-4ed5-bccd-3bde7404c66e.png',
@@ -15,6 +17,8 @@ const css = (u: string, w: number) => `url("${img(u, w)}")`;
 /** CSS custom properties consumed by app/vault.css */
 export const vaultArtVars = {
   '--v-office-wide': css(src.officeWide, 2048),
+  '--v-cctv': css(src.cctv, 1200),
+  '--v-blueprint': css(src.blueprint, 1080),
   '--v-office-tall': css(src.officeTall, 1080),
   '--v-vault-wide': css(src.vaultWide, 2048),
   '--v-vault-tall': css(src.vaultTall, 1080),
