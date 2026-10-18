@@ -290,6 +290,11 @@ body:has(.vault:not(.p-lobby)) .rx-dock { top: auto; bottom: calc(var(--rack-h, 
 .drawer-body .bot-row .label { flex: 0 0 100%; text-align: center; }
 .drawer-body .bot-styles { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; flex: 0 0 100%; }
 .drawer-body .bot-styles .chip { flex: none; }
-.drawer-body .rules-strip { gap: 6px; }
+.drawer-body .rules-strip { gap: 6px; max-width: 100%; box-sizing: border-box; }
+.drawer-body .rules-strip > span { min-width: 0; max-width: 100%; font-size: 12px; padding: 4px 9px; white-space: normal; }
+/* phone lobby: keep the reactions button off the corkboard */
+body:has(.vault.p-lobby) .rx-dock { top: auto !important; bottom: 10px !important; right: 6px !important; transform: scale(.78); transform-origin: bottom right; z-index: 20; }
+@media (min-width: 900px) { body:has(.vault.p-lobby) .rx-dock { transform: none; right: 18px !important; bottom: 18px !important; } }
+.v-lobby { padding-bottom: 72px; }
 .drawer-body .narrow-col .label { text-align: left; }
 .drawer-bar b { flex: none; }
