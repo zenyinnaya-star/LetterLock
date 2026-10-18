@@ -282,3 +282,7 @@
 .mm-room.s-lobby .mm-cork { min-height: 380px; padding-bottom: 34px; }
 .mm-room.s-lobby .mm-tabletop .mm-cta:not(:disabled) { font-size: clamp(18px, 2.4vw, 26px); letter-spacing: .14em; padding: 16px 54px; }
 @media (max-width: 760px) { .mm-lobby-board { grid-template-columns: 1fr; } .mm-invite.on-board { flex-direction: row; justify-self: center; } }
+.mm-room.s-lobby .mm-cork { min-height: 470px; }
+.mm-lobby-board { margin-top: 6px; }
+.mm-invite.on-board .mm-invite-txt .btn { font-size: 11px; padding: 6px 10px; }
+.mm-invite.on-board .mm-qr svg { width: 96px; height: 96px; }
