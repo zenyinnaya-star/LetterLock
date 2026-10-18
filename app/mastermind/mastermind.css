@@ -298,8 +298,8 @@
 
 /* ===== v4 fixes (QA pass): stable layout, phone layout, readable paper, stamps ===== */
 @media (min-width: 981px) and (min-height: 601px) {
-  .mm-tabletop { position: relative; min-height: 190px; }
-  .mm-dock { min-height: 200px; justify-content: flex-start; }
+  .mm-tabletop { position: relative; min-height: 180px; }
+  .mm-dock { min-height: 292px; justify-content: flex-start; }
   .mm-room.stage .mm-cork { min-height: 300px; }
 }
 .mm-toast { position: absolute; left: 50%; bottom: 4px; translate: -50% 0; white-space: nowrap; z-index: 3; }
