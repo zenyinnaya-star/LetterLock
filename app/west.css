@@ -273,3 +273,15 @@ body:has(.west:not(.p-lobby)) .rx-dock { top: 168px; bottom: auto !important; ri
 .w-banner span { display: block; white-space: nowrap; line-height: 1.1; }
 .w-banner { margin-left: auto; margin-right: auto; max-width: calc(100vw - 24px); }
 @media (max-width: 600px) { .w-banner { padding: 10px 22px 12px; } .w-banner span { font-size: clamp(22px, 8vw, 40px); } }
+
+/* Duel lobby: wooden notice board behind the room sign, wanted cards and start plate (matches mockup) */
+.p-lobby .w-lobby { position: relative; width: min(820px, 100%); padding: 20px 26px 28px; border-radius: 6px;
+  background:
+    radial-gradient(circle at 14px 14px, #6a6a6e 0 4px, #2a2a2c 5px, transparent 6px) top left / 100% 100% no-repeat,
+    repeating-linear-gradient(90deg, transparent 0 138px, rgba(0,0,0,.45) 138px 141px),
+    linear-gradient(180deg, #6b4524, #4b2f17 40%, #5a3a1d);
+  box-shadow: inset 0 0 0 3px #2b1a0b, inset 0 0 60px rgba(0,0,0,.45), 0 18px 50px rgba(0,0,0,.65); }
+.p-lobby .w-lobby::before, .p-lobby .w-lobby::after { content: ''; position: absolute; top: 10px; width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #b9b9bd, #4a4a4e); box-shadow: 0 2px 3px #000; }
+.p-lobby .w-lobby::before { left: 10px; } .p-lobby .w-lobby::after { right: 10px; }
+.p-lobby .w-sign { margin-top: 6px; }
+.p-lobby .w-lobby .btn.lg:not(:disabled) { font-size: clamp(18px, 2.4vw, 24px); letter-spacing: .14em; box-shadow: 0 0 0 2px #7c5a22, 0 8px 18px rgba(0,0,0,.5); }
