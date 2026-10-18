@@ -401,7 +401,7 @@ const en = {
   'tm.hint': 'Your team shares its banned letters. Score points, no strikes — crack the other team’s letters and hit them with cards.',
   // vault heist (classic mode look)
   'vt.code': 'Crew hideout', 'vt.case': 'Case file', 'vt.classified': 'Classified', 'vt.start': 'Start the heist · {n} in the crew',
-  'vt.ready': 'Ready', 'vt.busted': 'Busted', 'vt.alarm': 'Alarm', 'vt.caught': '{name} walked out with the gold.', 'vt.nobody': 'Nobody got away.',
+  'vt.ready': 'Ready', 'vt.victory': 'Victory', 'vt.defeat': 'Defeat', 'vt.busted': 'Busted', 'vt.alarm': 'Alarm', 'vt.caught': '{name} walked out with the gold.', 'vt.nobody': 'Nobody got away.',
   'lb.scan': 'Scan to join', 'lb.add_bot': 'Add bot', 'lb.settings': 'Game settings',
   'vt.final': 'Final two', 'vt.last_safe': 'Last safe standing', 'vt.open': 'OPEN!', 'vt.rules': '+1 lock each · {n}-second rounds · strikes never reset',
   'vt.you_cracked': 'You cracked the vault', 'vt.cracked_by': '{name} cracked the vault',

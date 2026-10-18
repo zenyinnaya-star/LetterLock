@@ -320,3 +320,12 @@ body:has(.vault.p-lobby) .rx-dock { top: auto !important; bottom: 10px !importan
 .v-safe { background: linear-gradient(160deg, rgba(46,42,36,.94), rgba(18,17,16,.94)); border-color: #9a7632; }
 .v-safe.me { border-color: #f0cd78; box-shadow: 0 0 0 1px #f0cd78, 0 0 18px rgba(240,205,120,.28), 0 6px 14px rgba(0,0,0,.55); }
 .vault-rack .rack-inner { background: linear-gradient(180deg, rgba(36,33,30,.95), rgba(14,13,12,.95)); border-color: #9a7632; }
+
+/* finale verdict banner */
+.v-verdict { display:flex; flex-direction:column; align-items:center; gap:4px; padding:6px 0 14px; text-align:center; }
+.v-verdict b { font:900 clamp(40px,8vw,76px)/1 var(--display); letter-spacing:.14em; text-transform:uppercase; }
+.v-verdict span { font:700 13px var(--mono); letter-spacing:.2em; text-transform:uppercase; }
+.vault.p-finished.won .v-verdict b { color:#ffe7a0; text-shadow:0 4px 0 #5e4314, 0 0 34px rgba(255,200,80,.7); }
+.vault.p-finished.won .v-verdict span { color:#e8c46a; }
+.vault.p-finished.lost .v-verdict b { color:#ff4d4d; text-shadow:0 4px 0 #3a0606, 0 0 34px rgba(255,40,40,.7); }
+.vault.p-finished.lost .v-verdict span { color:#ffd0d0; }

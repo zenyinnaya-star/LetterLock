@@ -197,6 +197,10 @@ export function VaultFinale({ state, children }: { state: RoomState; children: R
         )}
       </AnimatePresence>
       <div className={`v-door v-final${intro ? ' hidden' : ''}`}>
+        <div className="v-verdict" role="status">
+          <b>{iLost ? t('vt.defeat') : t('vt.victory')}</b>
+          <span>{iLost ? (winner ? t('vt.caught', { name: winner.name }) : t('vt.nobody')) : t('vt.you_cracked')}</span>
+        </div>
         <div className="v-content">{children}</div>
       </div>
     </div>
