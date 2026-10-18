@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import { saveAvatar } from '@/lib/avatar';
 import { rpc } from '@/lib/rpc';
 import { WORD_LANGS } from '@/lib/i18n';
@@ -30,6 +31,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
   const [copied, setCopied] = useState(false);
   const [botStyle, setBotStyle] = useState(0);
   const [story, setStory] = useState(false);
+  const [drawer, setDrawer] = useState(false);
   const [picks, setPicks] = useState<{ player_id: string; hero: string }[]>([]);
   useEffect(() => {
     try { if (sessionStorage.getItem(`letterlock:story:${state.room.code}`) === '1') setStory(true); } catch { /* ignore */ }
@@ -72,6 +74,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
 
   return (
     <>
+      <div className="lobby-top">
       <div className="col" style={{ alignItems: 'center', gap: 10 }}>
         <span className="label">{siege ? t('sg.code') : vault ? t('vt.code') : t('lb.code')}</span>
         {vault ? (
@@ -99,6 +102,13 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
         <button className="btn sm ghost" onClick={copy}>
           <Icon name={copied ? 'check' : 'link'} size={15} /> {copied ? t('lb.copied') : t('lb.share')}
         </button>
+      </div>
+      {url && (
+        <div className="lobby-qr" title={url}>
+          <div className="qr-frame"><QRCodeSVG value={url} size={112} level="M" marginSize={1} bgColor="#ffffff" fgColor="#0b0f14" /></div>
+          <span>{t('lb.scan')}</span>
+        </div>
+      )}
       </div>
 
       {teamMode ? (
@@ -147,6 +157,14 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
         </div>
       )}
 
+      <div className={`lobby-drawer${drawer ? ' open' : ''}`}>
+        <button type="button" className="drawer-bar" aria-expanded={drawer} onClick={() => setDrawer((v) => !v)}>
+          <Icon name="gear" size={16} />
+          <b>{t('lb.settings')}</b>
+          {cfg && <span className="drawer-sum">{t('lb.answers', { n: cfg.answer_seconds })} · {teamMode ? t('tm.no_strikes') : cfg.strikes > 1 ? t('lb.strikes', { n: cfg.strikes }) : t('lb.strike1')} · {cfg.cards ? t('lb.cards_on') : t('lb.cards_off')}</span>}
+          <i className="chev" aria-hidden>{drawer ? '▾' : '▸'}</i>
+        </button>
+        {drawer && <div className="drawer-body">
       {me && (
         <div className="narrow-col">
           <span className="label">{t('lb.avatar')}</span>
@@ -199,6 +217,9 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
           {isHost && <SettingsButton state={state} token={token} act={act} />}
         </div>
       )}
+
+        </div>}
+      </div>
 
       {story && (
         <div className="hc-lobby">

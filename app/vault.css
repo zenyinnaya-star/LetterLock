@@ -267,3 +267,21 @@ body:has(.vault:not(.p-lobby)) .rx-dock { top: auto; bottom: calc(var(--rack-h, 
 .vault .locks-table .label { font: 800 11px var(--mono); letter-spacing: .2em; color: var(--brass); }
 .vault .locks-table .locks-row { border-bottom: 1px dashed rgba(154,162,173,.25); padding: 6px 0; }
 .vault .locks-table .locks-row:last-child { border-bottom: 0; }
+
+/* ---------- lobby: zones (code + QR on top, crew in the middle, settings tucked away) ---------- */
+.lobby-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(14px, 4vw, 40px); }
+.lobby-qr { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.qr-frame { padding: 7px; background: #fff; border-radius: 6px; border: 3px solid #6b737e; box-shadow: inset 0 0 0 2px #2a2f36, 0 8px 18px rgba(0,0,0,.55); line-height: 0; }
+.qr-frame svg { width: clamp(92px, 14vw, 112px); height: auto; }
+.lobby-qr > span { font: 800 10px var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--brass, #e8c46a); }
+.lobby-drawer { width: min(520px, 100%); margin: 0 auto; border-radius: 10px; border: 1px solid #4a525d; background: rgba(8,12,15,.78); overflow: hidden; }
+.drawer-bar { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 14px; background: none; border: 0; cursor: pointer; color: var(--steel-hi, #dfe5ec); text-align: left; font: inherit; }
+.drawer-bar b { font: 800 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--brass, #e8c46a); white-space: nowrap; }
+.drawer-sum { flex: 1; min-width: 0; font-size: 12px; opacity: .7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.drawer-bar .chev { margin-left: auto; opacity: .7; }
+.drawer-body { display: flex; flex-direction: column; gap: 12px; padding: 4px 14px 14px; border-top: 1px dashed rgba(154,162,173,.25); }
+.drawer-body .narrow-col, .drawer-body .bot-row { width: 100%; max-width: none; }
+.drawer-body .rules-strip { justify-content: flex-start; }
+@media (min-width: 1200px) {
+  .lobby-drawer { position: fixed; right: 18px; top: 92px; width: 300px; margin: 0; z-index: 8; max-height: calc(100vh - 120px); overflow-y: auto; }
+}
