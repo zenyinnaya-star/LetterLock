@@ -6,6 +6,7 @@ import { audio } from '@/lib/audio';
 import { useT } from '@/lib/i18n/react';
 import type { PublicPlayer, RoomState } from '@/lib/types';
 import { vaultArtVars } from '@/lib/vaultArt';
+import { narrator } from '@/lib/narrator';
 import { PlayerAvatar } from './PlayerAvatar';
 
 /**
@@ -198,6 +199,62 @@ export function VaultFinale({ state, children }: { state: RoomState; children: R
       <div className={`v-door v-final${intro ? ' hidden' : ''}`}>
         <div className="v-content">{children}</div>
       </div>
+    </div>
+  );
+}
+
+
+/* ───────── the final two: two safes face off across the vault door ───────── */
+function Contender({ p, side, maxStrikes }: { p: PublicPlayer; side: 'l' | 'r'; maxStrikes: number }) {
+  const t = useT();
+  const tumblers = Math.max(p.letter_count, p.revealed.length, 1);
+  return (
+    <motion.div className={`v-contender ${side}`} initial={{ x: side === 'l' ? -120 : 120, opacity: 0, rotate: side === 'l' ? -6 : 6 }}
+      animate={{ x: 0, opacity: 1, rotate: side === 'l' ? -2 : 2 }} transition={{ type: 'spring', stiffness: 220, damping: 20, delay: side === 'l' ? 0.1 : 0.25 }}>
+      <div className="v-mug big"><PlayerAvatar p={p} size={104} /></div>
+      <b className="v-plate">{p.name}</b>
+      <span className="v-score">{t('du.pts', { n: p.points })}</span>
+      <div className="v-tumblers">
+        {Array.from({ length: tumblers }, (_, i) => {
+          const l = p.revealed[i];
+          return <i key={i} className={`v-tum${l ? ' open' : ''}`}>{l ?? ''}</i>;
+        })}
+      </div>
+      <div className="v-leds">{Array.from({ length: Math.max(1, maxStrikes) }, (_, i) => <i key={i} className={i < p.strikes ? 'on' : ''} />)}</div>
+    </motion.div>
+  );
+}
+
+export function VaultShowdown({ state, msLeft }: { state: RoomState; msLeft: number }) {
+  const t = useT();
+  const [a, b] = state.players.filter((p) => !p.eliminated);
+  const count = Math.ceil(msLeft / 1000);
+  const maxStrikes = state.room.settings.strikes ?? 3;
+  useEffect(() => {
+    if (count === 3) narrator.say('three'); else if (count === 2) narrator.say('two'); else if (count === 1) narrator.say('one'); else if (count <= 0) narrator.say('fight');
+  }, [count]);
+  if (!a || !b) return null;
+  return (
+    <div className="v-showdown">
+      <motion.div className="v-final-stamp" initial={{ scale: 3, opacity: 0, rotate: -12 }} animate={{ scale: 1, opacity: 1, rotate: -3 }} transition={{ type: 'spring', stiffness: 500, damping: 18 }}>
+        {t('vt.final')} <span>·</span> {t('vt.last_safe')}
+      </motion.div>
+      <div className="v-face">
+        <Contender p={a} side="l" maxStrikes={maxStrikes} />
+        <div className="v-core">
+          <div className="v-core-ring">
+            <AnimatePresence mode="wait">
+              <motion.span key={count <= 0 ? 'go' : count} className={`v-core-num${count <= 0 ? ' go' : ''}`}
+                initial={{ scale: 2.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.6, opacity: 0 }} transition={{ type: 'spring', stiffness: 600, damping: 20 }}>
+                {count <= 0 ? t('vt.open') : count}
+              </motion.span>
+            </AnimatePresence>
+          </div>
+          <span className="v-vs">VS</span>
+        </div>
+        <Contender p={b} side="r" maxStrikes={maxStrikes} />
+      </div>
+      <p className="v-rules">{t('vt.rules', { n: state.room.settings.duel_seconds })}</p>
     </div>
   );
 }

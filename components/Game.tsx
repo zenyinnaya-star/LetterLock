@@ -31,7 +31,7 @@ import '@/app/siege.css';
 import { SiegeFinale, TeamSiege } from './TeamSiege';
 import { siegeArtVars } from '@/lib/siegeArt';
 import '@/app/vault.css';
-import { VaultFinale, VaultHeist } from './VaultHeist';
+import { VaultFinale, VaultHeist, VaultShowdown } from './VaultHeist';
 import { vaultArtVars } from '@/lib/vaultArt';
 import { TeamHud, teamLabel } from './team';
 import { SettingsButton } from './SettingsPanel';
@@ -249,7 +249,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
     case 'reveal': main = <RevealPhase {...props} />; break;
     case 'guess': main = <GuessPhase {...props} />; break;
     case 'react': main = <ReactPhase {...props} />; break;
-    case 'duel_intro': main = <DuelIntro {...props} />; break;
+    case 'duel_intro': main = vault ? <VaultShowdown state={state} msLeft={msLeft} /> : <DuelIntro {...props} />; break;
     case 'finished': main = <Battle {...props} fallback={<Finished {...props} />} />; break;
     case 'battle': main = <Battle {...props} />; break;
   }
