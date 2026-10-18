@@ -245,3 +245,25 @@ body:has(.vault:not(.p-lobby)) .rx-dock { top: auto; bottom: calc(var(--rack-h, 
 .v-rules { margin: 0; padding: 6px 16px; border-radius: 3px; text-align: center; font: 700 clamp(10px, 1.7vw, 12px) var(--mono); letter-spacing: .12em; text-transform: uppercase;
   color: #1a1406; background: linear-gradient(180deg, #f3d58b, #b98d3d); max-width: 100%; }
 @media (max-width: 600px) { .v-face { grid-template-columns: 1fr 1fr; } .v-core { grid-column: 1 / -1; grid-row: 1; flex-direction: row; gap: 14px; } }
+
+/* ---------- finale: heist report ---------- */
+.vault.p-finished .winner.victory-stage { position: relative; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 22px 12px 16px; margin-bottom: 14px;
+  border-radius: 10px; background: linear-gradient(180deg, rgba(8,12,15,.82), rgba(8,12,15,.55)); border: 1px solid #5c646f;
+  box-shadow: inset 0 0 0 4px #20252c, inset 0 0 0 5px #4a525d, 0 10px 26px rgba(0,0,0,.55); }
+.vault.p-finished .winner > div:first-child { padding: 6px; background: #e9e4d6; border-radius: 2px; rotate: -3deg; box-shadow: 0 6px 18px rgba(0,0,0,.7), 0 0 38px rgba(255,200,80,.45); }
+.vault.p-finished.lost .winner > div:first-child { box-shadow: 0 6px 18px rgba(0,0,0,.7), 0 0 38px rgba(255,50,50,.4); filter: grayscale(.4); }
+.vault.p-finished .winner > div:first-child .avatar, .vault.p-finished .winner > div:first-child img { border-radius: 1px !important; }
+.vault.p-finished .winner h1 { margin: 0; padding: 6px 22px; border-radius: 4px; font-size: clamp(24px, 5vw, 40px); letter-spacing: .06em; text-transform: uppercase;
+  color: #1a1406 !important; -webkit-text-fill-color: #1a1406; background: linear-gradient(180deg, #f8e2a0, #b98d3d); text-shadow: 0 1px 0 rgba(255,255,255,.5); box-shadow: 0 3px 8px rgba(0,0,0,.6), inset 0 0 0 2px rgba(0,0,0,.18); }
+.vault.p-finished.lost .winner h1 { color: #2a0606 !important; -webkit-text-fill-color: #2a0606; background: linear-gradient(180deg, #e8b0b0, #a04848); text-shadow: 0 1px 0 rgba(255,255,255,.35); }
+.vault .podium { counter-reset: box; gap: 10px; }
+.vault .podium .award { position: relative; counter-increment: box; padding-top: 26px !important; background: linear-gradient(170deg, #3d444e, #1d2127) !important; border: 1px solid #66707c !important;
+  box-shadow: inset 0 0 0 3px #232830, 0 6px 14px rgba(0,0,0,.5); }
+.vault .podium .award::before { content: 'BOX 0' counter(box); position: absolute; top: 6px; left: 50%; translate: -50% 0; padding: 0 10px; border-radius: 2px; font: 800 10px var(--mono);
+  letter-spacing: .2em; color: #1a1406; background: linear-gradient(180deg, #f3d58b, #b98d3d); }
+.vault .podium .award .title { font: 800 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--brass); }
+.vault .podium .award .who { font-weight: 800; color: var(--steel-hi); }
+.vault .locks-table { padding: 10px 12px; }
+.vault .locks-table .label { font: 800 11px var(--mono); letter-spacing: .2em; color: var(--brass); }
+.vault .locks-table .locks-row { border-bottom: 1px dashed rgba(154,162,173,.25); padding: 6px 0; }
+.vault .locks-table .locks-row:last-child { border-bottom: 0; }
