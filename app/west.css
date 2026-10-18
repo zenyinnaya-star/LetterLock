@@ -255,3 +255,21 @@ body:has(.west:not(.p-lobby)) .rx-dock { top: 168px; bottom: auto !important; ri
 @keyframes w-pulse { 50% { transform: translateY(-46%) scale(1.08); } }
 @keyframes w-blink { 50% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .west *, .w-flash { animation: none !important; } .w-dust { display: none; } }
+
+/* Duel finale: generated sunset street + swinging banner */
+.west.p-finished.lost { background-image: var(--w-loss) !important; background-size: cover !important; background-position: center 60% !important; }
+.w-banner { position: relative; margin: 0 auto 14px; padding: 12px 44px 14px; max-width: 92%; text-align: center; transform-origin: top center; color: #f3e6c6;
+  background: linear-gradient(180deg, #8f2a1c, #5a130b); border: 3px solid #2a0c07; border-radius: 4px; box-shadow: 0 12px 26px rgba(0,0,0,.55), inset 0 0 0 2px rgba(243,213,139,.35); animation: w-sway 4.5s ease-in-out infinite; }
+.w-banner::before, .w-banner::after { content: ''; position: absolute; top: -10px; width: 3px; height: 14px; background: #3a2a18; }
+.w-banner::before { left: 18%; } .w-banner::after { right: 18%; }
+.w-banner span { font-family: var(--impact, var(--display)); font-size: clamp(30px, 6vw, 64px); letter-spacing: .06em; text-shadow: 0 3px 0 #2a0c07; }
+.w-banner.lost { background: linear-gradient(180deg, #7a1f14, #3d0b06); }
+@keyframes w-sway { 0%,100% { transform: rotate(-.8deg); } 50% { transform: rotate(.8deg); } }
+.w-draw, .w-link { transition: transform .2s, filter .2s; }
+.w-draw:hover { transform: translateY(-2px) scale(1.03); filter: brightness(1.12); }
+.w-draw:active { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) { .w-banner { animation: none; } }
+.w-banner { width: max-content; max-width: 94vw; box-sizing: border-box; align-self: center; }
+.w-banner span { display: block; white-space: nowrap; line-height: 1.1; }
+.w-banner { margin-left: auto; margin-right: auto; max-width: calc(100vw - 24px); }
+@media (max-width: 600px) { .w-banner { padding: 10px 22px 12px; } .w-banner span { font-size: clamp(22px, 8vw, 40px); } }

@@ -7,6 +7,12 @@ import { Header, spring } from '@/components/ui';
 import { useT } from '@/lib/i18n/react';
 
 const TITLE = 'LETTERLOCK';
+const DOORS = [
+  { k: 'vault', tag: 'Classic', name: 'Vault Heist', line: 'Answer fast, crack your rivals’ locks, last safe standing.' },
+  { k: 'west', tag: '1v1', name: 'High Noon Duel', line: 'Two players, three strikes, one quickest draw.' },
+  { k: 'siege', tag: '2v2 · 3v3', name: 'Team Siege', line: 'Shared rack, focus fire, bring the castle down together.' },
+  { k: 'noir', tag: '2–8 players', name: 'Mastermind', line: 'Set the secret, drop the clues, crack the case.' },
+];
 
 export default function Home() {
   const t = useT();
@@ -40,6 +46,26 @@ export default function Home() {
         </motion.div>
       </section>
       <p className="lp-chips muted small center">{t('lp.chips')}</p>
+      <section className="doors" aria-label="Game worlds">
+        <motion.h2 className="doors-h" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.7 }}>
+          Same lock.<br /><span>Different worlds.</span>
+        </motion.h2>
+        <div className="doors-grid">
+          {DOORS.map((d, i) => (
+            <motion.div key={d.k} initial={{ opacity: 0, y: 60, rotateX: 12 }} whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+              viewport={{ once: true, margin: '-60px' }} transition={{ ...spring, delay: (i % 2) * 0.12 }}>
+              <Link href="/play" className={`door door-${d.k}`}>
+                <span className="door-glow" aria-hidden />
+                <span className="door-knob" aria-hidden />
+                <span className="door-tag">{d.tag}</span>
+                <strong className="door-name">{d.name}</strong>
+                <span className="door-line">{d.line}</span>
+                <span className="door-go">Step inside →</span>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

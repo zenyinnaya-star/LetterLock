@@ -3,9 +3,9 @@ import { img } from './mmArt';
 
 const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/';
 const src = {
-  fieldWide: CDN + 'hf_20261017_180608_f17f9994-09e4-441d-9aa0-46f337178f3e.png',
+  fieldWide: CDN + 'hf_20261018_053246_c1277b08-2027-4d6d-a1ac-7dc26f4d975c.png',
   fieldTall: CDN + 'hf_20261017_180625_da619a1b-80e8-41d3-95fd-e43f4b0d68ab.png',
-  tentWide: CDN + 'hf_20261017_180608_932f5f6f-7ef7-4ba9-a284-461cdae055e1.png',
+  tentWide: CDN + 'hf_20261018_053229_0ee64d2f-fb64-498e-b783-0cc9b1b187c0.png',
   tentTall: CDN + 'hf_20261017_180608_c369ecb0-1842-42ca-820a-b9341f23dfef.png',
   iron: CDN + 'hf_20261017_180608_3ee9dae5-89ff-476d-8fbb-61cd5d1e4099.png',
   stone: CDN + 'hf_20261017_180624_158b5b20-a772-42a8-9176-2ae0788deda2.png',

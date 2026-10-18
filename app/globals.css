@@ -2624,3 +2624,43 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .tier-fx.c-thief { --fx: #b9c2d6; } .tier-fx.c-parasite { --fx: #7dff2c; } .tier-fx.c-oracle { --fx: #7aa6ff; }
 .tier-fx.c-wildcard { --fx: #ff4d4d; } .tier-fx.c-jester { --fx: #ff7ad9; } .tier-fx.c-mastermind { --fx: #4dffd2; }
 
+
+/* ===== Landing: doorways ===== */
+.doors { max-width: 1040px; margin: 56px auto 80px; padding: 0 16px; }
+.doors-h { color: #f6efe0; text-shadow: none; -webkit-text-stroke: 0; text-align: center; font-family: var(--display); font-size: clamp(30px, 6vw, 56px); line-height: 1.05; margin: 0 0 32px; }
+.doors-h span { text-shadow: none; background: linear-gradient(90deg, #f3d27a, #e0384f); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.doors-grid { display: grid; grid-template-columns: 1fr; gap: 18px; perspective: 900px; }
+.door { position: relative; display: flex; flex-direction: column; gap: 8px; min-height: 280px; padding: 22px 18px 18px; border-radius: 120px 120px 14px 14px / 90px 90px 14px 14px; overflow: hidden; text-decoration: none; color: #fff; border: 2px solid rgba(255,255,255,.14); box-shadow: 0 18px 40px rgba(0,0,0,.45); transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s; }
+.door:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 28px 54px rgba(0,0,0,.55); }
+.door-glow { position: absolute; inset: auto -20% -40% -20%; height: 70%; background: radial-gradient(closest-side, rgba(255,255,255,.28), transparent); opacity: .0; transition: opacity .4s; }
+.door:hover .door-glow { opacity: 1; }
+.door-knob { position: absolute; right: 18px; top: 58%; width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff3c4, #b98b2e); box-shadow: 0 0 10px rgba(255,220,120,.7); }
+.door-tag { margin-top: 56px; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; opacity: .8; }
+.door-name { font-family: var(--display); font-size: 26px; line-height: 1.05; }
+.door-line { font-size: 14px; opacity: .85; line-height: 1.35; }
+.door-go { margin-top: auto; font-weight: 800; font-size: 13px; letter-spacing: .04em; }
+.door-vault { background: linear-gradient(180deg, #3b3226, #14110d); }
+.door-west  { background: linear-gradient(180deg, #8a4a1f, #2a1408); }
+.door-siege { background: linear-gradient(180deg, #5b2a2a, #1a1020); }
+.door-noir  { background: linear-gradient(180deg, #2b3340, #07090d); }
+@media (prefers-reduced-motion: reduce) { .door, .door-glow { transition: none; } }
+
+@media (min-width: 560px) { .doors-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 900px) { .doors-grid { grid-template-columns: repeat(4, 1fr); } .doors { max-width: 1120px; } }
+.door-line, .door-name { padding-right: 20px; }
+
+/* ===== Mode select: worlds ===== */
+.world-sub { margin: 4px 0 0; text-align: center; color: var(--muted); font-size: 14px; letter-spacing: .04em; }
+.mode-card { position: relative; overflow: hidden; transition: box-shadow .3s, border-color .3s; }
+.mode-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.14) 50%, transparent 65%); transform: translateX(-120%); transition: transform .7s; pointer-events: none; }
+.mode-card:hover::after { transform: translateX(120%); }
+.mode-card.world-create { background: linear-gradient(160deg, #3b3226, #14110d); border-color: #b98b2e; }
+.mode-card.world-create:hover { box-shadow: 0 0 26px rgba(214,170,70,.35); }
+.mode-card.world-duel { background: linear-gradient(160deg, #8a4a1f, #2a1408); border-color: #d08a45; }
+.mode-card.world-duel:hover { box-shadow: 0 0 26px rgba(230,140,60,.35); }
+.mode-card.world-team { background: linear-gradient(160deg, #5b2a2a, #1a1020); border-color: #c0605a; }
+.mode-card.world-team:hover { box-shadow: 0 0 26px rgba(220,90,80,.35); }
+.mode-card.world-mastermind { background: linear-gradient(160deg, #2b3340, #07090d); border-color: #7d8da3; }
+.mode-card.world-mastermind:hover { box-shadow: 0 0 26px rgba(150,170,200,.3); }
+@media (prefers-reduced-motion: reduce) { .mode-card::after { transition: none; } }
+.play-head .stage-title { color: #f3d27a; text-shadow: 0 0 18px rgba(243,210,122,.35); -webkit-text-stroke: 0; }
