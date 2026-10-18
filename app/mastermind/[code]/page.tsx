@@ -3,6 +3,7 @@
 import { memo, use, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
+import { QRCodeSVG } from 'qrcode.react';
 import { Header } from '@/components/ui';
 import { audio } from '@/lib/audio';
 import { loadToken, mm, mmError, REACTIONS, saveToken, type MmState } from '@/lib/mastermind';
@@ -378,7 +379,13 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
         {/* ---------- TABLE (letter slots) ---------- */}
         <div className="mm-tabletop">
           {room.status === 'lobby' ? (
-            <div className="mm-kicker">{players.length < 2 ? 'Share the code. You need at least 2 detectives.' : `${players.length} detectives in the room`}</div>
+            <>
+              <div className="mm-kicker">{players.length < 2 ? 'Share the code. You need at least 2 detectives.' : `${players.length} detectives in the room`}</div>
+              <div className="mm-invite">
+                <div className="mm-qr"><QRCodeSVG value={`${typeof window !== 'undefined' ? window.location.origin : ''}/mastermind/${room.code}`} size={104} level="M" marginSize={1} bgColor="#f5ecd6" fgColor="#1a1208" /></div>
+                <div className="mm-invite-txt"><b>Scan to join</b><button type="button" className="btn" onClick={() => { try { void navigator.clipboard.writeText(`${window.location.origin}/mastermind/${room.code}`); } catch { /* ignore */ } }}>Copy invite link</button></div>
+              </div>
+            </>
           ) : room.status === 'finished' ? (
             <div className="mm-kicker">{board[0] ? `${board[0].name} solves the most cases` : ''}{s.word ? ` · last word: ${s.word.toUpperCase()}` : ''}</div>
           ) : (

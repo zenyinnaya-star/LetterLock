@@ -335,3 +335,6 @@ body:has(.siege) .tv-ptt.live { background: radial-gradient(ellipse at 50% 20%, 
   100% { translate: var(--dx) var(--dy); rotate: 540deg; scale: 1; opacity: .2; } }
 @keyframes s-impact { 0% { opacity: 1; transform: scale(.3); } 100% { opacity: 0; transform: scale(1.6); } }
 @media (prefers-reduced-motion: reduce) { .siege *, .s-hurt { animation: none !important; } .s-embers { display: none; } }
+
+.siege .lobby-qr, .west .lobby-qr { gap: 10px; }
+.siege .lobby-qr > span, .west .lobby-qr > span { line-height: 1.4; margin-top: 2px; text-shadow: 0 1px 6px #000, 0 0 10px rgba(0,0,0,.8); position: static; }

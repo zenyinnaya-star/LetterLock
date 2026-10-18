@@ -252,3 +252,10 @@
 @keyframes mm-mote { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: .9; } 85% { opacity: .6; } 100% { transform: translate(30px, 160px); opacity: 0; } }
 @keyframes mm-glow { 0% { transform: scale(1.35); box-shadow: 0 0 60px rgba(255,200,90,1); } 100% { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .mm-room *, .mm-light, .mm-vignette { animation: none !important; } .mm-dust { display: none; } }
+
+/* lobby invite: QR + copy link */
+.mm-invite { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 10px; }
+.mm-qr { padding: 6px; background: #f5ecd6; border-radius: 4px; box-shadow: 0 6px 18px rgba(0,0,0,.5); transform: rotate(-2deg); line-height: 0; }
+.mm-invite-txt { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.mm-invite-txt b { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--amber); }
+.mm-title { font-size: clamp(30px, 6vw, 62px); letter-spacing: .08em; max-width: 100%; overflow-wrap: anywhere; }
