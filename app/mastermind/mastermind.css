@@ -350,3 +350,7 @@
 .mm-glass .hurt { list-style: none; margin: 8px 0 0; padding: 0; font-style: normal; display: grid; gap: 4px; }
 .mm-glass .hurt li { display: flex; justify-content: space-between; gap: 8px; font: 600 12px 'Courier New', ui-monospace, monospace; color: #e9dcc0; }
 .mm-glass .hurt li span { color: #ff6b66; letter-spacing: 2px; }
+@media (min-width: 981px) and (min-height: 601px) {
+  .mm-room.s-finished .mm-dock { min-height: 150px; }
+  .mm-room.s-finished .mm-tabletop { min-height: 60px; }
+}
