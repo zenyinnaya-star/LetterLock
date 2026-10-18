@@ -14,7 +14,7 @@ const css = (u: string, w?: number) => `url("${img(u, w)}")`;
 export const mmArtVars = {
   '--art-room-wide': css(src.roomWide, 2048),
   '--art-room-tall': "url('/art/mm-room.jpg')",
-  '--art-cork': css(src.cork, 1600),
+  '--art-cork': css(src.cork, 1200),
   '--art-folder': css(src.folder, 1200),
   '--art-sil': css(src.silhouette, 384),
   '--art-polaroid': css(src.polaroid, 384),
