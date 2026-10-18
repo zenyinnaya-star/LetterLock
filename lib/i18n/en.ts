@@ -402,7 +402,7 @@ const en = {
   // vault heist (classic mode look)
   'vt.code': 'Crew hideout', 'vt.case': 'Case file', 'vt.classified': 'Classified', 'vt.start': 'Start the heist · {n} in the crew',
   'vt.ready': 'Ready', 'vt.busted': 'Busted', 'vt.alarm': 'Alarm', 'vt.caught': '{name} walked out with the gold.', 'vt.nobody': 'Nobody got away.',
-  'lb.scan': 'Scan to join', 'lb.settings': 'Game settings',
+  'lb.scan': 'Scan to join', 'lb.add_bot': 'Add bot', 'lb.settings': 'Game settings',
   'vt.final': 'Final two', 'vt.last_safe': 'Last safe standing', 'vt.open': 'OPEN!', 'vt.rules': '+1 lock each · {n}-second rounds · strikes never reset',
   'vt.you_cracked': 'You cracked the vault', 'vt.cracked_by': '{name} cracked the vault',
   // siege (team mode look)

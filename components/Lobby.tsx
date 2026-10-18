@@ -157,6 +157,15 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
         </div>
       )}
 
+      {isHost && !teamMode && !story && (
+        <div className="quick-bot">
+          <button className="btn sm ghost" disabled={count >= max || (duelMode && count >= 2)}
+            onClick={() => token && void act(() => rpc.addBot(token, 2, botStyle).then(() => pingBots?.()))}>
+            <Icon name="users" size={14} /> {t('lb.add_bot')}
+          </button>
+        </div>
+      )}
+
       <div className={`lobby-drawer${drawer ? ' open' : ''}`}>
         <button type="button" className="drawer-bar" aria-expanded={drawer} onClick={() => setDrawer((v) => !v)}>
           <Icon name="gear" size={16} />

@@ -285,3 +285,11 @@ body:has(.vault:not(.p-lobby)) .rx-dock { top: auto; bottom: calc(var(--rack-h, 
 @media (min-width: 1200px) {
   .lobby-drawer { position: fixed; right: 18px; top: 92px; width: 300px; margin: 0; z-index: 8; max-height: calc(100vh - 120px); overflow-y: auto; }
 }
+.quick-bot { display: flex; justify-content: center; margin: -2px 0 2px; }
+.drawer-body .bot-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 8px; }
+.drawer-body .bot-row .label { flex: 0 0 100%; text-align: center; }
+.drawer-body .bot-styles { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; flex: 0 0 100%; }
+.drawer-body .bot-styles .chip { flex: none; }
+.drawer-body .rules-strip { gap: 6px; }
+.drawer-body .narrow-col .label { text-align: left; }
+.drawer-bar b { flex: none; }
