@@ -382,6 +382,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
             <>
               <div className="mm-kicker">{players.length < 2 ? 'Share the code. You need at least 2 detectives.' : `${players.length} detectives in the room`}</div>
               <div className="mm-invite">
+                <div className="mm-plate"><span>Room code</span><b>{room.code}</b></div>
                 <div className="mm-qr"><QRCodeSVG value={`${typeof window !== 'undefined' ? window.location.origin : ''}/mastermind/${room.code}`} size={104} level="M" marginSize={1} bgColor="#f5ecd6" fgColor="#1a1208" /></div>
                 <div className="mm-invite-txt"><b>Scan to join</b><button type="button" className="btn" onClick={() => { try { void navigator.clipboard.writeText(`${window.location.origin}/mastermind/${room.code}`); } catch { /* ignore */ } }}>Copy invite link</button></div>
               </div>
