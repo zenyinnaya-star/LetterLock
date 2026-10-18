@@ -219,7 +219,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
       if (!r.correct) {
         const mine = [...st.guesses].reverse().find((g) => g.player_id === st.me.id && g.text === typed);
         const hits = mine?.hits;
-        setToast({ k: Date.now(), msg: hits === undefined ? `${typed.toUpperCase()} is wrong` : `${typed.toUpperCase()}: ${hits} letter${hits === 1 ? '' : 's'} in the right place` });
+        setToast({ k: Date.now(), msg: hits === undefined ? `${typed.toUpperCase()} is wrong` : `${typed.toUpperCase()}: ${hits} in place${mine?.near ? ` · ${mine.near} elsewhere` : ''}` });
       }
     } catch (e) { setErr(mmError(e)); }
     setBusy(false);
@@ -268,7 +268,13 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
   const guessing = inRound && !me.is_mastermind && !me.out;
 
   // letter slots on the table
-  const known = s.slots && s.slots.length ? s.slots : (s.word ? s.word.toUpperCase().split('') : null);
+  const baseKnown = s.slots && s.slots.length ? s.slots : (s.word ? s.word.toUpperCase().split('') : null);
+  // letters deduced from earlier accusations (migration 082 reports which positions were exact)
+  const known = baseKnown && baseKnown.map((c, i) => {
+    if (c) return c;
+    const g = s.guesses.find((x) => x.hit_pos?.includes(i + 1));
+    return g ? (g.text[i] ?? '').toUpperCase() || null : null;
+  });
   const typed = guessing ? text.toUpperCase().replace(/[^A-Z]/g, '') : '';
   const slots = known ?? Array.from({ length: 6 }, () => null as string | null);
   const unknownLen = !known;
@@ -349,7 +355,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
                       <li key={i} className={g.correct ? 'ok' : 'x'}>
                         <b>{nameOf(g.player_id)}</b> <span className="w">{g.text}</span>
                         {!g.correct && g.hits !== undefined && (
-                          <span className="pegs" title={`${g.hits} in the right place`}>{Array.from({ length: Math.max(g.text.length, 1) }, (_, k) => <i key={k} className={k < g.hits! ? 'on' : ''} />)}</span>
+                          <span className="pegs" title={`${g.hits} in the right place${g.near ? `, ${g.near} elsewhere` : ''}`}>{Array.from({ length: Math.max(g.text.length, 1) }, (_, k) => <i key={k} className={k < g.hits! ? 'on' : k < g.hits! + (g.near ?? 0) ? 'near' : ''} />)}</span>
                         )}
                       </li>
                     ))}
@@ -362,7 +368,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
               <div className="mm-podium">
                 {[board[1], board[0], board[2]].map((p, i) => p && (
                   <motion.div key={p.id} className={`step p${[2, 1, 3][i]}`} initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: [0.35, 0.1, 0.6][i], type: 'spring', stiffness: 200, damping: 16 }}>
-                    <div className="mm-photo"><div className="pic sil" /><div className="cap">{p.name}</div></div>
+                    <div className="mm-photo">{i === 1 && <span className="crown" aria-hidden>👑</span>}<div className="pic sil" /><div className="cap">{p.name}</div></div>
                     <div className="block"><span>{['2nd', '1st', '3rd'][i]}</span><b>{p.points}</b></div>
                   </motion.div>
                 ))}
@@ -464,7 +470,15 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
             </div>
           )}
 
-          {room.status === 'between' && <p className="mm-sub">Next round starting…</p>}
+          {room.status === 'between' && (
+            <>
+              <div className="mm-recap" aria-label="Round recap">
+                {players.filter((p) => (deltas[p.id] ?? 0) > 0).map((p) => <span key={p.id}><b>{p.name}</b> +{deltas[p.id]}</span>)}
+                <span className="meta">{s.clues.length}/{room.clue_limit} clues used</span>
+              </div>
+              <p className="mm-sub">{room.between_until ? `Next round in ${Math.max(0, Math.ceil((room.between_until - now) / 1000))}s…` : 'Next round starting…'}</p>
+            </>
+          )}
           {room.status === 'finished' && me.is_host && <button className="btn lg mm-cta" disabled={busy} onClick={() => act(() => mm.again(token))}>Open a new case</button>}
           {room.status === 'finished' && !me.is_host && <p className="mm-sub">Waiting for the host to open a new case…</p>}
 
@@ -499,7 +513,14 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
         <aside className="mm-side right">
           <div className="mm-glass">
             <div className="tag">Behind the glass</div>
-            {behindGlass.length === 0 ? <div className="none">{inRound ? 'Nobody eliminated yet' : 'Eliminated players watch from here'}</div> : (
+            {behindGlass.length === 0 ? (
+              <div className="none">
+                {inRound ? 'Nobody eliminated yet' : 'Eliminated players watch from here'}
+                {inRound && players.some((p) => !p.is_mastermind && p.hp < 3) && (
+                  <ul className="hurt">{players.filter((p) => !p.is_mastermind && p.hp < 3).map((p) => <li key={p.id}>{p.name} <span>{'❤'.repeat(Math.max(0, p.hp))}{'♡'.repeat(3 - Math.max(0, p.hp))}</span></li>)}</ul>
+                )}
+              </div>
+            ) : (
               <div className="sil">
                 {behindGlass.map((p) => <div key={p.id} className="ghost"><div className="mug" /><span>{p.name}</span>{p.id === me.id && <em>you</em>}</div>)}
               </div>

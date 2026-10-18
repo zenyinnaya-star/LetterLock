@@ -15,7 +15,7 @@ export interface MmState {
   word: string | null;
   players: MmPlayer[];
   clues: string[];
-  guesses: { player_id: string; text: string; correct: boolean; hits?: number }[];
+  guesses: { player_id: string; text: string; correct: boolean; hits?: number; near?: number; hit_pos?: number[] }[];
   /** v2 (migration 078): one entry per letter, null while hidden. Missing on older servers. */
   slots?: (string | null)[];
   reacts?: { id: number; player_id: string; emoji: string }[];

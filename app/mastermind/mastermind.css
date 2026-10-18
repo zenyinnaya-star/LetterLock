@@ -337,3 +337,16 @@
 .mm-room.s-finished .mm-podium .mm-photo { width: 104px; } .mm-room.s-finished .mm-podium .block { width: 150px; }
 @media (max-height: 760px) { .mm-room.s-finished .mm-podium { padding-top: 84px; } .mm-room.s-finished .mm-podium .p1 .block { height: 84px; } .mm-room.s-finished .mm-podium .p2 .block { height: 62px; } }
 @media (max-width: 980px), (max-height: 600px) { .mm-evidence .mm-photo.suspect { width: 100px; } }
+
+/* v5: feedback pegs, recap, crown, glass */
+.mm-log .pegs i.near { background: #e7a73a; border-color: #8a5a12; }
+.mm-log li { font-size: 13px; }
+.mm-recap { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; font: 600 13px 'Courier New', ui-monospace, monospace; }
+.mm-recap span { padding: 3px 10px; border-radius: 999px; background: rgba(10,14,26,.62); border: 1px solid rgba(255,181,74,.4); color: #6dffb0; }
+.mm-recap span b { color: #f1e4c3; margin-right: 4px; } .mm-recap .meta { color: #cdbd98; border-color: rgba(255,255,255,.12); }
+.mm-podium .mm-photo { position: relative; }
+.mm-podium .crown { position: absolute; left: 50%; top: -38px; translate: -50% 0; font-size: 34px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.6)); animation: mm-crown 2.4s ease-in-out infinite; }
+@keyframes mm-crown { 50% { transform: translateY(-5px) rotate(4deg); } }
+.mm-glass .hurt { list-style: none; margin: 8px 0 0; padding: 0; font-style: normal; display: grid; gap: 4px; }
+.mm-glass .hurt li { display: flex; justify-content: space-between; gap: 8px; font: 600 12px 'Courier New', ui-monospace, monospace; color: #e9dcc0; }
+.mm-glass .hurt li span { color: #ff6b66; letter-spacing: 2px; }
