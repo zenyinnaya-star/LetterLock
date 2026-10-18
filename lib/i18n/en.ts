@@ -434,6 +434,8 @@ const en = {
   'wst.no_answer': 'no word', 'wst.strike': 'strike', 'wst.ready': 'Holstered', 'wst.quiet': 'Quiet out here. Nobody fired.',
   'wst.reward': 'Reward: {n} pts', 'wst.winner': 'Winner', 'wst.you_won': 'You’re the last one standing.', 'wst.they_won': '{name} is the last one standing.',
   'wst.stats': 'Full stats', 'wst.hide_stats': 'Hide stats', 'wst.again': 'Ride again',
+  'wst.outdrawn': 'OUTDRAWN',
+  'wst.quickest': 'QUICKEST DRAW',
   'wst.defeated': 'Defeated', 'wst.you_lost': '{name} drew faster. You fell.', 'wst.reward_lost': 'Reward claimed by {name}',
   'wst.standing': 'still standing', 'wst.fell': 'fell in the dust', 'wst.rematch_q': 'Another round?', 'wst.revenge': 'Settle the score',
   'wst.drawn': 'has drawn', 'wst.thinking': 'hand on the holster…',

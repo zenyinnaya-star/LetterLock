@@ -448,6 +448,9 @@ export function WestFinale({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
       <div className="w-vignette" aria-hidden />
       {iLost && <div className="w-dusk" aria-hidden />}
       <div className="w-post finale">
+        <motion.div className={`w-banner${iLost ? ' lost' : ''}`} initial={{ y: -80, rotate: -3, opacity: 0 }} animate={{ y: 0, rotate: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 140, damping: 12, delay: 0.15 }}>
+          <span>{iLost ? t('wst.outdrawn') : t('wst.quickest')}</span>
+        </motion.div>
         <motion.div className="w-poster" initial={{ y: -40, rotate: -4, opacity: 0 }} animate={{ y: 0, rotate: iLost ? 3 : -1, opacity: 1 }} transition={{ type: 'spring', stiffness: 160, damping: 16 }}>
           <div className="w-poster-body">
             <div className="w-wanted-name">{face ? (face.id === state.me?.id ? t('wst.you') : face.name) : '—'}</div>

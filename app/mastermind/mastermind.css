@@ -66,8 +66,8 @@
 .mm-clock.urgent { animation: mm-pulse 1s ease-in-out infinite; }
 
 /* ---------- cork board ---------- */
-.mm-cork { position: relative; min-height: 230px; overflow: hidden; padding: 28px 22px 22px; border-radius: 8px;
-  background: #8a5a2c url('/art/mm-cork.jpg') center / 420px auto;
+.mm-cork { position: relative; min-height: 300px; overflow: hidden; padding: 28px 22px 22px; border-radius: 8px;
+  background: #8a5a2c var(--art-cork, url('/art/mm-cork.jpg')) center / cover;
   box-shadow: 0 0 0 10px #3b2412, 0 0 0 12px #1c1008, 0 26px 60px rgba(0,0,0,.75), inset 0 0 50px rgba(0,0,0,.55); }
 .mm-cork::after { content: ''; position: absolute; inset: 0; border-radius: 8px; pointer-events: none; background: radial-gradient(ellipse 60% 90% at 50% 0%, rgba(255,200,120,.22), transparent 70%); }
 .mm-cork.jolt { animation: mm-jolt .4s; }
@@ -264,3 +264,8 @@
 .mm-plate b { font-family: var(--display); font-size: 28px; letter-spacing: .12em; color: #f3d58b; }
 .mm-cta:not(:disabled) { background: linear-gradient(180deg, #ffe08a, #d9a23a 55%, #a8721c); color: #1a1206; border: 2px solid #f6d27a; box-shadow: 0 0 0 2px #6b4710, 0 10px 24px rgba(0,0,0,.55), 0 0 28px rgba(255,200,90,.35); letter-spacing: .06em; transition: transform .2s, box-shadow .2s; }
 .mm-cta:not(:disabled):hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 0 0 2px #6b4710, 0 14px 30px rgba(0,0,0,.6), 0 0 40px rgba(255,200,90,.55); }
+.mm-mugs { gap: 16px 20px; }
+.mm-photo { transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s; }
+.mm-photo:hover { transform: translateY(-4px) rotate(0deg) scale(1.05); box-shadow: 0 14px 28px rgba(0,0,0,.6); z-index: 4; }
+.mm-room .btn { transition: transform .18s, filter .18s; }
+.mm-room .btn:active:not(:disabled) { transform: scale(.97); }
