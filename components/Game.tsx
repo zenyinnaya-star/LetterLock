@@ -225,14 +225,9 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
     if (secs === lastTick.current) return;
     lastTick.current = secs;
     if (secs === 10 && phase === 'answer') narrator.say('ten', { interrupt: false });
-    if (secs <= 5) audio.heartbeat();
-    if (secs <= 10) {
-      audio.tick(true);
-      const id = window.setTimeout(() => audio.tick(true), 500);
-      return () => window.clearTimeout(id);
-    }
+    if (secs <= 10) { audio.tenSec(west ? 'duel' : siege ? 'team' : vault ? 'vault' : 'classic', secs); return; }
     if (secs % 2 === 0) audio.tick(false);
-  }, [secs, phase, msLeft]);
+  }, [secs, phase, msLeft, west, siege, vault]);
 
   async function leave(delayMs = 0) {
     if (token) { try { await rpc.leave(token); } catch { /* ignore */ } }

@@ -343,6 +343,26 @@ export const audio = {
     for (let i = 0; i < 4; i++) tone(2400 + i * 300, delay + 0.08 + i * 0.045, 0.05, 'square', 0.1);
     tone(1800, delay + 0.3, 0.05, 'square', 0.22); tone(900, delay + 0.34, 0.08, 'square', 0.18);
   },
+  /**
+   * The last ten seconds: one cue per second that gets more urgent as time runs out, skinned per mode.
+   * vault = dial clicks, duel = wall-clock tick into a heartbeat, team = war-drum thumps, classic = the shared tick.
+   */
+  tenSec(theme: 'vault' | 'duel' | 'team' | 'classic', s: number) {
+    const up = Math.max(0, 10 - s); // 0 at ten seconds left, 9 at one
+    if (theme === 'vault') {
+      for (const d of s <= 3 ? [0, 0.25, 0.5, 0.75] : s <= 5 ? [0, 0.5] : [0]) { noise(d, 0.02, 0.4 + up * 0.03, 3800, 6); tone(1200 + up * 90, d, 0.05, 'square', 0.1 + up * 0.012); }
+    } else if (theme === 'duel') {
+      tone(180, 0, 0.06, 'sine', 0.4, 120); noise(0, 0.03, 0.25, 1500, 2);
+      if (s <= 5) this.heartbeat();
+      if (s <= 3) { tone(180, 0.5, 0.06, 'sine', 0.4, 120); noise(0.5, 0.03, 0.25, 1500, 2); }
+    } else if (theme === 'team') {
+      tone(78, 0, 0.3, 'sine', 0.5 + up * 0.03, 45); noise(0, 0.07, 0.25, 320, 1);
+      if (s <= 5) { tone(70, 0.25, 0.3, 'sine', 0.55, 40); noise(0.25, 0.07, 0.25, 300, 1); }
+    } else {
+      if (s <= 5) this.heartbeat();
+      this.tick(true); tone(1400, 0.5, 0.05, 'square', 0.25);
+    }
+  },
   /** Low double thump: last seconds on the clock. */
   heartbeat() { tone(60, 0, 0.14, 'sine', 0.7, 42); tone(54, 0.2, 0.18, 'sine', 0.55, 38); },
   /** Doom stinger: a player is eliminated. */
