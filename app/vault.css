@@ -8,10 +8,10 @@
 
 .vault { --steel: #8b939e; --steel-hi: #dfe4ea; --gun: #1b1f25; --teal: #52e0c4; --brass: #e8c46a; --alarm: #ff4d4d; --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   position: fixed; inset: 0; z-index: 1; isolation: isolate; overflow-x: hidden; overflow-y: auto; color: #e6ebf0;
-  background: #0b0f14 var(--v-vault-tall) center / cover no-repeat;
+  background: #0b0f14 var(--v-vault-tall) 14% 50% / cover no-repeat;
   display: flex; flex-direction: column; align-items: center; gap: 10px;
   padding: 58px 12px calc(var(--rack-h, 120px) + 12px); font-family: var(--body); }
-@media (min-width: 900px) and (min-aspect-ratio: 1/1) { .vault { background-image: var(--v-vault-wide); background-position: center 45%; } }
+@media (min-width: 900px) and (min-aspect-ratio: 1/1) { .vault { background-image: var(--v-vault-wide); background-position: center 50%; } }
 .vault > :not(.v-shade):not(.v-lasers):not(.v-alarm-flash):not(.v-beacons):not(.v-glints):not(.v-intro) { position: relative; z-index: 2; }
 
 /* atmosphere */

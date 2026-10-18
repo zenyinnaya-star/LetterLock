@@ -16,6 +16,8 @@ const src = {
   board: CDN + 'hf_20261018_161219_62e9c5ca-d825-4839-9a90-f5a4817a9163.png',
   paper: CDN + 'hf_20261018_161219_22967dd4-57e9-4b9f-b5d9-65afe2fc2ad1.png',
   brass: CDN + 'hf_20261018_161220_632aa44e-6039-4f0f-97c5-f7623b7978d9.png',
+  frame: CDN + 'hf_20261018_162706_0f3940fc-f11e-4d56-ae69-3036451ef12d.png',
+  bezel: CDN + 'hf_20261018_162706_029bcdd7-95a1-42c0-a542-7cefbe9806af.png',
   sign: CDN + 'hf_20261017_054630_f7d08f39-416f-4732-b2b9-54bc32b6f0ae.png',
 };
 const css = (u: string, w: number) => `url("${img(u, w)}")`;
@@ -36,4 +38,6 @@ export const westArtVars = {
   '--w-board': css(src.board, 1080),
   '--w-paper': css(src.paper, 1200),
   '--w-brass': css(src.brass, 1200),
+  '--w-frame': css(src.frame, 1080),
+  '--w-bezel': css(src.bezel, 640),
 } as React.CSSProperties;

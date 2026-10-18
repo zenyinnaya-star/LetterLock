@@ -308,3 +308,9 @@ body:has(.west:not(.p-lobby)) .rx-dock { top: 168px; bottom: auto !important; ri
 .p-lobby .w-lobby .lobby-top { padding: 34px 64px 30px; }
 .p-lobby .w-sign { width: min(270px, 70vw); }
 @media (max-height: 820px) { .p-lobby .w-lobby .lobby-top { padding: 28px 56px 24px; } .p-lobby .w-lobby .duel-lobby { transform: scale(.92); } }
+
+/* ---------- gameplay rework (Higgsfield frame + bezel) ---------- */
+.w-clock { background: var(--w-bezel) 50% 50% / 178% no-repeat; box-shadow: none; filter: drop-shadow(0 10px 14px rgba(0,0,0,.6)); }
+.w-bar { padding: 40px 54px 34px; background: var(--w-frame) 50% 47% / 100% 125% no-repeat; }
+.w-bar .w-plate { top: 6px; }
+@media (max-width: 600px) { .w-bar { padding: 32px 34px 28px; } }
