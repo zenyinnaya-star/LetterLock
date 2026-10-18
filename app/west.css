@@ -269,3 +269,7 @@ body:has(.west:not(.p-lobby)) .rx-dock { top: 168px; bottom: auto !important; ri
 .w-draw:hover { transform: translateY(-2px) scale(1.03); filter: brightness(1.12); }
 .w-draw:active { transform: scale(.97); }
 @media (prefers-reduced-motion: reduce) { .w-banner { animation: none; } }
+.w-banner { width: max-content; max-width: 94vw; box-sizing: border-box; align-self: center; }
+.w-banner span { display: block; white-space: nowrap; line-height: 1.1; }
+.w-banner { margin-left: auto; margin-right: auto; max-width: calc(100vw - 24px); }
+@media (max-width: 600px) { .w-banner { padding: 10px 22px 12px; } .w-banner span { font-size: clamp(22px, 8vw, 40px); } }
