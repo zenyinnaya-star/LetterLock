@@ -2648,3 +2648,19 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 @media (min-width: 560px) { .doors-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 900px) { .doors-grid { grid-template-columns: repeat(4, 1fr); } .doors { max-width: 1120px; } }
 .door-line, .door-name { padding-right: 20px; }
+
+/* ===== Mode select: worlds ===== */
+.world-sub { margin: 4px 0 0; text-align: center; color: var(--muted); font-size: 14px; letter-spacing: .04em; }
+.mode-card { position: relative; overflow: hidden; transition: box-shadow .3s, border-color .3s; }
+.mode-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.14) 50%, transparent 65%); transform: translateX(-120%); transition: transform .7s; pointer-events: none; }
+.mode-card:hover::after { transform: translateX(120%); }
+.mode-card.world-create { background: linear-gradient(160deg, #3b3226, #14110d); border-color: #b98b2e; }
+.mode-card.world-create:hover { box-shadow: 0 0 26px rgba(214,170,70,.35); }
+.mode-card.world-duel { background: linear-gradient(160deg, #8a4a1f, #2a1408); border-color: #d08a45; }
+.mode-card.world-duel:hover { box-shadow: 0 0 26px rgba(230,140,60,.35); }
+.mode-card.world-team { background: linear-gradient(160deg, #5b2a2a, #1a1020); border-color: #c0605a; }
+.mode-card.world-team:hover { box-shadow: 0 0 26px rgba(220,90,80,.35); }
+.mode-card.world-mastermind { background: linear-gradient(160deg, #2b3340, #07090d); border-color: #7d8da3; }
+.mode-card.world-mastermind:hover { box-shadow: 0 0 26px rgba(150,170,200,.3); }
+@media (prefers-reduced-motion: reduce) { .mode-card::after { transition: none; } }
+.play-head .stage-title { color: #f3d27a; text-shadow: 0 0 18px rgba(243,210,122,.35); -webkit-text-stroke: 0; }
