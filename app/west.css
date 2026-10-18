@@ -304,3 +304,7 @@ body:has(.west:not(.p-lobby)) .rx-dock { top: 168px; bottom: auto !important; ri
 .p-lobby .w-lobby .lobby-top .lobby-qr { background: none; box-shadow: none; padding: 0; }
 .p-lobby .w-lobby .btn.sm.ghost { color: #f2dfae; background: linear-gradient(180deg, #4a2f17, #2b1a0b); border-color: #8f6625; }
 @media (max-width: 560px) { .p-lobby .w-lobby { padding: 22px 14px 28px; } .p-lobby .w-lobby .lobby-top { padding: 40px 26px 36px; } }
+.p-lobby .w-lobby { padding: 24px 40px 26px; gap: 10px; }
+.p-lobby .w-lobby .lobby-top { padding: 34px 64px 30px; }
+.p-lobby .w-sign { width: min(270px, 70vw); }
+@media (max-height: 820px) { .p-lobby .w-lobby .lobby-top { padding: 28px 56px 24px; } .p-lobby .w-lobby .duel-lobby { transform: scale(.92); } }
