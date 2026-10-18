@@ -2,69 +2,50 @@
 
 import Link from 'next/link';
 import { motion } from 'motion/react';
-import { Icon } from '@/components/icons';
-import { Header, spring } from '@/components/ui';
+import { Header } from '@/components/ui';
 import { useT } from '@/lib/i18n/react';
+import './landing.css';
 
-const TITLE = 'LETTERLOCK';
-const DOORS = [
-  { k: 'vault', tag: 'Classic', name: 'Vault Heist', line: 'Answer fast, crack your rivals’ locks, last safe standing.' },
-  { k: 'west', tag: '1v1', name: 'High Noon Duel', line: 'Two players, three strikes, one quickest draw.' },
-  { k: 'siege', tag: '2v2 · 3v3', name: 'Team Siege', line: 'Shared rack, focus fire, bring the castle down together.' },
-  { k: 'noir', tag: '2–8 players', name: 'Mastermind', line: 'Set the secret, drop the clues, crack the case.' },
+const WORLDS = [
+  { k: 'vault', label: 'Bank' },
+  { k: 'west', label: 'Saloon' },
+  { k: 'siege', label: 'Castle' },
+  { k: 'noir', label: 'Interrogation' },
 ];
 
 export default function Home() {
   const t = useT();
   return (
-    <main className="shell landing">
+    <main className="worlds-land">
+      <div className="wl-bg" aria-hidden />
       <Header />
-      <section className="lp-hero">
-        <motion.div className="hero-art lp-art" aria-hidden initial={{ opacity: 0, scale: 1.08 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}>
-        </motion.div>
-        <h1 className="hero-tiles lp-tiles" aria-label="Letterlock">
-          {TITLE.split('').map((c, i) => (
-            <motion.span key={i} className="tile" aria-hidden
-              style={i >= 6 ? { background: 'linear-gradient(180deg,#e0384f,#8e0b1b)', color: '#fff' } : undefined}
-              initial={{ y: -120, rotate: (i % 2 ? 1 : -1) * 25, opacity: 0 }}
-              animate={{ y: 0, rotate: (i % 3 - 1) * 3, opacity: 1 }}
-              whileHover={{ y: -6, rotate: 0 }}
-              transition={{ ...spring, delay: 0.1 + i * 0.06 }}>
-              {c}
-            </motion.span>
-          ))}
-        </h1>
-        <motion.p className="tagline lp-tag" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
-          {t('home.tag1')}<br />{t('home.tag2')}
+      <section className="wl-stage">
+        <motion.h1 className="wl-logo" aria-label="Letterlock" initial={{ opacity: 0, y: -24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
+          LETTER<span className="wl-lock">L<i className="wl-key" aria-hidden />CK</span>
+        </motion.h1>
+        <motion.p className="wl-tag" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.8 }}>
+          <span>Same lock. Different worlds.</span>
         </motion.p>
-        <motion.div className="lp-cta" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 1 }}>
-          <Link href="/play" className="btn lg block lp-play"><Icon name="play" size={22} /> {t('lp.play')}</Link>
-          <div className="lp-links">
-            <Link href="/daily"><Icon name="trophy" size={16} /> {t('home.daily')}</Link>
-            <Link href="/how-to-play"><Icon name="bulb" size={16} /> {t('hd.rules')}</Link>
-          </div>
-        </motion.div>
-      </section>
-      <p className="lp-chips muted small center">{t('lp.chips')}</p>
-      <section className="doors" aria-label="Game worlds">
-        <motion.h2 className="doors-h" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.7 }}>
-          Same lock.<br /><span>Different worlds.</span>
-        </motion.h2>
-        <div className="doors-grid">
-          {DOORS.map((d, i) => (
-            <motion.div key={d.k} initial={{ opacity: 0, y: 60, rotateX: 12 }} whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-              viewport={{ once: true, margin: '-60px' }} transition={{ ...spring, delay: (i % 2) * 0.12 }}>
-              <Link href="/play" className={`door door-${d.k}`}>
-                <span className="door-glow" aria-hidden />
-                <span className="door-knob" aria-hidden />
-                <span className="door-tag">{d.tag}</span>
-                <strong className="door-name">{d.name}</strong>
-                <span className="door-line">{d.line}</span>
-                <span className="door-go">Step inside →</span>
+
+        <div className="wl-arches">
+          {WORLDS.map((w, i) => (
+            <motion.div key={w.k} className="wl-arch-wrap" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.35 + i * 0.12 }}>
+              <Link href="/play" className={`wl-arch wl-${w.k}`}>
+                <span className="wl-art" style={{ backgroundImage: `url(/art/worlds/land_${w.k}.webp)` }} />
+                <span className="wl-rim" aria-hidden />
               </Link>
+              <span className="wl-label">{w.label}</span>
             </motion.div>
           ))}
         </div>
+
+        <motion.div className="wl-cta" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1, duration: 0.6 }}>
+          <Link href="/play" className="wl-play">PLAY</Link>
+          <div className="wl-links">
+            <Link href="/daily">{t('home.daily')}</Link>
+            <Link href="/how-to-play">{t('hd.rules')}</Link>
+          </div>
+        </motion.div>
       </section>
     </main>
   );

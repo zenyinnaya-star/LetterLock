@@ -10,6 +10,7 @@ import { Header, spring } from '@/components/ui';
 import { audio } from '@/lib/audio';
 import { useT } from '@/lib/i18n/react';
 import type { Key } from '@/lib/i18n';
+import '../landing.css';
 
 type Kind = 'mastermind' | 'jester' | 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory';
 interface Mode { kind: Kind; icon: IconName; k: string; tone: string }
@@ -21,10 +22,13 @@ const BG: Partial<Record<Kind, string>> = {
   story: `url(${CDN}20261008_072145_be5c6185-1e84-4cf8-b0c2-942af2b412c9.png)`,
 };
 
+const DOORS: { kind: Kind; art: string; icon: IconName; name: string; players: string }[] = [
+  { kind: 'create', art: 'vault', icon: 'users', name: 'Classic', players: '2–8 players' },
+  { kind: 'duel', art: 'west', icon: 'swords', name: 'Duel', players: '2 players' },
+  { kind: 'team', art: 'siege', icon: 'shield', name: 'Siege', players: '4–8 players' },
+  { kind: 'mastermind', art: 'noir', icon: 'bulb', name: 'Mastermind', players: '3–12 players' },
+];
 const MODES: Mode[] = [
-  { kind: 'create', icon: 'users', k: 'classic', tone: 'amber' },
-  { kind: 'duel', icon: 'swords', k: 'duel', tone: 'red' },
-  { kind: 'team', icon: 'shield', k: 'team', tone: 'cyan' },
   { kind: 'story', icon: 'crown', k: 'story', tone: 'gold' },
   { kind: 'solo', icon: 'terminal', k: 'solo', tone: 'violet' },
 ];
@@ -32,7 +36,6 @@ const LAB: Mode[] = [
   { kind: 'reverse', icon: 'swap', k: 'reverse', tone: 'green' },
   { kind: 'chaos', icon: 'dice', k: 'chaos', tone: 'pink' },
   { kind: 'memory', icon: 'eye', k: 'memory', tone: 'blue' },
-  { kind: 'mastermind', icon: 'bulb', k: 'mastermind', tone: 'amber' },
   { kind: 'jester', icon: 'skull', k: 'jester', tone: 'pink' },
 ];
 
@@ -72,6 +75,19 @@ export default function Play() {
         <Link href="/" className="play-back" aria-label={t('pl.back')}><Icon name="logout" size={18} /> {t('pl.back')}</Link>
         <h1 className="stage-title">{t('pl.title')}</h1>
         <p className="world-sub">Choose your world — same lock, different rules.</p>
+      </div>
+
+      <div className="wd-grid">
+        {DOORS.map((d, i) => (
+          <motion.button key={d.kind} className={`wd-card wd-${d.art}`} initial={{ opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.1 + i * 0.1 }} whileHover={{ y: -10 }} whileTap={{ scale: 0.97 }}
+            onClick={() => (d.kind === 'mastermind' ? router.push('/mastermind') : go(d.kind))}>
+            <span className="wd-art" style={{ backgroundImage: `url(/art/worlds/mode_${d.art}.webp)` }} />
+            <span className="wd-shade" aria-hidden />
+            <span className="wd-ico"><Icon name={d.icon} size={22} /></span>
+            <span className="wd-name">{d.name}</span>
+            <span className="wd-pl">{d.players}</span>
+          </motion.button>
+        ))}
       </div>
 
       <div className="play-grid">
