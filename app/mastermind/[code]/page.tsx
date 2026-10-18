@@ -312,13 +312,19 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
             {room.status === 'lobby' && (
               <>
                 <div className="mm-cork-title">Case {room.code}<small>{room.quick ? 'Quick case · 3 short rounds' : 'Everyone takes a turn holding the secret'}</small></div>
-                <div className="mm-mugs">
+                <div className="mm-lobby-board"><div className="mm-mugs">
                   {players.map((p) => (
                     <motion.div key={p.id} data-pin className={`mm-photo${p.id === me.id ? ' me' : ''}`} initial={{ y: -40, opacity: 0, rotate: -6 }} animate={{ y: 0, opacity: 1, rotate: (p.name.length % 5) - 2 }}>
                       <div className="pic sil" /><div className="cap">{p.name}{p.is_host ? ' ★' : ''}</div>
                     </motion.div>
                   ))}
                   {Array.from({ length: Math.max(0, 2 - players.length) }, (_, i) => <div key={`w${i}`} className="mm-photo empty"><div className="pic">?</div><div className="cap">Waiting…</div></div>)}
+                </div>
+              <div className="mm-invite on-board">
+                <div className="mm-plate"><span>Room code</span><b>{room.code}</b></div>
+                <div className="mm-qr"><QRCodeSVG value={`${typeof window !== 'undefined' ? window.location.origin : ''}/mastermind/${room.code}`} size={104} level="M" marginSize={1} bgColor="#f5ecd6" fgColor="#1a1208" /></div>
+                <div className="mm-invite-txt"><b>Scan to join</b><button type="button" className="btn" onClick={() => { try { void navigator.clipboard.writeText(`${window.location.origin}/mastermind/${room.code}`); } catch { /* ignore */ } }}>Copy invite link</button></div>
+              </div>
                 </div>
               </>
             )}
@@ -381,11 +387,6 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
           {room.status === 'lobby' ? (
             <>
               <div className="mm-kicker">{players.length < 2 ? 'Share the code. You need at least 2 detectives.' : `${players.length} detectives in the room`}</div>
-              <div className="mm-invite">
-                <div className="mm-plate"><span>Room code</span><b>{room.code}</b></div>
-                <div className="mm-qr"><QRCodeSVG value={`${typeof window !== 'undefined' ? window.location.origin : ''}/mastermind/${room.code}`} size={104} level="M" marginSize={1} bgColor="#f5ecd6" fgColor="#1a1208" /></div>
-                <div className="mm-invite-txt"><b>Scan to join</b><button type="button" className="btn" onClick={() => { try { void navigator.clipboard.writeText(`${window.location.origin}/mastermind/${room.code}`); } catch { /* ignore */ } }}>Copy invite link</button></div>
-              </div>
             </>
           ) : room.status === 'finished' ? (
             <div className="mm-kicker">{board[0] ? `${board[0].name} solves the most cases` : ''}{s.word ? ` · last word: ${s.word.toUpperCase()}` : ''}</div>

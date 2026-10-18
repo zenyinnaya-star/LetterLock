@@ -269,3 +269,16 @@
 .mm-photo:hover { transform: translateY(-4px) rotate(0deg) scale(1.05); box-shadow: 0 14px 28px rgba(0,0,0,.6); z-index: 4; }
 .mm-room .btn { transition: transform .18s, filter .18s; }
 .mm-room .btn:active:not(:disabled) { transform: scale(.97); }
+
+/* Lobby: polaroids and the room-code plate + QR share the cork board (matches mockup) */
+.mm-lobby-board { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 22px; align-items: start; padding: 0 8px; }
+.mm-lobby-board .mm-mugs { display: flex; flex-wrap: wrap; gap: 18px 16px; justify-content: center; align-content: flex-start; }
+.mm-invite.on-board { flex-direction: column; margin: 0; gap: 10px; padding: 10px; border-radius: 6px; background: linear-gradient(180deg, #2a2a2c, #151516); box-shadow: 0 0 0 2px #4a4a4e, 0 12px 24px rgba(0,0,0,.55); }
+.mm-invite.on-board .mm-plate { width: 100%; text-align: center; }
+.mm-invite.on-board .mm-invite-txt { align-items: center; }
+.mm-invite.on-board .mm-invite-txt b { color: #e9dcc0; }
+.mm-cork-title { background: #efe3c4; color: #231810; display: inline-block; padding: 10px 26px; font-family: 'Special Elite','Courier New',monospace; letter-spacing: .12em; text-shadow: none; box-shadow: 0 6px 14px rgba(0,0,0,.45); transform: rotate(-1.2deg); position: relative; left: 50%; translate: -50% 0; }
+.mm-cork-title small { color: #5a4630; }
+.mm-room.s-lobby .mm-cork { min-height: 380px; padding-bottom: 34px; }
+.mm-room.s-lobby .mm-tabletop .mm-cta:not(:disabled) { font-size: clamp(18px, 2.4vw, 26px); letter-spacing: .14em; padding: 16px 54px; }
+@media (max-width: 760px) { .mm-lobby-board { grid-template-columns: 1fr; } .mm-invite.on-board { flex-direction: row; justify-self: center; } }
