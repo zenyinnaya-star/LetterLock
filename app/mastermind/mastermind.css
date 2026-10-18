@@ -295,3 +295,40 @@
 .mm-invite.on-board { width: 176px; aspect-ratio: .64; justify-content: center; padding: 22px 16px; border-radius: 0; box-shadow: none; filter: drop-shadow(0 10px 14px rgba(0,0,0,.6));
   background: var(--art-plaque) 50% 49% / 139% 123% no-repeat; }
 .mm-invite.on-board .mm-plate { filter: none; width: 100%; }
+
+/* ===== v4 fixes (QA pass): stable layout, phone layout, readable paper, stamps ===== */
+@media (min-width: 981px) and (min-height: 601px) {
+  .mm-tabletop { position: relative; min-height: 190px; }
+  .mm-dock { min-height: 200px; justify-content: flex-start; }
+  .mm-room.stage .mm-cork { min-height: 300px; }
+}
+.mm-toast { position: absolute; left: 50%; bottom: 4px; translate: -50% 0; white-space: nowrap; z-index: 3; }
+.mm-tabletop { position: relative; }
+.mm-suspect .delta { right: 46px; top: 50%; translate: 0 -50%; font-size: 15px; }
+.mm-center { gap: 40px; }
+.mm-toggle { display: inline-flex; gap: 8px; align-items: center; padding: 3px 10px; border-radius: 6px; background: rgba(241,228,195,.78); color: #3a2610; }
+/* clue / accusation paper: readable text over the folder art */
+.mm-folder { padding: 20px 34px 16px 30px; }
+.mm-folder .mm-hint { background: rgba(241,228,195,.82); padding: 3px 10px; border-radius: 5px; align-self: flex-start; }
+.mm-folder .mm-reveal { background: rgba(241,228,195,.9); }
+/* finale: stamp no longer clipped, podium fills the board */
+.mm-stamp.closed { top: 24%; }
+.mm-podium { padding-top: 120px; gap: 26px; }
+.mm-podium .mm-photo { width: 118px; } .mm-podium .block { width: 160px; }
+.mm-podium .p1 .block { height: 110px; } .mm-podium .p2 .block { height: 80px; } .mm-podium .p3 .block { height: 58px; }
+.mm-room.s-finished .mm-cork { min-height: 400px; }
+@media (max-width: 980px), (max-height: 600px) {
+  .mm-hud { flex-direction: row; align-items: center; justify-content: space-between; }
+  .mm-hud .mm-clockwrap { margin-top: 0; }
+  .mm-clock { width: 62px; height: 62px; }
+  .mm-evidence .mm-photo.suspect { display: block; width: 84px; justify-self: center; }
+  .mm-dock { display: contents; }
+  .mm-folder { position: sticky; bottom: 8px; z-index: 9; align-self: center; width: 100%; max-width: 640px; padding: 18px 26px 12px 22px; margin-top: 14px; }
+  .mm-room.stage { padding-bottom: 36px; }
+  .mm-podium { padding-top: 90px; gap: 10px; } .mm-podium .mm-photo { width: 92px; } .mm-podium .block { width: 100px; }
+}
+@media (max-width: 760px) {
+  .mm-invite.on-board { flex-direction: column; justify-self: center; width: min(190px, 70%); }
+  .mm-invite.on-board .mm-plate { width: 100%; }
+  .mm-lobby-board { padding: 0; }
+}

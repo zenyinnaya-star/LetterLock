@@ -68,6 +68,8 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
   const [now, setNow] = useState(0);
   const [flash, setFlash] = useState<{ k: number; kind: 'good' | 'bad' } | null>(null);
   const [shake, setShake] = useState(0);
+  const guessRef = useRef<HTMLInputElement>(null);
+  useEffect(() => { if (shake) guessRef.current?.focus(); }, [shake]);
   const [flicker, setFlicker] = useState(0);
   const [hitId, setHitId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ k: number; msg: string } | null>(null);
@@ -444,7 +446,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
           {guessing && (
             <form key={shake} className={`mm-folder${shake ? ' shake' : ''}`} data-tab="Case file · your accusation" onSubmit={(e) => { e.preventDefault(); void guess(); }}>
               <div className="mm-row">
-                <input className="input" placeholder="Type the word" maxLength={unknownLen ? 20 : slots.length} value={text} autoCapitalize="off" autoComplete="off" spellCheck={false} onChange={(e) => setText(e.target.value)} />
+                <input ref={guessRef} className="input" placeholder="Type the word" maxLength={unknownLen ? 20 : slots.length} value={text} autoCapitalize="off" autoComplete="off" spellCheck={false} onChange={(e) => setText(e.target.value)} />
                 <button className="btn" disabled={busy || !text.trim()}>Accuse</button>
               </div>
               <p className="mm-hint"><span className="hearts">{'❤'.repeat(Math.max(0, me.hp))}{'♡'.repeat(Math.max(0, 3 - me.hp))}</span> · a wrong accusation costs a heart</p>
