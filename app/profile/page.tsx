@@ -141,7 +141,7 @@ export default function ProfilePage() {
             </div>
           </>
         )}
-        {!p && {restoreBox}}
+        {!p && restoreBox}
         <Link className="btn ghost block" href="/">{t('pf.back')}</Link>
       </div>
     </main>
