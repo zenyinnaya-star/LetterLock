@@ -27,89 +27,121 @@ export default function ProfilePage() {
     setMsg({ ok, text: ok ? t('pf.restore_ok') : t('pf.restore_bad') });
     if (ok) { setCode(''); load(); }
   }
+  const restoreBox = (
+    <>
+      <span className="label">{t('pf.restore')}</span>
+      <div className="row" style={{ gap: 8, flexWrap: 'nowrap' }}>
+        <input className="input" value={code} placeholder={t('pf.restore_ph')} onChange={(e) => setCode(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter' && code.trim()) void restore(); }} aria-label={t('pf.restore_ph')} style={{ flex: 1, minWidth: 0 }} />
+        <button className="btn ghost" disabled={!code.trim()} onClick={() => void restore()}>{t('pf.restore_btn')}</button>
+      </div>
+      {msg && <div className={`note ${msg.ok ? 'ok' : 'bad'}`}>{msg.text}</div>}
+    </>
+  );
   const pct = p ? Math.min(100, Math.round(((p.xp - p.level_floor) / Math.max(1, p.level_next - p.level_floor)) * 100)) : 0;
   const earned = new Set(p?.achievements ?? []);
 
   return (
-    <main className="shell narrow">
+    <main className="shell pf-shell">
       <Header />
-      <div className="sheet profile-page">
+      <div className="sheet profile-page pf2">
         <h1 className="stage-title">{t('pf.prof')}</h1>
         {ready && !p && <p className="muted center">{t('pf.empty')}</p>}
         {p && (
           <>
-            <div className="pp-head">
-              <div className="pp-level">{p.level}</div>
-              <div>
-                <b className="pp-name">{p.name}</b>
-                <div className="muted">{t(`ttl.${titleKey(p.level)}` as never)} · {t('pf.level', { n: p.level })}</div>
+            <section className="pf-hero">
+              <div className="pf-ring" style={{ ['--pct' as string]: `${pct * 3.6}deg` }} role="img" aria-label={t('pf.level', { n: p.level })}>
+                <div><b>{p.level}</b><span>LEVEL</span></div>
               </div>
-            </div>
-            <div className="xp-bar"><i style={{ width: `${pct}%` }} /></div>
-            <div className="muted small center">{t('pf.xp', { a: p.xp, b: p.level_next })}</div>
-            <div className="pp-grid">
+              <div className="pf-who">
+                <b className="pp-name">{p.name}</b>
+                <div className="pf-pills">
+                  <span className="pf-pill">{t(`ttl.${titleKey(p.level)}` as never)}</span>
+                  {m?.badge && <span className="pf-pill bad">{badgeLabel(m.badge)}</span>}
+                </div>
+                <div className="xp-bar"><i style={{ width: `${pct}%` }} /></div>
+                <div className="muted small">{t('pf.xp', { a: p.xp, b: p.level_next })}</div>
+              </div>
+            </section>
+
+            <div className="pf-stats">
               <div><b>{p.games}</b><span>{t('pf.games')}</span></div>
               <div><b>{p.wins}</b><span>{t('pf.wins')}</span></div>
               <div><b>{p.valid_answers}</b><span>{t('pf.answers')}</span></div>
               <div><b>{p.best_streak}</b><span>{t('pf.streak')}</span></div>
               <div><b>{p.fastest_ms == null ? '—' : `${(p.fastest_ms / 1000).toFixed(1)}s`}</b><span>{t('pf.fastest')}</span></div>
             </div>
-            {m && (
-              <>
-                <div className="pp-grid">
-                  <div><b>{m.classes[0] ? CLASSES[m.classes[0].class].name : '—'}</b><span>Favorite class</span></div>
-                  <div><b>{m.longest_word ? m.longest_word.toUpperCase() : '—'}</b><span>Longest word</span></div>
-                  <div><b>{m.win_streak}</b><span>Win streak (best {m.best_win_streak})</span></div>
-                  <div><b>{Object.entries(m.modes).sort((a, b) => b[1] - a[1])[0]?.[0] ?? '—'}</b><span>Top mode</span></div>
-                </div>
-                <span className="label">Class mastery</span>
-                <div className="mastery-list">
-                  {m.classes.length === 0 && <span className="muted small">Finish a game to start ranking up a class.</span>}
-                  {m.classes.map((c) => {
-                    const nx = nextTierXp(c.xp);
-                    const worn = m.badge === `${c.class}:${c.tier}`;
-                    return (
-                      <div key={c.class} className="mastery-row">
-                        <span><b>{CLASSES[c.class].name}</b> · {tierName(c.class, c.tier)}<br />
-                          <span className="muted small">{c.xp} XP{nx ? ` / ${nx}` : ' · max'} · {c.games} games · {c.wins} wins</span></span>
-                        {c.tier >= 2 && (
-                          <button className={`btn sm ${worn ? '' : 'ghost'}`} onClick={() => void equipBadge(worn ? null : `${c.class}:${c.tier}`).then(() => fetchMastery().then(setM))}>
-                            {worn ? 'Wearing' : 'Wear badge'}
-                          </button>
-                        )}
+
+            <div className="pf-cols">
+              <div className="pf-col">
+                {m && (
+                  <>
+                    <section className="pf-card">
+                      <span className="label">Your best</span>
+                      <div className="pf-best">
+                        <div><span>Favorite class</span><b>{m.classes[0] ? CLASSES[m.classes[0].class].name : '—'}</b></div>
+                        <div><span>Top mode</span><b>{Object.entries(m.modes).sort((a, b) => b[1] - a[1])[0]?.[0] ?? '—'}</b></div>
+                        <div><span>Longest word</span><b className="mono">{m.longest_word ? m.longest_word.toUpperCase() : '—'}</b></div>
+                        <div><span>Win streak</span><b>{m.win_streak} <i>(best {m.best_win_streak})</i></b></div>
                       </div>
-                    );
-                  })}
-                </div>
-                {m.badge && <span className="muted small">Shown beside your name in lobbies: {badgeLabel(m.badge)}</span>}
-              </>
-            )}
-            <span className="label">{t('pf.ach')} · {earned.size}/{ACHIEVEMENTS.length}</span>
-            <div className="ach-grid">
-              {ACHIEVEMENTS.map((a) => (
-                <div key={a.id} className={`ach${earned.has(a.id) ? ' on' : ''}`}>
-                  <span className="ach-ico"><Icon name={a.icon} size={20} /></span>
-                  <span><b>{t(`ach.${a.id}` as never)}</b><br /><span className="muted small">{t(`ach.${a.id}_d` as never)}</span></span>
-                </div>
-              ))}
+                    </section>
+                    <section className="pf-card">
+                      <span className="label">Class mastery</span>
+                      <div className="mastery-list">
+                        {m.classes.length === 0 && <span className="muted small">Finish a game to start ranking up a class.</span>}
+                        {m.classes.map((c) => {
+                          const nx = nextTierXp(c.xp);
+                          const worn = m.badge === `${c.class}:${c.tier}`;
+                          const prev = TIER_XP[c.tier - 1] ?? 0;
+                          const cp = nx ? Math.min(100, Math.round(((c.xp - prev) / Math.max(1, nx - prev)) * 100)) : 100;
+                          return (
+                            <div key={c.class} className="mastery-row pf-m">
+                              <span className="pf-m-main">
+                                <b>{CLASSES[c.class].name}</b> · {tierName(c.class, c.tier)}
+                                <span className="xp-bar"><i style={{ width: `${cp}%` }} /></span>
+                                <span className="muted small">{c.xp} XP{nx ? ` / ${nx}` : ' · max'} · {c.games} games · {c.wins} wins</span>
+                              </span>
+                              {c.tier >= 2 && (
+                                <button className={`btn sm ${worn ? '' : 'ghost'}`} onClick={() => void equipBadge(worn ? null : `${c.class}:${c.tier}`).then(() => fetchMastery().then(setM))}>
+                                  {worn ? 'Wearing' : 'Wear badge'}
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  </>
+                )}
+              </div>
+              <div className="pf-col">
+                <section className="pf-card">
+                  <span className="label">{t('pf.ach')} · {earned.size}/{ACHIEVEMENTS.length}</span>
+                  <div className="ach-grid pf-ach">
+                    {ACHIEVEMENTS.map((a) => (
+                      <div key={a.id} className={`ach${earned.has(a.id) ? ' on' : ''}`}>
+                        <span className="ach-ico"><Icon name={a.icon} size={20} /></span>
+                        <span><b>{t(`ach.${a.id}` as never)}</b><br /><span className="muted small">{t(`ach.${a.id}_d` as never)}</span></span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+                <section className="pf-card">
+                  <span className="label">{t('pf.code')}</span>
+                  <div className="code-box">
+                    <code>{p.code}</code>
+                    <button className="btn sm ghost" onClick={() => { void navigator.clipboard?.writeText(p.code).then(() => { setCopied(true); window.setTimeout(() => setCopied(false), 1500); }); }}>
+                      {copied ? t('pf.copied') : t('pf.copy')}
+                    </button>
+                  </div>
+                  <span className="muted small">{t('pf.code_hint')}</span>
+                  {restoreBox}
+                </section>
+              </div>
             </div>
-            <span className="label">{t('pf.code')}</span>
-            <div className="code-box">
-              <code>{p.code}</code>
-              <button className="btn sm ghost" onClick={() => { void navigator.clipboard?.writeText(p.code).then(() => { setCopied(true); window.setTimeout(() => setCopied(false), 1500); }); }}>
-                {copied ? t('pf.copied') : t('pf.copy')}
-              </button>
-            </div>
-            <span className="muted small">{t('pf.code_hint')}</span>
           </>
         )}
-        <span className="label">{t('pf.restore')}</span>
-        <div className="row" style={{ gap: 8, flexWrap: 'nowrap' }}>
-          <input className="input" value={code} placeholder={t('pf.restore_ph')} onChange={(e) => setCode(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter' && code.trim()) void restore(); }} aria-label={t('pf.restore_ph')} style={{ flex: 1, minWidth: 0 }} />
-          <button className="btn ghost" disabled={!code.trim()} onClick={() => void restore()}>{t('pf.restore_btn')}</button>
-        </div>
-        {msg && <div className={`note ${msg.ok ? 'ok' : 'bad'}`}>{msg.text}</div>}
+        {!p && {restoreBox}}
         <Link className="btn ghost block" href="/">{t('pf.back')}</Link>
       </div>
     </main>

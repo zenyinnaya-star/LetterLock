@@ -2670,3 +2670,32 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .mode-video { margin:0; }
 .mode-video video { width:100%; aspect-ratio:16/9; border-radius:12px; background:#000; display:block; }
 .mode-video figcaption { margin-top:6px; font-size:13px; opacity:.85; }
+
+/* profile page v2 */
+.pf-shell { max-width: 1100px; margin: 0 auto; width: 100%; }
+.pf2 { gap: 18px; }
+.pf-hero { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; padding: 22px; border-radius: 18px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,207,74,.28); }
+.pf-ring { --pct: 0deg; width: 116px; height: 116px; border-radius: 50%; display: grid; place-items: center; flex: none; background: conic-gradient(#ffcf4a var(--pct), rgba(255,255,255,.12) 0); }
+.pf-ring > div { width: 96px; height: 96px; border-radius: 50%; background: #15110c; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.pf-ring b { font-family: var(--display); font-size: 40px; line-height: 1; color: #ffe7a0; }
+.pf-ring span { font-size: 10px; letter-spacing: .2em; color: var(--muted); margin-top: 4px; }
+.pf-who { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.pf-who .pp-name { font-family: var(--display); font-size: clamp(28px, 5vw, 40px); }
+.pf-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pf-pill { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 4px 12px; border-radius: 999px; border: 1px solid rgba(255,207,74,.4); color: #ffcf4a; }
+.pf-pill.bad { background: rgba(255,80,80,.14); border-color: rgba(255,120,120,.4); color: #ffb3b3; }
+.pf-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.pf-stats div { display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 14px; background: rgba(255,255,255,.05); }
+.pf-stats b { font-family: var(--display); font-size: clamp(22px, 3.4vw, 32px); color: #ffe7a0; line-height: 1; }
+.pf-stats span { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); }
+.pf-cols { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+.pf-col { flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+.pf-card { display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 16px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); }
+.pf-best { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.pf-best span { display: block; font-size: 12px; color: var(--muted); }
+.pf-best b { font-size: 20px; text-transform: capitalize; }
+.pf-best b.mono { font-family: ui-monospace, monospace; letter-spacing: .1em; overflow-wrap: anywhere; text-transform: none; }
+.pf-best i { font-size: 12px; font-weight: 400; color: var(--muted); font-style: normal; }
+.pf-m-main { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+.pf-ach { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+@media (max-width: 640px) { .pf-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pf-best { grid-template-columns: 1fr; } }
