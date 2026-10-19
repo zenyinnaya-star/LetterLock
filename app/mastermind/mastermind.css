@@ -371,3 +371,14 @@
   .mm-room.stage.s-lobby .mm-tabletop { align-self: start; min-height: 0; margin-top: 4px; }
   .mm-room.stage.s-lobby .mm-dock { align-self: start; }
 }
+
+/* v6b: mid-width desktops (~1000-1280px): narrower side rails, board never shrinks under its contents, plaque goes beside/below mugs */
+.mm-room.stage .mm-cork { flex: none; }
+@media (min-width: 981px) and (max-width: 1279px) and (min-height: 601px) {
+  .mm-room.stage { grid-template-columns: 150px minmax(0, 1fr) 150px; gap: 10px 14px; padding-left: 14px; padding-right: 14px; }
+  .mm-room.stage.s-lobby .mm-lobby-board { grid-template-columns: 1fr; justify-items: center; }
+  .mm-room.stage.s-lobby .mm-invite.on-board { flex-direction: row; width: auto; padding: 12px 18px; gap: 14px; }
+  .mm-room.stage.s-lobby .mm-invite.on-board .mm-plate { width: 150px; }
+  .mm-room.stage.s-lobby .mm-invite.on-board .mm-qr svg { width: 72px; height: 72px; }
+  .mm-room.stage.s-lobby .mm-mugs { gap: 12px; }
+}
