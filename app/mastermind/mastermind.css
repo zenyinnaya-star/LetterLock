@@ -356,4 +356,4 @@
 }
 
 /* lobby: the room-code plate + QR plaque must fit inside the cork board */
-@media (min-width: 981px) and (min-height: 601px) { .mm-room.stage.s-lobby .mm-cork { min-height: 480px; } }
+@media (min-width: 981px) and (min-height: 601px) { .mm-room.stage.s-lobby .mm-cork { min-height: 400px; padding-top: 14px; } }
