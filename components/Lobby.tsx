@@ -1,5 +1,6 @@
 'use client';
 
+import { shareOrigin } from '@/lib/site';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -55,7 +56,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
   const teamSize = cfg?.team_size ?? 2;
   const teamsReady = teamMode && (state.teams ?? []).length === 2 && state.players.every((p) => p.team_id)
     && (state.teams ?? []).every((tm) => state.players.filter((p) => p.team_id === tm.id).length >= 2);
-  const url = typeof window !== 'undefined' ? `${window.location.origin}/room/${state.room.code}` : '';
+  const url = typeof window !== 'undefined' ? `${shareOrigin()}/room/${state.room.code}` : '';
 
   async function copy() {
     try {

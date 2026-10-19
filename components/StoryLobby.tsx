@@ -1,5 +1,6 @@
 'use client';
 
+import { shareOrigin } from '@/lib/site';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
@@ -38,7 +39,7 @@ export function StoryLobby({ state, token, act, onLeave, picks, isHost }: {
   const mine = me ? heroOf(me.id) ?? null : null;
   const info = mine ? heroById(mine) : null;
   useEffect(() => { if (mine) { try { localStorage.setItem('letterlock:hero', mine); } catch { /* ignore */ } } }, [mine]);
-  const url = typeof window !== 'undefined' ? `${window.location.origin}/room/${state.room.code}` : '';
+  const url = typeof window !== 'undefined' ? `${shareOrigin()}/room/${state.room.code}` : '';
   const others = state.players.filter((p) => p.id !== me?.id);
 
   useEffect(() => {

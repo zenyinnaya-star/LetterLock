@@ -1,5 +1,6 @@
 'use client';
 
+import { shareOrigin } from '@/lib/site';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { Header, Tile } from '@/components/ui';
@@ -67,7 +68,7 @@ export default function DailyPage() {
   }
   async function share() {
     if (!info) return;
-    const text = t('dc.share_text', { day: info.day, n: info.score, rank: info.rank ?? '–' }) + ' ' + window.location.origin + '/daily';
+    const text = t('dc.share_text', { day: info.day, n: info.score, rank: info.rank ?? '–' }) + ' ' + shareOrigin() + '/daily';
     try { if (navigator.share) await navigator.share({ text }); else await navigator.clipboard.writeText(text); setMsg({ ok: true, text: t('dc.copied') }); } catch { /* cancelled */ }
   }
 
