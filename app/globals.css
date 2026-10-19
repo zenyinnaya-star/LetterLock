@@ -2743,3 +2743,9 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .pf2 .code-box { background: #100c06; border: 1px solid #6b5420; border-radius: 6px; }
 .pf2 .code-box code { color: #f1e3b8; font-family: ui-monospace, monospace; }
 @media (max-width: 720px) { .pf-ach { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pf-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pf-best span { width: 110px; } }
+
+.pf-m { display: flex; align-items: center; gap: 12px; }
+.pf-m-ico { display: grid; place-items: center; width: 36px; flex: none; color: #e8c46a; }
+.pf-m-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.pf-bg { background: linear-gradient(180deg, rgba(10,8,4,.25), rgba(10,8,4,.55)), url('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261019_005936_be368828-f555-4e4e-a238-d6861c7f8c77.png') center / cover no-repeat, #0b0905; }
+.pf-bg::after { background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%); }

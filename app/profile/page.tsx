@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Header } from '@/components/ui';
-import { Icon } from '@/components/icons';
+import { ClassIcon, Icon } from '@/components/icons';
 import { ACHIEVEMENTS } from '@/lib/achievements';
 import { useT } from '@/lib/i18n/react';
 import { CLASSES } from '@/lib/classes';
@@ -59,6 +59,7 @@ export default function ProfilePage() {
                 <b className="pp-name">{p.name}</b>
                 <div className="pf-pills">
                   <span className="pf-pill">{t(`ttl.${titleKey(p.level)}` as never)}</span>
+                  {m?.classes[0] && <span className="pf-pill bad">{CLASSES[m.classes[0].class].name} · Tier {m.classes[0].tier}</span>}
                   {m?.badge && <span className="pf-pill bad">{badgeLabel(m.badge)}</span>}
                 </div>
                 <div className="xp-bar"><i style={{ width: `${pct}%` }} /></div>
@@ -98,10 +99,11 @@ export default function ProfilePage() {
                           const cp = nx ? Math.min(100, Math.round(((c.xp - prev) / Math.max(1, nx - prev)) * 100)) : 100;
                           return (
                             <div key={c.class} className="mastery-row pf-m">
+                              <span className="pf-m-ico"><ClassIcon cls={c.class} size={28} /></span>
                               <span className="pf-m-main">
-                                <b>{CLASSES[c.class].name}</b> · {tierName(c.class, c.tier)}
+                                <span className="pf-m-top"><b>{CLASSES[c.class].name}</b><span className="muted small">{tierName(c.class, c.tier)} · LVL {c.tier}</span></span>
                                 <span className="xp-bar"><i style={{ width: `${cp}%` }} /></span>
-                                <span className="muted small">{c.xp} XP{nx ? ` / ${nx}` : ' · max'} · {c.games} games · {c.wins} wins</span>
+                                <span className="muted small">{c.xp}{nx ? ` / ${nx}` : ' · max'} XP · {c.games} games · {c.wins} wins</span>
                               </span>
                               {c.tier >= 2 && (
                                 <button className={`btn sm ${worn ? '' : 'ghost'}`} onClick={() => void equipBadge(worn ? null : `${c.class}:${c.tier}`).then(() => fetchMastery().then(setM))}>
