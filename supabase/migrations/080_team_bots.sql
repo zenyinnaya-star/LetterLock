@@ -132,7 +132,7 @@ begin
           select c.letter into v_back from team_calls c
             where c.room_id = v_room.id and c.round = v_room.round and c.team_id = v_b.team_id and not c.resolved
             order by c.id limit 1;
-          if v_back is not null and random() < case v_lvl when 1 then 0.45 when 2 then 0.75 else 0.95 end then
+          if v_back is not null and random() < (case v_lvl when 1 then 0.45 when 2 then 0.75 else 0.95 end) then
             perform submit_guess(v_b.token, v_target.id, v_back);
             continue;
           end if;
