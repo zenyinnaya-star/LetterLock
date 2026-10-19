@@ -382,3 +382,7 @@
   .mm-room.stage.s-lobby .mm-invite.on-board .mm-qr svg { width: 72px; height: 72px; }
   .mm-room.stage.s-lobby .mm-mugs { gap: 12px; }
 }
+
+/* v6c: the wall must grow with its board (min-height:0 let the grid row collapse and the board spill over the table) */
+.mm-room.stage.s-lobby .mm-wall { min-height: auto; height: auto; }
+.mm-room.stage.s-lobby { grid-template-rows: max-content max-content 1fr; }
