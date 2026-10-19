@@ -42,6 +42,7 @@ export default function ProfilePage() {
   const earned = new Set(p?.achievements ?? []);
 
   return (
+    <>
     <div className="pf-bg" aria-hidden="true" />
     <main className="shell pf-shell">
       <Header />
@@ -154,5 +155,6 @@ export default function ProfilePage() {
         <Link className="btn ghost block" href="/">{t('pf.back')}</Link>
       </div>
     </main>
+    </>
   );
 }
