@@ -42,6 +42,7 @@ export default function ProfilePage() {
   const earned = new Set(p?.achievements ?? []);
 
   return (
+    <div className="pf-bg" aria-hidden="true" />
     <main className="shell pf-shell">
       <Header />
       <div className="sheet profile-page pf2">
@@ -65,11 +66,11 @@ export default function ProfilePage() {
             </section>
 
             <div className="pf-stats">
-              <div><b>{p.games}</b><span>{t('pf.games')}</span></div>
-              <div><b>{p.wins}</b><span>{t('pf.wins')}</span></div>
-              <div><b>{p.valid_answers}</b><span>{t('pf.answers')}</span></div>
-              <div><b>{p.best_streak}</b><span>{t('pf.streak')}</span></div>
-              <div><b>{p.fastest_ms == null ? '—' : `${(p.fastest_ms / 1000).toFixed(1)}s`}</b><span>{t('pf.fastest')}</span></div>
+              <div><Icon name="cards" size={26} /><span className="pf-sv"><b>{p.games}</b><span>{t('pf.games')}</span></span></div>
+              <div><Icon name="trophy" size={26} /><span className="pf-sv"><b>{p.wins}</b><span>{t('pf.wins')}</span></span></div>
+              <div><Icon name="check" size={26} /><span className="pf-sv"><b>{p.valid_answers}</b><span>{t('pf.answers')}</span></span></div>
+              <div><Icon name="bolt" size={26} /><span className="pf-sv"><b>{p.best_streak}</b><span>{t('pf.streak')}</span></span></div>
+              <div><Icon name="clock" size={26} /><span className="pf-sv"><b>{p.fastest_ms == null ? '—' : `${(p.fastest_ms / 1000).toFixed(1)}s`}</b><span>{t('pf.fastest')}</span></span></div>
             </div>
 
             <div className="pf-cols">
@@ -77,7 +78,7 @@ export default function ProfilePage() {
                 {m && (
                   <>
                     <section className="pf-card">
-                      <span className="label">Your best</span>
+                      <span className="label pf-h"><Icon name="crown" size={20} /> Your best</span>
                       <div className="pf-best">
                         <div><span>Favorite class</span><b>{m.classes[0] ? CLASSES[m.classes[0].class].name : '—'}</b></div>
                         <div><span>Top mode</span><b>{Object.entries(m.modes).sort((a, b) => b[1] - a[1])[0]?.[0] ?? '—'}</b></div>
@@ -86,7 +87,7 @@ export default function ProfilePage() {
                       </div>
                     </section>
                     <section className="pf-card">
-                      <span className="label">Class mastery</span>
+                      <span className="label pf-h"><Icon name="target" size={20} /> Class mastery</span>
                       <div className="mastery-list">
                         {m.classes.length === 0 && <span className="muted small">Finish a game to start ranking up a class.</span>}
                         {m.classes.map((c) => {
@@ -110,24 +111,32 @@ export default function ProfilePage() {
                           );
                         })}
                       </div>
+                      {m.badge && (
+                        <div className="pf-wear">
+                          <span className="pf-hex big"><Icon name="shield" size={30} /></span>
+                          <span><span className="muted small">Wearing</span><br /><b>{badgeLabel(m.badge)}</b></span>
+                          <button className="btn sm ghost" onClick={() => void equipBadge(null).then(() => fetchMastery().then(setM))}>Remove</button>
+                        </div>
+                      )}
                     </section>
                   </>
                 )}
               </div>
               <div className="pf-col">
                 <section className="pf-card">
-                  <span className="label">{t('pf.ach')} · {earned.size}/{ACHIEVEMENTS.length}</span>
+                  <span className="label pf-h"><Icon name="trophy" size={20} /> {t('pf.ach')} <em>{earned.size}/{ACHIEVEMENTS.length}</em></span>
                   <div className="ach-grid pf-ach">
                     {ACHIEVEMENTS.map((a) => (
-                      <div key={a.id} className={`ach${earned.has(a.id) ? ' on' : ''}`}>
-                        <span className="ach-ico"><Icon name={a.icon} size={20} /></span>
-                        <span><b>{t(`ach.${a.id}` as never)}</b><br /><span className="muted small">{t(`ach.${a.id}_d` as never)}</span></span>
+                      <div key={a.id} className={`ach pf-a${earned.has(a.id) ? ' on' : ''}`}>
+                        <span className="ach-ico pf-hex"><Icon name={earned.has(a.id) ? a.icon : 'lock'} size={22} /></span>
+                        <b>{t(`ach.${a.id}` as never)}</b>
+                        <span className="muted small">{t(`ach.${a.id}_d` as never)}</span>
                       </div>
                     ))}
                   </div>
                 </section>
                 <section className="pf-card">
-                  <span className="label">{t('pf.code')}</span>
+                  <span className="label pf-h"><Icon name="lock" size={20} /> {t('pf.code')}</span>
                   <div className="code-box">
                     <code>{p.code}</code>
                     <button className="btn sm ghost" onClick={() => { void navigator.clipboard?.writeText(p.code).then(() => { setCopied(true); window.setTimeout(() => setCopied(false), 1500); }); }}>
