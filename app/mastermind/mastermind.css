@@ -357,3 +357,17 @@
 
 /* lobby: the room-code plate + QR plaque must fit inside the cork board */
 @media (min-width: 981px) and (min-height: 601px) { .mm-room.stage.s-lobby .mm-cork { min-height: 400px; padding-top: 14px; } }
+
+/* v6 lobby (final word): one coherent layout. Board sizes to its content, sits below the top bar, plaque is a compact card. */
+@media (min-width: 981px) and (min-height: 601px) {
+  .mm-room.stage.s-lobby { grid-template-rows: auto auto 1fr; padding-top: 72px; }
+  .mm-room.stage.s-lobby .mm-wall { padding-top: 0; justify-content: flex-start; }
+  .mm-room.stage.s-lobby .mm-cork { min-height: 0; padding: 18px 22px 22px; overflow: visible; }
+  .mm-room.stage.s-lobby .mm-cork-title { margin-bottom: 18px; }
+  .mm-room.stage.s-lobby .mm-lobby-board { align-items: center; }
+  .mm-room.stage.s-lobby .mm-invite.on-board { width: 168px; aspect-ratio: auto; padding: 16px 14px; gap: 8px; }
+  .mm-room.stage.s-lobby .mm-invite.on-board .mm-qr svg { width: 92px; height: 92px; }
+  .mm-room.stage.s-lobby .mm-invite.on-board .mm-invite-txt .btn { white-space: nowrap; }
+  .mm-room.stage.s-lobby .mm-tabletop { align-self: start; min-height: 0; margin-top: 4px; }
+  .mm-room.stage.s-lobby .mm-dock { align-self: start; }
+}
