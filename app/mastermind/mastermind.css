@@ -354,3 +354,6 @@
   .mm-room.s-finished .mm-dock { min-height: 150px; }
   .mm-room.s-finished .mm-tabletop { min-height: 60px; }
 }
+
+/* lobby: the room-code plate + QR plaque must fit inside the cork board */
+@media (min-width: 981px) and (min-height: 601px) { .mm-room.stage.s-lobby .mm-cork { min-height: 480px; } }

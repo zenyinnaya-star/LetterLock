@@ -38,7 +38,8 @@ export default function MastermindHome() {
         <div className="mm-or">or join an investigation</div>
         <div className="mm-folder" data-tab="Join">
           <div className="mm-row">
-            <input className="input" placeholder="CODE" maxLength={4} value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} />
+            <input className="input" placeholder="CODE" maxLength={4} value={code} onChange={(e) => setCode(e.target.value.toUpperCase())}
+              onKeyDown={(e) => { if (e.key === 'Enter' && !busy && name.trim() && code.length >= 4) go(() => mm.join(code, name.trim())); }} />
             <button className="btn ghost" disabled={busy || !name.trim() || code.length < 4} onClick={() => go(() => mm.join(code, name.trim()))}>Join</button>
           </div>
         </div>

@@ -2749,3 +2749,6 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .pf-m-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .pf-bg { background: linear-gradient(180deg, rgba(10,8,4,.25), rgba(10,8,4,.55)), url('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261019_005936_be368828-f555-4e4e-a238-d6861c7f8c77.png') center / cover no-repeat, #0b0905; }
 .pf-bg::after { background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%); }
+
+.tc-member.empty.add { cursor: pointer; justify-content: center; color: #e8c46a; border-style: dashed; font-weight: 700; letter-spacing: .08em; background: transparent; width: 100%; min-height: 58px; font-size: 13px; }
+.tc-member.empty.add:hover { background: rgba(255,207,74,.1); }

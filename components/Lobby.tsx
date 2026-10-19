@@ -112,7 +112,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
       </div>
 
       {teamMode ? (
-        <TeamLobby state={state} token={token} act={act} bots={bots} isHost={isHost} siege={siege} onRemoveBot={(id) => token && void act(() => rpc.removeBot(token, id).then(() => pingBots?.()))} />
+        <TeamLobby state={state} token={token} act={act} bots={bots} isHost={isHost} siege={siege} onAddBot={() => token && void act(() => rpc.addBot(token, 2, botStyle).then(() => pingBots?.()))} onRemoveBot={(id) => token && void act(() => rpc.removeBot(token, id).then(() => pingBots?.()))} />
       ) : duelMode ? (
         <div className="duel-lobby">
           <DuelSeat p={state.players[0]} meId={me?.id} side="left" west={west} />

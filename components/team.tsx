@@ -82,7 +82,7 @@ export function TeamHud({ state }: { state: RoomState }) {
 }
 
 /* ───────── lobby: two team cards ───────── */
-export function TeamLobby({ state, token, act, bots = [], isHost = false, siege = false, onRemoveBot }: { state: RoomState; token: string | null; act: Act; bots?: string[]; isHost?: boolean; siege?: boolean; onRemoveBot?: (id: string) => void }) {
+export function TeamLobby({ state, token, act, bots = [], isHost = false, siege = false, onRemoveBot, onAddBot }: { state: RoomState; token: string | null; act: Act; bots?: string[]; isHost?: boolean; siege?: boolean; onRemoveBot?: (id: string) => void; onAddBot?: () => void }) {
   const t = useT();
   const me = state.me;
   const size = state.room.settings.team_size ?? 2;
@@ -95,16 +95,16 @@ export function TeamLobby({ state, token, act, bots = [], isHost = false, siege 
             <motion.span className="dl-vs tl-vs" initial={{ scale: 3, opacity: 0, rotate: -20 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 500, damping: 16, delay: 0.2 }}>{t('tm.vs')}</motion.span>
           )}
-          <TeamCard team={tm} members={state.players.filter((p) => p.team_id === tm.id)} size={size} state={state} token={token} act={act} meId={me?.id} bots={bots} isHost={isHost} siege={siege} onRemoveBot={onRemoveBot} />
+          <TeamCard team={tm} members={state.players.filter((p) => p.team_id === tm.id)} size={size} state={state} token={token} act={act} meId={me?.id} bots={bots} isHost={isHost} siege={siege} onRemoveBot={onRemoveBot} onAddBot={onAddBot} />
         </div>
       ))}
     </div>
   );
 }
 
-function TeamCard({ team, members: raw, size, state, token, act, meId, bots = [], isHost = false, siege = false, onRemoveBot }: {
+function TeamCard({ team, members: raw, size, state, token, act, meId, bots = [], isHost = false, siege = false, onRemoveBot, onAddBot }: {
   team: Team; members: PublicPlayer[]; size: number; state: RoomState; token: string | null; act: Act; meId?: string;
-  bots?: string[]; isHost?: boolean; siege?: boolean; onRemoveBot?: (id: string) => void;
+  bots?: string[]; isHost?: boolean; siege?: boolean; onRemoveBot?: (id: string) => void; onAddBot?: () => void;
 }) {
   // in the war tent the king takes the throne at the head of the table
   const members = siege ? [...raw].sort((a, b) => (a.id === team.leader_id ? -1 : b.id === team.leader_id ? 1 : 0)) : raw;
@@ -188,7 +188,9 @@ function TeamCard({ team, members: raw, size, state, token, act, meId, bots = []
           ))}
         </AnimatePresence>
         {Array.from({ length: Math.max(0, size - members.length) }, (_, i) => (
-          <div key={`e${i}`} className="tc-member empty">{t('tm.open_slot')}</div>
+          isHost && onAddBot ? (
+            <button key={`e${i}`} type="button" className="tc-member empty add" onClick={onAddBot}>+ {t('lb.add_bot')}</button>
+          ) : <div key={`e${i}`} className="tc-member empty">{t('tm.open_slot')}</div>
         ))}
       </div>
 
