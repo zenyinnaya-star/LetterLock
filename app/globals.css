@@ -2664,3 +2664,9 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .mode-card.world-mastermind:hover { box-shadow: 0 0 26px rgba(150,170,200,.3); }
 @media (prefers-reduced-motion: reduce) { .mode-card::after { transition: none; } }
 .play-head .stage-title { color: #f3d27a; text-shadow: 0 0 18px rgba(243,210,122,.35); -webkit-text-stroke: 0; }
+
+/* per-mode how-to-play videos */
+.mode-videos { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin:18px 0 8px; }
+.mode-video { margin:0; }
+.mode-video video { width:100%; aspect-ratio:16/9; border-radius:12px; background:#000; display:block; }
+.mode-video figcaption { margin-top:6px; font-size:13px; opacity:.85; }
