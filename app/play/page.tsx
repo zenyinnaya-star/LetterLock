@@ -69,6 +69,8 @@ export default function Play() {
   );
 
   return (
+    <>
+    <div className="pf-bg" aria-hidden="true" />
     <main className="shell play-shell">
       <Header />
       <div className="play-head">
@@ -127,5 +129,6 @@ export default function Play() {
         </div>
       )}
     </main>
+    </>
   );
 }
