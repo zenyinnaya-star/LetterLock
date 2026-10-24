@@ -81,6 +81,8 @@ export const rpc = {
   battleStep: (token: string, turn: number) => call<void>('battle_step', { p_token: token, p_turn: turn }),
   getRecap: (code: string) => call<Recap>('get_recap', { p_code: code }),
   createRoom: (name: string, cls: PlayerClass) => call<JoinResult>('create_room', { p_name: name, p_class: cls }),
+  joinSpectator: (code: string, name: string) => call<JoinResult>('join_spectator', { p_code: code, p_name: name }),
+  setHostMode: (token: string, play: boolean) => call<{ play: boolean }>('set_host_mode', { p_token: token, p_play: play }),
   joinRoom: (code: string, name: string, cls: PlayerClass) =>
     call<JoinResult>('join_room', { p_code: code, p_name: name, p_class: cls }),
   getState: (code: string, token: string | null) =>

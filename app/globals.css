@@ -2786,3 +2786,17 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
   .wordmark span { width: 15px !important; height: 18px !important; font-size: 10px !important; }
 }
 @media (max-width: 360px) { .topbar .pc-bar { display: none; } .wordmark span { width: 13px !important; } }
+
+/* host / spectator */
+.sel-who { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sel-who button { text-align: left; display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line, rgba(255,255,255,.18)); background: rgba(0,0,0,.35); color: inherit; cursor: pointer; }
+.sel-who button span { font-size: 12px; opacity: .7; }
+.sel-who button.on { border-color: var(--ca, #f5c451); background: rgba(255,255,255,.1); box-shadow: 0 0 0 1px var(--ca, #f5c451) inset; }
+.selpage.host-only .sel-right, .selpage.host-only .sel-cards, .selpage.host-only .sel-change { display: none; }
+.host-switch { display: inline-flex; align-self: center; padding: 3px; border-radius: 999px; background: rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.15); }
+.host-switch button { border: 0; background: transparent; color: inherit; padding: 7px 14px; border-radius: 999px; font-weight: 600; cursor: pointer; font-size: 14px; }
+.host-switch button.on { background: var(--accent, #f5c451); color: #111; }
+.watchers { text-align: center; font-size: 13px; opacity: .75; display: flex; gap: 6px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.spec-pill { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 40; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 32px); padding: 8px 12px; border-radius: 999px; background: rgba(10,12,18,.9); border: 1px solid rgba(255,255,255,.2); font-size: 13px; backdrop-filter: blur(6px); }
+.spec-pill .input { width: 130px; padding: 6px 10px; min-height: 0; }
+.spec-err { color: #ff8a8a; }

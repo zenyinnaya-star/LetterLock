@@ -63,6 +63,7 @@ function Select() {
   const [cls, setCls] = useState<PlayerClass>('ninja');
   const [name, setName] = useState('');
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [hostOnly, setHostOnly] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   // only the heroes the player put in their loadout (profile page); guests / offline get the three starters
@@ -98,7 +99,8 @@ function Select() {
     try { window.localStorage.setItem(LAST, cls); } catch { /* ignore */ }
     setBusy(true); setErr(null);
     try {
-      const r = kind === 'join' ? await rpc.joinRoom(code, name.trim(), cls) : await rpc.createRoom(name.trim(), cls);
+      const r = kind === 'join' ? await rpc.joinRoom(code, name.trim(), cls) : await rpc.createRoom(name.trim(), hostOnly ? 'hero' : cls);
+      if (hostOnly) await rpc.setHostMode(r.token, false);
       if (kind === 'duel') await rpc.updateSettings(r.token, { mode: 'duel', max_players: 2 });
       if (kind === 'team') await rpc.updateSettings(r.token, { mode: 'team' });
       if (kind === 'story') await rpc.updateSettings(r.token, { max_players: 4 });
@@ -129,7 +131,7 @@ function Select() {
   });
 
   return (
-    <main className="selpage" style={{ ['--ca' as string]: ca, ['--cb' as string]: cb }}>
+    <main className={`selpage${hostOnly ? ' host-only' : ''}`} style={{ ['--ca' as string]: ca, ['--cb' as string]: cb }}>
       <Art cls={cls} />
       <header className="sel-top">
         <Link href="/play" className="play-back" aria-label={t('pl.back')}><Icon name="logout" size={18} /> {t('pl.back')}</Link>
@@ -152,6 +154,16 @@ function Select() {
               <input className="input" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} placeholder={t('home.name_ph')} autoComplete="nickname" />
             </label>
           </div>
+          {kind === 'create' && (
+            <div className="sel-who" role="radiogroup" aria-label="Play or just host">
+              <button type="button" role="radio" aria-checked={!hostOnly} className={!hostOnly ? 'on' : ''} onClick={() => setHostOnly(false)}>
+                <b>Play</b><span>Pick a hero and join in</span>
+              </button>
+              <button type="button" role="radio" aria-checked={hostOnly} className={hostOnly ? 'on' : ''} onClick={() => setHostOnly(true)}>
+                <b>Just host</b><span>Run the room, no hero needed</span>
+              </button>
+            </div>
+          )}
           {err && <motion.div className="note bad" initial={{ x: -8 }} animate={{ x: [8, -6, 4, 0] }}>{err}</motion.div>}
         </aside>
 
@@ -196,7 +208,7 @@ function Select() {
         </div>
         <Link href="/profile" className="sel-change">Change heroes on your profile</Link>
         <motion.button type="button" className="sel-lock" disabled={busy} onClick={() => void lockIn()} whileTap={{ scale: 0.96 }}>
-          <Icon name="lock" size={18} /> {t('sel.lock')} · {info.name}
+          <Icon name="lock" size={18} /> {hostOnly ? 'Create room' : `${t('sel.lock')} · ${info.name}`}
         </motion.button>
       </footer>
     </main>

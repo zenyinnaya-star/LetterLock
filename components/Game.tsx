@@ -23,6 +23,7 @@ import { Reactions } from './Reactions';
 import { ActionFeed } from './ActionFeed';
 import { DuelHud } from './DuelHud';
 import { TeamVoice } from './TeamVoice';
+import { Spectate } from './Spectate';
 import { DuelWest, WestFinale } from './DuelWest';
 import { westArtVars } from '@/lib/westArt';
 import '@/app/west.css';
@@ -122,7 +123,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           else audio.fanfare();
         }
       }
-      if (cur.eliminated && !p.eliminated) { audio.elimination(); narrator.say('eliminated', { delay: 400 }); }
+      if (cur.eliminated && !p.eliminated && !me?.is_spectator) { audio.elimination(); narrator.say('eliminated', { delay: 400 }); }
       else if (cur.strikes > p.strikes) { if (west) audio.hammer(); else if (!vault) audio.buzzer(); }
       else if (cur.answerKey && cur.answerKey !== p.answerKey) {
         if (me?.answer?.valid) audio.success(); else if (!audio.file('nope')) audio.buzzer();
@@ -201,7 +202,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
     const before = knownOut.current;
     knownOut.current = out;
     if (!before || phase === 'lobby' || phase === 'finished') return;
-    const fresh = state.players.filter((p) => out.has(p.id) && !before.has(p.id) && !p.quit);
+    const fresh = state.players.filter((p) => out.has(p.id) && !before.has(p.id) && !p.quit && !p.is_spectator);
     if (fresh.length === 0) return;
     if (fresh.length === 1 && fresh[0].id === me?.id) { announcer.say(tr('an.you_out'), { delay: 1600 }); return; }
     const names = fresh.map((p, i) => (p.id === me?.id ? tr('fd.you') : classCall(p, state.players, i === 0)));
@@ -339,7 +340,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
             } />
           {vaultEnd ? <VaultFinale state={state}>{main}</VaultFinale> : (
             <VaultHeist state={state} msLeft={msLeft}>
-              {me?.eliminated && <div className="banner out"><Icon name="skull" size={18} /> {t('gm.out')}</div>}
+              {me?.eliminated && !me.is_spectator && <div className="banner out"><Icon name="skull" size={18} /> {t('gm.out')}</div>}
               {!me && <div className="banner info"><Icon name="eye" size={18} /> {t('gm.spectator')}</div>}
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div key={`${phase}-${state.room.round}`} className="stage-body"
@@ -381,7 +382,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           ? <DuelHud state={state} />
           : <Hud state={state} meId={me?.id ?? null} />)}
         <AnimatePresence>
-          {me?.eliminated && phase !== 'finished' && (
+          {me?.eliminated && !me.is_spectator && phase !== 'finished' && (
             <motion.div className="banner out" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
               <Icon name="skull" size={18} /> {t('gm.out')}
             </motion.div>
@@ -407,6 +408,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
       </div>
       )}
       {phase !== 'battle' && <div className={west ? 'west-rack' : siege ? 'siege-rack' : vault || vaultEnd ? 'vault-rack' : undefined}><Rack state={state} token={token} act={act} /></div>}
+      <Spectate state={state} token={token} act={act} />
       <Reactions state={state} token={token} />
       {state.room.settings?.mode === 'team' && <TeamVoice state={state} token={token} />}
       <ActionFeed state={state} token={token} />
