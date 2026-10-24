@@ -2771,3 +2771,18 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .lo-card.on small { color: #f6d27a; opacity: 1; }
 .lo-card.locked { opacity: .45; cursor: not-allowed; filter: grayscale(.8); }
 .lo-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+
+/* phone header: everything must fit inside the screen width */
+@media (max-width: 480px) {
+  .topbar { gap: 4px; max-width: 100%; }
+  .topbar > :first-child { flex: 0 1 auto; min-width: 0; }
+  .topbar .tools { gap: 3px; flex: 0 1 auto; min-width: 0; }
+  .topbar .tools > * { flex-shrink: 1; min-width: 0; }
+  .topbar .iconbtn { width: 30px; height: 30px; padding: 0; flex: 0 0 30px; }
+  .topbar .iconbtn svg { width: 16px; height: 16px; }
+  .topbar .profile-chip { padding: 4px 6px; gap: 5px; }
+  .topbar .pc-bar { width: 22px; }
+  .wordmark { gap: 1px; }
+  .wordmark span { width: 15px !important; height: 18px !important; font-size: 10px !important; }
+}
+@media (max-width: 360px) { .topbar .pc-bar { display: none; } .wordmark span { width: 13px !important; } }
