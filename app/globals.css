@@ -2802,8 +2802,11 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .spec-err { color: #ff8a8a; }
 
 /* play hub: one clear main choice, everything else tucked away */
-.wd-badge { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 3; padding: 3px 10px; border-radius: 999px; background: var(--accent, #f5c451); color: #111; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-.join-bar.top { max-width: 420px; margin: 18px auto 6px; }
+.wd-badge { position: static; display: inline-block; margin-top: 4px; z-index: 3; padding: 3px 10px; border-radius: 999px; background: var(--accent, #f5c451); color: #111; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.join-bar.top { max-width: 420px; margin: 18px auto 6px; display: grid; grid-template-columns: 120px 1fr; gap: 8px; padding: 0 16px; }
+.join-bar.top .input.code { width: 100%; min-width: 0; text-align: center; letter-spacing: .25em; }
+.join-bar.top .btn { width: 100%; min-width: 0; padding-inline: 8px; }
+@media (max-width: 480px) { .sel-cards { justify-content: center; gap: 6px; } .sel-card { min-width: 0; flex: 1 1 0; } }
 .more-modes { max-width: 1100px; margin: 14px auto 40px; }
 .more-modes > summary { cursor: pointer; list-style: none; text-align: center; font-weight: 700; padding: 10px 14px; border-radius: 12px; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.14); }
 .more-modes > summary::-webkit-details-marker { display: none; }

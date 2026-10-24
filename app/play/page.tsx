@@ -85,10 +85,10 @@ export default function Play() {
             onClick={() => (d.kind === 'mastermind' ? router.push('/mastermind') : go(d.kind))}>
             <span className="wd-art" style={{ backgroundImage: `url(/art/worlds/mode_${d.art}.webp)` }} />
             <span className="wd-shade" aria-hidden />
-            {d.kind === 'create' && <span className="wd-badge">Start here</span>}
             <span className="wd-ico"><Icon name={d.icon} size={22} /></span>
             <span className="wd-name">{d.name}</span>
             <span className="wd-pl">{d.players}</span>
+            {d.kind === 'create' && <span className="wd-badge">Start here</span>}
           </motion.button>
         ))}
       </div>
