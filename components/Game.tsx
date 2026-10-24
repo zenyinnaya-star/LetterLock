@@ -409,7 +409,7 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
         </section>
       </div>
       )}
-      {phase !== 'battle' && <div className={west ? 'west-rack' : siege ? 'siege-rack' : vault || vaultEnd ? 'vault-rack' : undefined}><Rack state={state} token={token} act={act} /></div>}
+      {phase !== 'battle' && !me?.is_spectator && <div className={west ? 'west-rack' : siege ? 'siege-rack' : vault || vaultEnd ? 'vault-rack' : undefined}><Rack state={state} token={token} act={act} /></div>}
       <Spectate state={fullState} token={token} act={act} />
       <Reactions state={state} token={token} />
       {state.room.settings?.mode === 'team' && <TeamVoice state={state} token={token} />}
