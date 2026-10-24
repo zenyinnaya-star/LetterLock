@@ -12,12 +12,14 @@ export interface DailyAnswer { word: string; valid: boolean; reason: string | nu
 const KEY = 'letterlock.daily.key';
 const STREAK = 'letterlock.daily.streak';
 
+// storage can be blocked (private mode): keep a per-tab random key so those players don't all share one daily run
+let memKey: string | null = null;
 export function dailyKey(): string {
   try {
     let k = window.localStorage.getItem(KEY);
     if (!k) { k = crypto.randomUUID(); window.localStorage.setItem(KEY, k); }
     return k;
-  } catch { return '00000000-0000-4000-8000-000000000000'; }
+  } catch { return (memKey ??= crypto.randomUUID()); }
 }
 
 async function call<T>(fn: string, args: Record<string, unknown>): Promise<T> {
