@@ -158,7 +158,8 @@ export function VaultFinale({ state, children }: { state: RoomState; children: R
   const t = useT();
   const me = state.me;
   const winner = state.players.find((p) => p.id === state.room.winner_id);
-  const iLost = !!me && (!winner || winner.id !== me.id);
+  const spec = !!me?.is_spectator;
+  const iLost = !!me && !spec && (!winner || winner.id !== me.id);
   const [intro, setIntro] = useState(true);
   useEffect(() => {
     const a = window.setTimeout(() => (iLost ? audio.vaultLose() : audio.vaultOpen()), 300);
@@ -198,8 +199,8 @@ export function VaultFinale({ state, children }: { state: RoomState; children: R
       </AnimatePresence>
       <div className={`v-door v-final${intro ? ' hidden' : ''}`}>
         <div className="v-verdict" role="status">
-          <b>{iLost ? t('vt.defeat') : t('vt.victory')}</b>
-          <span>{iLost ? (winner ? t('vt.caught', { name: winner.name }) : t('vt.nobody')) : t('vt.you_cracked')}</span>
+          <b>{spec ? 'Heist over' : iLost ? t('vt.defeat') : t('vt.victory')}</b>
+          <span>{spec ? (winner ? `${winner.name} walked out with the gold.` : t('vt.nobody')) : iLost ? (winner ? t('vt.caught', { name: winner.name }) : t('vt.nobody')) : t('vt.you_cracked')}</span>
         </div>
         <div className="v-content">{children}</div>
       </div>

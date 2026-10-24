@@ -18,7 +18,7 @@ export function GameSummary({ state }: { state: RoomState }) {
   const code = state.room.code;
   useEffect(() => {
     let alive = true;
-    void rpc.gameStats(code).then((s) => { if (alive) setStats(s); }).catch(() => undefined);
+    void rpc.gameStats(code).then((s) => { if (alive) setStats(s.filter((x) => state.players.some((p) => p.id === x.player_id))); }).catch(() => undefined);
     return () => { alive = false; };
   }, [code]);
   if (!stats || stats.length === 0) return null;
