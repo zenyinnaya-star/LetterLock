@@ -3,7 +3,7 @@
 import { TutorialCoach } from './TutorialCoach';
 import Link from 'next/link';
 import { AnimatePresence, MotionConfig, motion } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCountdown } from '@/hooks/useCountdown';
 import { announcer } from '@/lib/announcer';
 import { narrator } from '@/lib/narrator';
@@ -49,11 +49,13 @@ function classCall(p: PublicPlayer, all: PublicPlayer[], capital = false): strin
   return tr(capital ? 'an.The' : 'an.the', { cls });
 }
 
-export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBots }: {
+export function Game({ state: fullState, token, offset, refresh, bots = [], botInfo, pingBots }: {
   state: RoomState; token: string | null; offset: number; refresh: () => Promise<void>;
   bots?: string[]; botInfo?: Record<string, { l: number; s: number }>; pingBots?: () => Promise<void>;
 }) {
   const t = useT();
+  // spectators (incl. a host who sat out) are not part of the match: hide them from every in-game view
+  const state = useMemo(() => ({ ...fullState, players: fullState.players.filter((p) => !p.is_spectator) }), [fullState]);
   const [toast, setToast] = useState<{ msg: string; good?: boolean } | null>(null);
   const [confirmQuit, setConfirmQuit] = useState(false);
   const msLeft = useCountdown(state.room.phase_ends_at, offset);
@@ -240,7 +242,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   const props = { state, token, msLeft, act, offset };
   let main: React.ReactNode;
   switch (phase) {
-    case 'lobby': main = <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} vault={vaultLobby} onStory={setStoryLobby} />; break;
+    case 'lobby': main = <Lobby state={fullState} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} vault={vaultLobby} onStory={setStoryLobby} />; break;
     case 'answer': main = <AnswerPhase {...props} />; break;
     case 'reveal': main = <RevealPhase {...props} />; break;
     case 'guess': main = <GuessPhase {...props} />; break;
@@ -278,7 +280,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           <div className="west p-lobby" style={westArtVars}>
             <div className="w-dust" aria-hidden>{Array.from({ length: 12 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>
             <div className="w-lobby">
-              <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} west />
+              <Lobby state={fullState} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} west />
             </div>
           </div>
         </div>
@@ -291,7 +293,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
             <div className="s-embers" aria-hidden>{Array.from({ length: 18 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>
             <div className="s-vignette" aria-hidden />
             <div className="s-lobby">
-              <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} siege />
+              <Lobby state={fullState} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} siege />
             </div>
           </div>
         </div>
@@ -408,7 +410,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
       </div>
       )}
       {phase !== 'battle' && <div className={west ? 'west-rack' : siege ? 'siege-rack' : vault || vaultEnd ? 'vault-rack' : undefined}><Rack state={state} token={token} act={act} /></div>}
-      <Spectate state={state} token={token} act={act} />
+      <Spectate state={fullState} token={token} act={act} />
       <Reactions state={state} token={token} />
       {state.room.settings?.mode === 'team' && <TeamVoice state={state} token={token} />}
       <ActionFeed state={state} token={token} />
