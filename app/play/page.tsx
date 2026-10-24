@@ -85,6 +85,7 @@ export default function Play() {
             onClick={() => (d.kind === 'mastermind' ? router.push('/mastermind') : go(d.kind))}>
             <span className="wd-art" style={{ backgroundImage: `url(/art/worlds/mode_${d.art}.webp)` }} />
             <span className="wd-shade" aria-hidden />
+            {d.kind === 'create' && <span className="wd-badge">Start here</span>}
             <span className="wd-ico"><Icon name={d.icon} size={22} /></span>
             <span className="wd-name">{d.name}</span>
             <span className="wd-pl">{d.players}</span>
@@ -92,6 +93,15 @@ export default function Play() {
         ))}
       </div>
 
+      <div className="join-bar top">
+        <input className="input code" maxLength={4} value={code} placeholder={t('home.code_ph')} aria-label={t('home.code')}
+          onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
+          onKeyDown={(e) => { if (e.key === 'Enter' && code.length === 4) go('join'); }} />
+        <button className="btn lg" disabled={code.length !== 4} onClick={() => go('join')}>{t('pl.join')}</button>
+      </div>
+
+      <details className="more-modes">
+        <summary>More ways to play <span>Tutorial · Daily challenge · Experiments</span></summary>
       <div className="play-grid">
         <section className="play-modes">
           <span className="label">{t('pl.modes')}</span>
@@ -106,14 +116,9 @@ export default function Play() {
           <span className="label lab-label"><Icon name="bolt" size={14} /> {t('pl.lab')}</span>
           <div className="mode-grid three">{LAB.map((m, i) => card(m, i + 4))}</div>
 
-          <div className="join-bar">
-            <input className="input code" maxLength={4} value={code} placeholder={t('home.code_ph')} aria-label={t('home.code')}
-              onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
-              onKeyDown={(e) => { if (e.key === 'Enter' && code.length === 4) go('join'); }} />
-            <button className="btn lg" disabled={code.length !== 4} onClick={() => go('join')}>{t('pl.join')}</button>
-          </div>
         </section>
       </div>
+      </details>
       {askPw && (
         <div className="pve-lock" role="dialog" aria-modal="true" onClick={() => setAskPw(false)}>
           <form onClick={(e) => e.stopPropagation()} onSubmit={(e) => { e.preventDefault(); void submitPw(); }}>

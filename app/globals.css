@@ -2800,3 +2800,12 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .spec-pill { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 40; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 32px); padding: 8px 12px; border-radius: 999px; background: rgba(10,12,18,.9); border: 1px solid rgba(255,255,255,.2); font-size: 13px; backdrop-filter: blur(6px); }
 .spec-pill .input { width: 130px; padding: 6px 10px; min-height: 0; }
 .spec-err { color: #ff8a8a; }
+
+/* play hub: one clear main choice, everything else tucked away */
+.wd-badge { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 3; padding: 3px 10px; border-radius: 999px; background: var(--accent, #f5c451); color: #111; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.join-bar.top { max-width: 420px; margin: 18px auto 6px; }
+.more-modes { max-width: 1100px; margin: 14px auto 40px; }
+.more-modes > summary { cursor: pointer; list-style: none; text-align: center; font-weight: 700; padding: 10px 14px; border-radius: 12px; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.14); }
+.more-modes > summary::-webkit-details-marker { display: none; }
+.more-modes > summary span { display: block; font-size: 12px; font-weight: 500; opacity: .65; margin-top: 2px; }
+.more-modes[open] > summary { margin-bottom: 14px; }
