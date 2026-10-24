@@ -21,7 +21,9 @@ import { SettingsButton } from './SettingsPanel';
 import { HeroPicker } from './HeroPicker';
 import { StoryLobby } from './StoryLobby';
 import type { HeroId } from '@/lib/heroes';
-import { softSpring, spring } from './ui';
+import { ClassPicker, softSpring, spring } from './ui';
+import { STARTERS, fetchHeroState } from '@/lib/loadout';
+import type { PlayerClass } from '@/lib/types';
 
 const STYLE_KEYS = ['solo.s0', 'solo.s1', 'solo.s2', 'solo.s3'] as const;
 
@@ -35,6 +37,8 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
   const [botStyle, setBotStyle] = useState(0);
   const [story, setStory] = useState(false);
   const [drawer, setDrawer] = useState(false);
+  const [pool, setPool] = useState<PlayerClass[]>(STARTERS);
+  useEffect(() => { void fetchHeroState().then((st) => { if (st && st.loadout.length >= 3) setPool(st.loadout); }); }, []);
   const [picks, setPicks] = useState<{ player_id: string; hero: string }[]>([]);
   useEffect(() => {
     try { if (sessionStorage.getItem(`letterlock:story:${state.room.code}`) === '1') setStory(true); } catch { /* ignore */ }
@@ -208,6 +212,12 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
               <span className="col" style={{ gap: 0, textAlign: 'left' }}><b>{CLASSES[me.class].name}</b><span className="muted small">{CLASSES[me.class].tagline}</span></span>
               <Icon name="lock" size={16} />
             </div>
+          )}
+          {!me.is_spectator && (
+            <details className="cs-more">
+              <summary>Change hero</summary>
+              <ClassPicker value={me.class} only={pool} onChange={(c) => token && void act(() => rpc.setClass(token, c))} />
+            </details>
           )}
         </div>
       )}
