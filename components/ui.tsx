@@ -149,7 +149,7 @@ export function Clock({ msLeft }: { msLeft: number }) {
 }
 
 /* ───────── class picker ───────── */
-export function ClassPicker({ value, onChange }: { value: PlayerClass | null; onChange: (c: PlayerClass) => void }) {
+export function ClassPicker({ value, onChange, only }: { value: PlayerClass | null; onChange: (c: PlayerClass) => void; only?: PlayerClass[] }) {
   const t = useT();
   const info = value ? CLASSES[value] : null;
   const [open, setOpen] = useState<PlayerClass | null>(null);
@@ -163,7 +163,7 @@ export function ClassPicker({ value, onChange }: { value: PlayerClass | null; on
         )}
       </AnimatePresence>
       <div className="classes-grid" role="radiogroup" aria-label={t('home.class')}>
-        {CLASS_ORDER.map((c) => {
+        {(only && only.length ? only : CLASS_ORDER).map((c) => {
           const sel = value === c;
           return (
             <motion.button key={c} type="button" role="radio" aria-checked={sel} className={`class-tile${sel ? ' sel' : ''}`}

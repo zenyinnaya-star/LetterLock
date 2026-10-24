@@ -2759,3 +2759,15 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .sel-change { align-self: center; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #cdbd98; text-decoration: underline; text-underline-offset: 3px; opacity: .85; }
 .sel-change:hover { opacity: 1; }
 @media (min-width: 900px) { .sel-card { max-width: 170px; } .sel-change { align-self: center; white-space: nowrap; } }
+
+/* loadout editor (profile) */
+.lo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; margin: 10px 0; }
+.lo-card { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px 8px; border-radius: 12px; cursor: pointer; color: inherit;
+  background: rgba(14,17,40,.7); border: 1.5px solid rgba(255,255,255,.12); transition: transform .15s, border-color .15s, background .15s; }
+.lo-card b { font-family: var(--display); font-weight: 400; font-size: 12px; letter-spacing: .4px; text-transform: uppercase; }
+.lo-card small { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; display: inline-flex; align-items: center; gap: 3px; }
+.lo-card:hover:not(.locked) { transform: translateY(-2px); }
+.lo-card.on { border-color: #f6d27a; background: rgba(246,210,122,.14); box-shadow: 0 0 16px rgba(246,210,122,.25); }
+.lo-card.on small { color: #f6d27a; opacity: 1; }
+.lo-card.locked { opacity: .45; cursor: not-allowed; filter: grayscale(.8); }
+.lo-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }

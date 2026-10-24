@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { LoadoutEditor } from '@/components/LoadoutEditor';
 import { Header } from '@/components/ui';
 import { ClassIcon, Icon } from '@/components/icons';
 import { ACHIEVEMENTS } from '@/lib/achievements';
@@ -77,6 +78,7 @@ export default function ProfilePage() {
 
             <div className="pf-cols">
               <div className="pf-col">
+                <LoadoutEditor />
                 {m && (
                   <>
                     <section className="pf-card">
