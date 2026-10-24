@@ -21,6 +21,7 @@ import { loadName, saveName, saveSession } from '@/lib/session';
 import type { PlayerClass, RoomSettings } from '@/lib/types';
 import { StoryHeroSelect } from '@/components/StoryHeroSelect';
 import { pveUnlocked } from '@/lib/pveGate';
+import { STARTERS, fetchHeroState } from '@/lib/loadout';
 
 type Kind = 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory' | 'join';
 const META: Record<Kind, { icon: IconName; k: string }> = {
@@ -64,10 +65,18 @@ function Select() {
   const [avatar, setAvatar] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  // only the heroes the player put in their loadout (profile page); guests / offline get the three starters
+  const [pool, setPool] = useState<PlayerClass[]>(STARTERS);
 
   useEffect(() => {
     setName(loadName()); setAvatar(loadAvatar());
-    try { const l = window.localStorage.getItem(LAST) as PlayerClass | null; if (l && CLASS_ORDER.includes(l)) setCls(l); } catch { /* ignore */ }
+    let last: PlayerClass | null = null;
+    try { last = window.localStorage.getItem(LAST) as PlayerClass | null; } catch { /* ignore */ }
+    void fetchHeroState().then((st) => {
+      const lo = st && st.loadout.length >= 3 ? st.loadout.filter((c) => CLASS_ORDER.includes(c)) : STARTERS;
+      setPool(lo);
+      setCls(last && lo.includes(last) ? last : lo[0]);
+    });
     narrator.say('choose', { delay: 300 });
   }, []);
 
@@ -111,9 +120,9 @@ function Select() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
-      const i = CLASS_ORDER.indexOf(cls);
-      if (e.key === 'ArrowRight') pick(CLASS_ORDER[(i + 1) % CLASS_ORDER.length]);
-      if (e.key === 'ArrowLeft') pick(CLASS_ORDER[(i - 1 + CLASS_ORDER.length) % CLASS_ORDER.length]);
+      const i = Math.max(0, pool.indexOf(cls));
+      if (e.key === 'ArrowRight') pick(pool[(i + 1) % pool.length]);
+      if (e.key === 'ArrowLeft') pick(pool[(i - 1 + pool.length) % pool.length]);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -174,7 +183,7 @@ function Select() {
 
       <footer className="sel-strip">
         <div className="sel-cards" role="radiogroup" aria-label={t('home.class')}>
-          {CLASS_ORDER.map((c) => {
+          {pool.map((c) => {
             const on = c === cls; const [a, b] = CLASS_COLORS[c];
             return (
               <button key={c} type="button" role="radio" aria-checked={on} className={`sel-card${on ? ' on' : ''}`}
@@ -185,6 +194,7 @@ function Select() {
             );
           })}
         </div>
+        <Link href="/profile" className="sel-change">Change heroes on your profile</Link>
         <motion.button type="button" className="sel-lock" disabled={busy} onClick={() => void lockIn()} whileTap={{ scale: 0.96 }}>
           <Icon name="lock" size={18} /> {t('sel.lock')} · {info.name}
         </motion.button>

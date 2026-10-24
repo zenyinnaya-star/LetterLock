@@ -2752,3 +2752,10 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 
 .tc-member.empty.add { cursor: pointer; justify-content: center; color: #e8c46a; border-style: dashed; font-weight: 700; letter-spacing: .08em; background: transparent; width: 100%; min-height: 58px; font-size: 13px; }
 .tc-member.empty.add:hover { background: rgba(255,207,74,.1); }
+
+/* class select: loadout only (3-4 big cards), fills the phone width */
+.sel-cards { justify-content: center; }
+.sel-card { flex: 1 1 0; max-width: 150px; min-width: 84px; padding: 12px 6px 10px; }
+.sel-change { align-self: center; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #cdbd98; text-decoration: underline; text-underline-offset: 3px; opacity: .85; }
+.sel-change:hover { opacity: 1; }
+@media (min-width: 900px) { .sel-card { max-width: 170px; } .sel-change { align-self: center; white-space: nowrap; } }
