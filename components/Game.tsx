@@ -146,11 +146,11 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
     if (phase === 'battle') { music.play('battle'); return; }
     if (phase === 'finished') {
       music.play('none'); // let the fanfare + announcer land, then bring the theme back
-      const id = window.setTimeout(() => music.play('theme'), 4000);
+      const id = window.setTimeout(() => music.play(classic ? 'vault' : 'theme'), 4000);
       return () => window.clearTimeout(id);
     }
-    music.play('theme', { quiet: phase !== 'lobby' });
-  }, [phase, duel, duelMode]);
+    music.play(classic ? 'vault' : 'theme', { quiet: phase !== 'lobby' });
+  }, [phase, duel, duelMode, classic]);
   useEffect(() => () => music.play('theme'), []);
 
   // announcer voice
