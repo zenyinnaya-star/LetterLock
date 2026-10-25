@@ -2812,3 +2812,9 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .more-modes > summary::-webkit-details-marker { display: none; }
 .more-modes > summary span { display: block; font-size: 12px; font-weight: 500; opacity: .65; margin-top: 2px; }
 .more-modes[open] > summary { margin-bottom: 14px; }
+
+/* phone: Quit / Leave in the in-game header collapse to an icon so they don't sit under the profile chip */
+@media (max-width: 480px) {
+  .topbar .textbtn { font-size: 0; gap: 0; padding: 6px; }
+  .topbar .textbtn svg { width: 16px; height: 16px; }
+}
