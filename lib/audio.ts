@@ -189,7 +189,7 @@ export const audio = {
   /** Error buzz: trace missed. */
   denied() { tone(180, 0, 0.12, 'square', 0.25); tone(140, 0.14, 0.22, 'square', 0.25); },
   /** Play one of the recorded effects in /public/audio (after `delay` seconds); returns false if it can't. */
-  file(name: 'sword-slash' | 'access-denied' | 'money' | 'villain-laugh' | 'victory' | 'defeat' | 'correct' | 'metal-clang' | 'coin-swipe' | 'mystical-harp' | 'cannon' | 'boing' | 'siren' | 'squelch' | 'nope', delay = 0, volume = 0.9) {
+  file(name: 'sword-slash' | 'access-denied' | 'money' | 'villain-laugh' | 'victory' | 'defeat' | 'correct' | 'metal-clang' | 'coin-swipe' | 'mystical-harp' | 'cannon' | 'boing' | 'siren' | 'squelch' | 'nope' | 'alarm' | 'alarm-long', delay = 0, volume = 0.9) {
     if (!getPrefs().sfx || muted || typeof window === 'undefined') return false;
     const go = () => { try { const a = new Audio(`/audio/${name}.mp3`); a.volume = volume; void a.play().catch(() => undefined); } catch { /* ignore */ } };
     if (delay > 0) window.setTimeout(go, delay * 1000); else go();
@@ -259,7 +259,7 @@ export const audio = {
   /** Vault: the combination dial spins (new round). */
   dial() { for (let i = 0; i < 9; i++) noise(i * 0.045, 0.018, 0.28 - i * 0.02, 3600 - i * 120, 6); tone(180, 0.42, 0.18, 'sine', 0.3, 120); },
   /** Vault: alarm klaxon (a strike, or the heist fails). */
-  alarm(long = false) { const n = long ? 4 : 1; for (let i = 0; i < n; i++) { tone(880, i * 0.5, 0.24, 'square', 0.08, 660); tone(660, i * 0.5 + 0.25, 0.24, 'square', 0.08, 880); } },
+  alarm(long = false) { if (this.file(long ? 'alarm-long' : 'alarm', 0, long ? 0.7 : 0.55)) return; const n = long ? 4 : 1; for (let i = 0; i < n; i++) { tone(880, i * 0.5, 0.24, 'square', 0.08, 660); tone(660, i * 0.5 + 0.25, 0.24, 'square', 0.08, 880); } },
   /** Vault: heavy bolts retract and the door swings open. */
   vaultOpen() { [0, 0.12, 0.24, 0.36].forEach((t) => { noise(t, 0.06, 0.5, 1800, 3); tone(140, t, 0.1, 'square', 0.15, 90); }); tone(70, 0.6, 1.6, 'sawtooth', 0.12, 45); noise(0.6, 1.6, 0.12, 300, 0.6, 120); [[523, 1.9], [659, 2.05], [784, 2.2], [1047, 2.4]].forEach(([f, t]) => tone(f, t, 0.9, 'triangle', 0.12)); },
   /** Vault: guards lock the doors (lose). */
