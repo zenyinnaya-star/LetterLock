@@ -288,7 +288,6 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
       <StageHead state={state} label={t('ph.guess')} msLeft={msLeft} />
       <h2 className="stage-title">{t('ph.crack')}</h2>
       {!(teamMode && tx) && <p className="muted center" style={{ margin: 0 }}>{t('ph.crack_sub')}</p>}
-      <Hints state={state} />
       {canPlay && teamMode && tx && <TeamCalls state={state} tx={tx} meId={me.id} canBack={!me.guess && !myCall} onBack={fire} alone={teamAlive < 2} />}
       {!canPlay ? (
         <Spectating text={t('ph.spec_guess')} />
@@ -328,6 +327,8 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
           </button>
         </div>
       )}
+      {/* below the picker, so a late hint can't push the keys out from under a tap */}
+      <Hints state={state} />
     </>
   );
 }
