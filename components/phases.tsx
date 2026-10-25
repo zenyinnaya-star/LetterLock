@@ -282,6 +282,9 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
   const fire = (l: string) => effTarget && token && void act(() => rpc.guess(token, effTarget, l));
 
   useEffect(() => { setTarget(null); setLetter(null); }, [state.room.round]);
+  // only one possible target (a 1v1 finale): pick them for the player
+  const soleTarget = !teamMode && targets.length === 1 ? targets[0].id : null;
+  useEffect(() => { if (soleTarget) setTarget(soleTarget); }, [soleTarget, state.room.round]);
 
   return (
     <>

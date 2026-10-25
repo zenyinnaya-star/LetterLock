@@ -2797,7 +2797,7 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .host-switch button { border: 0; background: transparent; color: inherit; padding: 7px 14px; border-radius: 999px; font-weight: 600; cursor: pointer; font-size: 14px; }
 .host-switch button.on { background: var(--accent, #f5c451); color: #111; }
 .watchers { text-align: center; font-size: 13px; opacity: .75; display: flex; gap: 6px; justify-content: center; align-items: center; flex-wrap: wrap; }
-.spec-pill { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 40; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 32px); padding: 8px 12px; border-radius: 999px; background: rgba(10,12,18,.9); border: 1px solid rgba(255,255,255,.2); font-size: 13px; backdrop-filter: blur(6px); }
+.spec-pill { position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%); z-index: 40; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 32px); padding: 8px 12px; border-radius: 999px; background: rgba(10,12,18,.9); border: 1px solid rgba(255,255,255,.2); font-size: 13px; backdrop-filter: blur(6px); }
 .spec-pill .input { width: 130px; padding: 6px 10px; min-height: 0; }
 .spec-err { color: #ff8a8a; }
 
