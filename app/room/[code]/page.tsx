@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { linkProfile } from '@/lib/profile';
+import { STARTERS, fetchHeroState } from '@/lib/loadout';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AvatarPicker } from '@/components/AvatarPicker';
@@ -76,7 +77,8 @@ function JoinHere({ code, onJoined }: { code: string; onJoined: (token: string) 
   const [story, setStory] = useState(false);
   const [hero, setHero] = useState<HeroId | null>(null);
   const [taken, setTaken] = useState<Record<string, string>>({});
-  useEffect(() => { setName(loadName()); setAvatar(loadAvatar()); }, []);
+  const [pool, setPool] = useState<PlayerClass[]>(STARTERS);
+  useEffect(() => { setName(loadName()); setAvatar(loadAvatar()); void fetchHeroState().then((st) => { if (st && st.loadout.length >= 3) setPool(st.loadout); }); }, []);
   useEffect(() => {
     let live = true;
     const load = () => rpc.roomStoryPublic(code).then((r) => {
@@ -130,7 +132,7 @@ function JoinHere({ code, onJoined }: { code: string; onJoined: (token: string) 
         ) : (
           <>
             <span className="label">{t('home.class')}</span>
-            <ClassPicker value={cls} onChange={setCls} />
+            <ClassPicker value={cls} onChange={setCls} only={pool} />
           </>
         )}
         <button className="btn lg block" disabled={busy || !ready || !name.trim()} onClick={join}>{t('room.join')}</button>

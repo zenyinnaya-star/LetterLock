@@ -1,5 +1,6 @@
 'use client';
 
+import { shareOrigin } from '@/lib/site';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -20,9 +21,13 @@ import { SettingsButton } from './SettingsPanel';
 import { HeroPicker } from './HeroPicker';
 import { StoryLobby } from './StoryLobby';
 import type { HeroId } from '@/lib/heroes';
-import { softSpring, spring } from './ui';
+import { ClassPicker, softSpring, spring } from './ui';
+import { STARTERS, fetchHeroState } from '@/lib/loadout';
+import type { PlayerClass } from '@/lib/types';
 
 const STYLE_KEYS = ['solo.s0', 'solo.s1', 'solo.s2', 'solo.s3'] as const;
+
+const cfg0 = (st: RoomState) => st.room.settings;
 
 export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots, west = false, siege = false, vault = false, onStory }: {
   state: RoomState; token: string | null; act: Act; onLeave: () => void; bots?: string[]; botInfo?: Record<string, { l: number; s: number }>; pingBots?: () => Promise<void>; west?: boolean; siege?: boolean; vault?: boolean; onStory?: (v: boolean) => void;
@@ -32,6 +37,8 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
   const [botStyle, setBotStyle] = useState(0);
   const [story, setStory] = useState(false);
   const [drawer, setDrawer] = useState(false);
+  const [pool, setPool] = useState<PlayerClass[]>(STARTERS);
+  useEffect(() => { void fetchHeroState().then((st) => { if (st && st.loadout.length >= 3) setPool(st.loadout); }); }, []);
   const [picks, setPicks] = useState<{ player_id: string; hero: string }[]>([]);
   useEffect(() => {
     try { if (sessionStorage.getItem(`letterlock:story:${state.room.code}`) === '1') setStory(true); } catch { /* ignore */ }
@@ -47,7 +54,10 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
   }, [token, state.room.state_version]);
   const me = state.me;
   const isHost = !!me && me.id === state.room.host_id;
-  const count = state.players.length;
+  const roster = state.players.filter((p) => !p.is_spectator);
+  const watchers = state.players.filter((p) => p.is_spectator);
+  const count = roster.length;
+  const canHostSwitch = isHost && !!token && (cfg0(state)?.mode ?? 'classic') !== 'team';
   const cfg = state.room.settings;
   const max = cfg?.max_players ?? 8;
   const duelMode = cfg?.mode === 'duel';
@@ -55,7 +65,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
   const teamSize = cfg?.team_size ?? 2;
   const teamsReady = teamMode && (state.teams ?? []).length === 2 && state.players.every((p) => p.team_id)
     && (state.teams ?? []).every((tm) => state.players.filter((p) => p.team_id === tm.id).length >= 2);
-  const url = typeof window !== 'undefined' ? `${window.location.origin}/room/${state.room.code}` : '';
+  const url = typeof window !== 'undefined' ? `${shareOrigin()}/room/${state.room.code}` : '';
 
   async function copy() {
     try {
@@ -112,18 +122,18 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
       </div>
 
       {teamMode ? (
-        <TeamLobby state={state} token={token} act={act} bots={bots} isHost={isHost} siege={siege} onRemoveBot={(id) => token && void act(() => rpc.removeBot(token, id).then(() => pingBots?.()))} />
+        <TeamLobby state={state} token={token} act={act} bots={bots} isHost={isHost} siege={siege} onAddBot={() => token && void act(() => rpc.addBot(token, 2, botStyle).then(() => pingBots?.()))} onRemoveBot={(id) => token && void act(() => rpc.removeBot(token, id).then(() => pingBots?.()))} />
       ) : duelMode ? (
         <div className="duel-lobby">
-          <DuelSeat p={state.players[0]} meId={me?.id} side="left" west={west} />
+          <DuelSeat p={roster[0]} meId={me?.id} side="left" west={west} />
           <motion.span className="dl-vs" initial={{ scale: 3, opacity: 0, rotate: -20 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 500, damping: 16, delay: 0.3 }}>{west ? 'vs' : 'VS'}</motion.span>
-          <DuelSeat p={state.players[1]} meId={me?.id} side="right" west={west} />
+          <DuelSeat p={roster[1]} meId={me?.id} side="right" west={west} />
         </div>
       ) : (
       <div className="seats">
           <AnimatePresence initial={false}>
-            {state.players.map((p) => (
+            {roster.map((p) => (
               <motion.div key={p.id} layout className={`seat${p.id === me?.id ? ' me' : ''}`}
                 initial={{ opacity: 0, scale: 0.6, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.6 }} transition={spring}>
                 <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }} transition={softSpring}>
@@ -157,6 +167,17 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
         </div>
       )}
 
+      {watchers.length > 0 && (
+        <div className="watchers"><Icon name="eye" size={14} /> Watching: {watchers.map((w) => w.name + (w.is_host ? ' (host)' : '')).join(', ')}</div>
+      )}
+      {canHostSwitch && !story && (
+        <div className="host-switch" role="group" aria-label="Host mode">
+          <button type="button" className={!me?.is_spectator ? 'on' : ''} aria-pressed={!me?.is_spectator}
+            onClick={() => token && void act(() => rpc.setHostMode(token, true))}>I'm playing</button>
+          <button type="button" className={me?.is_spectator ? 'on' : ''} aria-pressed={!!me?.is_spectator}
+            onClick={() => token && void act(() => rpc.setHostMode(token, false))}>Just hosting</button>
+        </div>
+      )}
       {isHost && !teamMode && !story && (
         <div className="quick-bot">
           <button className="btn sm ghost" disabled={count >= max || (duelMode && count >= 2)}
@@ -191,6 +212,12 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
               <span className="col" style={{ gap: 0, textAlign: 'left' }}><b>{CLASSES[me.class].name}</b><span className="muted small">{CLASSES[me.class].tagline}</span></span>
               <Icon name="lock" size={16} />
             </div>
+          )}
+          {!me.is_spectator && (
+            <details className="cs-more">
+              <summary>Change hero</summary>
+              <ClassPicker value={me.class} only={pool} onChange={(c) => token && void act(() => rpc.setClass(token, c))} />
+            </details>
           )}
         </div>
       )}

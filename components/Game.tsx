@@ -3,7 +3,7 @@
 import { TutorialCoach } from './TutorialCoach';
 import Link from 'next/link';
 import { AnimatePresence, MotionConfig, motion } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCountdown } from '@/hooks/useCountdown';
 import { announcer } from '@/lib/announcer';
 import { narrator } from '@/lib/narrator';
@@ -23,6 +23,7 @@ import { Reactions } from './Reactions';
 import { ActionFeed } from './ActionFeed';
 import { DuelHud } from './DuelHud';
 import { TeamVoice } from './TeamVoice';
+import { Spectate } from './Spectate';
 import { DuelWest, WestFinale } from './DuelWest';
 import { westArtVars } from '@/lib/westArt';
 import '@/app/west.css';
@@ -48,11 +49,13 @@ function classCall(p: PublicPlayer, all: PublicPlayer[], capital = false): strin
   return tr(capital ? 'an.The' : 'an.the', { cls });
 }
 
-export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBots }: {
+export function Game({ state: fullState, token, offset, refresh, bots = [], botInfo, pingBots }: {
   state: RoomState; token: string | null; offset: number; refresh: () => Promise<void>;
   bots?: string[]; botInfo?: Record<string, { l: number; s: number }>; pingBots?: () => Promise<void>;
 }) {
   const t = useT();
+  // spectators (incl. a host who sat out) are not part of the match: hide them from every in-game view
+  const state = useMemo(() => ({ ...fullState, players: fullState.players.filter((p) => !p.is_spectator) }), [fullState]);
   const [toast, setToast] = useState<{ msg: string; good?: boolean } | null>(null);
   const [confirmQuit, setConfirmQuit] = useState(false);
   const msLeft = useCountdown(state.room.phase_ends_at, offset);
@@ -122,7 +125,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           else audio.fanfare();
         }
       }
-      if (cur.eliminated && !p.eliminated) { audio.elimination(); narrator.say('eliminated', { delay: 400 }); }
+      if (cur.eliminated && !p.eliminated && !me?.is_spectator) { audio.elimination(); narrator.say('eliminated', { delay: 400 }); }
       else if (cur.strikes > p.strikes) { if (west) audio.hammer(); else if (!vault) audio.buzzer(); }
       else if (cur.answerKey && cur.answerKey !== p.answerKey) {
         if (me?.answer?.valid) audio.success(); else if (!audio.file('nope')) audio.buzzer();
@@ -201,7 +204,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
     const before = knownOut.current;
     knownOut.current = out;
     if (!before || phase === 'lobby' || phase === 'finished') return;
-    const fresh = state.players.filter((p) => out.has(p.id) && !before.has(p.id) && !p.quit);
+    const fresh = state.players.filter((p) => out.has(p.id) && !before.has(p.id) && !p.quit && !p.is_spectator);
     if (fresh.length === 0) return;
     if (fresh.length === 1 && fresh[0].id === me?.id) { announcer.say(tr('an.you_out'), { delay: 1600 }); return; }
     const names = fresh.map((p, i) => (p.id === me?.id ? tr('fd.you') : classCall(p, state.players, i === 0)));
@@ -239,7 +242,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
   const props = { state, token, msLeft, act, offset };
   let main: React.ReactNode;
   switch (phase) {
-    case 'lobby': main = <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} vault={vaultLobby} onStory={setStoryLobby} />; break;
+    case 'lobby': main = <Lobby state={fullState} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} vault={vaultLobby} onStory={setStoryLobby} />; break;
     case 'answer': main = <AnswerPhase {...props} />; break;
     case 'reveal': main = <RevealPhase {...props} />; break;
     case 'guess': main = <GuessPhase {...props} />; break;
@@ -277,7 +280,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           <div className="west p-lobby" style={westArtVars}>
             <div className="w-dust" aria-hidden>{Array.from({ length: 12 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>
             <div className="w-lobby">
-              <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} west />
+              <Lobby state={fullState} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} west />
             </div>
           </div>
         </div>
@@ -290,7 +293,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
             <div className="s-embers" aria-hidden>{Array.from({ length: 18 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>
             <div className="s-vignette" aria-hidden />
             <div className="s-lobby">
-              <Lobby state={state} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} siege />
+              <Lobby state={fullState} token={token} act={act} onLeave={() => void leave()} bots={bots} botInfo={botInfo} pingBots={pingBots} siege />
             </div>
           </div>
         </div>
@@ -339,7 +342,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
             } />
           {vaultEnd ? <VaultFinale state={state}>{main}</VaultFinale> : (
             <VaultHeist state={state} msLeft={msLeft}>
-              {me?.eliminated && <div className="banner out"><Icon name="skull" size={18} /> {t('gm.out')}</div>}
+              {me?.eliminated && !me.is_spectator && <div className="banner out"><Icon name="skull" size={18} /> {t('gm.out')}</div>}
               {!me && <div className="banner info"><Icon name="eye" size={18} /> {t('gm.spectator')}</div>}
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div key={`${phase}-${state.room.round}`} className="stage-body"
@@ -381,7 +384,7 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
           ? <DuelHud state={state} />
           : <Hud state={state} meId={me?.id ?? null} />)}
         <AnimatePresence>
-          {me?.eliminated && phase !== 'finished' && (
+          {me?.eliminated && !me.is_spectator && phase !== 'finished' && (
             <motion.div className="banner out" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
               <Icon name="skull" size={18} /> {t('gm.out')}
             </motion.div>
@@ -406,7 +409,8 @@ export function Game({ state, token, offset, refresh, bots = [], botInfo, pingBo
         </section>
       </div>
       )}
-      {phase !== 'battle' && <div className={west ? 'west-rack' : siege ? 'siege-rack' : vault || vaultEnd ? 'vault-rack' : undefined}><Rack state={state} token={token} act={act} /></div>}
+      {phase !== 'battle' && !me?.is_spectator && <div className={west ? 'west-rack' : siege ? 'siege-rack' : vault || vaultEnd ? 'vault-rack' : undefined}><Rack state={state} token={token} act={act} /></div>}
+      <Spectate state={fullState} token={token} act={act} />
       <Reactions state={state} token={token} />
       {state.room.settings?.mode === 'team' && <TeamVoice state={state} token={token} />}
       <ActionFeed state={state} token={token} />

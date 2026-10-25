@@ -21,6 +21,7 @@ import { loadName, saveName, saveSession } from '@/lib/session';
 import type { PlayerClass, RoomSettings } from '@/lib/types';
 import { StoryHeroSelect } from '@/components/StoryHeroSelect';
 import { pveUnlocked } from '@/lib/pveGate';
+import { STARTERS, fetchHeroState } from '@/lib/loadout';
 
 type Kind = 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory' | 'join';
 const META: Record<Kind, { icon: IconName; k: string }> = {
@@ -62,12 +63,21 @@ function Select() {
   const [cls, setCls] = useState<PlayerClass>('ninja');
   const [name, setName] = useState('');
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [hostOnly, setHostOnly] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  // only the heroes the player put in their loadout (profile page); guests / offline get the three starters
+  const [pool, setPool] = useState<PlayerClass[]>(STARTERS);
 
   useEffect(() => {
     setName(loadName()); setAvatar(loadAvatar());
-    try { const l = window.localStorage.getItem(LAST) as PlayerClass | null; if (l && CLASS_ORDER.includes(l)) setCls(l); } catch { /* ignore */ }
+    let last: PlayerClass | null = null;
+    try { last = window.localStorage.getItem(LAST) as PlayerClass | null; } catch { /* ignore */ }
+    void fetchHeroState().then((st) => {
+      const lo = st && st.loadout.length >= 3 ? st.loadout.filter((c) => CLASS_ORDER.includes(c)) : STARTERS;
+      setPool(lo);
+      setCls(last && lo.includes(last) ? last : lo[0]);
+    });
     narrator.say('choose', { delay: 300 });
   }, []);
 
@@ -89,7 +99,8 @@ function Select() {
     try { window.localStorage.setItem(LAST, cls); } catch { /* ignore */ }
     setBusy(true); setErr(null);
     try {
-      const r = kind === 'join' ? await rpc.joinRoom(code, name.trim(), cls) : await rpc.createRoom(name.trim(), cls);
+      const r = kind === 'join' ? await rpc.joinRoom(code, name.trim(), cls) : await rpc.createRoom(name.trim(), hostOnly ? 'hero' : cls);
+      if (hostOnly) await rpc.setHostMode(r.token, false);
       if (kind === 'duel') await rpc.updateSettings(r.token, { mode: 'duel', max_players: 2 });
       if (kind === 'team') await rpc.updateSettings(r.token, { mode: 'team' });
       if (kind === 'story') await rpc.updateSettings(r.token, { max_players: 4 });
@@ -111,16 +122,16 @@ function Select() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
-      const i = CLASS_ORDER.indexOf(cls);
-      if (e.key === 'ArrowRight') pick(CLASS_ORDER[(i + 1) % CLASS_ORDER.length]);
-      if (e.key === 'ArrowLeft') pick(CLASS_ORDER[(i - 1 + CLASS_ORDER.length) % CLASS_ORDER.length]);
+      const i = Math.max(0, pool.indexOf(cls));
+      if (e.key === 'ArrowRight') pick(pool[(i + 1) % pool.length]);
+      if (e.key === 'ArrowLeft') pick(pool[(i - 1 + pool.length) % pool.length]);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   });
 
   return (
-    <main className="selpage" style={{ ['--ca' as string]: ca, ['--cb' as string]: cb }}>
+    <main className={`selpage${hostOnly ? ' host-only' : ''}`} style={{ ['--ca' as string]: ca, ['--cb' as string]: cb }}>
       <Art cls={cls} />
       <header className="sel-top">
         <Link href="/play" className="play-back" aria-label={t('pl.back')}><Icon name="logout" size={18} /> {t('pl.back')}</Link>
@@ -143,6 +154,16 @@ function Select() {
               <input className="input" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} placeholder={t('home.name_ph')} autoComplete="nickname" />
             </label>
           </div>
+          {kind === 'create' && (
+            <div className="sel-who" role="radiogroup" aria-label="Play or just host">
+              <button type="button" role="radio" aria-checked={!hostOnly} className={!hostOnly ? 'on' : ''} onClick={() => setHostOnly(false)}>
+                <b>Play</b><span>Pick a hero and join in</span>
+              </button>
+              <button type="button" role="radio" aria-checked={hostOnly} className={hostOnly ? 'on' : ''} onClick={() => setHostOnly(true)}>
+                <b>Just host</b><span>Run the room, no hero needed</span>
+              </button>
+            </div>
+          )}
           {err && <motion.div className="note bad" initial={{ x: -8 }} animate={{ x: [8, -6, 4, 0] }}>{err}</motion.div>}
         </aside>
 
@@ -174,7 +195,7 @@ function Select() {
 
       <footer className="sel-strip">
         <div className="sel-cards" role="radiogroup" aria-label={t('home.class')}>
-          {CLASS_ORDER.map((c) => {
+          {pool.map((c) => {
             const on = c === cls; const [a, b] = CLASS_COLORS[c];
             return (
               <button key={c} type="button" role="radio" aria-checked={on} className={`sel-card${on ? ' on' : ''}`}
@@ -185,8 +206,9 @@ function Select() {
             );
           })}
         </div>
+        <Link href="/profile" className="sel-change">Change heroes on your profile</Link>
         <motion.button type="button" className="sel-lock" disabled={busy} onClick={() => void lockIn()} whileTap={{ scale: 0.96 }}>
-          <Icon name="lock" size={18} /> {t('sel.lock')} · {info.name}
+          <Icon name="lock" size={18} /> {hostOnly ? 'Create room' : `${t('sel.lock')} · ${info.name}`}
         </motion.button>
       </footer>
     </main>

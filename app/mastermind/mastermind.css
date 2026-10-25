@@ -269,3 +269,120 @@
 .mm-photo:hover { transform: translateY(-4px) rotate(0deg) scale(1.05); box-shadow: 0 14px 28px rgba(0,0,0,.6); z-index: 4; }
 .mm-room .btn { transition: transform .18s, filter .18s; }
 .mm-room .btn:active:not(:disabled) { transform: scale(.97); }
+
+/* Lobby: polaroids and the room-code plate + QR share the cork board (matches mockup) */
+.mm-lobby-board { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 22px; align-items: start; padding: 0 8px; }
+.mm-lobby-board .mm-mugs { display: flex; flex-wrap: wrap; gap: 18px 16px; justify-content: center; align-content: flex-start; }
+.mm-invite.on-board { flex-direction: column; margin: 0; gap: 10px; padding: 10px; border-radius: 6px; background: linear-gradient(180deg, #2a2a2c, #151516); box-shadow: 0 0 0 2px #4a4a4e, 0 12px 24px rgba(0,0,0,.55); }
+.mm-invite.on-board .mm-plate { width: 100%; text-align: center; }
+.mm-invite.on-board .mm-invite-txt { align-items: center; }
+.mm-invite.on-board .mm-invite-txt b { color: #e9dcc0; }
+.mm-cork-title { background: #efe3c4; color: #231810; display: inline-block; padding: 10px 26px; font-family: 'Special Elite','Courier New',monospace; letter-spacing: .12em; text-shadow: none; box-shadow: 0 6px 14px rgba(0,0,0,.45); transform: rotate(-1.2deg); position: relative; left: 50%; translate: -50% 0; }
+.mm-cork-title small { color: #5a4630; }
+.mm-room.s-lobby .mm-cork { min-height: 380px; padding-bottom: 34px; }
+.mm-room.s-lobby .mm-tabletop .mm-cta:not(:disabled) { font-size: clamp(18px, 2.4vw, 26px); letter-spacing: .14em; padding: 16px 54px; }
+@media (max-width: 760px) { .mm-lobby-board { grid-template-columns: 1fr; } .mm-invite.on-board { flex-direction: row; justify-self: center; } }
+.mm-room.s-lobby .mm-cork { min-height: 470px; }
+.mm-lobby-board { margin-top: 6px; }
+.mm-invite.on-board .mm-invite-txt .btn { font-size: 11px; padding: 6px 10px; }
+.mm-invite.on-board .mm-qr svg { width: 96px; height: 96px; }
+
+/* Mastermind v3: generated brass room-code plate and engraved plaque behind the QR */
+.mm-plate { width: 220px; aspect-ratio: 2.75; justify-content: center; border: 0; border-radius: 0; box-shadow: none; filter: drop-shadow(0 8px 10px rgba(0,0,0,.55));
+  background: var(--art-brass) 50% 50% / 171% 263% no-repeat; }
+.mm-plate span { color: #4a3510; font-weight: 700; }
+.mm-plate b { color: #2a1c05; text-shadow: 0 1px 0 rgba(255,240,190,.5); }
+.mm-invite.on-board { width: 176px; aspect-ratio: .64; justify-content: center; padding: 22px 16px; border-radius: 0; box-shadow: none; filter: drop-shadow(0 10px 14px rgba(0,0,0,.6));
+  background: var(--art-plaque) 50% 49% / 139% 123% no-repeat; }
+.mm-invite.on-board .mm-plate { filter: none; width: 100%; }
+
+/* ===== v4 fixes (QA pass): stable layout, phone layout, readable paper, stamps ===== */
+@media (min-width: 981px) and (min-height: 601px) {
+  .mm-tabletop { position: relative; min-height: 180px; }
+  .mm-dock { min-height: 292px; justify-content: flex-start; }
+  .mm-room.stage .mm-cork { min-height: 300px; }
+}
+.mm-toast { position: absolute; left: 50%; bottom: 4px; translate: -50% 0; white-space: nowrap; z-index: 3; }
+.mm-tabletop { position: relative; }
+.mm-suspect .delta { right: 46px; top: 50%; translate: 0 -50%; font-size: 15px; }
+.mm-center { gap: 40px; }
+.mm-toggle { display: inline-flex; gap: 8px; align-items: center; padding: 3px 10px; border-radius: 6px; background: rgba(241,228,195,.78); color: #3a2610; }
+/* clue / accusation paper: readable text over the folder art */
+.mm-folder { padding: 20px 34px 16px 30px; }
+.mm-folder .mm-hint { background: rgba(241,228,195,.82); padding: 3px 10px; border-radius: 5px; align-self: flex-start; }
+.mm-folder .mm-reveal { background: rgba(241,228,195,.9); }
+/* finale: stamp no longer clipped, podium fills the board */
+.mm-stamp.closed { top: 24%; }
+.mm-podium { padding-top: 120px; gap: 26px; }
+.mm-podium .mm-photo { width: 118px; } .mm-podium .block { width: 160px; }
+.mm-podium .p1 .block { height: 110px; } .mm-podium .p2 .block { height: 80px; } .mm-podium .p3 .block { height: 58px; }
+.mm-room.s-finished .mm-cork { min-height: 400px; }
+@media (max-width: 980px), (max-height: 600px) {
+  .mm-hud { flex-direction: row; align-items: center; justify-content: space-between; }
+  .mm-hud .mm-clockwrap { margin-top: 0; }
+  .mm-clock { width: 62px; height: 62px; }
+  .mm-evidence .mm-photo.suspect { display: block; width: 84px; justify-self: center; }
+  .mm-dock { display: contents; }
+  .mm-folder { position: sticky; bottom: 8px; z-index: 9; align-self: center; width: 100%; max-width: 640px; padding: 18px 26px 12px 22px; margin-top: 14px; }
+  .mm-room.stage { padding-bottom: 36px; }
+  .mm-podium { padding-top: 90px; gap: 10px; } .mm-podium .mm-photo { width: 92px; } .mm-podium .block { width: 100px; }
+}
+@media (max-width: 760px) {
+  .mm-invite.on-board { flex-direction: column; justify-self: center; width: min(190px, 70%); }
+  .mm-invite.on-board .mm-plate { width: 100%; }
+  .mm-lobby-board { padding: 0; }
+}
+.mm-room.s-finished .mm-wall { padding-top: 34px; }
+.mm-room.s-finished .mm-podium { padding-top: 96px; }
+.mm-room.s-finished .mm-podium .mm-photo { width: 104px; } .mm-room.s-finished .mm-podium .block { width: 150px; }
+@media (max-height: 760px) { .mm-room.s-finished .mm-podium { padding-top: 84px; } .mm-room.s-finished .mm-podium .p1 .block { height: 84px; } .mm-room.s-finished .mm-podium .p2 .block { height: 62px; } }
+@media (max-width: 980px), (max-height: 600px) { .mm-evidence .mm-photo.suspect { width: 100px; } }
+
+/* v5: feedback pegs, recap, crown, glass */
+.mm-log .pegs i.near { background: #e7a73a; border-color: #8a5a12; }
+.mm-log li { font-size: 13px; }
+.mm-recap { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; font: 600 13px 'Courier New', ui-monospace, monospace; }
+.mm-recap span { padding: 3px 10px; border-radius: 999px; background: rgba(10,14,26,.62); border: 1px solid rgba(255,181,74,.4); color: #6dffb0; }
+.mm-recap span b { color: #f1e4c3; margin-right: 4px; } .mm-recap .meta { color: #cdbd98; border-color: rgba(255,255,255,.12); }
+.mm-podium .mm-photo { position: relative; }
+.mm-podium .crown { position: absolute; left: 50%; top: -38px; translate: -50% 0; font-size: 34px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.6)); animation: mm-crown 2.4s ease-in-out infinite; }
+@keyframes mm-crown { 50% { transform: translateY(-5px) rotate(4deg); } }
+.mm-glass .hurt { list-style: none; margin: 8px 0 0; padding: 0; font-style: normal; display: grid; gap: 4px; }
+.mm-glass .hurt li { display: flex; justify-content: space-between; gap: 8px; font: 600 12px 'Courier New', ui-monospace, monospace; color: #e9dcc0; }
+.mm-glass .hurt li span { color: #ff6b66; letter-spacing: 2px; }
+@media (min-width: 981px) and (min-height: 601px) {
+  .mm-room.s-finished .mm-dock { min-height: 150px; }
+  .mm-room.s-finished .mm-tabletop { min-height: 60px; }
+}
+
+/* lobby: the room-code plate + QR plaque must fit inside the cork board */
+@media (min-width: 981px) and (min-height: 601px) { .mm-room.stage.s-lobby .mm-cork { min-height: 400px; padding-top: 14px; } }
+
+/* v6 lobby (final word): one coherent layout. Board sizes to its content, sits below the top bar, plaque is a compact card. */
+@media (min-width: 981px) and (min-height: 601px) {
+  .mm-room.stage.s-lobby { grid-template-rows: auto auto 1fr; padding-top: 72px; }
+  .mm-room.stage.s-lobby .mm-wall { padding-top: 0; justify-content: flex-start; }
+  .mm-room.stage.s-lobby .mm-cork { min-height: 0; padding: 18px 22px 22px; overflow: visible; }
+  .mm-room.stage.s-lobby .mm-cork-title { margin-bottom: 18px; }
+  .mm-room.stage.s-lobby .mm-lobby-board { align-items: center; }
+  .mm-room.stage.s-lobby .mm-invite.on-board { width: 168px; aspect-ratio: auto; padding: 16px 14px; gap: 8px; }
+  .mm-room.stage.s-lobby .mm-invite.on-board .mm-qr svg { width: 92px; height: 92px; }
+  .mm-room.stage.s-lobby .mm-invite.on-board .mm-invite-txt .btn { white-space: nowrap; }
+  .mm-room.stage.s-lobby .mm-tabletop { align-self: start; min-height: 0; margin-top: 4px; }
+  .mm-room.stage.s-lobby .mm-dock { align-self: start; }
+}
+
+/* v6b: mid-width desktops (~1000-1280px): narrower side rails, board never shrinks under its contents, plaque goes beside/below mugs */
+.mm-room.stage .mm-cork { flex: none; }
+@media (min-width: 981px) and (max-width: 1279px) and (min-height: 601px) {
+  .mm-room.stage { grid-template-columns: 150px minmax(0, 1fr) 150px; gap: 10px 14px; padding-left: 14px; padding-right: 14px; }
+  .mm-room.stage.s-lobby .mm-lobby-board { grid-template-columns: 1fr; justify-items: center; }
+  .mm-room.stage.s-lobby .mm-invite.on-board { flex-direction: row; width: auto; padding: 12px 18px; gap: 14px; }
+  .mm-room.stage.s-lobby .mm-invite.on-board .mm-plate { width: 150px; }
+  .mm-room.stage.s-lobby .mm-invite.on-board .mm-qr svg { width: 72px; height: 72px; }
+  .mm-room.stage.s-lobby .mm-mugs { gap: 12px; }
+}
+
+/* v6c: the wall must grow with its board (min-height:0 let the grid row collapse and the board spill over the table) */
+.mm-room.stage.s-lobby .mm-wall { min-height: auto; height: auto; }
+.mm-room.stage.s-lobby { grid-template-rows: max-content max-content 1fr; }

@@ -31,6 +31,7 @@ export interface PublicPlayer {
   latched_to: string | null;
   oracle_word: string | null;
   team_id?: string | null;
+  is_spectator?: boolean;
 }
 
 export interface IntelNinja { kind: 'ninja'; round: number; letters: string[] }
@@ -61,6 +62,7 @@ export interface Me {
   intel: Intel[];
   used_words: string[];
   team_id?: string | null;
+  is_spectator?: boolean;
 }
 
 export interface RevealRow { player_id: string; word: string; valid: boolean; reason: string | null; points: number; legend?: boolean }

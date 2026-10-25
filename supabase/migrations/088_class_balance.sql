@@ -1,0 +1,6 @@
+-- Balance pass (applied live via the Supabase MCP; patch text kept here for the record)
+-- Gambler: busted bet costs 15 (was 10).      _advance_phase_core: points - 15, feed amount 15
+-- Ninja: duel vision shows 3 locks (was 6).   use_perk: limit case when v_room.duel then 3 else 6 end
+-- Oracle: perk also removes one own hidden lock (min 1 left, not in team mode).
+-- Mimic: transforming also removes one own hidden lock (min 1 left, not in team mode).
+-- _ult_cost: oracle 10, jester 12, villain 14, hacker 16, gambler 10, mimic 14, parasite 16.

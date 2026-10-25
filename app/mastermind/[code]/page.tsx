@@ -1,5 +1,6 @@
 'use client';
 
+import { shareOrigin } from '@/lib/site';
 import { memo, use, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
@@ -68,6 +69,8 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
   const [now, setNow] = useState(0);
   const [flash, setFlash] = useState<{ k: number; kind: 'good' | 'bad' } | null>(null);
   const [shake, setShake] = useState(0);
+  const guessRef = useRef<HTMLInputElement>(null);
+  useEffect(() => { if (shake) guessRef.current?.focus(); }, [shake]);
   const [flicker, setFlicker] = useState(0);
   const [hitId, setHitId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ k: number; msg: string } | null>(null);
@@ -217,7 +220,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
       if (!r.correct) {
         const mine = [...st.guesses].reverse().find((g) => g.player_id === st.me.id && g.text === typed);
         const hits = mine?.hits;
-        setToast({ k: Date.now(), msg: hits === undefined ? `${typed.toUpperCase()} is wrong` : `${typed.toUpperCase()}: ${hits} letter${hits === 1 ? '' : 's'} in the right place` });
+        setToast({ k: Date.now(), msg: hits === undefined ? `${typed.toUpperCase()} is wrong` : `${typed.toUpperCase()}: ${hits} in place${mine?.near ? ` · ${mine.near} elsewhere` : ''}` });
       }
     } catch (e) { setErr(mmError(e)); }
     setBusy(false);
@@ -266,7 +269,13 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
   const guessing = inRound && !me.is_mastermind && !me.out;
 
   // letter slots on the table
-  const known = s.slots && s.slots.length ? s.slots : (s.word ? s.word.toUpperCase().split('') : null);
+  const baseKnown = s.slots && s.slots.length ? s.slots : (s.word ? s.word.toUpperCase().split('') : null);
+  // letters deduced from earlier accusations (migration 082 reports which positions were exact)
+  const known = baseKnown && baseKnown.map((c, i) => {
+    if (c) return c;
+    const g = s.guesses.find((x) => x.hit_pos?.includes(i + 1));
+    return g ? (g.text[i] ?? '').toUpperCase() || null : null;
+  });
   const typed = guessing ? text.toUpperCase().replace(/[^A-Z]/g, '') : '';
   const slots = known ?? Array.from({ length: 6 }, () => null as string | null);
   const unknownLen = !known;
@@ -312,13 +321,19 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
             {room.status === 'lobby' && (
               <>
                 <div className="mm-cork-title">Case {room.code}<small>{room.quick ? 'Quick case · 3 short rounds' : 'Everyone takes a turn holding the secret'}</small></div>
-                <div className="mm-mugs">
+                <div className="mm-lobby-board"><div className="mm-mugs">
                   {players.map((p) => (
                     <motion.div key={p.id} data-pin className={`mm-photo${p.id === me.id ? ' me' : ''}`} initial={{ y: -40, opacity: 0, rotate: -6 }} animate={{ y: 0, opacity: 1, rotate: (p.name.length % 5) - 2 }}>
                       <div className="pic sil" /><div className="cap">{p.name}{p.is_host ? ' ★' : ''}</div>
                     </motion.div>
                   ))}
                   {Array.from({ length: Math.max(0, 2 - players.length) }, (_, i) => <div key={`w${i}`} className="mm-photo empty"><div className="pic">?</div><div className="cap">Waiting…</div></div>)}
+                </div>
+              <div className="mm-invite on-board">
+                <div className="mm-plate"><span>Room code</span><b>{room.code}</b></div>
+                <div className="mm-qr"><QRCodeSVG value={`${shareOrigin()}/mastermind/${room.code}`} size={104} level="M" marginSize={1} bgColor="#f5ecd6" fgColor="#1a1208" /></div>
+                <div className="mm-invite-txt"><b>Scan to join</b><button type="button" className="btn" onClick={() => { try { void navigator.clipboard.writeText(`${shareOrigin()}/mastermind/${room.code}`); } catch { /* ignore */ } }}>Copy invite link</button></div>
+              </div>
                 </div>
               </>
             )}
@@ -341,7 +356,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
                       <li key={i} className={g.correct ? 'ok' : 'x'}>
                         <b>{nameOf(g.player_id)}</b> <span className="w">{g.text}</span>
                         {!g.correct && g.hits !== undefined && (
-                          <span className="pegs" title={`${g.hits} in the right place`}>{Array.from({ length: Math.max(g.text.length, 1) }, (_, k) => <i key={k} className={k < g.hits! ? 'on' : ''} />)}</span>
+                          <span className="pegs" title={`${g.hits} in the right place${g.near ? `, ${g.near} elsewhere` : ''}`}>{Array.from({ length: Math.max(g.text.length, 1) }, (_, k) => <i key={k} className={k < g.hits! ? 'on' : k < g.hits! + (g.near ?? 0) ? 'near' : ''} />)}</span>
                         )}
                       </li>
                     ))}
@@ -354,7 +369,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
               <div className="mm-podium">
                 {[board[1], board[0], board[2]].map((p, i) => p && (
                   <motion.div key={p.id} className={`step p${[2, 1, 3][i]}`} initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: [0.35, 0.1, 0.6][i], type: 'spring', stiffness: 200, damping: 16 }}>
-                    <div className="mm-photo"><div className="pic sil" /><div className="cap">{p.name}</div></div>
+                    <div className="mm-photo">{i === 1 && <span className="crown" aria-hidden>👑</span>}<div className="pic sil" /><div className="cap">{p.name}</div></div>
                     <div className="block"><span>{['2nd', '1st', '3rd'][i]}</span><b>{p.points}</b></div>
                   </motion.div>
                 ))}
@@ -381,11 +396,6 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
           {room.status === 'lobby' ? (
             <>
               <div className="mm-kicker">{players.length < 2 ? 'Share the code. You need at least 2 detectives.' : `${players.length} detectives in the room`}</div>
-              <div className="mm-invite">
-                <div className="mm-plate"><span>Room code</span><b>{room.code}</b></div>
-                <div className="mm-qr"><QRCodeSVG value={`${typeof window !== 'undefined' ? window.location.origin : ''}/mastermind/${room.code}`} size={104} level="M" marginSize={1} bgColor="#f5ecd6" fgColor="#1a1208" /></div>
-                <div className="mm-invite-txt"><b>Scan to join</b><button type="button" className="btn" onClick={() => { try { void navigator.clipboard.writeText(`${window.location.origin}/mastermind/${room.code}`); } catch { /* ignore */ } }}>Copy invite link</button></div>
-              </div>
             </>
           ) : room.status === 'finished' ? (
             <div className="mm-kicker">{board[0] ? `${board[0].name} solves the most cases` : ''}{s.word ? ` · last word: ${s.word.toUpperCase()}` : ''}</div>
@@ -443,7 +453,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
           {guessing && (
             <form key={shake} className={`mm-folder${shake ? ' shake' : ''}`} data-tab="Case file · your accusation" onSubmit={(e) => { e.preventDefault(); void guess(); }}>
               <div className="mm-row">
-                <input className="input" placeholder="Type the word" maxLength={unknownLen ? 20 : slots.length} value={text} autoCapitalize="off" autoComplete="off" spellCheck={false} onChange={(e) => setText(e.target.value)} />
+                <input ref={guessRef} className="input" placeholder="Type the word" maxLength={unknownLen ? 20 : slots.length} value={text} autoCapitalize="off" autoComplete="off" spellCheck={false} onChange={(e) => setText(e.target.value)} />
                 <button className="btn" disabled={busy || !text.trim()}>Accuse</button>
               </div>
               <p className="mm-hint"><span className="hearts">{'❤'.repeat(Math.max(0, me.hp))}{'♡'.repeat(Math.max(0, 3 - me.hp))}</span> · a wrong accusation costs a heart</p>
@@ -461,7 +471,15 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
             </div>
           )}
 
-          {room.status === 'between' && <p className="mm-sub">Next round starting…</p>}
+          {room.status === 'between' && (
+            <>
+              <div className="mm-recap" aria-label="Round recap">
+                {players.filter((p) => (deltas[p.id] ?? 0) > 0).map((p) => <span key={p.id}><b>{p.name}</b> +{deltas[p.id]}</span>)}
+                <span className="meta">{s.clues.length}/{room.clue_limit} clues used</span>
+              </div>
+              <p className="mm-sub">{room.between_until ? `Next round in ${Math.max(0, Math.ceil((room.between_until - now) / 1000))}s…` : 'Next round starting…'}</p>
+            </>
+          )}
           {room.status === 'finished' && me.is_host && <button className="btn lg mm-cta" disabled={busy} onClick={() => act(() => mm.again(token))}>Open a new case</button>}
           {room.status === 'finished' && !me.is_host && <p className="mm-sub">Waiting for the host to open a new case…</p>}
 
@@ -496,7 +514,14 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
         <aside className="mm-side right">
           <div className="mm-glass">
             <div className="tag">Behind the glass</div>
-            {behindGlass.length === 0 ? <div className="none">{inRound ? 'Nobody eliminated yet' : 'Eliminated players watch from here'}</div> : (
+            {behindGlass.length === 0 ? (
+              <div className="none">
+                {inRound ? 'Nobody eliminated yet' : 'Eliminated players watch from here'}
+                {inRound && players.some((p) => !p.is_mastermind && p.hp < 3) && (
+                  <ul className="hurt">{players.filter((p) => !p.is_mastermind && p.hp < 3).map((p) => <li key={p.id}>{p.name} <span>{'❤'.repeat(Math.max(0, p.hp))}{'♡'.repeat(3 - Math.max(0, p.hp))}</span></li>)}</ul>
+                )}
+              </div>
+            ) : (
               <div className="sil">
                 {behindGlass.map((p) => <div key={p.id} className="ghost"><div className="mug" /><span>{p.name}</span>{p.id === me.id && <em>you</em>}</div>)}
               </div>

@@ -153,7 +153,7 @@
 .w-post.finale { margin-top: 10px; }
 .w-mug { width: 58%; aspect-ratio: 1; border-radius: 4px; overflow: hidden; filter: sepia(.6) contrast(1.05) brightness(.95); box-shadow: inset 0 0 0 2px rgba(43,29,16,.6); }
 .w-mug img, .w-mug .w-portrait-fallback { width: 100%; height: 100%; object-fit: cover; display: block; }
-.w-stamp { position: absolute; left: 50%; top: 66%; translate: -50% -50%; padding: 4px 18px; border: 5px double currentColor; border-radius: 8px;
+.w-stamp { position: absolute; left: 50%; top: 55%; translate: -50% -50%; padding: 4px 18px; border: 5px double currentColor; border-radius: 8px;
   font: 900 clamp(30px, 9vw, 46px) 'Cinzel', Georgia, serif; letter-spacing: .14em; text-transform: uppercase; color: rgba(160,26,14,.92); pointer-events: none; background: rgba(240,222,186,.18);
   -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -2.2 1.6'/></filter><rect width='300' height='120' filter='url(%23n)'/></svg>");
   mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -2.2 1.6'/></filter><rect width='300' height='120' filter='url(%23n)'/></svg>"); }
@@ -273,3 +273,44 @@ body:has(.west:not(.p-lobby)) .rx-dock { top: 168px; bottom: auto !important; ri
 .w-banner span { display: block; white-space: nowrap; line-height: 1.1; }
 .w-banner { margin-left: auto; margin-right: auto; max-width: calc(100vw - 24px); }
 @media (max-width: 600px) { .w-banner { padding: 10px 22px 12px; } .w-banner span { font-size: clamp(22px, 8vw, 40px); } }
+
+/* Duel lobby: wooden notice board behind the room sign, wanted cards and start plate (matches mockup) */
+.p-lobby .w-lobby { position: relative; width: min(820px, 100%); padding: 20px 26px 28px; border-radius: 6px;
+  background:
+    radial-gradient(circle at 14px 14px, #6a6a6e 0 4px, #2a2a2c 5px, transparent 6px) top left / 100% 100% no-repeat,
+    repeating-linear-gradient(90deg, transparent 0 138px, rgba(0,0,0,.45) 138px 141px),
+    linear-gradient(180deg, #6b4524, #4b2f17 40%, #5a3a1d);
+  box-shadow: inset 0 0 0 3px #2b1a0b, inset 0 0 60px rgba(0,0,0,.45), 0 18px 50px rgba(0,0,0,.65); }
+.p-lobby .w-lobby::before, .p-lobby .w-lobby::after { content: ''; position: absolute; top: 10px; width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #b9b9bd, #4a4a4e); box-shadow: 0 2px 3px #000; }
+.p-lobby .w-lobby::before { left: 10px; } .p-lobby .w-lobby::after { right: 10px; }
+.p-lobby .w-sign { margin-top: 6px; }
+.p-lobby .w-lobby .btn.lg:not(:disabled) { font-size: clamp(18px, 2.4vw, 24px); letter-spacing: .14em; box-shadow: 0 0 0 2px #7c5a22, 0 8px 18px rgba(0,0,0,.5); }
+
+/* Duel upgrade (from combined mockup): brass code plate, parchment QR card, parchment waiting banner */
+.p-lobby .w-sign { background: linear-gradient(180deg, #e9cd86, #c39a45 45%, #8f6a26) !important; border: 3px solid #5b3f14; border-radius: 5px; box-shadow: inset 0 0 0 2px rgba(255,236,170,.55), inset 0 -8px 14px rgba(70,40,5,.35), 0 10px 18px rgba(0,0,0,.6); }
+.p-lobby .w-sign::before, .p-lobby .w-sign::after { background: repeating-linear-gradient(180deg, #7a5a22 0 5px, #2a1a08 5px 7px); }
+.p-lobby .w-sign span { color: #2a1a07; text-shadow: 0 1px 0 rgba(255,240,190,.55); }
+.p-lobby .w-lobby .lobby-qr { padding: 10px 12px 6px; background: linear-gradient(180deg, #f2e2b6, #d9bd82); border-radius: 4px; box-shadow: 0 6px 14px rgba(0,0,0,.5), inset 0 0 0 1px rgba(90,60,20,.4); }
+.p-lobby .w-lobby .lobby-qr > span { color: #3a2410 !important; text-shadow: none !important; font-weight: 800; }
+.p-lobby .w-lobby .btn.lg:disabled { color: #3a2410; background: linear-gradient(180deg, #efdfb4, #cdb078); filter: none; box-shadow: inset 0 0 0 2px rgba(90,60,20,.45), 0 4px 10px rgba(0,0,0,.4); }
+
+/* Duel lobby v3: generated art — notice board, torn parchment header, brass code plate */
+.p-lobby .w-lobby { background: var(--w-board) 50% 50% / 100% 100% no-repeat !important; box-shadow: 0 18px 50px rgba(0,0,0,.65) !important; padding: 34px 40px 40px; border-radius: 0; width: min(860px, 100%); }
+.p-lobby .w-lobby::before, .p-lobby .w-lobby::after { display: none; }
+.p-lobby .w-lobby .lobby-top { background: var(--w-paper) 50% 50% / 145% 137% no-repeat; padding: 54px 70px 50px; margin: 0 auto; filter: drop-shadow(0 10px 14px rgba(0,0,0,.55)); }
+.p-lobby .w-lobby .lobby-top .label { color: #3a2410; text-shadow: none; font-weight: 800; }
+.p-lobby .w-sign { aspect-ratio: 2.9; width: min(300px, 70vw); margin-top: 0; background: var(--w-brass) 50% 50% / 142% auto no-repeat !important; border: 0 !important; box-shadow: none !important; border-radius: 0; filter: drop-shadow(0 8px 10px rgba(0,0,0,.5)); }
+.p-lobby .w-sign::before, .p-lobby .w-sign::after { display: none; }
+.p-lobby .w-lobby .lobby-top .lobby-qr { background: none; box-shadow: none; padding: 0; }
+.p-lobby .w-lobby .btn.sm.ghost { color: #f2dfae; background: linear-gradient(180deg, #4a2f17, #2b1a0b); border-color: #8f6625; }
+@media (max-width: 560px) { .p-lobby .w-lobby { padding: 22px 14px 28px; } .p-lobby .w-lobby .lobby-top { padding: 40px 26px 36px; } }
+.p-lobby .w-lobby { padding: 24px 40px 26px; gap: 10px; }
+.p-lobby .w-lobby .lobby-top { padding: 34px 64px 30px; }
+.p-lobby .w-sign { width: min(270px, 70vw); }
+@media (max-height: 820px) { .p-lobby .w-lobby .lobby-top { padding: 28px 56px 24px; } .p-lobby .w-lobby .duel-lobby { transform: scale(.92); } }
+
+/* ---------- gameplay rework (Higgsfield frame + bezel) ---------- */
+.w-clock { background: var(--w-bezel) 50% 50% / 178% no-repeat; box-shadow: none; filter: drop-shadow(0 10px 14px rgba(0,0,0,.6)); }
+.w-bar { padding: 40px 54px 34px; background: var(--w-frame) 50% 47% / 100% 125% no-repeat; }
+.w-bar .w-plate { top: 6px; }
+@media (max-width: 600px) { .w-bar { padding: 32px 34px 28px; } }
