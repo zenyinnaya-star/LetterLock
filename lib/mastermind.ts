@@ -6,12 +6,12 @@ async function call<T>(fn: string, args: Record<string, unknown>): Promise<T> {
   return data as T;
 }
 
-export interface MmPlayer { id: string; name: string; points: number; hp: number; out: boolean; is_host: boolean; is_mastermind: boolean }
+export interface MmPlayer { id: string; name: string; points: number; hp: number; out: boolean; is_host: boolean; is_mastermind: boolean; sitting?: boolean }
 export interface MmState {
   room: { code: string; status: 'lobby' | 'round' | 'between' | 'finished'; quick: boolean; round: number; total_rounds: number;
     round_secs: number; round_ends: number | null; between_until: number | null; server_now: number; clues_left: number; clue_limit: number;
     solved_by: string | null; mastermind_id: string | null; can_reveal?: boolean };
-  me: { id: string; name: string; is_host: boolean; hp: number; out: boolean; points: number; is_mastermind: boolean; backing: string | null };
+  me: { id: string; name: string; is_host: boolean; hp: number; out: boolean; points: number; is_mastermind: boolean; backing: string | null; sitting?: boolean };
   word: string | null;
   players: MmPlayer[];
   clues: string[];
@@ -30,6 +30,7 @@ export const mm = {
   clue: (token: string, text: string) => call<void>('mm_clue', { p_token: token, p_text: text }),
   guess: (token: string, text: string) => call<{ correct: boolean }>('mm_guess', { p_token: token, p_text: text }),
   back: (token: string, target: string) => call<void>('mm_back', { p_token: token, p_target: target }),
+  sit: (token: string, sit: boolean) => call<{ sitting: boolean }>('mm_sit', { p_token: token, p_sit: sit }),
   again: (token: string) => call<void>('mm_again', { p_token: token }),
   reveal: (token: string) => call<{ pos: number }>('mm_reveal', { p_token: token }),
   react: (token: string, emoji: string) => call<void>('mm_react', { p_token: token, p_emoji: emoji }),

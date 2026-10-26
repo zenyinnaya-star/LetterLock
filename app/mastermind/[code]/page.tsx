@@ -261,9 +261,10 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
   const { room, me, players } = s;
   const mmPlayer = players.find((p) => p.is_mastermind);
   const nameOf = (id: string) => players.find((p) => p.id === id)?.name ?? '?';
-  const board = [...players].sort((a, b) => b.points - a.points);
+  const activeN = players.filter((p) => !p.sitting).length;
+  const board = players.filter((p) => !p.sitting).sort((a, b) => b.points - a.points);
   const inRound = room.status === 'round';
-  const lineup = players.filter((p) => !p.out);
+  const lineup = players.filter((p) => !p.out && !p.sitting);
   const behindGlass = inRound ? players.filter((p) => p.out && !p.is_mastermind) : [];
   const cards = Array.from({ length: room.clue_limit }, (_, i) => s.clues[i] ?? null);
   const guessing = inRound && !me.is_mastermind && !me.out;
@@ -324,7 +325,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
                 <div className="mm-lobby-board"><div className="mm-mugs">
                   {players.map((p) => (
                     <motion.div key={p.id} data-pin className={`mm-photo${p.id === me.id ? ' me' : ''}`} initial={{ y: -40, opacity: 0, rotate: -6 }} animate={{ y: 0, opacity: 1, rotate: (p.name.length % 5) - 2 }}>
-                      <div className="pic sil" /><div className="cap">{p.name}{p.is_host ? ' ★' : ''}</div>
+                      <div className="pic sil" /><div className="cap">{p.name}{p.is_host ? ' ★' : ''}{p.sitting ? ' (watching)' : ''}</div>
                     </motion.div>
                   ))}
                   {Array.from({ length: Math.max(0, 2 - players.length) }, (_, i) => <div key={`w${i}`} className="mm-photo empty"><div className="pic">?</div><div className="cap">Waiting…</div></div>)}
@@ -431,7 +432,7 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
         <div className="mm-dock">
           {room.status === 'lobby' && (
             me.is_host
-              ? <button className="btn lg mm-cta" disabled={busy || players.length < 2} onClick={() => act(() => mm.start(token))}>{players.length < 2 ? 'Waiting for suspects…' : 'Begin the interrogation'}</button>
+              ? <button className="btn lg mm-cta" disabled={busy || activeN < 2} onClick={() => act(() => mm.start(token))}>{activeN < 2 ? 'Waiting for suspects…' : 'Begin the interrogation'}</button>
               : <p className="mm-sub">Waiting for the host to begin…</p>
           )}
 
@@ -489,6 +490,12 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
             </div>
           )}
           {err && <p className="mm-err">{err}</p>}
+          {me.is_host && (
+            <button className="btn ghost sm" disabled={busy || (!me.sitting && inRound && me.is_mastermind) || (me.sitting && inRound)}
+              onClick={() => act(() => mm.sit(token, !me.sitting))}>
+              {me.sitting ? 'Rejoin the game' : 'Sit out and keep hosting'}
+            </button>
+          )}
           <button className="btn ghost sm mm-leave" onClick={() => router.push('/play')}>Leave</button>
         </div>
 
