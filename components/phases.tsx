@@ -566,9 +566,11 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
   const [open, setOpen] = useState<null | { kind: 'card'; id: number } | { kind: 'perk' } | { kind: 'trace' } | { kind: 'ult' }>(null);
   const [ultRound, setUltRound] = useState(-1);
   const [ultFirst, setUltFirst] = useState<string | null>(null);
+  const [ultLetters, setUltLetters] = useState<string[]>([]);
+  const [ultPick, setUltPick] = useState<string[]>([]);
   const phase = state.room.phase;
   useEffect(() => setOpen(null), [phase]);
-  useEffect(() => { if (open?.kind !== 'ult') setUltFirst(null); }, [open]);
+  useEffect(() => { if (open?.kind !== 'ult') { setUltFirst(null); setUltLetters([]); setUltPick([]); } }, [open]);
   // Memory twist: my locks fade out a few seconds into each answer phase, so I have to remember them
   const memoryTwist = state.room.settings.twist === 'memory';
   const [memHidden, setMemHidden] = useState(false);
@@ -608,20 +610,26 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
     return false;
   }
 
-  const ULTS: Record<string, { cost: number; phases: string[]; target?: boolean; buy?: boolean; needsUsed?: boolean; two?: boolean }> = {
+  // costs mirror the server's _ult_cost()
+  const ULTS: Record<string, { cost: number; phases: string[]; target?: boolean; buy?: boolean; needsUsed?: boolean; letters?: boolean; multi?: boolean; rule?: boolean }> = {
     ninja: { cost: 16, phases: ['answer', 'reveal', 'guess', 'react'] },
     oracle: { cost: 12, phases: ['answer', 'reveal', 'guess', 'react'] },
     mastermind: { cost: 12, phases: ['answer', 'reveal', 'guess', 'react'], target: true },
     hero: { cost: 14, phases: ['answer', 'reveal', 'guess', 'react'], needsUsed: true },
-    jester: { cost: 14, phases: ['answer', 'reveal', 'guess', 'react'] },
-    villain: { cost: 18, phases: ['answer', 'reveal', 'guess', 'react'], target: true },
-    hacker: { cost: 20, phases: ['answer', 'reveal', 'guess', 'react'] },
-    gambler: { cost: 8, phases: ['answer', 'reveal', 'guess', 'react'], buy: true },
-    mimic: { cost: 18, phases: ['answer', 'reveal', 'guess', 'react'], target: true },
-    parasite: { cost: 20, phases: ['answer', 'reveal', 'guess', 'react'], target: true, two: true },
+    jester: { cost: 12, phases: ['answer', 'reveal', 'guess', 'react'] },
+    villain: { cost: 14, phases: ['answer', 'reveal', 'guess', 'react'], target: true, letters: true },
+    hacker: { cost: 14, phases: ['answer', 'reveal', 'guess', 'react'], multi: true },
+    gambler: { cost: 10, phases: ['answer', 'reveal', 'guess', 'react'], buy: true },
+    mimic: { cost: 14, phases: ['answer', 'reveal', 'guess', 'react'], target: true },
+    parasite: { cost: 14, phases: ['answer', 'reveal', 'guess', 'react'] },
     thief: { cost: 16, phases: ['answer', 'reveal', 'guess', 'react'], target: true },
-    wildcard: { cost: 16, phases: ['answer', 'reveal', 'guess', 'react'] },
+    wildcard: { cost: 12, phases: ['answer', 'reveal', 'guess', 'react'], rule: true },
   };
+  const RULES: { key: string; label: string }[] = [
+    { key: 'swap', label: 'Lock swap' }, { key: 'no_e', label: 'No-E round' }, { key: 'shuffle', label: 'Card shuffle' },
+    { key: 'double', label: 'Double points' }, { key: 'amnesty', label: 'Amnesty' }, { key: 'speed', label: 'Speed round' },
+  ];
+  const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   const ult = cfg.ultimates && !teamMode && !me.eliminated ? ULTS[me.class] : undefined;
   const charge = me.charge ?? 0;
   const ultUsable = !!ult && charge >= ult.cost && ult.phases.includes(phase) && ultRound !== state.room.round && (!ult.needsUsed || me.perk_used);
@@ -747,7 +755,7 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
                 animate={ultUsable ? { boxShadow: ['0 0 0 0 #ff4d6d00', '0 0 0 5px #ff4d6d88', '0 0 0 0 #ff4d6d00'] } : {}}
                 transition={{ repeat: Infinity, duration: 1.4 }}
                 onClick={() => {
-                  if (ult.target || ult.buy) setOpen(open?.kind === 'ult' ? null : { kind: 'ult' });
+                  if (ult.target || ult.buy || ult.multi || ult.rule) setOpen(open?.kind === 'ult' ? null : { kind: 'ult' });
                   else fireUlt(null);
                 }}>
                 <Icon name="bolt" size={26} />
@@ -757,27 +765,64 @@ export function Rack({ state, token, act }: Omit<PhaseProps, 'msLeft'>) {
               <AnimatePresence>
                 {open?.kind === 'ult' && (
                   <motion.div className="popover" initial={{ opacity: 0, y: 8, x: '-50%' }} animate={{ opacity: 1, y: 0, x: '-50%' }} exit={{ opacity: 0, y: 8, x: '-50%' }}>
-                    {!(ult.two && ultFirst) && <span className="label">{ult.buy ? t('ult.buy') : t('ult.pick')}</span>}
+                    {!(ult.letters && ultFirst) && <span className="label">{ult.buy ? t('ult.buy') : ult.rule ? 'Bend which rule?' : ult.multi ? 'Pick targets' : t('ult.pick')}</span>}
                     {ult.buy
                       ? (['attack', 'shield', 'cleanse'] as const).map((k) => (
                           <button key={k} className="btn sm ghost" onClick={() => fireUlt(null, k)}><CardIcon kind={k} size={16} /> {CARD_INFO[k].name}</button>
                         ))
-                      : ult.two && ultFirst
+                      : ult.rule
+                        ? RULES.map((r) => <button key={r.key} className="btn sm ghost" onClick={() => fireUlt(null, r.key)}>{r.label}</button>)
+                      : ult.multi
                         ? (
                           <>
-                            <span className="label">{t('ult.second')}</span>
-                            {ultTargets.filter((p) => p.id !== ultFirst).map((p) => (
-                              <button key={p.id} className="btn sm danger" onClick={() => fireUlt(ultFirst, p.id)}><PlayerAvatar p={p} size={18} /> {p.name}</button>
+                            {ultTargets.map((p) => (
+                              <button key={p.id} className={`btn sm ${ultPick.includes(p.id) ? 'danger' : 'ghost'}`} aria-pressed={ultPick.includes(p.id)}
+                                onClick={() => setUltPick((v) => (v.includes(p.id) ? v.filter((x) => x !== p.id) : [...v, p.id]))}>
+                                <PlayerAvatar p={p} size={18} /> {p.name}
+                              </button>
                             ))}
-                            <button className="btn sm ghost" onClick={() => fireUlt(ultFirst)}>{t('ult.one')}</button>
+                            <button className="btn sm ghost" onClick={() => setUltPick(ultPick.length === ultTargets.length ? [] : ultTargets.map((p) => p.id))}>
+                              {ultPick.length === ultTargets.length ? 'Clear' : 'Select all'}
+                            </button>
+                            <button className="btn sm" disabled={ultPick.length === 0} onClick={() => fireUlt(null, ultPick.join(','))}>
+                              Hack {ultPick.length || ''} &amp; crack
+                            </button>
+                          </>
+                        )
+                      : ult.letters && ultFirst
+                        ? (
+                          <>
+                            <span className="label">Pick up to 4 locks for {nameOf(state, ultFirst)}</span>
+                            <div className="ult-letters">
+                              {ALPHA.map((l) => (
+                                <button key={l} type="button" className={`ult-l${ultLetters.includes(l) ? ' on' : ''}`} aria-pressed={ultLetters.includes(l)}
+                                  onClick={() => setUltLetters((v) => (v.includes(l) ? v.filter((x) => x !== l) : v.length >= 4 ? v : [...v, l]))}>{l}</button>
+                              ))}
+                            </div>
+                            <button className="btn sm danger" disabled={ultLetters.length === 0} onClick={() => fireUlt(ultFirst, ultLetters.join(''))}>
+                              Stack {ultLetters.length || ''} lock{ultLetters.length === 1 ? '' : 's'}
+                            </button>
+                            <button className="btn sm ghost" onClick={() => fireUlt(ultFirst)}>Random 4</button>
                           </>
                         )
                         : ultTargets.map((p) => (
-                          <button key={p.id} className="btn sm danger" onClick={() => (ult.two ? setUltFirst(p.id) : fireUlt(p.id))}><PlayerAvatar p={p} size={18} /> {p.name}{me.class === 'mimic' && p.class && <span className="muted small"> · {CLASSES[p.class].name}</span>}</button>
+                          <button key={p.id} className="btn sm danger" onClick={() => (ult.letters ? setUltFirst(p.id) : fireUlt(p.id))}><PlayerAvatar p={p} size={18} /> {p.name}{me.class === 'mimic' && p.class && <span className="muted small"> · {CLASSES[p.class].name}</span>}</button>
                         ))}
                   </motion.div>
                 )}
               </AnimatePresence>
+            </div>
+          </>
+        )}
+        {me.fate && (
+          <>
+            <span className="sep" />
+            <div className="sect">
+              <span className="sect-label">Foretold</span>
+              <div className="row small" style={{ gap: 6, color: '#cfe9ff' }}>
+                <Icon name="orb" size={14} /> next locks
+                <TileRow small letters={me.fate.split('').map((l) => ({ letter: l }))} />
+              </div>
             </div>
           </>
         )}

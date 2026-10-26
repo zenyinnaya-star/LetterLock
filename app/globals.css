@@ -2830,3 +2830,8 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 
 /* watch-only status: tiny, see-through, never blocks taps or content */
 .spec-pill.status { bottom: 10px; padding: 4px 10px; font-size: 12px; opacity: .7; pointer-events: none; }
+
+/* ultimate letter picker (Villain) */
+.ult-letters { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; max-width: 300px; }
+.ult-l { padding: 6px 0; border-radius: 6px; border: 1px solid rgba(255,255,255,.25); background: rgba(0,0,0,.4); color: inherit; font-weight: 800; cursor: pointer; }
+.ult-l.on { background: #ff4d6d; color: #fff; border-color: #ff4d6d; }

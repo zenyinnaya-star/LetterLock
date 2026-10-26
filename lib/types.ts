@@ -41,7 +41,8 @@ export interface IntelMastermind {
   kind: 'mastermind'; round: number; target_id: string; target_name: string; letters: string[]; leaked: string;
 }
 export interface IntelOracle { kind: 'oracle'; round: number; prompt: string }
-export type Intel = IntelNinja | IntelMastermind | IntelOracle;
+export interface IntelHacker { kind: 'hacker'; round: number; target_id: string; target_name: string; letters: string[] }
+export type Intel = IntelNinja | IntelMastermind | IntelOracle | IntelHacker;
 
 export interface Me {
   id: string;
@@ -65,6 +66,8 @@ export interface Me {
   used_words: string[];
   team_id?: string | null;
   is_spectator?: boolean;
+  /** Oracle ultimate: the next locks that will land on me, in order */
+  fate?: string | null;
 }
 
 export interface RevealRow { player_id: string; word: string; valid: boolean; reason: string | null; points: number; legend?: boolean }
