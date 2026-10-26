@@ -41,7 +41,7 @@ export function Spectate({ state, token, act }: { state: RoomState; token: strin
 
   if (me.is_spectator) {
     return (
-      <div className="spec-pill">
+      <div className="spec-pill status">
         <Icon name="eye" size={15} />
         <span>{me.id === state.room.host_id ? 'You’re hosting from the sidelines' : 'You’re watching'}</span>
       </div>

@@ -2827,3 +2827,6 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .rv-chip { display: inline-flex; gap: 5px; align-items: center; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.08); font-size: 13px; }
 .rv-chip.lead { background: rgba(245,196,81,.22); color: var(--accent, #f5c451); }
 .rv-chip.me, .rivalry b.me { text-decoration: underline; text-underline-offset: 3px; }
+
+/* watch-only status: tiny, see-through, never blocks taps or content */
+.spec-pill.status { bottom: 10px; padding: 4px 10px; font-size: 12px; opacity: .7; pointer-events: none; }
