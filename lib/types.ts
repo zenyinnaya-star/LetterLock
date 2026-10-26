@@ -32,6 +32,8 @@ export interface PublicPlayer {
   oracle_word: string | null;
   team_id?: string | null;
   is_spectator?: boolean;
+  /** rivalry: games won in this room since it opened (carries across rematches) */
+  wins?: number;
 }
 
 export interface IntelNinja { kind: 'ninja'; round: number; letters: string[] }

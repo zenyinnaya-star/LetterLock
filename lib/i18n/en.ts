@@ -172,7 +172,7 @@ const en = {
   'er.CANNOT_TARGET_SELF': 'You can’t target yourself.', 'er.TARGET_ELIMINATED': 'That player is already out.',
   'er.BAD_LETTER': 'Pick a letter A–Z.', 'er.ALREADY_GUESSED': 'You already guessed this round.',
   'er.ALREADY_REVEALED': 'That letter’s already been cracked — pick another.', 'er.CARD_NOT_AVAILABLE': 'That card isn’t available.',
-  'er.VILLAIN_NO_SHIELD': 'Villains can’t use Shields.', 'er.NOTHING_TO_BLOCK': 'Nothing is aimed at you to block.',
+  'er.RATE_LIMITED': 'Too many tries — wait a minute and try again.', 'er.VILLAIN_NO_SHIELD': 'Villains can’t use Shields.', 'er.NOTHING_TO_BLOCK': 'Nothing is aimed at you to block.',
   'er.AT_MINIMUM': 'You already have just 1 letter — nothing to cleanse.', 'er.PERK_USED': 'You’ve already used your perk.',
   'er.PERK_NOT_READY': 'Ninja vision unlocks from round 3.', 'er.NOTHING_TO_ABSORB': 'Nothing is aimed at that player.',
   'er.NO_ACTIVE_PERK': 'Your perk is passive — it kicks in when you play an Attack card.', 'er.PERKS_OFF': 'Class perks are switched off in this room.',

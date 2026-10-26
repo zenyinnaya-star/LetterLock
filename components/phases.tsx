@@ -1,5 +1,6 @@
 'use client';
 
+import { Rivalry } from './Rivalry';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CARD_INFO, CHAOS_INFO, CLASSES } from '@/lib/classes';
@@ -525,6 +526,7 @@ export function Finished({ state, token, act }: PhaseProps) {
             {!tie && state.teams![0].points === state.teams![1].points && <span className="muted small">{t('tm.tiebreak')}</span>}
           </div>
         )}
+        {!teamMode && <Rivalry players={state.players} meId={state.me?.id} min={2} />}
       </div>
       <div className="podium">
         {awards.map((a, i) => (

@@ -55,7 +55,8 @@ export async function fetchProfile(): Promise<ProfileInfo | null> {
 
 export async function restoreProfile(code: string): Promise<boolean> {
   try {
-    const s = await call<Stored>('profile_restore', { p_code: code });
+    const s = await call<Stored | null>('profile_restore', { p_code: code });
+    if (!s) return false; // wrong code: the server returns null (not an error) so the attempt still counts toward the rate limit
     store(s);
     return true;
   } catch { return false; }

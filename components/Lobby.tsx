@@ -22,6 +22,7 @@ import { HeroPicker } from './HeroPicker';
 import { StoryLobby } from './StoryLobby';
 import type { HeroId } from '@/lib/heroes';
 import { ClassPicker, softSpring, spring } from './ui';
+import { Rivalry } from './Rivalry';
 import { STARTERS, fetchHeroState } from '@/lib/loadout';
 import type { PlayerClass } from '@/lib/types';
 
@@ -167,6 +168,7 @@ export function Lobby({ state, token, act, onLeave, bots = [], botInfo, pingBots
         </div>
       )}
 
+      <Rivalry players={roster} meId={me?.id} />
       {watchers.length > 0 && (
         <div className="watchers"><Icon name="eye" size={14} /> Watching: {watchers.map((w) => w.name + (w.is_host ? ' (host)' : '')).join(', ')}</div>
       )}

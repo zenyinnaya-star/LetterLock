@@ -61,6 +61,8 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
   const msLeft = useCountdown(state.room.phase_ends_at, offset);
   const phase = state.room.phase;
   const me = state.me;
+  // host can step out mid-game (kept in the Quit sheet so nothing floats over the play area)
+  const canSitOut = !!me && !me.is_spectator && me.id === state.room.host_id && state.room.settings?.mode !== 'team' && phase !== 'answer' && phase !== 'finished' && phase !== 'lobby' && !me.eliminated;
   // 1v1 duels play out on the full-screen western street
   const west = state.room.settings?.mode === 'duel' && state.room.duel && state.players.filter((p) => !p.eliminated).length === 2
     && ['duel_intro', 'answer', 'reveal', 'guess', 'react'].includes(phase);
@@ -429,6 +431,11 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
                 <button className="btn ghost" onClick={() => setConfirmQuit(false)}>{t('gm.keep')}</button>
                 <button className="btn danger" onClick={() => { audio.chicken(); setConfirmQuit(false); void leave(2400); }}>{t('gm.quit_anyway')}</button>
               </div>
+              {canSitOut && (
+                <button className="btn sm ghost" style={{ marginTop: 12 }} onClick={() => { setConfirmQuit(false); if (token) void act(() => rpc.setHostMode(token, false)); }}>
+                  <Icon name="eye" size={14} /> Sit out and keep hosting
+                </button>
+              )}
             </motion.div>
           </motion.div>
         )}

@@ -2818,3 +2818,12 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
   .topbar .textbtn { font-size: 0; gap: 0; padding: 6px; }
   .topbar .textbtn svg { width: 16px; height: 16px; }
 }
+
+/* rivalry score */
+.rivalry { margin: 14px auto 4px; padding: 10px 14px; max-width: 460px; border-radius: 14px; background: rgba(0,0,0,.32); border: 1px solid rgba(255,255,255,.14); text-align: center; }
+.rivalry .label { display: inline-flex; gap: 6px; align-items: center; justify-content: center; margin-bottom: 6px; }
+.rv-row { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: center; }
+.rv-score { font-weight: 800; font-size: 22px; letter-spacing: .04em; color: var(--accent, #f5c451); }
+.rv-chip { display: inline-flex; gap: 5px; align-items: center; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.08); font-size: 13px; }
+.rv-chip.lead { background: rgba(245,196,81,.22); color: var(--accent, #f5c451); }
+.rv-chip.me, .rivalry b.me { text-decoration: underline; text-underline-offset: 3px; }

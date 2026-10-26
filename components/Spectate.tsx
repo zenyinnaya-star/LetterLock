@@ -15,7 +15,6 @@ export function Spectate({ state, token, act }: { state: RoomState; token: strin
   const [name, setName] = useState(() => (typeof window === 'undefined' ? '' : loadName()));
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [confirm, setConfirm] = useState(false);
   if (phase === 'lobby' || phase === 'battle') return null;
 
   // outsider watching a game in progress → offer a named spectator seat
@@ -49,20 +48,6 @@ export function Spectate({ state, token, act }: { state: RoomState; token: strin
     );
   }
 
-  const team = state.room.settings?.mode === 'team';
-  const canSit = me.id === state.room.host_id && !team && phase !== 'answer' && phase !== 'finished' && !me.eliminated;
-  if (!canSit) return null;
-  return (
-    <div className="spec-pill">
-      {confirm ? (
-        <>
-          <span>Sit out for the rest of this game?</span>
-          <button className="btn sm danger" onClick={() => { setConfirm(false); if (token) void act(() => rpc.setHostMode(token, false)); }}>Sit out</button>
-          <button className="btn sm ghost" onClick={() => setConfirm(false)}>Stay in</button>
-        </>
-      ) : (
-        <button className="btn sm ghost" onClick={() => setConfirm(true)}><Icon name="eye" size={14} /> Sit out (keep hosting)</button>
-      )}
-    </div>
-  );
+  // the host's sit-out now lives in the Quit sheet (Game.tsx) so nothing floats over the play area
+  return null;
 }
