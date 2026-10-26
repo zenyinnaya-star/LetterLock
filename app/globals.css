@@ -2835,3 +2835,15 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .ult-letters { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; max-width: 300px; }
 .ult-l { padding: 6px 0; border-radius: 6px; border: 1px solid rgba(255,255,255,.25); background: rgba(0,0,0,.4); color: inherit; font-weight: 800; cursor: pointer; }
 .ult-l.on { background: #ff4d6d; color: #fff; border-color: #ff4d6d; }
+
+/* word rarity ladder + unstoppable streak */
+.tier-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 3px; }
+.tier-tag, .bchip.tier { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 900; letter-spacing: .7px; padding: 2px 9px; border-radius: 99px; color: #10131c; }
+.tier-tag.epic, .bchip.tier.epic { background: linear-gradient(90deg, #7be0a0, #3fc0b0); }
+.tier-tag.legendary, .bchip.tier.legendary { background: linear-gradient(90deg, #ffd86b, #ff9d5c); }
+.tier-tag.mythic, .bchip.tier.mythic { background: linear-gradient(90deg, #d38bff, #7c6bff); color: #fff; box-shadow: 0 0 10px rgba(160,110,255,.55); }
+.tier-tag.godlike, .bchip.tier.godlike { background: linear-gradient(90deg, #ff5e8a, #ffd24a, #5ee0ff); color: #12091a; box-shadow: 0 0 14px rgba(255,120,180,.7); animation: godglow 1.4s ease-in-out infinite alternate; }
+@keyframes godglow { from { filter: brightness(1); } to { filter: brightness(1.35); } }
+.unstop-tag, .bchip.unstop { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 900; letter-spacing: .7px; padding: 2px 9px; border-radius: 99px; color: #fff; background: linear-gradient(90deg, #ff3d3d, #ff9d1c); box-shadow: 0 0 12px rgba(255,90,40,.7); animation: unstopPulse .8s ease-in-out infinite alternate; }
+@keyframes unstopPulse { from { transform: scale(1); } to { transform: scale(1.07); } }
+@media (prefers-reduced-motion: reduce) { .tier-tag.godlike, .bchip.tier.godlike, .unstop-tag, .bchip.unstop { animation: none; } }

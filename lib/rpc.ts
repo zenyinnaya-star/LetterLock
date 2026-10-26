@@ -94,7 +94,8 @@ export const rpc = {
   start: (token: string) => call<void>('start_game', { p_token: token }),
   answer: (token: string, word: string) =>
     call<{ word: string; valid: boolean; reason: string | null; points: number; letter: string | null;
-      bonus?: number; speed_bonus?: number; streak_bonus?: number; streak?: number; elapsed_ms?: number | null }>(
+      bonus?: number; speed_bonus?: number; streak_bonus?: number; streak?: number; elapsed_ms?: number | null;
+      tier?: string; tier_bonus?: number; tier_run?: number; mult?: number; unstoppable?: boolean }>(
       'submit_answer', { p_token: token, p_word: word }),
   guess: (token: string, targetId: string, letter: string) =>
     call<{ correct: boolean; card: CardKind | null; letter: string }>(

@@ -70,7 +70,7 @@ export interface Me {
   fate?: string | null;
 }
 
-export interface RevealRow { player_id: string; word: string; valid: boolean; reason: string | null; points: number; legend?: boolean }
+export interface RevealRow { player_id: string; word: string; valid: boolean; reason: string | null; points: number; legend?: boolean; tier?: string | null; mult?: number | null }
 export interface GuessResult { guesser_id: string; target_id: string; correct: boolean; letter: string | null }
 export interface Pending {
   id: number; target_id: string; source_id: string | null; source_class: PlayerClass | null; kind: 'attack' | 'ninja' | 'hack';

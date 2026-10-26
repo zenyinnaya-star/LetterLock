@@ -7,6 +7,7 @@ import { CARD_INFO, CHAOS_INFO, CLASSES } from '@/lib/classes';
 import { REASONS } from '@/lib/errors';
 import { prepareAnswer } from '@/lib/answer';
 import { Rich, useT } from '@/lib/i18n/react';
+import type { Key } from '@/lib/i18n/en';
 import { rpc } from '@/lib/rpc';
 import { useTeamExtra } from '@/hooks/useTeamExtra';
 import { narrator } from '@/lib/narrator';
@@ -99,7 +100,7 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
   const [word, setWord] = useState('');
   const lang = state.room.settings.lang ?? 'en';
   const [busy, setBusy] = useState(false);
-  const [bonus, setBonus] = useState<{ word: string; speed: number; streak: number; run: number } | null>(null);
+  const [bonus, setBonus] = useState<{ word: string; speed: number; streak: number; run: number; tier: string; tierBonus: number; tierRun: number; mult: number; unstop: boolean } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const banned = useMemo(() => new Set(me?.letters.map((l) => l.letter) ?? []), [me?.letters]);
 
@@ -128,7 +129,7 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
     if (!token || !prepared.send || busy) return;
     setBusy(true);
     const r = await act(() => rpc.answer(token, prepared.send));
-    setBonus(r?.valid ? { word: r.word, speed: r.speed_bonus ?? 0, streak: r.streak_bonus ?? 0, run: r.streak ?? 0 } : null);
+    setBonus(r?.valid ? { word: r.word, speed: r.speed_bonus ?? 0, streak: r.streak_bonus ?? 0, run: r.streak ?? 0, tier: r.tier ?? 'common', tierBonus: r.tier_bonus ?? 0, tierRun: r.tier_run ?? 0, mult: r.mult ?? 1, unstop: !!r.unstoppable } : null);
     setBusy(false);
   }
 
@@ -214,8 +215,10 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
               </motion.div>
             )}
           </AnimatePresence>
-          {me.answer?.valid && bonus && bonus.word === me.answer.word && (bonus.speed > 0 || bonus.streak > 0) && (
+          {me.answer?.valid && bonus && bonus.word === me.answer.word && (bonus.speed > 0 || bonus.streak > 0 || bonus.tier !== 'common') && (
             <div className="bonus-chips">
+              {bonus.tier !== 'common' && <span className={`bchip tier ${bonus.tier}`}><Icon name="sparkle" size={13} /> {t(`tier.${bonus.tier}` as Key)} +{bonus.tierBonus}</span>}
+              {bonus.unstop && <span className="bchip unstop"><Icon name="bolt" size={13} /> {t('tier.unstop', { m: bonus.mult })}</span>}
               {bonus.speed > 0 && <span className="bchip speed"><Icon name="bolt" size={13} /> {t('ph.bonus_speed', { n: bonus.speed })}</span>}
               {bonus.streak > 0 && <span className="bchip streak"><Icon name="burst" size={13} /> {t('ph.bonus_streak', { s: bonus.run, n: bonus.streak })}</span>}
             </div>
@@ -248,7 +251,13 @@ export function RevealPhase({ state, msLeft }: PhaseProps) {
               <div>
                 <div className="small muted">{p?.name}</div>
                 <div className="word">{r.word ? r.word.toUpperCase() : '— — —'}</div>
-                {r.legend && <div className="legend-tag"><Icon name="sparkle" size={13} /> {t('ph.legend')}</div>}
+                {r.valid && r.tier && r.tier !== 'common' && (
+                  <div className="tier-row">
+                    <span className={`tier-tag ${r.tier}`}><Icon name="sparkle" size={13} /> {t(`tier.${r.tier}` as Key)}</span>
+                    {(r.mult ?? 1) > 1 && <motion.span className="unstop-tag" initial={{ scale: 0 }} animate={{ scale: [0, 1.25, 1] }} transition={{ delay: 0.5 + i * 0.35 }}><Icon name="bolt" size={13} /> {t('tier.unstop', { m: r.mult ?? 1 })}</motion.span>}
+                  </div>
+                )}
+                {r.legend && !(r.tier && r.tier !== 'common') && <div className="legend-tag"><Icon name="sparkle" size={13} /> {t('ph.legend')}</div>}
                 {!r.valid && (
                   <div className="why"><Icon name="x" size={13} strokeWidth={3} /> {REASONS[r.reason ?? ''] ?? r.reason} · {t('ph.strike')}{p?.eliminated ? ` · ${t('ph.eliminated')}` : ''}</div>
                 )}
