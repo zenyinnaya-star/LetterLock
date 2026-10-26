@@ -28,6 +28,9 @@ const LOOK: Record<FeedItem['type'], { icon: IconName; tone: string; sfx: () => 
   bet_lose: { icon: 'coin', tone: 'hit', sfx: () => audio.bust() },
   steal: { icon: 'hand', tone: 'thief', sfx: () => audio.swipe() },
   drop: { icon: 'hand', tone: 'miss', sfx: () => audio.swipe() },
+  heist: { icon: 'hand', tone: 'thief', sfx: () => audio.swipe() },
+  frame: { icon: 'mask', tone: 'thief', sfx: () => audio.morph() },
+  bounty: { icon: 'target', tone: 'gold', sfx: () => audio.cashout() },
   latch: { icon: 'link2', tone: 'parasite', sfx: () => audio.squelch() },
   drain: { icon: 'drop', tone: 'parasite', sfx: () => audio.squelch() },
   host_down: { icon: 'skull', tone: 'hit', sfx: () => audio.buzzer() },
@@ -42,7 +45,7 @@ const LOOK: Record<FeedItem['type'], { icon: IconName; tone: string; sfx: () => 
 };
 const LOOK_FALLBACK = { icon: 'sparkle' as IconName, tone: 'gold', sfx: () => audio.whoosh() };
 
-const ARROW_TYPES = ['focus_fire', 'attack', 'hack', 'block', 'absorb', 'caught', 'trace_miss', 'steal', 'drop', 'latch', 'drain', 'host_down', 'mimic', 'swap'];
+const ARROW_TYPES = ['focus_fire', 'attack', 'hack', 'block', 'absorb', 'caught', 'trace_miss', 'steal', 'drop', 'heist', 'frame', 'bounty', 'latch', 'drain', 'host_down', 'mimic', 'swap'];
 
 /**
  * Big "who did what to whom" banners with a sound for every attack, hack, block, cleanse and rage quit.
@@ -177,6 +180,9 @@ function Banner({ item, state, meId }: { item: FeedItem; state: RoomState; meId:
     case 'bet_lose': text = R('fd.bust', <em>{t('fd.minus_pts', { n: item.amount ?? 0 })}</em>); break;
     case 'steal': text = R('fd.steal'); break;
     case 'drop': text = R('fd.drop'); break;
+    case 'heist': text = R('fd.heist', <em>{t('fd.heist_sub', { p: item.amount ?? 0, c: item.cards ?? 0 })}</em>); break;
+    case 'frame': text = R('fd.frame', <em>{t('fd.frame_sub')}</em>); break;
+    case 'bounty': text = R('fd.bounty', <em>{t('fd.plus_pts', { n: item.amount ?? 0 })}</em>); break;
     case 'latch': text = R('fd.latch', <em>{t('fd.parasite')}</em>); break;
     case 'drain': text = R('fd.drain', <em>{n > 1 ? t('fd.minus_locks', { n }) : t('fd.minus_lock1')}</em>); break;
     case 'host_down': text = R('fd.host_down', <em>{t('fd.strike')}</em>); break;

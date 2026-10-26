@@ -440,6 +440,18 @@ export function ReactPhase({ state, token, msLeft, act }: PhaseProps) {
           </motion.div>
         )}
       </AnimatePresence>
+      {canPlay && me.class === 'thief' && !state.room.settings.mode?.startsWith('team') && (
+        <div className="narrow-col" style={{ display: 'grid', gap: 6 }}>
+          <div className="small muted center">{t('th.frame')}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center' }}>
+            {state.players.filter((x) => x.id !== me.id && !x.eliminated && !x.is_spectator).map((x) => (
+              <button key={x.id} className="btn sm ghost" onClick={() => token && void act(() => rpc.thiefFrame(token, x.id), t('th.framed'))}>
+                <Avatar state={state} id={x.id} size={20} /> {x.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       {canPlay && (
         <div className="narrow-col">
           <button className="btn ghost block" disabled={!!myReady} onClick={() => token && void act(() => rpc.reactReady(token))}>

@@ -34,6 +34,7 @@ export interface PublicPlayer {
   is_spectator?: boolean;
   /** rivalry: games won in this room since it opened (carries across rematches) */
   wins?: number;
+  wanted?: boolean;
 }
 
 export interface IntelNinja { kind: 'ninja'; round: number; letters: string[] }
@@ -143,7 +144,7 @@ export interface RoomSettings {
 }
 
 export type FeedType = 'attack' | 'hack' | 'block' | 'cleanse' | 'absorb' | 'caught' | 'trace_miss' | 'chicken'
-  | 'bet' | 'bet_win' | 'bet_lose' | 'steal' | 'drop' | 'latch' | 'drain' | 'host_down' | 'mimic' | 'oracle' | 'swap' | 'chaos' | 'ult' | 'legend' | 'focus_fire' | 'rally';
+  | 'bet' | 'bet_win' | 'bet_lose' | 'steal' | 'drop' | 'latch' | 'drain' | 'host_down' | 'mimic' | 'oracle' | 'swap' | 'chaos' | 'ult' | 'legend' | 'focus_fire' | 'rally' | 'heist' | 'frame' | 'bounty';
 export interface FeedItem {
   id: number;
   round: number;
@@ -152,6 +153,7 @@ export interface FeedItem {
   from_class?: PlayerClass | null;
   to?: string | null;
   amount?: number;
+  cards?: number;
   what?: string;
   name?: string;
 }

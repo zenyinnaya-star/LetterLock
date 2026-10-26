@@ -5,7 +5,7 @@ import { avatarColors } from '@/lib/avatar';
 import type { PlayerClass } from '@/lib/types';
 import { ClassIcon } from './icons';
 
-interface Who { name: string; avatar_url?: string | null; class?: PlayerClass | null }
+interface Who { name: string; avatar_url?: string | null; class?: PlayerClass | null; wanted?: boolean }
 
 /**
  * A player's face: their uploaded photo, or a generated placeholder (initial on a colour from their name).
@@ -32,6 +32,7 @@ export function PlayerAvatar({ p, size = 36, badge = false, className }: { p: Wh
           </svg>
         )}
       </span>
+      {p.wanted && size >= 28 && <span className="pavatar-wanted">WANTED</span>}
       {badge && p.class && size >= 28 && (
         <span className="pavatar-badge"><ClassIcon cls={p.class} size={Math.round(size * 0.42)} /></span>
       )}

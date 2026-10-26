@@ -2847,3 +2847,7 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 .unstop-tag, .bchip.unstop { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 900; letter-spacing: .7px; padding: 2px 9px; border-radius: 99px; color: #fff; background: linear-gradient(90deg, #ff3d3d, #ff9d1c); box-shadow: 0 0 12px rgba(255,90,40,.7); animation: unstopPulse .8s ease-in-out infinite alternate; }
 @keyframes unstopPulse { from { transform: scale(1); } to { transform: scale(1.07); } }
 @media (prefers-reduced-motion: reduce) { .tier-tag.godlike, .bchip.tier.godlike, .unstop-tag, .bchip.unstop { animation: none; } }
+
+/* thief: wanted */
+.pavatar { position: relative; }
+.pavatar-wanted { position: absolute; left: 50%; bottom: -6px; transform: translateX(-50%); font-size: 8px; font-weight: 900; letter-spacing: .8px; background: #d4202a; color: #fff; padding: 1px 5px; border-radius: 4px; box-shadow: 0 0 8px rgba(255,40,50,.7); white-space: nowrap; }

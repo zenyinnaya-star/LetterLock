@@ -97,7 +97,7 @@ const EN_GUIDE: Record<PlayerClass, ClassGuide> = {
   },
   thief: {
     style: 'Economy', difficulty: 2,
-    how: 'When you crack someone\'s lock you steal a card from their hand instead of drawing. If you miss a guess you drop one of your cards into their hand.',
+    how: 'Crack a lock and you steal a card. Once a round, Hot Potato: dump one of your own locks on any player. Grand Heist takes their best cards plus the points from their word this round. Steal a lot and you are WANTED: crack the Thief for a bounty, and framed locks go back to him. Miss a guess and you drop a card into their hand.',
     tips: [
       'Guess the players holding the most cards — bigger hands, better loot.',
       'Only guess when you\'re fairly sure; misses feed your enemies.',
