@@ -559,3 +559,10 @@
   .vault-rack .rack-inner .sect-label { font-size: 14px !important; }
   .vault-rack .rack-inner .perkbtn small, .vault-rack .rack-inner .cardbtn small { display: none; }
 }
+
+/* keep play content clear of the fixed HUD tray; tidy header in short landscape */
+@media (max-width: 700px) { .vault:not(.p-finished):not(.p-lobby) .v-content { padding-bottom: 150px !important; } }
+@media (max-height: 520px) and (orientation: landscape) {
+  .vault:not(.p-finished):not(.p-lobby) .v-content { padding-bottom: 80px !important; }
+  .vault-shell .topbar .wordmark, .vault-shell .topbar .logo { display: none !important; }
+}
