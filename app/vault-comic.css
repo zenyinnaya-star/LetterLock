@@ -217,3 +217,13 @@
 .vault-shell .topbar .room-chip { background: #fff !important; color: var(--k) !important; }
 .vault-shell .topbar .textbtn { color: var(--k) !important; }
 .vault-shell .topbar .textbtn.danger, .vault-shell .topbar .textbtn:last-child { color: #fff !important; }
+
+/* gameplay pass: readable placeholders, labels, HUD bar and header */
+.vault .input.word::placeholder, .vault .input::placeholder { color: #8a7a3a !important; opacity: 1 !important; -webkit-text-fill-color: #8a7a3a; }
+.vault .prompt-kicker, .vault .the-prompt, .vault .stage-body .label { color: var(--k) !important; opacity: 1 !important; font-family: var(--cmc); letter-spacing: .14em; }
+.vault .muted, .vault .hint { opacity: 1 !important; color: var(--k) !important; }
+.vault .rack, .vault-rack .rack-inner, .vault-rack .rack-inner * { opacity: 1 !important; }
+.vault-rack .rack-inner { background: #fff !important; }
+.vault-rack .rack-inner .label, .vault-rack .sect-label, .vault-rack .rack-pts { color: var(--k) !important; }
+.vault-shell .topbar .textbtn.danger { background: var(--p) !important; color: #fff !important; }
+.vault-shell .topbar, .vault-shell .topbar * { text-shadow: none !important; }
