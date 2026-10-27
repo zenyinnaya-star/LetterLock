@@ -17,7 +17,18 @@ export const ACTION_ART: Record<PlayerClass, string> = {
   jester: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261005_045241_ab7b117f-54ed-4dfd-8d8a-465f87b7a7f0.png',
 };
 
+/** Comic Pop portraits (Higgsfield CDN for now; save as /public/art/comic/class-<class>.webp to self-host). */
+export const COMIC_ART: Partial<Record<PlayerClass, string>> = {
+  ninja: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_035734_bae32255-9325-42ec-a302-121177a0d76f.png',
+  mastermind: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_035648_b64dc638-5e47-461d-9013-01fb6172b92d.png',
+  hero: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_035647_95a6c985-3173-4978-8974-9f24bff2bbe2.png',
+  villain: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_035819_2d2393ce-5945-4848-8e1e-2b6bea88d619.png',
+  hacker: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_035648_6257e2f0-0a6c-4bd1-9404-9cb37797cfee.png',
+  thief: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_035647_2c5aa729-1a1c-4c18-bfdc-bf081d15db92.png',
+};
+
 /** Order to try: local self-hosted file, then the CDN scene, then the portrait. */
 export function actionSources(c: PlayerClass): string[] {
-  return [`/art/action-${c}.webp`, ACTION_ART[c], `/art/class-${c}.webp`];
+  const comic = COMIC_ART[c];
+  return [`/art/comic/class-${c}.webp`, ...(comic ? [comic] : []), `/art/action-${c}.webp`, ACTION_ART[c], `/art/class-${c}.webp`];
 }
