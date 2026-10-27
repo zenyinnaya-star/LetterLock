@@ -13,6 +13,8 @@ let want: Track = 'none';
 let quiet = false; // in-game: sit the theme lower under the announcer
 let gestureHooked = false;
 let switchTimer = 0;
+const dbgLog: string[] = [];
+function note(m: string) { dbgLog.push(`${new Date().toISOString().slice(14, 19)} ${m}`); if (dbgLog.length > 8) dbgLog.shift(); }
 const fades = new Map<HTMLAudioElement, number>();
 
 function el(t: Exclude<Track, 'none'>): HTMLAudioElement {
@@ -65,7 +67,8 @@ function apply() {
     if (on) {
       const x = el(t);
       if (x.paused) {
-        x.play().catch(() => hookGesture()); // autoplay blocked until the first tap/key
+        note(`play ${t}`);
+        x.play().catch((e: unknown) => { note(`blocked ${t}: ${(e as Error)?.name ?? e}`); hookGesture(); }); // autoplay blocked until the first tap/key
       }
       fade(x, target(t), 900);
     } else if (a && !a.paused) {
@@ -96,4 +99,11 @@ export const music = {
     } else apply();
   },
   current() { return want; },
+  /** For the ?musicdebug=1 overlay: what the player thinks it is doing. */
+  debug() {
+    return {
+      want, quiet, muted: audio.isMuted(), pref: getPrefs().music, log: [...dbgLog],
+      els: (Object.keys(els) as (keyof typeof els)[]).map((k) => { const a = els[k]!; return `${k}: ${a.paused ? 'paused' : 'PLAYING'} t=${a.currentTime.toFixed(1)} vol=${a.volume.toFixed(2)} ready=${a.readyState} net=${a.networkState} err=${a.error?.code ?? '-'} ${a.src.split('/').pop()}`; }),
+    };
+  },
 };
