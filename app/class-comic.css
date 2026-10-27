@@ -107,3 +107,11 @@
   .selpage .sel-card { width: 54px !important; }
   .selpage .sel-cards { gap: 6px; overflow-x: auto; }
 }
+
+/* v3 polish */
+.selpage .sel-top h1, .selpage .sel-top h1 * { color: #fff !important; -webkit-text-fill-color: #fff !important; filter: none !important; opacity: 1 !important; }
+.selpage .sel-mode, .selpage .sel-you, .selpage .sel-who button, .selpage .input { background: #fff !important; background-image: none !important; filter: none !important; }
+.selpage .sel-who button.on { background: var(--p) !important; }
+.selpage .sel-cards .sel-card, .selpage .sel-strip .sel-card { width: 78px !important; height: 78px !important; min-width: 0 !important; max-width: none !important; flex: 0 0 78px !important; aspect-ratio: auto !important; }
+.selpage .sel-card .sel-card-art { position: absolute; inset: 0; width: 100% !important; height: 100% !important; object-fit: cover; }
+@media (max-width: 760px) { .selpage .sel-cards .sel-card { width: 56px !important; height: 56px !important; flex-basis: 56px !important; } }
