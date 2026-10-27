@@ -1,0 +1,93 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>Letterlock art drafts</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Baloo+2:wght@600;800&family=Cinzel:wght@700;900&family=Inter:wght@500;700;800&display=swap" rel=stylesheet>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}body{font-family:Inter,system-ui,sans-serif;overflow-x:hidden;background:#111}
+.tabs{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:6px;background:rgba(0,0,0,.75);padding:6px;border-radius:999px;backdrop-filter:blur(6px)}
+.tabs button{border:0;border-radius:999px;padding:8px 14px;font:700 13px Inter;color:#ddd;background:transparent;cursor:pointer}
+.tabs button.on{background:#fff;color:#111}
+.d{display:none;min-height:100dvh;position:relative;overflow:hidden;padding:70px 20px 40px}
+.d.on{display:flex;flex-direction:column;align-items:center}
+.cards{display:flex;gap:18px;justify-content:center;width:100%;max-width:1150px;margin-top:22px}
+.card{flex:1;max-width:250px;cursor:pointer;position:relative;transition:transform .25s cubic-bezier(.2,1.4,.4,1)}
+.card .art{width:100%;aspect-ratio:3/4;background-size:cover;background-position:center;display:block}
+.card .lbl{display:block;text-align:center}
+.desc{margin-top:22px;max-width:640px;text-align:center}
+.play{margin-top:22px;border:0;cursor:pointer}
+/* ===== A: Comic Pop ===== */
+.A{background:#ffd400}
+.A:before{content:'';position:absolute;inset:-50%;background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,255,255,.22) 0 7deg,transparent 7deg 18deg);animation:spin 80s linear infinite}
+.A:after{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,0,.12) 2px,transparent 2.5px);background-size:14px 14px;-webkit-mask-image:linear-gradient(160deg,#000,transparent 50%);pointer-events:none}
+.A>*{position:relative;z-index:2}
+.A .band{position:absolute;left:-5%;top:0;width:110%;height:150px;background:#111;transform:skewY(-4deg) translateY(-40px);z-index:1}
+.A h1{font:400 clamp(52px,9vw,110px)/1 Bangers;letter-spacing:.04em;color:#fff;text-shadow:5px 5px 0 #ff2e8a,10px 10px 0 #111;transform:rotate(-4deg);margin-top:-6px}
+.A .tag{font:400 clamp(16px,2.4vw,24px) Bangers;letter-spacing:.12em;color:#111;background:#fff;border:4px solid #111;padding:4px 18px;transform:rotate(-2deg) skewX(-10deg);box-shadow:5px 5px 0 #111;margin-top:10px}
+.A .card{transform:skewX(-6deg);background:#111;padding:6px;box-shadow:9px 9px 0 rgba(0,0,0,.85)}
+.A .card .art{border:3px solid #fff}
+.A .card .lbl{font:400 24px Bangers;letter-spacing:.08em;color:#fff;padding:8px 0 4px;transform:skewX(6deg)}
+.A .card .n{position:absolute;right:10px;top:4px;font:400 54px Bangers;color:#fff;text-shadow:4px 4px 0 #111;transform:skewX(6deg)}
+.A .card.sel{transform:skewX(-6deg) translateY(-14px) scale(1.06);background:#ff2e8a;z-index:3}
+.A .tear{position:absolute;left:0;right:0;bottom:0;height:240px;background:#ff2e8a;clip-path:polygon(0 30%,5% 22%,11% 34%,18% 20%,26% 32%,34% 18%,43% 30%,51% 17%,60% 31%,69% 19%,78% 32%,87% 21%,100% 30%,100% 100%,0 100%);z-index:1}
+.A .desc{font:800 18px Inter;color:#fff;margin-top:34px}
+.A .desc b{display:block;font:400 40px Bangers;letter-spacing:.06em}
+.A .play{font:400 44px Bangers;letter-spacing:.1em;color:#ffd400;background:#111;padding:8px 64px;transform:skewX(-10deg);box-shadow:6px 6px 0 #fff;border:4px solid #fff}
+/* ===== B: Midnight Heist ===== */
+.B{background:radial-gradient(ellipse 70% 50% at 50% 30%,#1c1710,#070605 70%);color:#f3e6c4}
+.B:after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 60px,rgba(255,200,100,.03) 60px 62px);pointer-events:none}
+.B h1{font:900 clamp(40px,7.5vw,92px)/1 Cinzel;letter-spacing:.08em;background:linear-gradient(180deg,#fbe7ad,#d29b3f 55%,#8a5d1c);-webkit-background-clip:text;color:transparent;filter:drop-shadow(0 0 24px rgba(255,170,60,.35))}
+.B .tag{font:700 13px Inter;letter-spacing:.45em;text-transform:uppercase;color:#cfae6c;margin-top:10px}
+.B .card{transform:skewX(-5deg);border:2px solid var(--c);background:#0b0907;padding:5px;box-shadow:0 0 0 1px rgba(0,0,0,.8),0 0 24px color-mix(in srgb,var(--c) 35%,transparent)}
+.B .card .lbl{font:800 13px Inter;letter-spacing:.3em;text-transform:uppercase;color:var(--c);padding:10px 0 6px;transform:skewX(5deg)}
+.B .card .n{position:absolute;left:12px;top:8px;font:900 30px Cinzel;color:var(--c);transform:skewX(5deg);text-shadow:0 2px 8px #000}
+.B .card.sel{transform:skewX(-5deg) translateY(-12px);box-shadow:0 0 0 1px #000,0 0 44px var(--c)}
+.B .card:nth-child(1){--c:#f2c25a}.B .card:nth-child(2){--c:#ff3da8}.B .card:nth-child(3){--c:#35d8ff}.B .card:nth-child(4){--c:#8dff5a}
+.B .desc{font:500 16px Inter;color:#cdbb92}
+.B .desc b{display:block;font:900 26px Cinzel;letter-spacing:.12em;color:#f6e2ae;margin-bottom:4px}
+.B .play{font:900 28px Cinzel;letter-spacing:.2em;color:#111;background:linear-gradient(180deg,#fbe2a0,#d6a043);padding:14px 74px;clip-path:polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%);filter:drop-shadow(0 0 20px rgba(255,170,60,.5))}
+/* ===== C: Sticker Party ===== */
+.C{background:#7b5cff;background:radial-gradient(circle at 20% 20%,#ff9fd2 0 12%,transparent 12.5%),radial-gradient(circle at 85% 30%,#ffe066 0 9%,transparent 9.5%),radial-gradient(circle at 75% 85%,#6ff0d2 0 14%,transparent 14.5%),radial-gradient(circle at 10% 90%,#ffb36b 0 10%,transparent 10.5%),#7b5cff}
+.C h1{font:800 clamp(46px,8.5vw,104px)/1 'Baloo 2';color:#fff;letter-spacing:.01em;-webkit-text-stroke:3px #2b1a5e;paint-order:stroke;text-shadow:0 8px 0 #2b1a5e}
+.C h1 span{display:inline-block;animation:bob 2.4s ease-in-out infinite}
+.C .tag{font:800 18px 'Baloo 2';color:#2b1a5e;background:#ffe066;border-radius:999px;padding:4px 20px;border:3px solid #2b1a5e;margin-top:12px;box-shadow:0 4px 0 #2b1a5e}
+.C .card{background:#fff;border-radius:28px;padding:10px;border:4px solid #2b1a5e;box-shadow:0 8px 0 #2b1a5e}
+.C .card:nth-child(odd){transform:rotate(-3deg)}.C .card:nth-child(even){transform:rotate(3deg)}
+.C .card .art{border-radius:20px}
+.C .card .lbl{font:800 22px 'Baloo 2';color:#2b1a5e;padding-top:6px}
+.C .card .n{position:absolute;left:-10px;top:-12px;width:46px;height:46px;border-radius:50%;background:#ff5d8f;border:4px solid #2b1a5e;color:#fff;font:800 22px/38px 'Baloo 2';text-align:center}
+.C .card.sel{transform:rotate(0) translateY(-14px) scale(1.07);z-index:3}
+.C .desc{font:600 18px 'Baloo 2';color:#fff;background:rgba(43,26,94,.55);border-radius:20px;padding:12px 22px}
+.C .desc b{display:block;font:800 28px 'Baloo 2';color:#ffe066}
+.C .play{font:800 34px 'Baloo 2';color:#fff;background:#ff5d8f;border:4px solid #2b1a5e;border-radius:22px;padding:6px 70px;box-shadow:0 8px 0 #2b1a5e}
+.C .play:active{transform:translateY(6px);box-shadow:0 2px 0 #2b1a5e}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+/* phones: scale down, keep the row */
+@media (max-width:700px){
+ .d{padding:62px 10px 30px}.cards{gap:7px;margin-top:16px}
+ .A .card,.B .card{padding:3px}.C .card{padding:5px;border-radius:16px;border-width:3px}.C .card .art{border-radius:11px}
+ .A .card .lbl{font-size:13px}.A .card .n{font-size:28px}.B .card .lbl{font-size:8px;letter-spacing:.12em}.B .card .n{font-size:18px}.C .card .lbl{font-size:12px}
+ .C .card .n{width:28px;height:28px;font-size:14px;line-height:22px;border-width:3px;left:-6px;top:-8px}
+ .A .desc b{font-size:28px}.A .desc,.B .desc,.C .desc{font-size:14px}.B .desc b,.C .desc b{font-size:20px}
+ .A .play{font-size:32px;padding:6px 44px}.B .play{font-size:22px;padding:12px 52px}.C .play{font-size:26px;padding:4px 50px}
+ .A .tear{height:300px}
+}
+</style></head><body>
+<div class=tabs><button data-k=A>1 · Comic Pop</button><button data-k=B>2 · Midnight Heist</button><button data-k=C>3 · Sticker Party</button></div>
+<section class="d A"><div class=band></div><h1>LETTERLOCK</h1><div class=tag>SAME LOCK. DIFFERENT WORLDS.</div><div class=cards></div><div class=tear></div><div class=desc></div><button class=play>PLAY!</button></section>
+<section class="d B"><h1>LETTERLOCK</h1><div class=tag>Same lock · Different worlds</div><div class=cards></div><div class=desc></div><button class=play>PLAY</button></section>
+<section class="d C"><h1><span>Letter</span><span style="animation-delay:.3s">lock</span></h1><div class=tag>Same lock. Different worlds!</div><div class=cards></div><div class=desc></div><button class=play>Play!</button></section>
+<script>
+const H='https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_';
+const IMG={A:['020055_afa4549e-7af7-484c-9c17-5a188d39a5e7','020119_c6adde07-372f-4108-a920-edb73df4c37f','020119_ab7779df-a236-4da3-8050-10300b620648','020119_99132e11-5487-4681-b899-9a0a3b4c4707'],
+B:['020056_c1de77dc-26b3-4091-a64d-29026f98565a','020120_dc691437-f9b8-46ca-a7fd-3a869ada0270','020141_bb3bc96b-ac59-49bd-bd10-f5630efe1341','020141_4ab95fd0-5b59-4a2e-859d-48950d7a840c'],
+C:['020056_6ae9b352-0f5c-4e6a-8722-1959757f6c09','020141_f9144a7f-e3ad-4491-928a-4a72ddb89c02','020141_3b55281e-9918-4b29-bd3b-ae484ebfdb85','020055_b60a8908-9ff0-4324-b0ef-f69801bbcb8f']};
+const W=[['Bank','Crack the vault. Pick the locks, grab the loot, don\'t get caught.'],['Saloon','High noon in the wild west. Fastest word wins the duel.'],['Castle','Defend the walls. Every word is a stone on the gate.'],['Interrogation','One lamp, one table. Read the room and find the liar.']];
+document.querySelectorAll('.d').forEach(d=>{const k=[...d.classList].find(c=>'ABC'.includes(c)&&c.length==1);const box=d.querySelector('.cards'),desc=d.querySelector('.desc');
+ box.innerHTML=W.map((w,i)=>`<div class=card data-i=${i}><span class=art style="background-image:url(${H}${IMG[k][i]}.png)"></span><span class=lbl>${w[0]}</span><span class=n>${i+1}</span></div>`).join('');
+ const sel=i=>{box.querySelectorAll('.card').forEach((c,j)=>c.classList.toggle('sel',j==i));desc.innerHTML=`<b>${W[i][0]}</b>${W[i][1]}`};
+ box.querySelectorAll('.card').forEach(c=>{c.onmouseenter=c.onclick=()=>sel(+c.dataset.i)});sel(0);});
+const show=k=>{document.querySelectorAll('.d').forEach(d=>d.classList.toggle('on',d.classList.contains(k)));document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.k==k));try{history.replaceState(null,'','#'+k)}catch(e){}};
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>show(b.dataset.k));
+show((location.hash||'#A').slice(1)||'A');
+</script></body></html>
