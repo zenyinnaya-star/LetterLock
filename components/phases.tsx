@@ -528,7 +528,7 @@ export function Finished({ state, token, act }: PhaseProps) {
     } catch (e) { if ((e as Error)?.name === 'AbortError') return; }
     const msg = `${text} ${url}`;
     let ok = false;
-    try { await navigator.clipboard.writeText(msg); ok = true; } catch {
+    try { await Promise.race([navigator.clipboard.writeText(msg), new Promise((_, rej) => window.setTimeout(() => rej(new Error('timeout')), 1500))]); ok = true; } catch {
       try { const ta = document.createElement('textarea'); ta.value = msg; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch { /* blocked */ }
     }
     setShared(ok ? 'ok' : 'fail'); window.setTimeout(() => setShared(null), 2600);
