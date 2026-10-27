@@ -193,9 +193,3 @@
 /* turn the flat pink floor into a torn-paper edge */
 .vault.p-lobby .v-shade::before { top: 40%; }
 .vault.p-lobby .v-shade::after { background-image: radial-gradient(#f7a400 30%, transparent 35%), linear-gradient(180deg, transparent 88%, #fff 88%, #fff 89.5%, #ff1f8e 89.5%); background-size: 11px 11px, 100% 100%; }
-
-/* lobby: the approved Comic Pop hideout painting is the background; live controls sit on top of it */
-.vault.p-lobby { background: #ffd400 url(/art/comic/lobby.webp) center top / cover no-repeat !important; padding-bottom: 0; }
-.vault.p-lobby::before, .vault.p-lobby::after { display: none !important; }
-.vault.p-lobby .v-shade { background: none !important; }
-.vault.p-lobby .v-shade::before, .vault.p-lobby .v-shade::after { display: none !important; }
