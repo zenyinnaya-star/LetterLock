@@ -3,6 +3,7 @@
 import { ProfileChip } from './ProfileChip';
 import { FeedbackButton } from './FeedbackButton';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion, useAnimationControls } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { audio } from '@/lib/audio';
@@ -26,6 +27,17 @@ export function Wordmark() {
       {'LETTER'.split('').map((c, i) => <span key={i}>{c}</span>)}
       {'LOCK'.split('').map((c, i) => <span key={`l${i}`} className="red">{c}</span>)}
     </Link>
+  );
+}
+
+/** "← Back": the previous page, or the menu when there is no history (new tab, deep link). */
+export function BackLink({ fallback = '/play' }: { fallback?: string }) {
+  const t = useT();
+  const router = useRouter();
+  return (
+    <button type="button" className="backlink" onClick={() => { if (typeof window !== 'undefined' && window.history.length > 1) router.back(); else router.push(fallback); }}>
+      ← {t('common.back')}
+    </button>
   );
 }
 

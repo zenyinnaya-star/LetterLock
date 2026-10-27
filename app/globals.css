@@ -2851,3 +2851,6 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 /* thief: wanted */
 .pavatar { position: relative; }
 .pavatar-wanted { position: absolute; left: 50%; bottom: -6px; transform: translateX(-50%); font-size: 8px; font-weight: 900; letter-spacing: .8px; background: #d4202a; color: #fff; padding: 1px 5px; border-radius: 4px; box-shadow: 0 0 8px rgba(255,40,50,.7); white-space: nowrap; }
+
+.backlink { display: inline-flex; align-items: center; gap: 6px; margin: 4px 0 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: inherit; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
+.backlink:hover { background: rgba(255,255,255,.12); }

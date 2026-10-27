@@ -3,7 +3,7 @@
 import { shareOrigin } from '@/lib/site';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { Header, Tile } from '@/components/ui';
+import { BackLink, Header, Tile } from '@/components/ui';
 import { Icon } from '@/components/icons';
 import { daily, readStreak, recordStreak, type DailyInfo } from '@/lib/daily';
 import { friendlyError, REASONS } from '@/lib/errors';
@@ -75,6 +75,7 @@ export default function DailyPage() {
   return (
     <main className="shell narrow">
       <Header />
+      <BackLink />
       <div className="sheet daily-page">
         <h1 className="stage-title"><Icon name="trophy" size={22} /> {t('dc.title')}</h1>
         {err && <p className="center" style={{ color: 'var(--lock)' }}>{err}</p>}

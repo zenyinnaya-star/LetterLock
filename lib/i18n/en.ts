@@ -1,6 +1,7 @@
 // English source strings. **x** renders bold; {name} is a variable.
 const en = {
   // header / common
+  'common.back': 'Back',
   'hd.rules': 'Rules', 'hd.music_on': 'Music on', 'hd.music_off': 'Music off', 'hd.mute': 'Mute', 'hd.unmute': 'Unmute',
   'hd.settings': 'Settings', 'hd.home': 'Letterlock home',
 

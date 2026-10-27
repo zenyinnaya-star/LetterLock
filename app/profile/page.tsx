@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { LoadoutEditor } from '@/components/LoadoutEditor';
-import { Header } from '@/components/ui';
+import { BackLink, Header } from '@/components/ui';
 import { ClassIcon, Icon } from '@/components/icons';
 import { ACHIEVEMENTS } from '@/lib/achievements';
 import { useT } from '@/lib/i18n/react';
@@ -47,6 +47,7 @@ export default function ProfilePage() {
     <div className="pf-bg" aria-hidden="true" />
     <main className="shell pf-shell">
       <Header />
+      <BackLink />
       <div className="sheet profile-page pf2">
         <h1 className="stage-title">{t('pf.prof')}</h1>
         {ready && !p && <p className="muted center">{t('pf.empty')}</p>}

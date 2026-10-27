@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Header } from '@/components/ui';
+import { BackLink, Header } from '@/components/ui';
 import { audio } from '@/lib/audio';
 import { CLASS_ORDER, CLASSES } from '@/lib/classes';
 import { tierName } from '@/lib/mastery';
@@ -14,6 +14,7 @@ export default function FlairPreview() {
   return (
     <main className="shell narrow">
       <Header />
+      <BackLink />
       <div className="sheet" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <h1 className="stage-title">Mastery flair preview</h1>
         <p className="muted small">Tiers 3, 4 and 5 add flair to a class&apos;s moves in a real match. Tiers 1 and 2 stay plain.</p>
