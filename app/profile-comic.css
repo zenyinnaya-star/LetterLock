@@ -26,3 +26,6 @@ body:has(.pf-shell) { background: #ffd400 radial-gradient(rgba(0,0,0,.12) 22%, t
 .pf-shell .pf-hex, .pf-shell .ach-ico { border: 3px solid #111 !important; box-shadow: 2px 2px 0 #111; }
 .pf-shell .pf-a:not(.on) { filter: grayscale(.9); opacity: .55; }
 .pf-shell svg { color: #111; }
+.pf-shell { background: #ffd400 radial-gradient(rgba(0,0,0,.12) 22%, transparent 26%) 0 0 / 9px 9px !important; min-height: 100vh; max-width: none !important; padding: 0 clamp(10px, 3vw, 40px) 60px; }
+.pf-shell > * { max-width: 1100px; margin-left: auto; margin-right: auto; }
+.pf-shell .topbar, .pf-shell .topbar * { color: #111 !important; }
