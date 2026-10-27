@@ -600,3 +600,6 @@
 .vault-rack .rack-inner .popover .btn:hover, .vault .popover .btn:hover { background: #ffe500 !important; }
 .vault-rack, .vault-rack .rack, .vault-rack .rack-inner { overflow: visible !important; }
 .vault-rack { z-index: 40; }
+
+/* the torn-paper clip-path on the rack cuts off anything that rises above it: lift it while a picker is open */
+.vault-rack .rack-inner:has(.popover), .rack-inner:has(.popover) { clip-path: none !important; -webkit-clip-path: none !important; }
