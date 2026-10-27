@@ -18,8 +18,17 @@ const dbgLog: string[] = [];
 function note(m: string) { dbgLog.push(`${new Date().toISOString().slice(14, 19)} ${m}`); if (dbgLog.length > 8) dbgLog.shift(); }
 const fades = new Map<HTMLAudioElement, number>();
 
+// a ~44-byte silent clip: enough to "unlock" an <audio> element on iOS without downloading a 2 MB track on the first tap
+const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+const silentEls = new Set<HTMLAudioElement>();
+
 function el(t: Exclude<Track, 'none'>): HTMLAudioElement {
   let a = els[t];
+  if (a && silentEls.has(a)) { // unlocked earlier with silence: load the real track now (keeping the Classic fallback)
+    silentEls.delete(a); const x = a;
+    if (t === 'vault') x.addEventListener('error', () => { if (!x.src.endsWith('theme.mp3')) { x.src = SRC.theme; x.load(); if (want === 'vault') void x.play().catch(() => hookGesture()); } }, { once: true });
+    x.src = SRC[t]; x.load();
+  }
   if (!a) {
     a = new Audio(SRC[t]);
     a.loop = true;
@@ -31,6 +40,17 @@ function el(t: Exclude<Track, 'none'>): HTMLAudioElement {
     a.volume = 0;
     els = { ...els, [t]: a };
   }
+  return a;
+}
+
+/** element for a track that is only being unlocked, not played: reuses the real one if it exists, else a silent stand-in */
+function unlockEl(t: 'theme' | 'vault'): HTMLAudioElement {
+  const have = els[t];
+  if (have) return have;
+  const a = new Audio(SILENT);
+  a.loop = true; a.volume = 0; a.preload = 'auto';
+  silentEls.add(a);
+  els = { ...els, [t]: a };
   return a;
 }
 
@@ -61,7 +81,7 @@ function hookGesture() {
   const go = () => {
     (['theme', 'vault'] as const).forEach((t) => {
       if (unlocked[t] || want === t) return;
-      const a = el(t);
+      const a = unlockEl(t);
       a.muted = true;
       a.play().then(() => { if (want !== t) { a.pause(); a.currentTime = 0; } a.muted = false; unlocked[t] = true; }).catch(() => { a.muted = false; });
     });
