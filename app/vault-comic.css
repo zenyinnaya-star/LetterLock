@@ -520,3 +520,4 @@
 .vault.p-finished .podium .award .medal.tier-ein { top: -50px; width: 62px; height: 62px; }
 .vault .fin-actions .btn.fin-share, .vault .fin-actions .btn.fin-share * { color: #111 !important; -webkit-text-fill-color: #111 !important; text-shadow: none !important; }
 .vault .fin-actions .btn.fin-replay { -webkit-text-fill-color: #fff !important; }
+.vault.p-finished .podium .award::before { display: none !important; }

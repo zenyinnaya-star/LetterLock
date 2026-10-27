@@ -516,7 +516,7 @@ export function Finished({ state, token, act }: PhaseProps) {
   const teamMode = state.room.settings.mode === 'team' && (state.teams?.length ?? 0) === 2;
   const wt = teamMode ? state.teams!.find((x) => x.idx === state.room.winner_team) : undefined;
   const tie = teamMode && !wt;
-  const [shared, setShared] = useState(false);
+  const [shared, setShared] = useState<null | 'ok' | 'fail'>(null);
   const me = state.me;
   const result = !me ? 'spec' : teamMode ? (wt && me.team_id === wt.id ? 'win' : 'lose') : state.room.winner_id === me.id ? 'win' : 'lose';
   async function shareResult() {
@@ -526,7 +526,12 @@ export function Finished({ state, token, act }: PhaseProps) {
     try {
       if (typeof navigator !== 'undefined' && navigator.share) { await navigator.share({ title: 'LetterLock', text, url }); return; }
     } catch (e) { if ((e as Error)?.name === 'AbortError') return; }
-    try { await navigator.clipboard.writeText(`${text} ${url}`); setShared(true); window.setTimeout(() => setShared(false), 2000); } catch { /* clipboard blocked */ }
+    const msg = `${text} ${url}`;
+    let ok = false;
+    try { await navigator.clipboard.writeText(msg); ok = true; } catch {
+      try { const ta = document.createElement('textarea'); ta.value = msg; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch { /* blocked */ }
+    }
+    setShared(ok ? 'ok' : 'fail'); window.setTimeout(() => setShared(null), 2600);
   }
   const awards = [
     { key: 'champ', icon: 'trophy' as const, color: '#ffcf4a', title: t('fn.champ'), who: tt?.champion, sub: t('fn.champ_sub') },
@@ -588,7 +593,7 @@ export function Finished({ state, token, act }: PhaseProps) {
         {isHost && token
           ? <button className="btn lg fin-replay" onClick={() => void act(() => rpc.playAgain(token))}>{t('fn.again')}</button>
           : <span className="fin-wait">{t('fn.wait')}</span>}
-        <button type="button" className="btn lg fin-share" onClick={() => void shareResult()}>{shared ? 'Copied!' : 'Share'}</button>
+        <button type="button" className="btn lg fin-share" onClick={() => void shareResult()}>{shared === 'ok' ? 'Link copied!' : shared === 'fail' ? 'Copy failed' : 'Share'}</button>
       </div>
     </>
   );
