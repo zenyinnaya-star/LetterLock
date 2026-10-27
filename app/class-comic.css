@@ -154,4 +154,6 @@
 .selpage .sel-cards { padding-top: 16px !important; align-items: flex-end; }
 .selpage .sel-cards .sel-card, .selpage .sel-strip .sel-card { height: auto !important; flex-direction: column; gap: 3px; padding: 0 0 3px !important; overflow: visible; }
 .selpage .sel-card .sel-card-art { position: relative !important; inset: auto !important; width: 100% !important; height: auto !important; aspect-ratio: 1 / 1; object-fit: cover; object-position: 50% 18%; display: block; }
-.selpage .sel-card b { position: static !important; background: none !important; font-size: 11px; line-height: 1; color: #fff !important; text-shadow: 1px 1px 0 #000; }
+.selpage .sel-card b { position: static !important; transform: none !important; width: 100%; box-sizing: border-box; border: 0 !important; border-top: 3px solid var(--k) !important; background: var(--k) !important; font-size: 11px; line-height: 1; padding: 4px 0 !important; text-align: center; color: #fff !important; text-shadow: none; letter-spacing: .06em; }
+.selpage .sel-card { background: transparent !important; border-color: transparent; }
+.selpage .sel-card.on { box-shadow: 0 0 0 3px var(--p), 4px 4px 0 3px var(--k); }
