@@ -425,3 +425,5 @@
 .lobby-drawer .drawer-body button, .lobby-drawer .drawer-body .btn, .lobby-drawer .drawer-body select, .lobby-drawer .drawer-body .chip { background: #fff !important; border: 3px solid #111 !important; border-radius: 3px !important; box-shadow: 3px 3px 0 #111 !important; font-family: var(--cmc) !important; }
 .lobby-drawer .drawer-body .on, .lobby-drawer .drawer-body [aria-checked='true'], .lobby-drawer .drawer-body button.sel { background: #ff1f8e !important; }
 .lobby-drawer .drawer-body .on *, .lobby-drawer .drawer-body [aria-checked='true'] * { color: #fff !important; }
+.vault.p-finished .podium .award .medal { display: none !important; }
+.vault.p-finished .podium .award { padding-top: 22px !important; }
