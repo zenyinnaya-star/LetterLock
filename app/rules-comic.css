@@ -20,3 +20,8 @@ body:has(.rules-comic) { background: #ffd400 radial-gradient(rgba(0,0,0,.12) 22%
 .rules-comic .rv-bigplay { background: var(--y) !important; color: var(--k) !important; border: 5px solid var(--k) !important; box-shadow: 4px 4px 0 var(--k) !important; }
 .rules-comic .rv-caption { background: #fff !important; color: var(--k) !important; border: 3px solid var(--k) !important; font-family: 'LL Comic', Bangers, Impact, sans-serif; letter-spacing: .04em; font-size: 20px; }
 .rules-comic .rv-controls { background: var(--k) !important; }
+main.shell.narrow.rules.rules-comic { max-width: 880px !important; width: calc(100% - 32px); margin-left: auto !important; margin-right: auto !important; }
+.rules-comic h1, .rules-comic h2 { background-clip: border-box !important; -webkit-background-clip: border-box !important; width: fit-content; max-width: 100%; }
+.rules-comic h1 { background: none !important; -webkit-text-fill-color: #fff !important; }
+.rules-comic h2 { -webkit-text-fill-color: #fff !important; }
+.rules-comic h2 { background: #ff1f8e !important; }
