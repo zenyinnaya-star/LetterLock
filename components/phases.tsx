@@ -247,7 +247,7 @@ export function RevealPhase({ state, msLeft }: PhaseProps) {
           return (
             <motion.div key={r.player_id} className={`reveal-row${r.valid ? '' : ' bad'}`}
               initial={{ opacity: 0, rotateX: -90, y: 10 }} animate={{ opacity: 1, rotateX: 0, y: 0 }}
-              transition={{ ...spring, delay: 0.15 + i * 0.35 }} style={{ transformPerspective: 600 }}>
+              transition={{ ...spring, delay: 0.05 + i * 0.12 }} style={{ transformPerspective: 600 }}>
               <Avatar state={state} id={r.player_id} size={36} />
               <div>
                 <div className="small muted">{p?.name}</div>
@@ -255,7 +255,7 @@ export function RevealPhase({ state, msLeft }: PhaseProps) {
                 {r.valid && r.tier && r.tier !== 'common' && (
                   <div className="tier-row">
                     <span className={`tier-tag ${r.tier}`}><Icon name="sparkle" size={13} /> {t(`tier.${r.tier}` as Key)}</span>
-                    {(r.mult ?? 1) > 1 && <motion.span className="unstop-tag" initial={{ scale: 0 }} animate={{ scale: [0, 1.25, 1] }} transition={{ delay: 0.5 + i * 0.35 }}><Icon name="bolt" size={13} /> {t('tier.unstop', { m: r.mult ?? 1 })}</motion.span>}
+                    {(r.mult ?? 1) > 1 && <motion.span className="unstop-tag" initial={{ scale: 0 }} animate={{ scale: [0, 1.25, 1] }} transition={{ delay: 0.2 + i * 0.12 }}><Icon name="bolt" size={13} /> {t('tier.unstop', { m: r.mult ?? 1 })}</motion.span>}
                   </div>
                 )}
                 {r.legend && !(r.tier && r.tier !== 'common') && <div className="legend-tag"><Icon name="sparkle" size={13} /> {t('ph.legend')}</div>}
@@ -263,7 +263,7 @@ export function RevealPhase({ state, msLeft }: PhaseProps) {
                   <div className="why"><Icon name="x" size={13} strokeWidth={3} /> {REASONS[r.reason ?? ''] ?? r.reason} · {t('ph.strike')}{p?.eliminated ? ` · ${t('ph.eliminated')}` : ''}</div>
                 )}
               </div>
-              <motion.div className="score" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ ...spring, delay: 0.35 + i * 0.35 }}
+              <motion.div className="score" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ ...spring, delay: 0.12 + i * 0.12 }}
                 style={{ color: r.valid ? 'var(--ok)' : 'var(--lock)' }}>
                 {r.valid ? `+${r.points}` : <Icon name={p?.eliminated ? 'skull' : 'x'} size={24} strokeWidth={2.6} />}
               </motion.div>
@@ -332,7 +332,7 @@ export function GuessPhase({ state, token, msLeft, act }: PhaseProps) {
             {ALPHABET.map((l, i) => (
               <motion.button key={l} className={`key${letter === l ? ' sel' : ''}`} disabled={!tp || tp.revealed.includes(l)}
                 onClick={() => setLetter(l)} initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: letter === l ? 1.08 : 1 }}
-                transition={{ ...spring, delay: i * 0.012 }} whileTap={{ scale: 0.9 }}>{l}</motion.button>
+                transition={{ ...spring, delay: i * 0.006 }} whileTap={{ scale: 0.9 }}>{l}</motion.button>
             ))}
           </div>
           <button className="btn lg block" disabled={!effTarget || !letter}

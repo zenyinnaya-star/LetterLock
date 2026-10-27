@@ -127,7 +127,7 @@ export function VaultHeist({ state, msLeft, children }: { state: RoomState; msLe
       for (let i = 0; i < n; i++) window.setTimeout(() => audio.tumbler(), i * 180);
       window.setTimeout(() => setFresh({}), 1600);
     }
-    if (state.players.some((pl) => (cur.strikes[pl.id] ?? 0) > (p.strikes[pl.id] ?? 0))) { audio.alarm(); setAlarm(Date.now()); }
+    if (state.players.some((pl) => (cur.strikes[pl.id] ?? 0) > (p.strikes[pl.id] ?? 0))) { audio.alarm(); setAlarm(Date.now()); window.setTimeout(() => setAlarm(0), 1000); }
     if (cur.phase === 'answer' && p.phase !== 'answer') { audio.dial(); setSpin(Date.now()); }
   }, [state.players, phase]);
 

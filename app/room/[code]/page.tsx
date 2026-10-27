@@ -56,11 +56,11 @@ export default function RoomPage() {
   }
 
   if (!state || !loaded) {
-    return <main className="shell narrow"><Header /><div className="sheet center muted">{t('room.loading', { code })}</div></main>;
+    return <RoomBoot label={t('room.loading', { code })} />;
   }
 
   if (token && stateToken !== token) {
-    return <main className="shell narrow"><Header /><div className="sheet center muted">{t('room.seat')}</div></main>;
+    return <RoomBoot label={t('room.seat')} />;
   }
 
   if (isLockedRoom(state.room.settings)) return <ComingSoon name={state.room.settings.mode === 'duel' ? 'Duel' : state.room.settings.mode === 'team' ? 'Siege' : 'Twist rooms'} />;
@@ -70,6 +70,11 @@ export default function RoomPage() {
   }
 
   return <Game state={state} token={state.me ? token : null} offset={offset} refresh={refresh} bots={botIds} botInfo={botInfo} pingBots={pingBots} />;
+}
+
+/** Comic-skinned boot screen so the old global backdrop never flashes between class select and the lobby. */
+function RoomBoot({ label }: { label: string }) {
+  return <main className="room-boot" role="status"><span className="room-boot-spin" aria-hidden /><b>{label}</b></main>;
 }
 
 /** QR / link joins use the comic class-select screen so every entry path looks the same. */

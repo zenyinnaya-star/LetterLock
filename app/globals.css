@@ -1018,9 +1018,9 @@ input { font: inherit; }
 /* ───────── transitions ───────── */
 :root { --ease-out: cubic-bezier(.16, 1, .3, 1); --ease-io: cubic-bezier(.76, 0, .24, 1); }
 .page-curtain { position: fixed; inset: 0; z-index: 9999; pointer-events: none; background: linear-gradient(105deg, #070816 0%, #10142e 60%, #1a1f48 100%);
-  box-shadow: -6px 0 60px rgba(255,207,74,.35); transform: translateX(0); animation: curtain .62s var(--ease-io) .04s both; }
+  box-shadow: -6px 0 60px rgba(255,207,74,.35); transform: translateX(0); animation: curtain .01s linear both; display: none; }
 @keyframes curtain { 0% { transform: translateX(0); visibility: visible; } 99% { visibility: visible; } 100% { transform: translateX(104%); visibility: hidden; } }
-.page-in { animation: pagein .7s var(--ease-out) .12s both; }
+.page-in { animation: pagein .16s ease-out both; }
 @keyframes pagein { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 .sel-info > * { animation: rise .5s var(--ease-out) both; }

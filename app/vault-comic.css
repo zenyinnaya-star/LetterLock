@@ -603,3 +603,9 @@
 
 /* the torn-paper clip-path on the rack cuts off anything that rises above it: lift it while a picker is open */
 .vault-rack .rack-inner:has(.popover), .rack-inner:has(.popover) { clip-path: none !important; -webkit-clip-path: none !important; }
+
+/* crack-phase keyboard: columns must be allowed to shrink (1fr alone overflows on phones) */
+.vault .kbd { grid-template-columns: repeat(9, minmax(0, 1fr)) !important; gap: 6px !important; width: 100%; max-width: min(100%, 440px) !important; box-sizing: border-box; padding: 0 2px 6px; }
+.vault .kbd .key { min-width: 0 !important; padding: 0 !important; font-size: clamp(15px, 5.2vw, 22px) !important; aspect-ratio: 1 / 1.05; }
+@media (min-width: 700px) { .vault .kbd { grid-template-columns: repeat(13, minmax(0, 1fr)) !important; max-width: 760px !important; } }
+.v-alarm-flash { pointer-events: none; }
