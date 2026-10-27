@@ -74,3 +74,5 @@
 .selpage .sel-name { color: #fff !important; -webkit-text-fill-color: #fff; text-shadow: .04em .04em 0 var(--p), .08em .08em 0 var(--k) !important; }
 .selpage .sel-right { padding-right: 10px; }
 .selpage .sel-info .cs-oneline { padding: 10px 12px; line-height: 1.35; }
+.selpage .sel-bg-img { top: 14%; bottom: 32%; right: 32%; width: min(26vw, 340px); }
+.selpage .sel-card { width: clamp(88px, 8vw, 118px); }
