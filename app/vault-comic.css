@@ -521,3 +521,23 @@
 .vault .fin-actions .btn.fin-share, .vault .fin-actions .btn.fin-share * { color: #111 !important; -webkit-text-fill-color: #111 !important; text-shadow: none !important; }
 .vault .fin-actions .btn.fin-replay { -webkit-text-fill-color: #fff !important; }
 .vault.p-finished .podium .award::before { display: none !important; }
+
+/* phone: Replay/Share stay on screen; compact finale in landscape; tidy the crowded header */
+@media (max-width: 899px) {
+  .vault.p-finished .fin-actions { position: sticky; bottom: 12px; z-index: 30; padding: 6px 0; }
+  .vault.p-finished .fin-actions .btn { font-size: 19px !important; padding: 8px 20px !important; }
+}
+@media (max-width: 520px) {
+  .vault-shell .topbar .wordmark, .vault-shell .topbar .logo { display: none !important; }
+  .vault.p-finished .podium { gap: 8px; }
+  .vault.p-finished .podium .award .who { font-size: 16px; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .vault.p-finished .v-verdict b { font-size: clamp(34px, 9vh, 56px) !important; }
+  .vault.p-finished .winner h1 { font-size: clamp(30px, 9vh, 48px) !important; }
+  .vault.p-finished .winner > div:first-child { transform: scale(.6); margin: -26px 0; }
+  .vault.p-finished .v-content { display: grid !important; grid-template-columns: 1fr 1.2fr; gap: 8px 16px; }
+  .vault.p-finished .v-content > .winner { grid-column: 1; grid-row: 1 / span 3; }
+  .vault.p-finished .v-content > .podium, .vault.p-finished .v-content > .locks-table, .vault.p-finished .v-content > .xp-card { grid-column: 2; margin: 0; }
+  .vault.p-finished .v-content > .fin-actions { grid-column: 1 / -1; }
+}
