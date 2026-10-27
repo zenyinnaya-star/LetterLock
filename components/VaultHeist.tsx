@@ -158,7 +158,7 @@ export function VaultFinale({ state, children }: { state: RoomState; children: R
   const t = useT();
   const me = state.me;
   const winner = state.players.find((p) => p.id === state.room.winner_id);
-  const spec = !!me?.is_spectator;
+  const spec = !me || !!me.is_spectator;
   const iLost = !!me && !spec && (!winner || winner.id !== me.id);
   const [intro, setIntro] = useState(true);
   useEffect(() => {
