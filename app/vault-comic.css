@@ -299,3 +299,12 @@
 .vault.p-finished .v-content, .vault.p-finished .v-content * { color: var(--k) !important; }
 .vault.p-finished .v-content .btn { color: #fff !important; }
 .vault.p-finished .v-content .btn.ghost { color: var(--k) !important; }
+
+/* the topbar is a sibling of .vault, so the comic vars must live on the shell too */
+.vault-shell { --y: #ffd400; --p: #ff1f8e; --k: #111; --alarm: #e5002b;
+  --dsp: 'LL Display', 'Luckiest Guy', Impact, sans-serif; --cmc: 'LL Comic', Bangers, Impact, sans-serif; }
+.vault-shell .topbar .room-chip { background: #111 !important; color: #fff !important; border: 3px solid #111; box-shadow: 3px 3px 0 #ff1f8e; }
+.vault-shell .topbar .textbtn { background: #fff !important; color: #111 !important; border: 3px solid #111 !important; box-shadow: 3px 3px 0 #111; }
+.vault-shell .topbar .textbtn:hover { background: #ffd400 !important; color: #111 !important; }
+.vault-shell .topbar .textbtn.danger { background: #ff1f8e !important; color: #fff !important; }
+.vault-shell .topbar .textbtn.danger:hover { background: #e5002b !important; color: #fff !important; }
