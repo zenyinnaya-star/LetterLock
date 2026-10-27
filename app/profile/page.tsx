@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { AvatarPicker } from '@/components/AvatarPicker';
 import { LoadoutEditor } from '@/components/LoadoutEditor';
 import { BackLink, Header } from '@/components/ui';
 import { ClassIcon, Icon } from '@/components/icons';
 import { ACHIEVEMENTS } from '@/lib/achievements';
+import { loadAvatar, saveAvatar } from '@/lib/avatar';
 import { useT } from '@/lib/i18n/react';
 import { CLASSES } from '@/lib/classes';
 import { badgeLabel, nextTierXp, tierName, TIER_XP, type Mastery } from '@/lib/mastery';
@@ -19,6 +21,8 @@ export default function ProfilePage() {
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [copied, setCopied] = useState(false);
   const [m, setM] = useState<Mastery | null>(null);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  useEffect(() => { setAvatar(loadAvatar()); }, []);
 
   const load = () => { void fetchProfile().then((x) => { setP(x); setReady(true); }); void fetchMastery().then(setM); };
   useEffect(() => { if (getStored()) load(); else setReady(true); }, []);
@@ -68,6 +72,10 @@ export default function ProfilePage() {
                 <div className="muted small">{t('pf.xp', { a: p.xp, b: p.level_next })}</div>
               </div>
             </section>
+
+            <div className="pf-avatar" style={{ display: 'flex', justifyContent: 'center', margin: '4px 0 10px' }}>
+              <AvatarPicker name={p.name} url={avatar} onChange={(u) => { setAvatar(u); saveAvatar(u); }} />
+            </div>
 
             <div className="pf-stats">
               <div><Icon name="cards" size={26} /><span className="pf-sv"><b>{p.games}</b><span>{t('pf.games')}</span></span></div>
