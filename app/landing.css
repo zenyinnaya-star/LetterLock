@@ -65,3 +65,20 @@
 .wd-grid.sm .wd-name { font-size: clamp(11px, 3vw, 16px); letter-spacing: .06em; }
 .wd-grid.sm .wd-pl { font-size: 10px; letter-spacing: .04em; }
 @media (max-width: 760px) { .wd-grid.one { grid-template-columns: minmax(0, 1fr); } .wd-grid.sm { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* landing background rework: vault wall, light rays, drifting letter tiles and gold dust */
+.wl-bg { overflow: hidden; background:
+  radial-gradient(ellipse 60% 45% at 50% 38%, rgba(255,176,80,.16), transparent 70%),
+  radial-gradient(ellipse 80% 55% at 50% 105%, rgba(255,150,60,.18), transparent 70%),
+  linear-gradient(180deg, #1a130c 0%, #0d0906 55%, #050403 100%); }
+.wl-bg::before { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; background: radial-gradient(ellipse 120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.75)); }
+.wl-bg > * { position: absolute; display: block; font-style: normal; text-decoration: none; }
+.wl-rays { inset: -20% -10% auto -10%; height: 90%; background: conic-gradient(from 180deg at 50% 0%, transparent 0deg, rgba(255,200,120,.10) 8deg, transparent 18deg, rgba(255,200,120,.07) 30deg, transparent 42deg, rgba(255,200,120,.09) 55deg, transparent 68deg, rgba(255,200,120,.06) 80deg, transparent 95deg, transparent 265deg, rgba(255,200,120,.06) 280deg, transparent 292deg, rgba(255,200,120,.09) 305deg, transparent 318deg, rgba(255,200,120,.07) 330deg, transparent 342deg, rgba(255,200,120,.10) 352deg, transparent 360deg); animation: wl-sway 14s ease-in-out infinite alternate; transform-origin: 50% 0; -webkit-mask-image: linear-gradient(180deg, #000, transparent 85%); mask-image: linear-gradient(180deg, #000, transparent 85%); }
+.wl-grid { inset: 0; opacity: .5; background-image: linear-gradient(rgba(224,178,94,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(224,178,94,.05) 1px, transparent 1px); background-size: 64px 64px; -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000, transparent 80%); mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000, transparent 80%); }
+.wl-fl { bottom: -60px; display: grid !important; place-items: center; width: 1.9em; height: 1.9em; border-radius: 22%; font-family: 'Cinzel', serif; font-weight: 700; color: rgba(246,217,140,.55); background: linear-gradient(160deg, rgba(60,44,24,.55), rgba(20,14,8,.55)); border: 1px solid rgba(224,178,94,.28); box-shadow: 0 0 18px rgba(255,170,70,.12); animation: wl-rise linear infinite; will-change: transform; }
+.wl-dust { bottom: -10px; width: 3px; height: 3px; border-radius: 50%; background: #ffd58a; box-shadow: 0 0 6px 1px rgba(255,190,100,.7); opacity: 0; animation: wl-mote linear infinite; }
+@keyframes wl-rise { 0% { transform: translateY(0) rotate(-8deg); opacity: 0; } 10% { opacity: .9; } 85% { opacity: .7; } 100% { transform: translateY(-115vh) rotate(14deg); opacity: 0; } }
+@keyframes wl-mote { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: .9; } 100% { transform: translate(24px, -80vh); opacity: 0; } }
+@keyframes wl-sway { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+@media (max-width: 600px) { .wl-fl:nth-of-type(n+7) { display: none !important; } .wl-grid { background-size: 44px 44px; } }
+@media (prefers-reduced-motion: reduce) { .wl-rays, .wl-fl, .wl-dust { animation: none; } .wl-fl { opacity: .35; bottom: 20%; } }

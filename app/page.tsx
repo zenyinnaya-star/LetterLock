@@ -13,11 +13,22 @@ const WORLDS = [
   { k: 'noir', label: 'Interrogation' },
 ];
 
+const LETTERS = ['L', 'O', 'C', 'K', 'W', 'O', 'R', 'D', 'S', 'A', 'E', 'T'];
+
 export default function Home() {
   const t = useT();
   return (
     <main className="worlds-land">
-      <div className="wl-bg" aria-hidden />
+      <div className="wl-bg" aria-hidden>
+        <i className="wl-rays" />
+        <i className="wl-grid" />
+        {LETTERS.map((c, i) => (
+          <b key={i} className="wl-fl" style={{ left: `${(i * 37 + 8) % 94}%`, animationDelay: `${-(i * 2.3) % 18}s`, animationDuration: `${16 + (i % 5) * 3}s`, fontSize: `${18 + (i % 4) * 8}px` }}>{c}</b>
+        ))}
+        {Array.from({ length: 22 }).map((_, i) => (
+          <u key={i} className="wl-dust" style={{ left: `${(i * 53) % 100}%`, animationDelay: `${-(i * 1.7) % 14}s`, animationDuration: `${9 + (i % 6) * 2}s` }} />
+        ))}
+      </div>
       <Header />
       <section className="wl-stage">
         <motion.h1 className="wl-logo" aria-label="Letterlock" initial={{ opacity: 0, y: -24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
