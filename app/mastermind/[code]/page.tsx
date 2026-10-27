@@ -14,6 +14,7 @@ import { loadToken, mm, mmError, REACTIONS, saveToken, type MmState } from '@/li
 import { mmArtVars } from '@/lib/mmArt';
 import { loadName } from '@/lib/session';
 import '../mastermind.css';
+import '../mm-comic.css';
 
 const CIRC = 2 * Math.PI * 44;
 
