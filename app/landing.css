@@ -37,7 +37,12 @@
 .wl-links a:hover { color: #ffe9b0; text-shadow: 0 0 12px rgba(255,190,100,.6); }
 
 @media (max-width: 760px) {
-  .wl-arches { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 14px; }
+  .wl-arches { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 4vh; }
+  .wl-arch { aspect-ratio: .5; box-shadow: 0 0 0 1.5px rgba(255,185,100,.55), 0 0 12px rgba(255,160,70,.25), 0 10px 18px rgba(0,0,0,.6); }
+  .wl-label { font-size: 8px; letter-spacing: .06em; gap: 0; }
+  .wl-label::before, .wl-label::after { display: none; }
+  .wl-play { padding: 12px 54px; font-size: 22px; }
+  .wl-stage { gap: 8px; padding: 4vh 8px 28px; gap: 14px; }
   .wl-logo { font-size: clamp(34px, 11vw, 56px); }
   .wl-tag span { white-space: normal; text-align: center; }
 }
