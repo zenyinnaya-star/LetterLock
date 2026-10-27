@@ -103,3 +103,21 @@
 @media (prefers-reduced-motion: reduce) {
   .mm-room .btn { transition: none; }
 }
+
+/* contrast fixes: letters and clock read in ink on paper, not glowing amber */
+.mm-room .mm-slots .slot, .mm-room .mm-slots .slot.lit, .mm-room .mm-slots.mine .slot.lit, .mm-room .mm-slots.reveal-all .slot.lit { color: var(--mk); text-shadow: none; font-size: clamp(26px, 3.4vw, 44px); }
+.mm-room .mm-slots .slot.unknown { color: rgba(11,13,26,.45); }
+.mm-room .mm-slots .slot.typed { color: #b3005f; border-color: var(--mk); box-shadow: 4px 4px 0 var(--mp); }
+.mm-room .mm-slots .slot.clash { border-color: #e5002b; box-shadow: 4px 4px 0 #e5002b; }
+.mm-room .mm-clock { filter: drop-shadow(4px 4px 0 var(--mk)); }
+.mm-room .mm-clock .arc { stroke: var(--mp); stroke-width: 7; }
+.mm-room .mm-clock .face { fill: var(--mpaper); stroke: var(--mk); stroke-width: 6; }
+.mm-room .mm-clock .tick, .mm-room .mm-clock .hand { stroke: var(--mk); }
+.mm-room .mm-clock.urgent .arc { stroke: #e5002b; }
+.mm-room .mm-card.empty { background: rgba(11,13,26,.72); color: #fff; border: 3px dashed var(--my); font-family: var(--mcmc); font-style: normal; letter-spacing: .06em; font-size: 15px; }
+.mm-room .mm-card .num { opacity: 1; color: #b3005f; font-family: var(--mcmc); font-size: 13px; }
+.mm-room .mm-card.empty .num { color: var(--my); }
+.mm-room .mm-photo .pic.sil { filter: contrast(1.1) saturate(.9); }
+.mm-room .mm-hint { background: var(--mpaper); color: var(--mk); text-shadow: none; padding: 2px 8px; border: 2px solid var(--mk); display: inline-block; }
+.mm-room .mm-qr + .mm-invite-txt b, .mm-room .mm-invite-txt b { color: var(--mk) !important; opacity: 1 !important; }
+.mm-room .mm-side .name, .mm-room .mm-side b { color: #fff; }
