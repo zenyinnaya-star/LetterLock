@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { pveUnlocked, tryUnlockPve } from '@/lib/pveGate';
-import { Header } from '@/components/ui';
+import { ComicTop } from '@/components/ComicTop';
 import { audio } from '@/lib/audio';
 import { burst, wipe } from '@/lib/comicFx';
 import { useT } from '@/lib/i18n/react';
@@ -13,17 +13,20 @@ import '../comic.css';
 
 type Kind = 'create' | 'duel' | 'team' | 'mastermind' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory' | 'jester';
 // Comic Pop art and hover loops (Higgsfield). Still image shows by default; the loop plays on hover / when selected.
-const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_';
-const DOORS: { kind: Kind; name: string; tag: string; players: string; desc: string; cta: string; pow: string; img: string; vid: string }[] = [
-  { kind: 'create', name: 'Classic', tag: 'Most played', players: '2–10 players', desc: 'Dodge your locked letters, crack everyone else’s. Last one standing wins.', cta: 'Create room', pow: 'POW!',
-    img: '020055_afa4549e-7af7-484c-9c17-5a188d39a5e7', vid: '032509_1331adb8-eead-4a1e-b3a7-25ee7da27c06' },
-  { kind: 'duel', name: 'Duel', tag: '1v1', players: '2 players', desc: 'High-noon showdown. Fastest word wins the draw.', cta: 'Start a duel', pow: 'BANG!',
-    img: '020119_c6adde07-372f-4108-a920-edb73df4c37f', vid: '032640_3c6b1749-4c02-481b-ab78-fa6b2ffc5124' },
-  { kind: 'team', name: 'Siege', tag: 'Teams', players: '4–8 players', desc: 'Two teams storm the castle. Every word is a stone on the gate.', cta: 'Start a siege', pow: 'CLANG!',
-    img: '020119_ab7779df-a236-4da3-8050-10300b620648', vid: '032509_5c9290a0-260a-4969-a9e1-0865899e7e55' },
-  { kind: 'mastermind', name: 'Mastermind', tag: 'Puzzle', players: '3–12 players', desc: 'One table, one lamp. Crack the hidden word before it cracks you.', cta: 'Open a case', pow: 'ZAP!',
-    img: '020119_99132e11-5487-4681-b899-9a0a3b4c4707', vid: '032509_7ff61b34-31d2-4a8f-8960-a167a3279ad1' },
+// Comic Pop art + hover loops (made with Higgsfield, self-hosted under /art/comic). Still frame by default; the loop plays on hover / tap.
+const DOORS: { kind: Kind; art: string; name: string; players: string; desc: string; cta: string; pow: string }[] = [
+  { kind: 'create', art: 'classic', name: 'Classic', players: '2–10 players', desc: 'Break the vault. Grab the cash. Get out.', cta: 'Create room', pow: 'POW!' },
+  { kind: 'duel', art: 'duel', name: 'Duel', players: '2 players', desc: 'High noon. Fastest word wins the draw.', cta: 'Start a duel', pow: 'BANG!' },
+  { kind: 'team', art: 'siege', name: 'Siege', players: '4–8 players', desc: 'Storm the castle. Every word hits the gate.', cta: 'Start a siege', pow: 'CLANG!' },
+  { kind: 'mastermind', art: 'mastermind', name: 'Mastermind', players: '3–12 players', desc: 'One lamp. One table. Crack the hidden word.', cta: 'Open a case', pow: 'ZAP!' },
 ];
+const SVG = {
+  people: <svg viewBox="0 0 24 24" aria-hidden><circle cx="8" cy="8" r="3.2" /><circle cx="16.5" cy="8.5" r="2.7" /><path d="M2 19c.4-3.6 2.9-5.6 6-5.6s5.6 2 6 5.6zM14.6 13.9c.6-.2 1.2-.3 1.9-.3 2.7 0 4.8 1.8 5.3 5.1h-6.1c-.1-1.9-.5-3.5-1.1-4.8z" /></svg>,
+  key: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden><circle cx="7.5" cy="12" r="4" /><path d="M11.5 12H21M17.5 12v3.5M20.5 12v2.5" /></svg>,
+  book: <svg viewBox="0 0 24 24" aria-hidden><path d="M3 5.5c3-1.3 6-1 9 1 3-2 6-2.3 9-1V19c-3-1.3-6-1-9 1-3-2-6-2.3-9-1z" /><path d="M12 6.5V20" /></svg>,
+  cal: <svg viewBox="0 0 24 24" aria-hidden><rect x="3.5" y="5" width="17" height="15" rx="1.5" /><path d="M3.5 10h17M8 3v4M16 3v4M7.5 13.5h2M11 13.5h2M14.5 13.5h2M7.5 16.5h2M11 16.5h2" /></svg>,
+  flask: <svg viewBox="0 0 24 24" aria-hidden><path d="M9.5 3h5M10.5 3v6L5 19a1.5 1.5 0 0 0 1.3 2h11.4A1.5 1.5 0 0 0 19 19l-5.5-10V3" /><path d="M7.5 15h9" /></svg>,
+};
 const LAB: { kind: Kind; k: string }[] = [
   { kind: 'solo', k: 'solo' }, { kind: 'reverse', k: 'reverse' }, { kind: 'chaos', k: 'chaos' }, { kind: 'memory', k: 'memory' }, { kind: 'jester', k: 'jester' },
 ];
@@ -66,23 +69,23 @@ export default function Play() {
     if (e.pointerType !== 'mouse') return;
     const el = e.currentTarget, r = el.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
-    el.style.transform = `skewX(-6deg) translateY(-12px) rotateY(${x * 14}deg) rotateX(${-y * 14}deg) scale(1.05)`;
+    el.style.transform = `translateY(-12px) rotateY(${x * 16}deg) rotateX(${-y * 16}deg) scale(1.05)`;
   }
   const d = DOORS[sel];
 
   return (
-    <main className="cp cp-play">
+    <main className="cp cp-pick">
       <div className="cp-sky" aria-hidden />
+      <div className="cp-pwedge" aria-hidden />
       <div className="cp-tear short" aria-hidden />
-      <Header />
-      <div className="cp-wrap">
-        <div className="cp-top"><Link href="/" className="cp-back"><span>◀ {t('pl.back')}</span></Link></div>
-        <h1 className="cp-h2">Pick your game</h1>
-        <p className="cp-sub">Four ways to play. Tap one to see it, then jump in.</p>
+      <ComicTop />
+      <div className="cp-pw">
+        <Link href="/" className="cp-back">‹ Back</Link>
+        <h1 className="cp-title cp-xt">Pick your game</h1>
 
-        <div className="cp-doors">
+        <div className="cp-cards">
           {DOORS.map((m, i) => (
-            <button key={m.kind} type="button" className={`cp-door${i === sel ? ' sel' : ''}${i === live ? ' live' : ''}`} style={{ ['--i' as string]: i }}
+            <button key={m.kind} type="button" className={`cp-card${i === sel ? ' sel' : ''}${i === live ? ' live' : ''}`} style={{ ['--i' as string]: i }}
               aria-pressed={i === sel} aria-label={`${m.name}, ${m.players}`}
               onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setSel(i); setLive(i); } }}
               onPointerMove={tilt}
@@ -94,58 +97,51 @@ export default function Play() {
                 if (i === sel && (mouse || live === i)) { start(m.kind); return; }
                 setSel(i); setLive(i);
               }}>
-              <span className="tg">{m.tag}</span>
-              <span className="art">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`${CDN}${m.img}_min.webp`} alt="" draggable={false} loading={i < 2 ? 'eager' : 'lazy'}
-                  onError={(e) => { const im = e.currentTarget; if (!im.src.endsWith('.png')) im.src = `${CDN}${m.img}.png`; }} />
-                <video ref={(v) => { vids.current[i] = v; }} src={`${CDN}${m.vid}.mp4`} muted loop playsInline preload="none" aria-hidden />
+              <span className="in">
+                <span className="art">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={`/art/comic/${m.art}.webp`} alt="" draggable={false} />
+                  <video ref={(v) => { vids.current[i] = v; }} poster={`/art/comic/${m.art}.webp`} muted loop playsInline preload="none" aria-hidden>
+                    <source src={`/art/comic/${m.art}.mp4`} type="video/mp4" />
+                    <source src={`/art/comic/${m.art}.webm`} type="video/webm" />
+                  </video>
+                </span>
+                <span className="lbl">{m.name}</span>
               </span>
-              <span className="l">{m.name}</span>
-              <span className="n">{i + 1}</span>
+              <span className="num cp-xt" aria-hidden>{i + 1}</span>
             </button>
           ))}
         </div>
 
-        <div className="cp-info">
-          <div className="cp-infob">
-            <div><b>{d.name}</b><p>{d.desc}</p><small>{d.players}</small></div>
-            <button type="button" className="cp-btn pink" onClick={(e) => { burst(e.clientX, e.clientY, d.pow); start(d.kind); }}><span>{d.cta} ▶</span></button>
+        <div className="cp-bar">
+          <div className="cp-info"><b>{d.name}</b><p>{d.desc}</p></div>
+          <button type="button" className="cp-create" onClick={(e) => { burst(e.clientX, e.clientY, d.pow); start(d.kind); }}>{SVG.people}<span>{d.cta}</span></button>
+          <span className="cp-or">or</span>
+          <label className="cp-join">
+            <span>{SVG.key} Join with code</span>
+            <span className="f">
+              <input maxLength={4} value={code} placeholder="Enter code…" aria-label={t('home.code')}
+                onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
+                onKeyDown={(e) => { if (e.key === 'Enter' && code.length === 4) start('join'); }} />
+              <button type="button" disabled={code.length !== 4} onClick={(e) => { burst(e.clientX, e.clientY, 'IN!'); start('join'); }}>Go</button>
+            </span>
+          </label>
+          <span className="cp-div" aria-hidden />
+          <div className="cp-minis">
+            <button type="button" className="cp-mini" onClick={() => (unlocked ? start('story') : (audio.unlock(), setAskPw(true)))}>{SVG.book}<span>Story</span></button>
+            <Link href="/daily" className="cp-mini">{SVG.cal}<span>Daily</span></Link>
+            <button type="button" className="cp-mini" aria-expanded={labOpen} onClick={() => setLabOpen((o) => !o)}>{SVG.flask}<span>Lab</span></button>
           </div>
         </div>
-
-        <div className="cp-row2">
-          <div className="cp-panel">
-            <span className="cp-tag">Have a code?</span>
-            <input className="cp-code" maxLength={4} value={code} placeholder="ABCD" aria-label={t('home.code')}
-              onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
-              onKeyDown={(e) => { if (e.key === 'Enter' && code.length === 4) start('join'); }} />
-            <button type="button" className="cp-btn sm" style={{ width: '100%' }} disabled={code.length !== 4}
-              onClick={(e) => { burst(e.clientX, e.clientY, 'IN!'); start('join'); }}><span>{t('pl.join')}</span></button>
-          </div>
-          <div>
-            <div className="cp-sec">Other games to try</div>
-            <div className="cp-mini">
-              <button type="button" className="cp-tile" style={{ background: '#16c47f', ['--i' as string]: 0 }}
-                onClick={() => (unlocked ? start('story') : (audio.unlock(), setAskPw(true)))}>
-                <em>★</em><b>Story</b><small>{unlocked ? t('pl.story_d' as Key) : 'Coming soon · locked'}</small>
+        {labOpen && (
+          <div className="cp-lab">
+            {LAB.map((m) => (
+              <button key={m.kind} type="button" disabled={m.kind === 'jester'} title={t(`pl.${m.k}_d` as Key)} onClick={() => start(m.kind)}>
+                {t(`pl.${m.k}` as Key)}{m.kind === 'jester' ? ' · soon' : ''}
               </button>
-              <Link href="/daily" className="cp-tile" style={{ background: '#ff2e8a', ['--i' as string]: 1 }}><em>☀</em><b>{t('pl.daily')}</b><small>One word a day</small></Link>
-              <button type="button" className="cp-tile" style={{ background: '#555', ['--i' as string]: 2 }} aria-expanded={labOpen} onClick={() => setLabOpen((o) => !o)}>
-                <em>⚗</em><b>{t('pl.lab')}</b><small>Experiments</small>
-              </button>
-            </div>
-            {labOpen && (
-              <div className="cp-lab">
-                {LAB.map((m) => (
-                  <button key={m.kind} type="button" disabled={m.kind === 'jester'} title={t(`pl.${m.k}_d` as Key)} onClick={() => start(m.kind)}>
-                    {t(`pl.${m.k}` as Key)}{m.kind === 'jester' ? ' · soon' : ''}
-                  </button>
-                ))}
-              </div>
-            )}
+            ))}
           </div>
-        </div>
+        )}
       </div>
 
       {askPw && (
