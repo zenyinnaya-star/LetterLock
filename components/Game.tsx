@@ -389,8 +389,8 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
               {!me && <div className="banner info"><Icon name="eye" size={18} /> {t('gm.spectator')}</div>}
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div key={`${phase}-${state.room.round}`} className="stage-body"
-                  initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -14 }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}>
+                  initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                  transition={{ duration: 0.12, ease: 'easeOut' }}>
                   {main}
                 </motion.div>
               </AnimatePresence>
@@ -442,10 +442,10 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
             <motion.div key={`${phase}-${state.room.round}`}
               className={phase === 'duel_intro' ? 'stage-body duel-wrap' : 'stage-body'}
               style={phase === 'duel_intro' ? { padding: 0 } : undefined}
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -18 }}
-              transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}>
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.14, ease: 'easeOut' }}>
               {main}
             </motion.div>
           </AnimatePresence>

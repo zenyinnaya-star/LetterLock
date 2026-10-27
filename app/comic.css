@@ -208,3 +208,10 @@
 @media (prefers-reduced-motion: reduce) {
   .cp-pick .cp-title, .cp-pick .cp-card, .cp-pick .cp-bar { animation: none !important; opacity: 1 !important; }
 }
+
+/* room boot: same yellow comic halftone as the lobby so the global backdrop never shows through */
+.room-boot { position: fixed; inset: 0; z-index: 50; display: grid; place-content: center; justify-items: center; gap: 14px; background: #ffd400 radial-gradient(rgba(0,0,0,.13) 22%, transparent 26%) 0 0 / 8px 8px; color: #111; font-family: 'LL Display', 'Luckiest Guy', Bangers, Impact, sans-serif; letter-spacing: .06em; text-transform: uppercase; text-align: center; padding: 0 16px; }
+.room-boot b { font-size: clamp(18px, 5vw, 26px); font-weight: 400; background: #fff; border: 4px solid #111; box-shadow: 5px 5px 0 #ff1f8e, 5px 5px 0 3px #111; padding: 6px 16px; transform: rotate(-1.5deg); }
+.room-boot-spin { width: 38px; height: 38px; border-radius: 50%; border: 5px solid #111; border-top-color: #ff1f8e; animation: room-boot-spin .7s linear infinite; }
+@keyframes room-boot-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .room-boot-spin { animation-duration: 2s; } }
