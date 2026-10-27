@@ -124,8 +124,9 @@ function Select() {
       if (kind === 'story') await rpc.updateSettings(r.token, { max_players: 4 });
       if (kind === 'solo') for (let i = 0; i < 3; i++) await rpc.addBot(r.token, 2, [1, 2, 3][i]);
       if (kind === 'reverse' || kind === 'chaos' || kind === 'memory') await rpc.updateSettings(r.token, { twist: kind } as Partial<RoomSettings>);
-      if (avatar) await rpc.setAvatar(r.token, avatar).catch(() => undefined);
-      await linkProfile(r.token, name.trim());
+      // profile + avatar bookkeeping runs in the background so Lock in lands on the room immediately
+      if (avatar) void rpc.setAvatar(r.token, avatar).catch(() => undefined);
+      void linkProfile(r.token, name.trim()).catch(() => undefined);
       saveName(name.trim());
       saveSession(r.code, { token: r.token, playerId: r.player_id });
       if (kind === 'solo') { try { sessionStorage.setItem(`letterlock:tutorial:${r.code}`, '1'); } catch { /* ignore */ } }
