@@ -273,6 +273,13 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
     clearSession(state.room.code);
     window.setTimeout(() => { window.location.href = '/'; }, delayMs);
   }
+  // quitting mid-game: show the defeat end screen and wait for the player to choose, never bounce home on a timer
+  const [quitEnd, setQuitEnd] = useState(false);
+  async function quitToEnd() {
+    setQuitEnd(true);
+    if (token) { try { await rpc.leave(token); } catch { /* ignore */ } }
+    clearSession(state.room.code);
+  }
 
   const midGame = phase !== 'lobby' && phase !== 'finished' && !!me && !me.eliminated;
   const props = { state, token, msLeft, act, offset };
@@ -450,6 +457,19 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
       <Reactions state={state} token={token} />
       {state.room.settings?.mode === 'team' && <TeamVoice state={state} token={token} />}
       <ActionFeed state={state} token={token} />
+      {quitEnd && (
+        <div className="quit-end" role="dialog" aria-modal="true" aria-label="You quit">
+          <div className="quit-end-card">
+            <span className="quit-end-tag">GAME OVER</span>
+            <h2>YOU CHICKENED OUT</h2>
+            <p>You left the heist. The crew plays on without you.</p>
+            <div className="quit-end-btns">
+              <a className="btn lg" href="/play">PLAY AGAIN</a>
+              <a className="btn ghost lg" href="/">BACK TO HOME</a>
+            </div>
+          </div>
+        </div>
+      )}
       <AnimatePresence>
         {confirmQuit && (
           <motion.div className="sheet-backdrop" onClick={() => setConfirmQuit(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -463,7 +483,7 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
               <p className="muted">{t('gm.quit_body')}</p>
               <div className="row" style={{ justifyContent: 'center', gap: 10 }}>
                 <button className="btn ghost" onClick={() => setConfirmQuit(false)}>{t('gm.keep')}</button>
-                <button className="btn danger" onClick={() => { audio.chicken(); setConfirmQuit(false); void leave(2400); }}>{t('gm.quit_anyway')}</button>
+                <button className="btn danger" onClick={() => { audio.chicken(); setConfirmQuit(false); void quitToEnd(); }}>{t('gm.quit_anyway')}</button>
               </div>
               {canSitOut && (
                 <button className="btn sm ghost" style={{ marginTop: 12 }} onClick={() => { setConfirmQuit(false); if (token) void act(() => rpc.setHostMode(token, false)); }}>

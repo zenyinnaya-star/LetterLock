@@ -364,3 +364,24 @@
 .vault.p-lobby .v-lobby::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; height: 9vh; z-index: 0; pointer-events: none;
   background: #ff1f8e radial-gradient(#d4006f 30%, transparent 34%) 0 0 / 11px 11px;
   clip-path: polygon(0 28%, 4% 12%, 8% 30%, 13% 8%, 18% 26%, 24% 10%, 30% 28%, 36% 6%, 42% 24%, 48% 10%, 54% 30%, 60% 8%, 66% 26%, 72% 12%, 78% 30%, 84% 8%, 90% 26%, 95% 12%, 100% 28%, 100% 100%, 0 100%); }
+
+/* quit = defeat end screen that waits for a choice */
+.quit-end { position: fixed; inset: 0; z-index: 1200; display: grid; place-items: center; padding: 20px; background: #e5002b; background-image: repeating-conic-gradient(from 0deg at 50% 45%, rgba(255,255,255,.14) 0 6deg, transparent 6deg 18deg), radial-gradient(rgba(0,0,0,.18) 22%, transparent 26%); background-size: auto, 10px 10px; animation: vc-enter .4s both; }
+.quit-end-card { background: #f4f1e8; border: 5px solid #111; box-shadow: 10px 10px 0 #111; padding: 28px 34px 30px; max-width: 560px; width: 100%; text-align: center; transform: rotate(-1.2deg); }
+.quit-end-tag { display: inline-block; background: #ff1f8e; color: #fff; font-family: 'LL Display','Luckiest Guy',Impact,sans-serif; padding: 4px 16px; border: 3px solid #111; transform: skewX(-8deg); letter-spacing: .06em; }
+.quit-end-card h2 { margin: 14px 0 8px; font-family: 'LL Display','Luckiest Guy',Impact,sans-serif; font-weight: 400; font-size: clamp(36px, 7vw, 64px); line-height: 1; color: #fff; -webkit-text-stroke: .06em #111; paint-order: stroke fill; text-shadow: .05em .05em 0 #e5002b, .1em .1em 0 #111; }
+.quit-end-card p { font-family: 'LL Comic', Bangers, Impact, sans-serif; font-size: 20px; letter-spacing: .04em; color: #111; margin: 0 0 20px; }
+.quit-end-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.quit-end-btns .btn { text-decoration: none; }
+
+/* finale declutter: big title, three compact awards, one clean score card; recap/summary/rivalry tucked away */
+.vault.p-finished .recap, .vault.p-finished .summary, .vault.p-finished .rivalry, .vault.p-finished .team-final + .rivalry { display: none !important; }
+.vault.p-finished .winner h1 { font-size: clamp(44px, 8vw, 96px) !important; line-height: .95; margin: 6px 0 4px; }
+.vault.p-finished .podium { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 720px; margin: 14px auto; }
+.vault.p-finished .podium .award { background: #fff !important; border: 4px solid var(--k) !important; box-shadow: 5px 5px 0 var(--k) !important; padding: 10px 8px !important; }
+.vault.p-finished .podium .award .muted { display: none; }
+.vault.p-finished .locks-table { max-width: 720px; margin: 10px auto; padding: 12px 16px; }
+.vault.p-finished .locks-row { padding: 6px 0; border-bottom: 2px dashed rgba(0,0,0,.25); }
+.vault.p-finished .locks-row:last-child { border-bottom: 0; }
+.vault.p-finished .xp-row, .vault.p-finished .xp { max-width: 720px; margin: 8px auto; }
+.vault.p-finished .v-content > * + * { margin-top: 10px; }
