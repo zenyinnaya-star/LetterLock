@@ -24,7 +24,7 @@
 .v-lasers i:nth-child(1) { top: 72%; rotate: 4deg; }
 .v-lasers i:nth-child(2) { top: 80%; rotate: -6deg; animation-delay: -3s; }
 .v-lasers i:nth-child(3) { top: 88%; rotate: 2deg; animation-delay: -6s; }
-.v-alarm-flash { z-index: 44; background: radial-gradient(ellipse at 50% 50%, rgba(255,30,30,.15), rgba(255,20,20,.55)); animation: v-flash .9s steps(2) 2 forwards; }
+.v-alarm-flash { z-index: 44; background: radial-gradient(ellipse at 50% 50%, rgba(255,30,30,.15), rgba(255,20,20,.55)); animation: v-flash .8s ease-out 1 forwards; }
 
 /* ---------- the wall of safes ---------- */
 .v-board { width: min(1240px, 100%); display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
@@ -215,7 +215,7 @@ body:has(.vault:not(.p-lobby)) .rx-dock { top: auto; bottom: calc(var(--rack-h, 
 }
 
 @keyframes v-sweep { 0% { translate: 0 -6px; } 100% { translate: 0 8px; } }
-@keyframes v-flash { 0% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes v-flash { 0% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
 @keyframes v-click { 0% { transform: rotateX(90deg) scale(1.3); } 60% { transform: rotateX(-15deg) scale(1.15); } 100% { transform: none; } }
 @keyframes v-led { 50% { opacity: .4; } }
 @keyframes v-spin { 0% { rotate: 0deg; } 60% { rotate: 400deg; } 100% { rotate: 360deg; } }
