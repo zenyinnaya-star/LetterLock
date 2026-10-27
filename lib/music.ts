@@ -5,7 +5,7 @@ import { getPrefs } from './prefs';
 
 export type Track = 'theme' | 'vault' | 'duel' | 'battle' | 'none';
 
-const SRC: Record<Exclude<Track, 'none'>, string> = { theme: '/audio/theme.mp3', vault: '/audio/vault.mp3', duel: '/audio/duel.mp3', battle: '/audio/story.mp3' };
+const SRC: Record<Exclude<Track, 'none'>, string> = { theme: '/audio/theme.mp3', vault: '/audio/classic-epic.mp3', duel: '/audio/duel.mp3', battle: '/audio/story.mp3' };
 const LEVEL: Record<Exclude<Track, 'none'>, number> = { theme: 0.32, vault: 0.4, duel: 0.55, battle: 0.5 };
 
 let els: Partial<Record<Exclude<Track, 'none'>, HTMLAudioElement>> = {};
