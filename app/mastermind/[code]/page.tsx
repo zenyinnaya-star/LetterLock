@@ -88,13 +88,37 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
 
   useEffect(() => { setToken(loadToken(code)); setJoinName(loadName()); setReady(true); }, [code]);
 
+  const copyInvite = useCallback(async (url: string) => {
+    let ok = false;
+    try { await navigator.clipboard.writeText(url); ok = true; } catch { /* fall back below */ }
+    if (!ok) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = url; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+        document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); document.body.removeChild(ta);
+      } catch { ok = false; }
+    }
+    setToast({ k: Date.now(), msg: ok ? 'Invite link copied' : `Copy failed. Share this link: ${url}` });
+  }, []);
+
+  // Poll guard: never run two state fetches at once, and drop any result older than the last one applied.
+  const inflight = useRef(false);
+  const seq = useRef(0);
+  const applied = useRef(0);
   const refresh = useCallback(async () => {
     if (!token) return;
+    if (inflight.current) return;
+    inflight.current = true;
+    const mine = ++seq.current;
     try {
       const st = await mm.state(token);
+      if (mine < applied.current) return;
+      applied.current = mine;
       offset.current = st.room.server_now - Date.now();
       setS(st);
-    } catch (e) { setErr(mmError(e)); }
+      setErr(null);
+    } catch (e) { if (mine >= applied.current) setErr(mmError(e)); }
+    finally { inflight.current = false; }
   }, [token]);
 
   useEffect(() => {
@@ -336,7 +360,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
               <div className="mm-invite on-board">
                 <div className="mm-plate"><span>Room code</span><b>{room.code}</b></div>
                 <div className="mm-qr"><QRCodeSVG value={`${shareOrigin()}/mastermind/${room.code}`} size={104} level="M" marginSize={1} bgColor="#f5ecd6" fgColor="#1a1208" /></div>
-                <div className="mm-invite-txt"><b>Scan to join</b><button type="button" className="btn" onClick={() => { try { void navigator.clipboard.writeText(`${shareOrigin()}/mastermind/${room.code}`); } catch { /* ignore */ } }}>Copy invite link</button></div>
+                <div className="mm-invite-txt"><b>Scan to join</b><button type="button" className="btn" onClick={() => void copyInvite(`${shareOrigin()}/mastermind/${room.code}`)}>Copy invite link</button></div>
               </div>
                 </div>
               </>

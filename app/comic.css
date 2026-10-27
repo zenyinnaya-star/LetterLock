@@ -199,3 +199,12 @@
 .cp-soon { position: absolute; z-index: 3; left: 50%; top: 38%; transform: translate(-50%, -50%) rotate(-6deg); background: var(--p, #ff1f8e); color: #fff; border: 3px solid #111;
   padding: 4px 12px; font-family: var(--cmc, Bangers, Impact), sans-serif; letter-spacing: .08em; text-transform: uppercase; box-shadow: 3px 3px 0 #111; white-space: nowrap; pointer-events: none; }
 .cp-create:disabled, .cp-mini:disabled { opacity: .55; cursor: not-allowed; filter: grayscale(.4); }
+
+/* Play screen: one sequential slide-in (title, cards 1-4, bar), left to right. */
+@keyframes cp-seq { from { opacity: 0; transform: translateX(-70px) rotate(calc(var(--rot, 0deg) - 3deg)); } }
+.cp-pick .cp-title { animation: cp-seq .45s 0s cubic-bezier(.2,1.2,.4,1) backwards; }
+.cp-pick .cp-card { opacity: 1; animation: cp-seq .45s cubic-bezier(.2,1.2,.4,1) backwards; animation-delay: calc(140ms + var(--i) * 110ms); }
+.cp-pick .cp-bar { animation: cp-seq .45s 640ms cubic-bezier(.2,1.2,.4,1) backwards; }
+@media (prefers-reduced-motion: reduce) {
+  .cp-pick .cp-title, .cp-pick .cp-card, .cp-pick .cp-bar { animation: none !important; opacity: 1 !important; }
+}

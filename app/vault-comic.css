@@ -566,3 +566,24 @@
   .vault:not(.p-finished):not(.p-lobby) .v-content { padding-bottom: 80px !important; }
   .vault-shell .topbar .wordmark, .vault-shell .topbar .logo { display: none !important; }
 }
+
+/* Classic answer phase: restrained heist tension. Everything is pointer-events:none, behind the UI, low contrast. */
+@keyframes vc-laser { 0% { transform: translateY(-4vh); opacity: 0; } 8% { opacity: .55; } 50% { opacity: .55; } 92% { opacity: .55; } 100% { transform: translateY(104vh); opacity: 0; } }
+@keyframes vc-dialturn { to { transform: rotate(360deg); } }
+.vault.p-answer::before { content: ''; position: fixed; left: 0; right: 0; top: 0; height: 3px; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg, transparent, #ff1f8e 15%, #ff1f8e 85%, transparent); box-shadow: 0 0 10px 2px rgba(255,31,142,.55); animation: vc-laser 7s linear infinite; }
+.vault.p-answer.tense::before { animation-duration: 3.5s; background: linear-gradient(90deg, transparent, #e5002b 15%, #e5002b 85%, transparent); box-shadow: 0 0 12px 3px rgba(229,0,43,.6); }
+/* blueprint corner ticks + halftone */
+.vault.p-answer::after { content: ''; position: fixed; inset: 10px; z-index: 1; pointer-events: none; opacity: .4;
+  background:
+    linear-gradient(#111,#111) top left / 34px 3px no-repeat, linear-gradient(#111,#111) top left / 3px 34px no-repeat,
+    linear-gradient(#111,#111) top right / 34px 3px no-repeat, linear-gradient(#111,#111) top right / 3px 34px no-repeat,
+    linear-gradient(#111,#111) bottom left / 34px 3px no-repeat, linear-gradient(#111,#111) bottom left / 3px 34px no-repeat,
+    linear-gradient(#111,#111) bottom right / 34px 3px no-repeat, linear-gradient(#111,#111) bottom right / 3px 34px no-repeat; }
+.vault.p-answer .v-dial svg { transform-origin: 50% 50%; animation: vc-dialturn 24s linear infinite; }
+.vault.p-answer .v-dial.urgent svg { animation-duration: 3s; }
+.vault.p-answer .v-dial-num { position: relative; }
+@media (prefers-reduced-motion: reduce) {
+  .vault.p-answer::before { animation: none; opacity: 0; }
+  .vault.p-answer .v-dial svg { animation: none; }
+}

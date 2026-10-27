@@ -153,9 +153,26 @@ export function DuelWest({ state, token, msLeft, act }: PhaseProps) {
   const reverse = twist === 'reverse', memory = twist === 'memory';
   const noE = state.room.chaos === 'no_e';
   const isBad = (c: string) => (!me?.hacked && !reverse && !memory && banned.has(c)) || (noE && c === 'E');
-  useEffect(() => { setWord(''); setPick(null); if (phase === 'answer') window.setTimeout(() => inputRef.current?.focus(), 350); }, [state.room.round, phase]);
+  useEffect(() => { setWord(''); setPick(null); if (phase === 'answer') later(() => inputRef.current?.focus(), 350); }, [state.room.round, phase]);
 
   const draftT = useRef<number | null>(null);
+
+
+  // Every delayed focus/FX/audio timer goes through later() so unmounting cancels them all.
+
+  const timers = useRef(new Set<number>());
+
+  const later = (fn: () => void, ms: number) => {
+
+    const id = window.setTimeout(() => { timers.current.delete(id); fn(); }, ms);
+
+    timers.current.add(id);
+
+    return id;
+
+  };
+
+  useEffect(() => () => { timers.current.forEach((id) => window.clearTimeout(id)); timers.current.clear(); if (draftT.current) window.clearTimeout(draftT.current); }, []);
   function sendDraft(v: string) {
     if (!token) return;
     if (draftT.current) window.clearTimeout(draftT.current);
@@ -200,10 +217,10 @@ export function DuelWest({ state, token, msLeft, act }: PhaseProps) {
   function fireFx(fromId: string | null | undefined, to: Pt | null, kind: Fx['kind'], delay = 0) {
     const from = center(portraitOf(fromId));
     if (!from || !to) return;
-    window.setTimeout(() => {
+    later(() => {
       const f = { id: Date.now() + Math.random(), from, to, kind };
       setFxs((v) => [...v.slice(-6), f]);
-      window.setTimeout(() => setFxs((v) => v.filter((x) => x.id !== f.id)), 1400);
+      later(() => setFxs((v) => v.filter((x) => x.id !== f.id)), 1400);
     }, delay);
   }
   const prev = useRef<{ oppRev: number; myRev: number; strikesL: number; strikesR: number; guessKey: string; phase: string; pend: string; pts: number } | null>(null);
@@ -220,7 +237,7 @@ export function DuelWest({ state, token, msLeft, act }: PhaseProps) {
     if (cur.guessKey && cur.guessKey !== p.guessKey && me?.guess) {
       const ok = me.guess.correct;
       audio.cock();
-      window.setTimeout(() => { audio.gunshot(); if (ok) { audio.thunk(); setShot(Date.now()); setJolt(Date.now()); } else audio.ricochet(); }, 220);
+      later(() => { audio.gunshot(); if (ok) { audio.thunk(); setShot(Date.now()); setJolt(Date.now()); } else audio.ricochet(); }, 220);
       fireFx(left.id, posterPt, ok ? 'hit' : 'miss', 220);
       if (ok) setHole(me.guess.letter);
     } else if (cur.oppRev > p.oppRev) {
@@ -228,13 +245,13 @@ export function DuelWest({ state, token, msLeft, act }: PhaseProps) {
     }
     // they cracked one of my letters
     if (cur.myRev > p.myRev) {
-      window.setTimeout(() => { audio.gunshot(); audio.thunk(); }, 120);
+      later(() => { audio.gunshot(); audio.thunk(); }, 120);
       fireFx(right.id, center(lRef.current), 'hit', 120); setHitL(Date.now()); setHurt(Date.now());
     }
     // their misses show up once the guesses are tallied
     if (cur.phase === 'react' && p.phase !== 'react') {
       state.guess_results.filter((g) => g.guesser_id !== left.id && !g.correct && g.target_id === left.id).forEach((_, i) => {
-        window.setTimeout(() => { audio.gunshot(); audio.ricochet(); }, 300 + i * 500);
+        later(() => { audio.gunshot(); audio.ricochet(); }, 300 + i * 500);
         fireFx(right.id, center(lRef.current), 'miss', 300 + i * 500);
       });
     }

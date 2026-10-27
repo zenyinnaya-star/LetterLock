@@ -10,6 +10,13 @@ import type { CardKind } from '@/lib/types';
 import '@/app/comic.css';
 import '@/app/rules-comic.css';
 
+const CDN = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU';
+const MODE_VIDEOS = [
+  { id: '264c39d9-823b-4fcf-81ae-739cb8789067', name: 'Classic', blurb: 'Lock a secret word, crack your rivals.', soon: false },
+  { id: '3599d026-942b-447e-a9bf-dffa609bd95c', name: 'Duel', blurb: 'One street, two players, fastest draw.', soon: true },
+  { id: '79313477-bf76-4532-95f2-efe9ff10bc1c', name: 'Mastermind', blurb: 'Hide a word, drop clues, crack it first.', soon: true },
+];
+
 export default function HowToPlay() {
   const t = useT();
   return (
@@ -20,6 +27,14 @@ export default function HowToPlay() {
       </header>
       <h1>{t('rl.title')}</h1>
       <RulesVideo />
+      <section className="mode-videos" aria-label="Mode walkthroughs">
+        {MODE_VIDEOS.map((v) => (
+          <figure key={v.id} className="mode-video">
+            <video controls playsInline preload="metadata" src={`${CDN}/${v.id}.mp4`} aria-label={`${v.name} how to play`} />
+            <figcaption><b>{v.name}</b>{v.soon ? <em className="mv-soon">Coming soon</em> : null} — {v.blurb}</figcaption>
+          </figure>
+        ))}
+      </section>
       <p className="big"><Rich k="rl.intro" /></p>
 
       <h2>{t('rl.basics')}</h2>
