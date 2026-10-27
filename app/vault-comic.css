@@ -359,7 +359,7 @@
   .vault.p-lobby::after { -webkit-mask-image: linear-gradient(270deg, #000 70%, transparent 100%); mask-image: linear-gradient(270deg, #000 70%, transparent 100%); }
   .vault.p-lobby .lobby-top > .col { zoom: 1.4; }
   .vault.p-lobby .lobby-qr { zoom: 1.35; }
-  .vault.vault.p-lobby .lobby-drawer, .vault.vault.p-lobby .v-lobby .lobby-drawer { position: fixed !important; inset: 64px 24px auto auto !important; width: 290px !important; max-width: 290px !important; transform: none !important; z-index: 6; }
+  .vault.vault.p-lobby .lobby-drawer, .vault.vault.p-lobby .v-lobby .lobby-drawer { position: absolute !important; inset: 10px -300px auto auto !important; width: 280px !important; max-width: 290px !important; transform: none !important; z-index: 6; }
 }
 .vault.p-lobby .v-lobby::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; height: 9vh; z-index: 0; pointer-events: none;
   background: #ff1f8e radial-gradient(#d4006f 30%, transparent 34%) 0 0 / 11px 11px;
