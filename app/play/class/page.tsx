@@ -56,6 +56,15 @@ function Art({ cls }: { cls: PlayerClass }) {
   );
 }
 
+function CardArt({ cls }: { cls: PlayerClass }) {
+  const srcs = actionSources(cls);
+  const [i, setI] = useState(0);
+  useEffect(() => setI(0), [cls]);
+  if (i >= srcs.length) return <ClassIcon cls={cls} size={56} />;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img className="sel-card-art" src={srcs[i]} alt="" draggable={false} onError={() => setI((n) => n + 1)} />;
+}
+
 function Select() {
   const router = useRouter();
   const t = useT();
@@ -202,7 +211,7 @@ function Select() {
             return (
               <button key={c} type="button" role="radio" aria-checked={on} className={`sel-card${on ? ' on' : ''}`}
                 style={{ ['--ca' as string]: a, ['--cb' as string]: b }} onClick={() => pick(c)}>
-                <ClassIcon cls={c} size={56} />
+                <CardArt cls={c} />
                 <b>{CLASSES[c].name}</b>
               </button>
             );
