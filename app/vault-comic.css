@@ -193,3 +193,23 @@
 /* turn the flat pink floor into a torn-paper edge */
 .vault.p-lobby .v-shade::before { top: 40%; }
 .vault.p-lobby .v-shade::after { background-image: radial-gradient(#f7a400 30%, transparent 35%), linear-gradient(180deg, transparent 88%, #fff 88%, #fff 89.5%, #ff1f8e 89.5%); background-size: 11px 11px, 100% 100%; }
+
+/* lobby detail pass to match the approved hideout mockup */
+.vault-shell .topbar .textbtn:not(.danger) { background: #fff; color: var(--k) !important; border: 3px solid var(--k); padding: 3px 10px; transform: skewX(-8deg); box-shadow: 3px 3px 0 var(--k); }
+.vault-shell .topbar .textbtn.danger, .vault-shell .topbar .textbtn:last-child { background: var(--p); color: #fff !important; border: 3px solid var(--k); padding: 3px 10px; transform: skewX(-8deg); box-shadow: 3px 3px 0 var(--k); }
+.vault.p-lobby .v-lobby .btn.sm.ghost { background: var(--k) !important; color: #fff !important; border: 3px solid var(--k) !important; transform: skewX(-8deg); box-shadow: 3px 3px 0 var(--p) !important; font-size: 15px; }
+.vault.p-lobby .quick-bot .btn { background: var(--k) !important; color: #fff !important; border: 3px solid var(--k) !important; transform: skewX(-8deg); box-shadow: 3px 3px 0 var(--p) !important; font-size: 14px; }
+.vault.p-lobby .host-switch { display: inline-flex; border: 3px solid var(--k) !important; background: #fff !important; transform: skewX(-8deg); }
+.vault.p-lobby .host-switch button { border: 0; border-radius: 0; font-family: var(--cmc); font-size: 15px; background: #fff; color: var(--k); padding: 6px 16px; }
+.vault.p-lobby .host-switch button.on { background: var(--p); color: #fff; }
+.vault.p-lobby .v-lobby .btn.lg:disabled { background: var(--k) !important; color: #bbb !important; border: 3px solid var(--k) !important; box-shadow: 4px 4px 0 var(--p) !important; border-style: solid !important; transform: skewX(-6deg); }
+.vault.p-lobby .v-lobby .btn.ghost.block { background: #fff !important; color: var(--k) !important; border: 3px solid var(--k) !important; box-shadow: 4px 4px 0 var(--k) !important; transform: skewX(-4deg); font-size: 16px; }
+.vault.p-lobby .v-lobby .muted { color: var(--k) !important; font-family: var(--cmc); font-size: 14px; letter-spacing: .03em; }
+.vault.p-lobby .v-case { background: #f2e5bd !important; border: 0 !important; box-shadow: 0 8px 0 #7b5a2a, 0 0 0 4px var(--k) !important; }
+.vault.p-lobby .v-case span { color: var(--k) !important; -webkit-text-fill-color: var(--k); -webkit-text-stroke: 0; text-shadow: none !important; font-size: clamp(44px, 8vw, 62px); }
+.vault.p-lobby .v-case em { font-size: 13px; background: var(--k); color: #fff; padding: 2px 8px; opacity: 1; }
+.vault.p-lobby .qr-frame { background: #fff; border: 4px solid var(--k) !important; border-radius: 0 !important; }
+.vault.p-lobby .lobby-qr > span { background: var(--k); color: #fff !important; padding: 3px 10px; transform: skewX(-8deg); }
+.vault.p-lobby .v-lobby .seats { border: 4px solid var(--k) !important; }
+/* torn pink floor at the bottom, like the mockup */
+.vault.p-lobby::after { content: '' !important; display: block !important; position: fixed; left: 0; right: 0; bottom: 0; height: 13vh; z-index: 0; pointer-events: none; background: var(--p) !important; background-image: radial-gradient(#d4006f 30%, transparent 34%) !important; background-size: 10px 10px !important; clip-path: polygon(0 40%,4% 30%,8% 42%,12% 26%,16% 38%,21% 22%,25% 34%,30% 18%,34% 30%,39% 14%,43% 26%,48% 10%,52% 22%,57% 8%,61% 20%,66% 4%,70% 18%,75% 2%,79% 14%,84% 0%,88% 12%,93% 4%,97% 14%,100% 6%,100% 100%,0 100%) !important; }
