@@ -2854,3 +2854,15 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 
 .backlink { display: inline-flex; align-items: center; gap: 6px; margin: 4px 0 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: inherit; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
 .backlink:hover { background: rgba(255,255,255,.12); }
+
+/* Play menu on phones: compact two-up tiles instead of tall single-column cards */
+@media (max-width: 600px) {
+  .play-shell .mode-grid, .play-shell .mode-grid.three { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .play-shell .mode-card { min-height: 0 !important; padding: 12px; gap: 2px; }
+  .play-shell .mode-card.has-bg { min-height: 112px !important; }
+  .play-shell .mode-card.wide { grid-column: 1 / -1; }
+  .play-shell .mode-card b { font-size: 15px; }
+  .play-shell .mc-desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 12px; }
+  .play-shell .mc-ico { width: 32px; height: 32px; }
+  .wd-grid.one { width: min(260px, 70%); }
+}

@@ -56,3 +56,12 @@
 .wd-card:hover .wd-art { transform: scale(1.07); filter: brightness(1.12); }
 .play-shell .world-sub { color: #d8c590; }
 @media (max-width: 760px) { .wd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Play menu: Classic is the front door; every other mode is stowed in "More ways to play" next to Story */
+.wd-grid.one { grid-template-columns: minmax(0, 1fr); width: min(300px, 78%); }
+.wd-grid.sm { grid-template-columns: repeat(3, minmax(0, 1fr)); width: min(720px, 100%); gap: clamp(8px, 2vw, 18px); margin: 0 auto 18px; }
+.wd-grid.sm .wd-card { aspect-ratio: .8; padding-bottom: 10px; border-radius: 70px 70px 8px 8px / 30% 30% 3% 3%; }
+.wd-grid.sm .wd-ico { width: 32px; height: 32px; }
+.wd-grid.sm .wd-name { font-size: clamp(11px, 3vw, 16px); letter-spacing: .06em; }
+.wd-grid.sm .wd-pl { font-size: 10px; letter-spacing: .04em; }
+@media (max-width: 760px) { .wd-grid.one { grid-template-columns: minmax(0, 1fr); } .wd-grid.sm { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

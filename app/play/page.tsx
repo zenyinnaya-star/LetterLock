@@ -46,6 +46,8 @@ export default function Play() {
   const [unlocked, setUnlocked] = useState(false);
   const [askPw, setAskPw] = useState(false);
   const [pw, setPw] = useState('');
+  const [moreOpen, setMoreOpen] = useState(false);
+  useEffect(() => { if (window.matchMedia('(min-width: 900px)').matches) setMoreOpen(true); }, []);
   const [pwErr, setPwErr] = useState(false);
   useEffect(() => { setUnlocked(pveUnlocked()); }, []);
   async function submitPw() {
@@ -79,8 +81,8 @@ export default function Play() {
         <p className="world-sub">Choose your world — same lock, different rules.</p>
       </div>
 
-      <div className="wd-grid">
-        {DOORS.map((d, i) => (
+      <div className="wd-grid one">
+        {DOORS.slice(0, 1).map((d, i) => (
           <motion.button key={d.kind} className={`wd-card wd-${d.art}`} initial={{ opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.1 + i * 0.1 }} whileHover={{ y: -10 }} whileTap={{ scale: 0.97 }}
             onClick={() => (d.kind === 'mastermind' ? router.push('/mastermind') : go(d.kind))}>
             <span className="wd-art" style={{ backgroundImage: `url(/art/worlds/mode_${d.art}.webp)` }} />
@@ -100,8 +102,21 @@ export default function Play() {
         <button className="btn lg" disabled={code.length !== 4} onClick={() => go('join')}>{t('pl.join')}</button>
       </div>
 
-      <details className="more-modes">
-        <summary>More ways to play <span>Tutorial · Daily challenge · Experiments</span></summary>
+      <details className="more-modes" open={moreOpen} onToggle={(e) => setMoreOpen((e.currentTarget as HTMLDetailsElement).open)}>
+        <summary>More ways to play <span>Duel · Siege · Mastermind · Story · Daily · Experiments</span></summary>
+      <div className="wd-grid sm">
+        {DOORS.slice(1).map((d, i) => (
+          <motion.button key={d.kind} className={`wd-card wd-${d.art}`} initial={{ opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 120, damping: 18, delay: 0.05 + i * 0.06 }} whileHover={{ y: -6 }} whileTap={{ scale: 0.97 }}
+            onClick={() => (d.kind === 'mastermind' ? router.push('/mastermind') : go(d.kind))}>
+            <span className="wd-art" style={{ backgroundImage: `url(/art/worlds/mode_${d.art}.webp)` }} />
+            <span className="wd-shade" aria-hidden />
+            <span className="wd-ico"><Icon name={d.icon} size={22} /></span>
+            <span className="wd-name">{d.name}</span>
+            <span className="wd-pl">{d.players}</span>
+            {d.kind === 'create' && <span className="wd-badge">Start here</span>}
+          </motion.button>
+        ))}
+      </div>
       <div className="play-grid">
         <section className="play-modes">
           <span className="label">{t('pl.modes')}</span>
