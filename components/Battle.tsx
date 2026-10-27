@@ -272,7 +272,7 @@ export function Battle({ state, token, act, fallback, offset = 0 }: { state: Roo
 
   const load = useCallback(async () => {
     const tk = tokenRef.current;
-    if (!tk) return;
+    if (!tk) { setLoaded(true); return; } // outsider/spectator without a seat: nothing to fetch, show the fallback
     if (inflightRef.current) { queuedRef.current = true; return; }
     inflightRef.current = true;
     try {
