@@ -452,10 +452,6 @@
 
 /* cinematic reveal: stamp slams in, then the winner panel; defeat is slower and desaturated */
 .vault.p-finished .winner.victory-stage { position: relative; }
-.vault.p-finished .winner.victory-stage::before { content: 'VICTORY!'; position: absolute; left: 50%; top: -22px; z-index: 4; transform: translateX(-50%) rotate(-5deg); background: #ffd400; color: #111; border: 4px solid #111; padding: 2px 18px;
-  font-family: var(--dsp); font-size: clamp(22px, 4vw, 38px); letter-spacing: .06em; box-shadow: 5px 5px 0 #111; animation: fin-stamp .55s cubic-bezier(.2,1.6,.3,1) .25s both; }
-.vault.p-finished .winner.fin-lose::before { content: 'DEFEAT'; background: #8f86c9; color: #fff; text-shadow: 2px 2px 0 #111; animation-duration: .9s; }
-.vault.p-finished .winner.fin-spec::before { content: 'GAME OVER'; background: #fff; }
 .vault.p-finished .winner.fin-win { animation: fin-flash .7s ease-out both; }
 .vault.p-finished .winner.fin-lose { animation: fin-sink .9s ease-out both; }
 .vault.p-finished .podium .award { animation: fin-pop .5s cubic-bezier(.2,1.6,.4,1) both; }
@@ -465,7 +461,7 @@
 @keyframes fin-sink { 0% { transform: translateY(-14px) scale(1.04); filter: saturate(0); } 100% { transform: none; filter: none; } }
 @keyframes fin-pop { from { transform: translateY(28px) scale(.85); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
-  .vault.p-finished .winner.victory-stage::before, .vault.p-finished .winner.fin-win, .vault.p-finished .winner.fin-lose, .vault.p-finished .podium .award, .vault .fin-actions .fin-replay { animation: none !important; }
+  .vault.p-finished .winner.fin-win, .vault.p-finished .winner.fin-lose, .vault.p-finished .podium .award, .vault .fin-actions .fin-replay { animation: none !important; }
 }
 
 /* ---- HUD tray v3: cream torn-paper strip with four ruled sections (locks | cards | hero | points), like the approved mockup ---- */
@@ -515,3 +511,12 @@
   .vault-rack .rack-inner .tile, .action-feed .action-banner::before, .action-feed .action-banner .arrow, .action-feed .action-banner.hit, .vault input.input.typing { animation: none !important; }
 }
 @media (max-width: 700px) { .action-feed .action-banner .txt { font-size: 17px; } .vault-rack .rack-inner .rack-pts, .vault-rack .rack-inner .rack-pts * { font-size: 30px; } }
+
+/* fixes from live check: medals sit above the card, Share text visible */
+.vault.p-finished .podium { margin-top: 44px !important; }
+.vault.p-finished .podium .award { padding-top: 28px !important; }
+.vault.p-finished .podium .award:has(.tier-ein) { padding-top: 36px !important; }
+.vault.p-finished .podium .award .medal { top: -40px; width: 50px; height: 50px; }
+.vault.p-finished .podium .award .medal.tier-ein { top: -50px; width: 62px; height: 62px; }
+.vault .fin-actions .btn.fin-share, .vault .fin-actions .btn.fin-share * { color: #111 !important; -webkit-text-fill-color: #111 !important; text-shadow: none !important; }
+.vault .fin-actions .btn.fin-replay { -webkit-text-fill-color: #fff !important; }
