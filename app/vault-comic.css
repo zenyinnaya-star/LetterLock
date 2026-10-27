@@ -524,7 +524,7 @@
 
 /* phone: Replay/Share stay on screen; compact finale in landscape; tidy the crowded header */
 @media (max-width: 899px) {
-  .vault.p-finished .fin-actions { position: sticky; bottom: 12px; z-index: 30; padding: 6px 0; }
+  .vault.p-finished .fin-actions.fin-actions { position: sticky !important; bottom: 12px; z-index: 30; padding: 6px 0; }
   .vault.p-finished .fin-actions .btn { font-size: 19px !important; padding: 8px 20px !important; }
 }
 @media (max-width: 520px) {
