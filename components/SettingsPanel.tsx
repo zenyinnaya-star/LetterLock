@@ -1,5 +1,7 @@
 'use client';
 
+import '@/app/settings-comic.css';
+import { CLASSIC_ONLY } from '@/lib/modes';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { getPrefs, setPref, type Prefs } from '@/lib/prefs';
@@ -61,6 +63,7 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
 
   function change(patch: Partial<RoomSettings>) {
     if (!editable || !local || !token || !act) return;
+    if (CLASSIC_ONLY && ((patch.mode && patch.mode !== 'classic') || (patch.twist && patch.twist !== 'none'))) return;
     setLocal({ ...local, ...patch });
     void act(() => rpc.updateSettings(token, patch));
   }
@@ -95,12 +98,12 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
                 <button role="radio" aria-checked={local.mode === 'classic'} className={local.mode === 'classic' ? 'on' : ''} disabled={!editable}
                   onClick={() => change({ mode: 'classic' })}>{t('st.classic')}</button>
                 <button role="radio" aria-checked={local.mode === 'duel'} className={local.mode === 'duel' ? 'on duel' : ''}
-                  disabled={!editable || (state?.players.length ?? 0) > 2}
-                  title={(state?.players.length ?? 0) > 2 ? t('st.duel_needs2') : undefined}
-                  onClick={() => change({ mode: 'duel', max_players: 2 })}>{t('st.duel')}</button>
+                  disabled={CLASSIC_ONLY || !editable || (state?.players.length ?? 0) > 2}
+                  title={CLASSIC_ONLY ? 'Coming soon' : (state?.players.length ?? 0) > 2 ? t('st.duel_needs2') : undefined}
+                  onClick={() => change({ mode: 'duel', max_players: 2 })}>{t('st.duel')}{CLASSIC_ONLY ? ' · soon' : ''}</button>
                 <button role="radio" aria-checked={local.mode === 'team'} className={local.mode === 'team' ? 'on' : ''}
-                  disabled={!editable || (state?.players.length ?? 0) > 6}
-                  onClick={() => change({ mode: 'team' })}>{t('st.team')}</button>
+                  disabled={CLASSIC_ONLY || !editable || (state?.players.length ?? 0) > 6}
+                  onClick={() => change({ mode: 'team' })}>{t('st.team')}{CLASSIC_ONLY ? ' · soon' : ''}</button>
               </div>
             </div>
 
@@ -146,7 +149,7 @@ function SettingsSheet({ state, token, act, onClose }: { state: RoomState | null
                 <span className="set-label"><Icon name="dice" size={16} /> {t('st.twist')}</span>
                 <div className="seg wrap" role="group" aria-label={t('st.twist')}>
                   {TWISTS.map((w) => (
-                    <button key={w} className={(local.twist ?? 'none') === w ? 'on' : ''} disabled={!editable} onClick={() => change({ twist: w })}>{t(`st.tw_${w}` as Key)}</button>
+                    <button key={w} className={(local.twist ?? 'none') === w ? 'on' : ''} disabled={!editable || (CLASSIC_ONLY && w !== 'none')} onClick={() => change({ twist: w })}>{t(`st.tw_${w}` as Key)}</button>
                   ))}
                 </div>
                 <span className="muted small">{t(`st.twh_${local.twist ?? 'none'}` as Key)}</span>

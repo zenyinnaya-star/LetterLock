@@ -1,0 +1,34 @@
+/* Rules page: Comic Pop skin (Classic only) */
+.rules-comic { --k: #111; --p: #ff1f8e; --y: #ffd400; position: relative; color: var(--k); max-width: 860px; padding-bottom: 80px; }
+body:has(.rules-comic) { background: #ffd400 radial-gradient(rgba(0,0,0,.12) 22%, transparent 26%) 0 0 / 9px 9px !important; background-attachment: fixed !important; }
+.rules-comic .topbar { background: none !important; border: 0 !important; }
+.rules-comic .topbar .btn { background: var(--p) !important; color: #fff !important; border: 3px solid var(--k) !important; border-radius: 3px; box-shadow: 3px 3px 0 var(--k); font-family: 'LL Display','Luckiest Guy',Impact,sans-serif; text-transform: uppercase; transform: skewX(-6deg); }
+.rules-comic h1 { font-family: 'LL Display','Luckiest Guy',Impact,sans-serif !important; font-weight: 400; font-size: clamp(44px, 9vw, 84px); text-transform: uppercase; color: #fff; -webkit-text-stroke: .07em var(--k); paint-order: stroke fill;
+  text-shadow: .05em .05em 0 var(--p), .1em .1em 0 var(--k); transform: rotate(-2deg); margin: 8px 0 18px; letter-spacing: .02em; }
+.rules-comic h2 { display: inline-block; font-family: 'LL Display','Luckiest Guy',Impact,sans-serif !important; font-weight: 400; font-size: clamp(22px, 4vw, 32px); text-transform: uppercase; background: var(--p); color: #fff !important;
+  border: 4px solid var(--k); box-shadow: 5px 5px 0 var(--k); padding: 2px 16px; margin: 34px 0 14px; transform: rotate(-1.2deg) skewX(-6deg); text-shadow: 2px 2px 0 var(--k); }
+.rules-comic p, .rules-comic li, .rules-comic .line span, .rules-comic .muted { color: var(--k) !important; font-size: 17px; line-height: 1.45; }
+.rules-comic .big { font-family: 'LL Comic', Bangers, Impact, sans-serif; font-size: clamp(20px, 3vw, 26px); letter-spacing: .03em; background: #fff; border: 4px solid var(--k); box-shadow: 6px 6px 0 var(--k); padding: 12px 16px; transform: rotate(.5deg); }
+.rules-comic ul, .rules-comic ol { background: #fff; border: 4px solid var(--k); box-shadow: 5px 5px 0 var(--k); padding: 14px 18px 14px 36px; margin: 8px 0; }
+.rules-comic li { margin: 5px 0; } .rules-comic li::marker { color: var(--p); font-weight: 900; }
+.rules-comic b, .rules-comic strong { color: #c4006b; }
+.rules-comic .line { display: flex; gap: 12px; align-items: center; background: #fff; border: 3px solid var(--k); box-shadow: 4px 4px 0 var(--k); padding: 8px 12px; margin: 8px 0; }
+.rules-comic .line svg { flex: none; }
+.rules-comic .btn.lg { background: var(--p) !important; color: #fff !important; font-family: 'LL Display','Luckiest Guy',Impact,sans-serif; text-transform: uppercase; border: 4px solid var(--k) !important; border-radius: 3px; box-shadow: 6px 6px 0 var(--k) !important; transform: skewX(-6deg); text-shadow: 2px 2px 0 var(--k); }
+/* the rules video: framed like a comic panel with a play stamp */
+.rules-comic .rv-scene, .rules-comic [class^='rv-'][class$='screen'], .rules-comic .rv-screen { border: 5px solid var(--k) !important; border-radius: 3px !important; box-shadow: 8px 8px 0 var(--p), 8px 8px 0 4px var(--k) !important; }
+.rules-comic .rv-bigplay { background: var(--y) !important; color: var(--k) !important; border: 5px solid var(--k) !important; box-shadow: 4px 4px 0 var(--k) !important; }
+.rules-comic .rv-caption { background: #fff !important; color: var(--k) !important; border: 3px solid var(--k) !important; font-family: 'LL Comic', Bangers, Impact, sans-serif; letter-spacing: .04em; font-size: 20px; }
+.rules-comic .rv-controls { background: var(--k) !important; }
+main.shell.narrow.rules.rules-comic { max-width: 880px !important; width: calc(100% - 32px); margin-left: auto !important; margin-right: auto !important; }
+.rules-comic h1, .rules-comic h2 { background-clip: border-box !important; -webkit-background-clip: border-box !important; width: fit-content; max-width: 100%; }
+.rules-comic h1 { background: none !important; -webkit-text-fill-color: #fff !important; }
+.rules-comic h2 { -webkit-text-fill-color: #fff !important; }
+.rules-comic h2 { background: #ff1f8e !important; }
+
+/* Mode walkthrough videos */
+.rules-comic .mode-videos { gap: 14px; }
+.rules-comic .mode-video { background: #fff; border: 4px solid #111; box-shadow: 5px 5px 0 #111; border-radius: 3px; padding: 8px; }
+.rules-comic .mode-video video { border-radius: 2px; border: 2px solid #111; }
+.rules-comic .mode-video figcaption { color: #111 !important; opacity: 1; font-size: 14px; }
+.rules-comic .mv-soon { font-style: normal; margin-left: 8px; background: #ff1f8e; color: #fff; padding: 1px 6px; border: 2px solid #111; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }

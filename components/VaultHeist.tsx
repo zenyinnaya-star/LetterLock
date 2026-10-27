@@ -158,12 +158,12 @@ export function VaultFinale({ state, children }: { state: RoomState; children: R
   const t = useT();
   const me = state.me;
   const winner = state.players.find((p) => p.id === state.room.winner_id);
-  const spec = !!me?.is_spectator;
+  const spec = !me || !!me.is_spectator;
   const iLost = !!me && !spec && (!winner || winner.id !== me.id);
-  const [intro, setIntro] = useState(true);
+  const [intro, setIntro] = useState(false); // door-opening intro removed: it covered the whole screen
   useEffect(() => {
     const a = window.setTimeout(() => (iLost ? audio.vaultLose() : audio.vaultOpen()), 300);
-    const b = window.setTimeout(() => setIntro(false), 3400);
+    const b = window.setTimeout(() => setIntro(false), 0);
     return () => { window.clearTimeout(a); window.clearTimeout(b); };
   }, [iLost]);
   const rootRef = useRackPad();

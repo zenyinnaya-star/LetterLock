@@ -19,9 +19,11 @@ import { linkProfile } from '@/lib/profile';
 import { rpc } from '@/lib/rpc';
 import { loadName, saveName, saveSession } from '@/lib/session';
 import type { PlayerClass, RoomSettings } from '@/lib/types';
-import { StoryHeroSelect } from '@/components/StoryHeroSelect';
-import { pveUnlocked } from '@/lib/pveGate';
+import { ComingSoon } from '@/components/ComingSoon';
+import { isClassicKind, isLockedRoom } from '@/lib/modes';
 import { STARTERS, fetchHeroState } from '@/lib/loadout';
+import '@/app/class-comic.css';
+import '@/app/comic.css';
 
 type Kind = 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory' | 'join';
 const META: Record<Kind, { icon: IconName; k: string }> = {
@@ -52,6 +54,15 @@ function Art({ cls }: { cls: PlayerClass }) {
       <div className="sel-shade" />
     </div>
   );
+}
+
+function CardArt({ cls }: { cls: PlayerClass }) {
+  const srcs = actionSources(cls);
+  const [i, setI] = useState(0);
+  useEffect(() => setI(0), [cls]);
+  if (i >= srcs.length) return <ClassIcon cls={cls} size={56} />;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img className="sel-card-art" src={srcs[i]} alt="" draggable={false} onError={() => setI((n) => n + 1)} />;
 }
 
 function Select() {
@@ -93,12 +104,18 @@ function Select() {
   }
 
   async function lockIn() {
+    if (!isClassicKind(kind)) return;
     if (!name.trim()) { setErr(t('home.err_name')); return; }
     if (kind === 'join' && code.length !== 4) { router.replace('/play'); return; }
     audio.unlock(); audio.success();
     try { window.localStorage.setItem(LAST, cls); } catch { /* ignore */ }
     setBusy(true); setErr(null);
     try {
+      if (kind === 'join') {
+        // refuse locked rooms (Duel, Siege, twists) before taking a seat in them
+        const peek = await rpc.getState(code, null).catch(() => null);
+        if (peek && isLockedRoom(peek.room.settings)) { setErr('That room is a mode that is coming soon. Classic only for now.'); setBusy(false); return; }
+      }
       const r = kind === 'join' ? await rpc.joinRoom(code, name.trim(), cls) : await rpc.createRoom(name.trim(), hostOnly ? 'hero' : cls);
       if (hostOnly) await rpc.setHostMode(r.token, false);
       if (kind === 'duel') await rpc.updateSettings(r.token, { mode: 'duel', max_players: 2 });
@@ -179,15 +196,17 @@ function Select() {
               </div>
               <p className="sel-tag">{info.tagline}</p>
               <p className="cs-oneline">{info.perk}</p>
-              <details className="cs-more sel-more">
-                <summary>{t('cs.how')} <Icon name="eye" size={14} /></summary>
+              <div className="sel-facts">
+                <div className="sel-box how"><b><Icon name="play" size={14} /> {t('cs.how')}</b><p>{guide.how}</p></div>
                 <div className="cs-box minus"><b>{t('cs.price')}</b><p>{info.cost}</p></div>
-                <div className="sel-box"><p>{guide.how}</p></div>
+              </div>
+              <details className="cs-more sel-more">
+                <summary>{t('cs.counter')} &amp; {t('cs.tips')} <Icon name="eye" size={14} /></summary>
+                <div className="sel-box counter"><b><Icon name="target" size={14} /> {t('cs.counter')}</b><p>{guide.counter}</p></div>
                 <div className="sel-box">
                   <b>{t('cs.tips')}</b>
                   <ol className="cs-tips">{guide.tips.slice(0, 3).map((x) => <li key={x}>{x}</li>)}</ol>
                 </div>
-                <div className="sel-box counter"><b><Icon name="target" size={14} /> {t('cs.counter')}</b><p>{guide.counter}</p></div>
               </details>
             </div>
         </section>
@@ -200,7 +219,7 @@ function Select() {
             return (
               <button key={c} type="button" role="radio" aria-checked={on} className={`sel-card${on ? ' on' : ''}`}
                 style={{ ['--ca' as string]: a, ['--cb' as string]: b }} onClick={() => pick(c)}>
-                <ClassIcon cls={c} size={56} />
+                <CardArt cls={c} />
                 <b>{CLASSES[c].name}</b>
               </button>
             );
@@ -217,11 +236,8 @@ function Select() {
 
 function Router() {
   const sp = useSearchParams();
-  const rt = useRouter();
-  const story = sp.get('mode') === 'story';
-  const [ok, setOk] = useState<boolean | null>(null);
-  useEffect(() => { const u = pveUnlocked(); setOk(u); if (story && !u) rt.replace('/play'); }, [story, rt]);
-  if (story) return ok ? <StoryHeroSelect /> : null;
+  const mode = sp.get('mode');
+  if (!isClassicKind(mode)) return <ComingSoon name="This mode" />;
   return <Select />;
 }
 

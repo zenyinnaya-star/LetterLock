@@ -1,5 +1,8 @@
 'use client';
 
+import { ComingSoon } from '@/components/ComingSoon';
+import { CLASSIC_ONLY } from '@/lib/modes';
+
 import { shareOrigin } from '@/lib/site';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
@@ -12,7 +15,7 @@ import { narrator } from '@/lib/narrator';
 import { audio } from '@/lib/audio';
 import { loadName, saveName } from '@/lib/session';
 
-export default function DailyPage() {
+function DailyPageInner() {
   const t = useT();
   const [info, setInfo] = useState<DailyInfo | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -143,3 +146,5 @@ export default function DailyPage() {
     </main>
   );
 }
+
+export default function DailyPage() { return CLASSIC_ONLY ? <ComingSoon name="Daily Challenge" /> : <DailyPageInner />; }

@@ -36,3 +36,36 @@ await Promise.all(Object.entries(ART).map(async ([name, file]) => {
     console.warn(`art: ${name} skipped (${e.message})`);
   }
 }));
+
+// Comic Pop class portraits: downsized to 512px webp so HUD icons stay light. Skipped quietly on failure.
+const COMIC = {
+  'ninja': 'hf_20261027_035734_bae32255-9325-42ec-a302-121177a0d76f.png',
+  'mastermind': 'hf_20261027_035648_b64dc638-5e47-461d-9013-01fb6172b92d.png',
+  'hero': 'hf_20261027_035647_95a6c985-3173-4978-8974-9f24bff2bbe2.png',
+  'villain': 'hf_20261027_035819_2d2393ce-5945-4848-8e1e-2b6bea88d619.png',
+  'hacker': 'hf_20261027_035648_6257e2f0-0a6c-4bd1-9404-9cb37797cfee.png',
+  'thief': 'hf_20261027_035647_2c5aa729-1a1c-4c18-bfdc-bf081d15db92.png',
+  'jester': 'hf_20261027_174112_4c8d23db-cbec-47f3-9a4c-3e4245731dfe.png',
+  'parasite': 'hf_20261027_173945_a446d2e3-b3aa-431e-a5df-5f07bf21ea1d.png',
+  'wildcard': 'hf_20261027_173943_f6b23a33-9712-4831-8fb7-d67980932ae5.png',
+  'oracle': 'hf_20261027_174112_7cd0a925-69e8-42b5-a59b-9e5d68fa237e.png',
+  'gambler': 'hf_20261027_173945_44fbd97d-ac69-4fd0-98c3-6238436ba52c.png',
+  'mimic': 'hf_20261027_173944_8c295f7c-a512-44b1-a4cf-f0e44eaeced2.png',
+};
+await mkdir('public/art/comic', { recursive: true });
+let sharp = null;
+try { sharp = (await import('sharp')).default; } catch { console.warn('art: sharp unavailable, saving comic portraits at full size'); }
+{
+  await Promise.all(Object.entries(COMIC).map(async ([cls, file]) => {
+    const out = `public/art/comic/class-${cls}.webp`;
+    try { await access(out); return; } catch { /* download */ }
+    try {
+      const res = await fetch(BASE + file);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const raw = Buffer.from(await res.arrayBuffer());
+      const buf = sharp ? await sharp(raw).resize(512, 512).webp({ quality: 82 }).toBuffer() : raw;
+      await writeFile(out, buf);
+      console.log(`art: comic ${cls} ready`);
+    } catch (e) { console.warn(`art: comic ${cls} skipped (${e.message})`); }
+  }));
+}

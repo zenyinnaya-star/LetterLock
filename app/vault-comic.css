@@ -1,0 +1,605 @@
+/* Comic Pop skin for Classic (the vault heist): lobby, answer, reveal, guess, finale. Loaded after vault.css, so it wins by order. */
+@font-face { font-family: 'LL Display'; src: url(/fonts/luckiest-guy.woff2) format('woff2'); font-display: swap; }
+@font-face { font-family: 'LL Comic'; src: url(/fonts/bangers.woff2) format('woff2'); font-display: swap; }
+
+.vault { --y: #ffd400; --p: #ff1f8e; --k: #111; --w: #fff; --dsp: 'LL Display', 'Luckiest Guy', Impact, sans-serif; --cmc: 'LL Comic', Bangers, Impact, sans-serif;
+  --display: var(--dsp); --mono: var(--cmc); --teal: var(--p); --brass: var(--k); --steel-hi: var(--k); --alarm: #e5002b; color: var(--k);
+  background: #ffd400 !important; background-image: none !important; }
+.vault-shell .topbar { background: none !important; }
+.vault-shell .topbar, .vault-shell .topbar * { color: var(--k); }
+.vault-shell .topbar .textbtn, .vault-shell .topbar .room-chip { font-family: var(--cmc); letter-spacing: .06em; text-transform: uppercase; font-size: 16px; }
+.vault-shell .topbar .room-chip { background: var(--k); color: #fff !important; padding: 2px 10px; transform: skewX(-8deg); border-radius: 0; }
+
+/* sunburst + halftone + pink torn edge, replacing the dark vault photo and lasers */
+.v-shade { z-index: 0 !important; background: radial-gradient(ellipse 60% 55% at 50% 44%, #fff6a8 0%, #ffe500 38%, #ffd400 75%) !important; overflow: hidden; }
+.v-shade::before { content: ''; position: absolute; left: 50%; top: 42%; width: 260vmax; height: 260vmax; transform: translate(-50%, -50%);
+  background: repeating-conic-gradient(from 3deg, rgba(255,255,255,.95) 0 2.4deg, transparent 2.4deg 12deg, rgba(255,255,255,.85) 12deg 13.1deg, transparent 13.1deg 21deg, rgba(255,255,255,.9) 21deg 22.6deg, transparent 22.6deg 31deg);
+  -webkit-mask-image: radial-gradient(circle, transparent 9%, rgba(0,0,0,.9) 16%, #000 30%); mask-image: radial-gradient(circle, transparent 9%, rgba(0,0,0,.9) 16%, #000 30%); animation: vc-spin 140s linear infinite; }
+.v-shade::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(#f7a400 30%, transparent 35%), linear-gradient(180deg, transparent 84%, #fff 84%, #fff 85.4%, #ff1f8e 85.4%);
+  background-size: 11px 11px, 100% 100%;
+  -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 45%, transparent 25%, rgba(0,0,0,.6) 60%, #000 95%); mask-image: radial-gradient(ellipse 62% 58% at 50% 45%, transparent 25%, rgba(0,0,0,.6) 60%, #000 95%); }
+.vault.tense .v-shade { background: radial-gradient(ellipse 60% 55% at 50% 44%, #ffd6d6 0%, #ff6b6b 45%, #e5002b 90%) !important; }
+.v-lasers, .v-beacons, .v-glints { display: none !important; }
+.v-alarm-flash { background: radial-gradient(ellipse at 50% 50%, rgba(255,31,142,.2), rgba(255,31,142,.6)) !important; }
+
+/* shared comic helpers */
+.vault .stage-title, .vault .v-verdict b, .vault .winner h1, .v-gold-word, .v-alarm-word { font-family: var(--dsp) !important; text-transform: uppercase; color: #fff !important; -webkit-text-fill-color: #fff;
+  -webkit-text-stroke: .09em var(--k); paint-order: stroke fill; letter-spacing: .02em; transform: rotate(-2deg) skewX(-6deg);
+  text-shadow: .02em .02em 0 var(--p), .04em .04em 0 var(--p), .06em .06em 0 var(--p), .08em .08em 0 var(--p), .1em .1em 0 var(--k), .12em .12em 0 var(--k) !important; }
+.vault .muted { color: #3a3200 !important; }
+.vault .label, .vault .prompt-kicker { font-family: var(--cmc); letter-spacing: .12em; color: var(--k); text-shadow: none; }
+
+/* wall of safes -> slanted player chips */
+.v-safe { background: #fff !important; border: 3px solid var(--k) !important; border-radius: 4px !important; transform: skewX(-6deg) rotate(-1deg); box-shadow: 4px 4px 0 var(--k) !important; transition: transform .2s cubic-bezier(.2,1.8,.4,1); }
+.v-safe:nth-child(2n) { transform: skewX(-6deg) rotate(1deg); }
+.v-safe:hover { transform: skewX(-6deg) rotate(0) translateY(-4px) scale(1.04); }
+.v-safe::before, .v-safe::after { display: none; }
+.v-safe.me { background: #fff6a8 !important; border-color: var(--p) !important; box-shadow: 4px 4px 0 var(--p), 0 0 0 3px var(--k) !important; animation: vc-wiggle 2.6s ease-in-out infinite; }
+.v-safe-name { color: var(--k); font-family: var(--cmc); font-size: 17px; letter-spacing: .04em; text-transform: uppercase; }
+.v-safe-pts { color: #fff; background: var(--p); border: 2px solid var(--k); padding: 0 6px; font-family: var(--dsp); font-size: 14px; transform: rotate(-4deg); }
+.v-mug { background: #fff; border: 2px solid var(--k); border-radius: 4px; box-shadow: 2px 2px 0 var(--k); }
+.v-mug .avatar, .v-mug img { filter: none; border-radius: 2px !important; }
+.v-done { background: #2bd96b; color: var(--k); border: 2px solid var(--k); box-shadow: none; animation: vc-pop .4s cubic-bezier(.2,1.8,.4,1); }
+.v-tum { background: #ddd; border: 2px solid var(--k); border-radius: 3px; box-shadow: 1px 1px 0 var(--k); }
+.v-tum::before { background: #999; }
+.v-tum.open { background: var(--y); color: var(--k); box-shadow: 1px 1px 0 var(--k); font-family: var(--dsp); }
+.v-leds i { background: #ccc; border: 1.5px solid var(--k); box-shadow: none; }
+.v-leds i.on { background: var(--alarm); box-shadow: none; }
+.v-safe.busted { filter: grayscale(1); opacity: .75; }
+.v-busted { background: #fff; color: var(--alarm); border-color: var(--alarm); font-family: var(--dsp); }
+
+/* the round panel (answer / reveal / guess) */
+.v-door { background: #fff !important; border: 4px solid var(--k) !important; border-radius: 6px !important; transform: rotate(-.6deg);
+  box-shadow: 8px 8px 0 var(--k), 0 0 0 7px rgba(255,255,255,.7) !important; animation: vc-slam .5s cubic-bezier(.2,1.5,.4,1) both; }
+.v-door::before { content: ''; position: absolute; inset: 0; border-radius: 2px; background-image: radial-gradient(rgba(255,31,142,.16) 30%, transparent 34%); background-size: 9px 9px; pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent 55%, #000); mask-image: linear-gradient(180deg, transparent 55%, #000); }
+.v-bolt { background: var(--k) !important; box-shadow: none; width: 10px; height: 10px; }
+.v-dial-slot { top: -30px; right: 22px; }
+.v-dial { filter: none; }
+.v-dial svg * { stroke: var(--k) !important; }
+.v-dial svg circle:first-child { fill: #fff !important; }
+.v-dial-num { font-family: var(--dsp); font-size: 28px; color: var(--p); text-shadow: 2px 2px 0 var(--k); }
+.v-dial.urgent { animation: vc-shake .35s linear infinite; }
+.v-dial.urgent .v-dial-num { color: var(--alarm); text-shadow: 2px 2px 0 var(--k); animation: none; }
+.vault .phase-tag { font-family: var(--cmc); color: #fff; background: var(--k); display: inline-block; padding: 2px 12px; transform: skewX(-10deg); letter-spacing: .12em; text-shadow: none; }
+.vault .phase-tag::before { content: '\25CF  '; color: var(--p); }
+.vault .prompt { background: var(--y) !important; color: var(--k) !important; -webkit-text-fill-color: var(--k) !important; text-shadow: none !important; font-family: var(--dsp) !important; text-transform: uppercase;
+  border: 4px solid var(--k) !important; border-radius: 3px !important; transform: rotate(-1.5deg) skewX(-5deg); box-shadow: 6px 6px 0 var(--p), 6px 6px 0 3px var(--k) !important; animation: vc-pop .55s .15s cubic-bezier(.2,1.8,.4,1) both; }
+.vault .prompt::before, .vault .prompt::after { background: var(--k); box-shadow: none; }
+.vault .input.word { background: #fff; color: var(--k); border: 4px solid var(--k); border-radius: 3px; font-family: var(--dsp); letter-spacing: .25em; box-shadow: 5px 5px 0 var(--k); caret-color: var(--p); }
+.vault .input.word:focus { border-color: var(--p); box-shadow: 5px 5px 0 var(--p), 0 0 0 3px var(--k); }
+.vault .word-preview .ch { font-family: var(--dsp); color: var(--k); background: var(--y); border: 3px solid var(--k); box-shadow: 3px 3px 0 var(--k); animation: vc-flip .35s cubic-bezier(.2,1.6,.4,1) both; }
+.vault .word-preview .ch.bad { color: #fff; background: var(--alarm); }
+.vault .note, .vault .hint, .vault .feed-item, .vault .mindgame { background: #fff6a8; border: 3px solid var(--k); border-radius: 3px; color: var(--k); box-shadow: 3px 3px 0 var(--k); }
+.vault .note.ok { background: #b6f5c9; } .vault .note.bad { background: #ffc2cf; }
+.vault .banner { border: 3px solid var(--k); border-radius: 3px; background: #fff6a8; color: var(--k); }
+
+/* buttons: skewed comic slabs with shine + squish */
+.vault .btn, .v-lobby .btn { position: relative; overflow: hidden; font-family: var(--dsp); letter-spacing: .04em; text-transform: uppercase; font-size: 20px; border-radius: 3px !important;
+  color: #fff !important; background: var(--p) !important; border: 4px solid var(--k) !important; box-shadow: 5px 5px 0 var(--k) !important; transform: skewX(-6deg); transition: transform .15s cubic-bezier(.2,1.8,.4,1), box-shadow .15s; text-shadow: 2px 2px 0 var(--k); }
+.vault .btn::after, .v-lobby .btn::after { content: ''; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.65), transparent); transform: skewX(-20deg); animation: vc-shine 3.2s ease-in-out infinite; }
+.vault .btn:hover:not(:disabled), .v-lobby .btn:hover:not(:disabled) { transform: skewX(-6deg) translateY(-3px) scale(1.04) rotate(-1deg); box-shadow: 7px 8px 0 var(--k) !important; }
+.vault .btn:active:not(:disabled), .v-lobby .btn:active:not(:disabled) { transform: skewX(-6deg) translateY(3px) scale(.96, .92); box-shadow: 1px 1px 0 var(--k) !important; }
+.vault .btn.ghost, .v-lobby .btn.ghost { background: #fff !important; color: var(--k) !important; text-shadow: none; font-size: 16px; }
+.vault .btn:disabled, .v-lobby .btn.lg:disabled { background: #e9e9e9 !important; color: #777 !important; text-shadow: none; filter: none; border-style: dashed !important; box-shadow: 4px 4px 0 #888 !important; }
+.vault .btn:disabled::after { display: none; }
+
+/* guess: A-Z keycaps, target chips */
+.vault .kbd .key { font-family: var(--dsp); color: var(--k); background: #fff; border: 3px solid var(--k); border-radius: 12px; box-shadow: 0 5px 0 var(--k); transition: transform .12s cubic-bezier(.2,1.8,.4,1); }
+.vault .kbd .key:hover:not(:disabled) { transform: translateY(-4px) rotate(-6deg) scale(1.1); background: #fff6a8; }
+.vault .kbd .key:active:not(:disabled) { transform: translateY(3px) scale(.9); box-shadow: 0 1px 0 var(--k); }
+.vault .kbd .key.sel { background: var(--p); color: #fff; box-shadow: 0 5px 0 var(--k); animation: vc-wiggle .6s ease-in-out infinite; }
+.vault .kbd .key:disabled { opacity: .35; background: #ddd; box-shadow: 0 2px 0 var(--k); }
+.vault .targets .target { background: #fff; border: 3px solid var(--k); border-radius: 3px; color: var(--k); box-shadow: 3px 3px 0 var(--k); transform: skewX(-6deg); transition: transform .15s cubic-bezier(.2,1.8,.4,1); }
+.vault .targets .target:hover { transform: skewX(-6deg) translateY(-3px) scale(1.05); }
+.vault .targets .target.sel { background: var(--y); border-color: var(--k); box-shadow: 3px 3px 0 var(--p), 0 0 0 3px var(--k); }
+
+/* reveal: result rows with POW scores */
+.vault .reveal-row { background: #fff; border: 3px solid var(--k); border-radius: 3px; box-shadow: 4px 4px 0 var(--k); transform: skewX(-4deg); animation: vc-row .45s cubic-bezier(.2,1.5,.4,1) both; }
+.vault .reveal-row:nth-child(2) { animation-delay: .12s; } .vault .reveal-row:nth-child(3) { animation-delay: .24s; } .vault .reveal-row:nth-child(4) { animation-delay: .36s; }
+.vault .reveal-row .word { font-family: var(--dsp); color: var(--k); letter-spacing: .12em; }
+.vault .reveal-row .pts, .vault .reveal-row [class*="gain"], .vault .reveal-row .delta { font-family: var(--dsp); color: #1faa55; text-shadow: 2px 2px 0 var(--k); font-size: 28px; animation: vc-boom .6s .3s cubic-bezier(.2,2,.4,1) both; }
+
+/* rack + HUD */
+.vault-rack .rack-inner { background: #fff !important; border: 4px solid var(--k) !important; border-radius: 3px; box-shadow: 6px 6px 0 var(--k) !important; color: var(--k); }
+.vault-rack .rack-inner * { color: var(--k); }
+.vault-rack .rack-pts b, .vault-rack .rack-pts strong { font-family: var(--dsp); color: var(--p); text-shadow: 2px 2px 0 var(--k); }
+
+/* lobby: case file, polaroid pinboard, comic toggle */
+.v-lobby .label { color: var(--k); }
+.v-case { background: #fff !important; border: 4px solid var(--k); border-radius: 3px; color: var(--k) !important; box-shadow: 6px 6px 0 var(--k) !important; transform: rotate(-3deg); }
+.v-case::before { background: var(--alarm); border: 2px solid var(--k); box-shadow: none; }
+.v-case em { font-family: var(--cmc); opacity: 1; letter-spacing: .2em; }
+.v-case span { font-family: var(--dsp); color: #fff; -webkit-text-stroke: .06em var(--k); paint-order: stroke fill; text-shadow: 3px 3px 0 var(--p); }
+.v-stamp { color: var(--alarm); border-color: var(--alarm); background: rgba(255,255,255,.9); font-family: var(--dsp); animation: vc-stamp .5s .6s cubic-bezier(.2,2,.4,1) both; }
+.lobby-code .tile { font-family: var(--dsp); }
+.qr-frame { border: 4px solid var(--k); border-radius: 3px; box-shadow: 5px 5px 0 var(--k); transform: rotate(2deg); }
+.lobby-qr > span { color: var(--k); font-family: var(--cmc); letter-spacing: .14em; }
+.v-lobby .seats { background: #c98a4b !important; background-image: radial-gradient(rgba(0,0,0,.2) 25%, transparent 30%) !important; background-size: 12px 12px !important; border: 4px solid var(--k); border-radius: 3px; box-shadow: 6px 6px 0 var(--k) !important; }
+.v-lobby .seat { border: 3px solid var(--k) !important; border-radius: 2px !important; box-shadow: 4px 4px 0 var(--k) !important; transition: transform .2s cubic-bezier(.2,1.8,.4,1); }
+.v-lobby .seat:hover { transform: rotate(0) translateY(-6px) scale(1.05); }
+.v-lobby .seat::before { background: var(--alarm); border: 2px solid var(--k); box-shadow: none; }
+.v-lobby .seat .avatar, .v-lobby .seat img { filter: none; }
+.v-lobby .seat b { font-family: var(--cmc); font-size: 17px; }
+.v-lobby .seat.me { box-shadow: 4px 4px 0 var(--p), 0 0 0 3px var(--k) !important; animation: vc-wiggle 2.6s ease-in-out infinite; }
+.v-lobby .seat.empty { background: rgba(255,255,255,.55) !important; border-style: dashed !important; }
+.v-lobby .narrow-col, .v-lobby .bot-row, .v-lobby .rules-strip, .v-lobby .sheet, .lobby-drawer { background: #fff !important; border: 3px solid var(--k) !important; border-radius: 3px; box-shadow: 4px 4px 0 var(--k); color: var(--k); }
+.v-lobby .rules-strip span, .v-lobby .duel-tag { color: var(--k) !important; background: #fff6a8 !important; border-color: var(--k) !important; }
+.drawer-bar, .drawer-bar b, .drawer-sum { color: var(--k) !important; font-family: var(--cmc); }
+.v-lobby .chip, .v-lobby .bot-styles button, .host-switch button { font-family: var(--cmc); color: var(--k); background: #fff; border: 3px solid var(--k); border-radius: 3px; }
+.v-lobby .chip.on, .host-switch button.on { color: #fff; background: var(--p); border-color: var(--k); }
+.host-switch { border: 3px solid var(--k) !important; background: #fff !important; border-radius: 3px; transform: skewX(-6deg); }
+.v-lobby .muted { color: #3a3200 !important; }
+
+/* finale: victory / defeat */
+.v-door.v-final { transform: none; }
+.v-verdict b { font-size: clamp(54px, 11vw, 112px) !important; animation: vc-boom .7s cubic-bezier(.2,2,.4,1) both; }
+.vault.p-finished.won .v-verdict b, .vault.p-finished.lost .v-verdict b { color: #fff; }
+.vault.p-finished.lost .v-shade { background: radial-gradient(ellipse 60% 55% at 50% 44%, #e6e1ff 0%, #8f86c9 50%, #4b4488 95%) !important; }
+.vault.p-finished.lost .v-shade::after { background-image: radial-gradient(#3a2f80 30%, transparent 35%), linear-gradient(180deg, transparent 84%, #fff 84%, #fff 85.4%, #ff1f8e 85.4%); }
+.vault.p-finished .v-verdict span { color: var(--k); font-family: var(--cmc); font-size: 20px; }
+.vault.p-finished .winner.victory-stage { background: #fff; border: 4px solid var(--k); border-radius: 3px; box-shadow: 6px 6px 0 var(--k); }
+.vault.p-finished .winner > div:first-child { background: var(--y); border: 4px solid var(--k); border-radius: 50%; padding: 4px; box-shadow: 4px 4px 0 var(--k); animation: vc-bounce 1.2s ease-in-out infinite; }
+.vault.p-finished.lost .winner > div:first-child { filter: grayscale(.6); animation: none; }
+.vault.p-finished .winner h1 { background: none !important; box-shadow: none !important; }
+.vault .podium .award, .vault .locks-table, .vault .summary, .vault .recap { background: #fff !important; border: 3px solid var(--k) !important; border-radius: 3px; box-shadow: 4px 4px 0 var(--k); color: var(--k); }
+.vault .podium .award::before { background: var(--y); font-family: var(--cmc); color: var(--k); border: 2px solid var(--k); }
+.vault .podium .award .title, .vault .locks-table .label { color: var(--p); font-family: var(--cmc); }
+.vault .podium .award .who { color: var(--k); }
+.v-gold-word, .v-alarm-word { font-size: clamp(40px, 9vw, 90px); animation: none; }
+.v-bigdoor { background: var(--y); border: 6px solid var(--k); box-shadow: 10px 10px 0 var(--k); }
+.v-wheel * { stroke: var(--k) !important; }
+
+/* showdown */
+.v-final-stamp { background: var(--alarm); color: #fff; border: 4px solid var(--k); font-family: var(--dsp); text-shadow: 2px 2px 0 var(--k); box-shadow: 4px 4px 0 var(--k); }
+.v-contender { background: #fff; border: 4px solid var(--k); border-radius: 3px; box-shadow: 5px 5px 0 var(--k); transform: skewX(-4deg); }
+.v-plate { background: var(--y); border: 3px solid var(--k); color: var(--k); box-shadow: none; font-family: var(--dsp); }
+.v-score { color: var(--k); font-family: var(--cmc); font-size: 18px; }
+.v-core-ring { background: var(--p); border: 5px solid var(--k); box-shadow: 5px 5px 0 var(--k); }
+.v-core-num { color: #fff; font-family: var(--dsp); text-shadow: 3px 3px 0 var(--k); }
+.v-vs { font-family: var(--dsp); color: #fff; -webkit-text-stroke: .08em var(--k); paint-order: stroke fill; text-shadow: 3px 3px 0 var(--p); }
+.v-rules { background: var(--y); border: 3px solid var(--k); color: var(--k); font-family: var(--cmc); }
+
+/* comic burst VFX layer (POW / BAM / ZAP), spawned by lib/comicFx */
+.cp-sp, .cp-powtxt { z-index: 9999; }
+
+@keyframes vc-spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes vc-wiggle { 0%, 100% { rotate: -1.2deg; } 50% { rotate: 1.4deg; } }
+@keyframes vc-pop { 0% { scale: 0; } 70% { scale: 1.12; } 100% { scale: 1; } }
+@keyframes vc-slam { 0% { translate: 0 -60px; scale: 1.15; opacity: 0; } 60% { translate: 0 8px; scale: .98; opacity: 1; } 100% { translate: 0 0; scale: 1; } }
+@keyframes vc-shine { 0%, 55% { left: -60%; } 80%, 100% { left: 130%; } }
+@keyframes vc-shake { 0%, 100% { translate: 0; } 25% { translate: 2px -2px; } 75% { translate: -2px 2px; } }
+@keyframes vc-flip { 0% { transform: rotateX(90deg) scale(.6); } 100% { transform: none; } }
+@keyframes vc-row { 0% { translate: -60px 0; opacity: 0; } 100% { translate: 0 0; opacity: 1; } }
+@keyframes vc-boom { 0% { scale: 0; rotate: -20deg; } 60% { scale: 1.5; rotate: 6deg; } 100% { scale: 1; rotate: -3deg; } }
+@keyframes vc-stamp { 0% { scale: 3; opacity: 0; } 100% { scale: 1; opacity: 1; } }
+@keyframes vc-bounce { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+
+@media (max-width: 600px) {
+  .v-door { box-shadow: 5px 5px 0 var(--k); }
+  .vault .btn, .v-lobby .btn { font-size: 18px; }
+  .vault .kbd .key { border-width: 2px; box-shadow: 0 3px 0 var(--k); }
+}
+@media (prefers-reduced-motion: reduce) { .vault *, .vault *::before, .vault *::after { animation: none !important; } }
+
+/* lobby: keep the CCTV wall and blueprint from the real hideout; header text readable on yellow */
+.vault.p-lobby::before, .vault.p-lobby::after { filter: drop-shadow(4px 4px 0 var(--k)) !important; border: 4px solid var(--k); border-radius: 3px; background-color: #fff; }
+.vault.p-lobby { padding-bottom: 60px; }
+.vault.p-lobby::after { background-color: #1d4fd1 !important; }
+.vault-shell .topbar .textbtn, .vault-shell .topbar .textbtn:hover, .vault-shell .topbar .room-chip { color: var(--k) !important; }
+.vault-shell .topbar .textbtn.danger { color: var(--alarm) !important; }
+.vault.p-lobby::before { display: block; }
+.vault.p-lobby::after { display: block; }
+/* turn the flat pink floor into a torn-paper edge */
+.vault.p-lobby .v-shade::before { top: 40%; }
+.vault.p-lobby .v-shade::after { background-image: radial-gradient(#f7a400 30%, transparent 35%), linear-gradient(180deg, transparent 88%, #fff 88%, #fff 89.5%, #ff1f8e 89.5%); background-size: 11px 11px, 100% 100%; }
+
+/* lobby detail pass to match the approved hideout mockup */
+.vault-shell .topbar .textbtn:not(.danger) { background: #fff; color: var(--k) !important; border: 3px solid var(--k); padding: 3px 10px; transform: skewX(-8deg); box-shadow: 3px 3px 0 var(--k); }
+.vault-shell .topbar .textbtn.danger, .vault-shell .topbar .textbtn:last-child { background: var(--p); color: #fff !important; border: 3px solid var(--k); padding: 3px 10px; transform: skewX(-8deg); box-shadow: 3px 3px 0 var(--k); }
+.vault.p-lobby .v-lobby .btn.sm.ghost { background: var(--k) !important; color: #fff !important; border: 3px solid var(--k) !important; transform: skewX(-8deg); box-shadow: 3px 3px 0 var(--p) !important; font-size: 15px; }
+.vault.p-lobby .quick-bot .btn { background: var(--k) !important; color: #fff !important; border: 3px solid var(--k) !important; transform: skewX(-8deg); box-shadow: 3px 3px 0 var(--p) !important; font-size: 14px; }
+.vault.p-lobby .host-switch { display: inline-flex; border: 3px solid var(--k) !important; background: #fff !important; transform: skewX(-8deg); }
+.vault.p-lobby .host-switch button { border: 0; border-radius: 0; font-family: var(--cmc); font-size: 15px; background: #fff; color: var(--k); padding: 6px 16px; }
+.vault.p-lobby .host-switch button.on { background: var(--p); color: #fff; }
+.vault.p-lobby .v-lobby .btn.lg:disabled { background: var(--k) !important; color: #bbb !important; border: 3px solid var(--k) !important; box-shadow: 4px 4px 0 var(--p) !important; border-style: solid !important; transform: skewX(-6deg); }
+.vault.p-lobby .v-lobby .btn.ghost.block { background: #fff !important; color: var(--k) !important; border: 3px solid var(--k) !important; box-shadow: 4px 4px 0 var(--k) !important; transform: skewX(-4deg); font-size: 16px; }
+.vault.p-lobby .v-lobby .muted { color: var(--k) !important; font-family: var(--cmc); font-size: 14px; letter-spacing: .03em; }
+.vault.p-lobby .v-case { background: #f2e5bd !important; border: 0 !important; box-shadow: 0 8px 0 #7b5a2a, 0 0 0 4px var(--k) !important; }
+.vault.p-lobby .v-case span { color: var(--k) !important; -webkit-text-fill-color: var(--k); -webkit-text-stroke: 0; text-shadow: none !important; font-size: clamp(44px, 8vw, 62px); }
+.vault.p-lobby .v-case em { font-size: 13px; background: var(--k); color: #fff; padding: 2px 8px; opacity: 1; }
+.vault.p-lobby .qr-frame { background: #fff; border: 4px solid var(--k) !important; border-radius: 0 !important; }
+.vault.p-lobby .lobby-qr > span { background: var(--k); color: #fff !important; padding: 3px 10px; transform: skewX(-8deg); }
+.vault.p-lobby .v-lobby .seats { border: 4px solid var(--k) !important; }
+/* torn pink floor at the bottom, like the mockup (on the lobby column so it does not cover the blueprint pseudo) */
+.vault.p-lobby .v-lobby::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; height: 13vh; z-index: -1; pointer-events: none; background: var(--p); background-image: radial-gradient(#d4006f 30%, transparent 34%); background-size: 10px 10px; clip-path: polygon(0 40%,4% 30%,8% 42%,12% 26%,16% 38%,21% 22%,25% 34%,30% 18%,34% 30%,39% 14%,43% 26%,48% 10%,52% 22%,57% 8%,61% 20%,66% 4%,70% 18%,75% 2%,79% 14%,84% 0%,88% 12%,93% 4%,97% 14%,100% 6%,100% 100%,0 100%); }
+.vault-shell .topbar, .vault-shell .topbar * { opacity: 1 !important; filter: none !important; }
+.vault-shell .topbar .room-chip { background: #fff !important; color: var(--k) !important; }
+.vault-shell .topbar .textbtn { color: var(--k) !important; }
+.vault-shell .topbar .textbtn.danger, .vault-shell .topbar .textbtn:last-child { color: #fff !important; }
+
+/* gameplay pass: readable placeholders, labels, HUD bar and header */
+.vault .input.word::placeholder, .vault .input::placeholder { color: #8a7a3a !important; opacity: 1 !important; -webkit-text-fill-color: #8a7a3a; }
+.vault .prompt-kicker, .vault .the-prompt, .vault .stage-body .label { color: var(--k) !important; opacity: 1 !important; font-family: var(--cmc); letter-spacing: .14em; }
+.vault .muted, .vault .hint { opacity: 1 !important; color: var(--k) !important; }
+.vault .rack, .vault-rack .rack-inner, .vault-rack .rack-inner * { opacity: 1 !important; }
+.vault-rack .rack-inner { background: #fff !important; }
+.vault-rack .rack-inner .label, .vault-rack .sect-label, .vault-rack .rack-pts { color: var(--k) !important; }
+.vault-shell .topbar .textbtn.danger { background: var(--p) !important; color: #fff !important; }
+.vault-shell .topbar, .vault-shell .topbar * { text-shadow: none !important; }
+
+/* ============ reference match pass: Classic gameplay + finale ============ */
+/* panel is cream with halftone, not flat white */
+.v-door { background: #f4f1e8 !important; }
+.v-door::before { background-image: radial-gradient(rgba(0,0,0,.1) 28%, transparent 32%) !important; background-size: 8px 8px !important;
+  -webkit-mask-image: none !important; mask-image: none !important; opacity: .55; }
+/* ROUND N · PHASE -> pink slanted tag */
+.vault .phase-tag { background: var(--p) !important; color: #fff !important; font-family: var(--dsp) !important; font-size: 19px; padding: 4px 18px; letter-spacing: .04em;
+  box-shadow: 4px 4px 0 var(--k); border: 3px solid var(--k); }
+.vault .phase-tag::before { content: '' !important; }
+/* big titles: yellow fill, black stroke, pink drop */
+.vault .stage-title { color: var(--y) !important; -webkit-text-fill-color: var(--y) !important; -webkit-text-stroke: .085em var(--k);
+  text-shadow: .035em .035em 0 var(--p), .07em .07em 0 var(--k) !important; font-size: clamp(30px, 5.2vw, 62px) !important; }
+/* timer: pink disc */
+.v-dial svg circle:first-child { fill: var(--p) !important; }
+.v-dial svg * { stroke: var(--k) !important; stroke-width: 3 !important; }
+.v-dial-num { color: #fff; text-shadow: 2px 2px 0 var(--k); font-size: 32px; }
+.v-dial { filter: drop-shadow(4px 4px 0 rgba(0,0,0,.85)); }
+/* A-Z keycaps: white disc, cyan bevel */
+.vault .kbd .key { background: #fff !important; border: 3px solid var(--k) !important; box-shadow: 0 6px 0 #4cc7e8, 0 6px 0 3px var(--k) !important; font-size: 22px; }
+.vault .kbd .key:hover:not(:disabled) { background: var(--y) !important; }
+.vault .kbd .key.sel { background: var(--p) !important; color: #fff !important; box-shadow: 0 6px 0 var(--k) !important; }
+/* action bar: black slab with pink offset */
+.vault .btn.lg, .vault .btn.block { background: var(--k) !important; color: #fff !important; box-shadow: 6px 6px 0 var(--p), 6px 6px 0 3px var(--k) !important; border: 3px solid var(--k) !important; }
+.vault .btn.lg:hover:not(:disabled), .vault .btn.block:hover:not(:disabled) { box-shadow: 8px 9px 0 var(--p), 8px 9px 0 3px var(--k) !important; }
+.vault .btn.lg:disabled, .vault .btn.block:disabled { background: #d8d4c8 !important; color: #8d8878 !important; box-shadow: 5px 5px 0 #a9a496 !important; }
+/* HUD rack: pink band, yellow section labels */
+.vault-rack .rack-inner { background: var(--p) !important; background-image: radial-gradient(#d4006f 28%, transparent 32%) !important; background-size: 9px 9px !important;
+  border: 4px solid var(--k) !important; }
+.vault-rack .rack-inner *, .vault-rack .rack-inner .label { color: #fff !important; }
+.vault-rack .sect-label, .vault-rack .rack .sect-label { background: var(--y) !important; color: var(--k) !important; padding: 2px 9px; font-family: var(--dsp) !important;
+  border: 2px solid var(--k); transform: skewX(-8deg); font-size: 13px !important; letter-spacing: .04em; }
+.vault-rack .rack-pts, .vault-rack .rack-pts * { font-family: var(--dsp) !important; color: #fff !important; font-size: 26px; text-shadow: 2px 2px 0 var(--k); }
+/* top bar: solid comic chips so it never washes out on yellow */
+.vault-shell .topbar { background: none !important; }
+.vault-shell .topbar .room-chip { background: var(--k) !important; color: #fff !important; font-family: var(--dsp) !important; font-size: 17px; padding: 3px 12px; border: 3px solid var(--k); box-shadow: 3px 3px 0 var(--p); }
+.vault-shell .topbar .textbtn { background: #fff !important; color: var(--k) !important; font-family: var(--dsp) !important; font-size: 15px; padding: 4px 12px; border: 3px solid var(--k) !important; box-shadow: 3px 3px 0 var(--k); transform: skewX(-8deg); opacity: 1 !important; }
+.vault-shell .topbar .textbtn.danger { background: var(--p) !important; color: #fff !important; }
+.vault-shell .topbar .iconbtn, .vault-shell .topbar button:not(.textbtn) { color: var(--k) !important; opacity: 1 !important; }
+/* finale: scores card, podium, action buttons like the mockup */
+.vault.p-finished .v-door { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+.vault.p-finished .v-door::before { display: none; }
+.vault.p-finished .winner.victory-stage { background: transparent; border: 0; box-shadow: none; }
+.vault .podium .award { background: #f4f1e8 !important; box-shadow: 5px 5px 0 var(--k) !important; transform: skewX(-4deg); }
+.vault .podium .award::before { background: var(--y); border: 3px solid var(--k); color: var(--k); font-family: var(--dsp); font-size: 12px; }
+.vault .summary, .vault .locks-table, .vault .recap { background: #f4f1e8 !important; }
+.vault.p-finished .btn { font-size: 22px; }
+
+/* notes must stay readable: dark ink on the pastel comic fills */
+.vault .note, .vault .note.ok, .vault .note.bad, .vault .note.info,
+.vault .banner, .vault .banner.out, .vault .banner.info, .vault .hint {
+  color: var(--k) !important; font-family: var(--cmc); font-size: 17px; letter-spacing: .02em; }
+.vault .note.bad { background: #ffc2cf !important; border-color: var(--alarm) !important; }
+.vault .note.ok { background: #b6f5c9 !important; }
+.vault .note *, .vault .banner *, .vault .hint * { color: var(--k) !important; }
+/* HUD labels: horizontal yellow comic tags, never sideways */
+.vault-rack .sect-label, .vault-rack .rack .sect-label { writing-mode: horizontal-tb !important; text-orientation: mixed !important; transform: skewX(-8deg) !important; white-space: nowrap; }
+.vault-rack .rack-pts .label, .vault-rack .rack-pts span { background: var(--y) !important; color: var(--k) !important; font-family: var(--dsp) !important; padding: 2px 9px; border: 2px solid var(--k); transform: skewX(-8deg); display: inline-block; font-size: 13px !important; text-shadow: none !important; }
+
+/* finale readability: subtitle, winner line, XP strip and stats on the pink band */
+.vault.p-finished .v-verdict span, .vault.p-finished .winner .muted { color: var(--k) !important; background: #fff; display: inline-block; padding: 3px 14px; border: 3px solid var(--k); transform: skewX(-6deg); font-size: 16px; box-shadow: 3px 3px 0 var(--k); }
+.vault.p-finished .winner h1 { color: #fff !important; -webkit-text-fill-color: #fff !important; -webkit-text-stroke: .07em var(--k);
+  text-shadow: .04em .04em 0 var(--p), .08em .08em 0 var(--k) !important; }
+/* everything below the awards sits on a white comic slab so it is always legible */
+.vault.p-finished .summary, .vault.p-finished .recap, .vault.p-finished .xp-row, .vault.p-finished .xp, .vault.p-finished .locks-table {
+  background: #f4f1e8 !important; border: 3px solid var(--k) !important; box-shadow: 4px 4px 0 var(--k); padding: 10px 14px; }
+.vault.p-finished .summary *, .vault.p-finished .recap *, .vault.p-finished .xp-row *, .vault.p-finished .xp * { color: var(--k) !important; text-shadow: none !important; }
+.vault.p-finished .v-door .v-content > * { position: relative; z-index: 2; }
+.vault.p-finished .v-content { background: rgba(255,255,255,.92); border: 4px solid var(--k); box-shadow: 6px 6px 0 var(--k); padding: 16px 18px; margin-top: 10px; }
+.vault.p-finished .v-content, .vault.p-finished .v-content * { color: var(--k) !important; }
+.vault.p-finished .v-content .btn { color: #fff !important; }
+.vault.p-finished .v-content .btn.ghost { color: var(--k) !important; }
+
+/* the topbar is a sibling of .vault, so the comic vars must live on the shell too */
+.vault-shell { --y: #ffd400; --p: #ff1f8e; --k: #111; --alarm: #e5002b;
+  --dsp: 'LL Display', 'Luckiest Guy', Impact, sans-serif; --cmc: 'LL Comic', Bangers, Impact, sans-serif; }
+.vault-shell .topbar .room-chip { background: #111 !important; color: #fff !important; border: 3px solid #111; box-shadow: 3px 3px 0 #ff1f8e; }
+.vault-shell .topbar .textbtn { background: #fff !important; color: #111 !important; border: 3px solid #111 !important; box-shadow: 3px 3px 0 #111; }
+.vault-shell .topbar .textbtn:hover { background: #ffd400 !important; color: #111 !important; }
+.vault-shell .topbar .textbtn.danger { background: #ff1f8e !important; color: #fff !important; }
+.vault-shell .topbar .textbtn.danger:hover { background: #e5002b !important; color: #fff !important; }
+
+/* Next.js can emit this chunk before vault.css, so the comic tokens must not
+   depend on source order. Doubled class + !important beats the base sheet. */
+.vault.vault, .vault-shell.vault-shell {
+  --y: #ffd400 !important; --p: #ff1f8e !important; --k: #111 !important; --alarm: #e5002b !important;
+  --dsp: 'LL Display', 'Luckiest Guy', Impact, sans-serif !important;
+  --cmc: 'LL Comic', Bangers, Impact, sans-serif !important;
+  --display: 'LL Display', 'Luckiest Guy', Impact, sans-serif !important;
+  --mono: 'LL Comic', Bangers, Impact, sans-serif !important;
+  --body: 'LL Comic', Bangers, Impact, sans-serif !important;
+  --teal: #ff1f8e !important; --brass: #111 !important; --steel-hi: #111 !important; --steel: #111 !important;
+}
+.vault.vault { background: #ffd400 !important; background-image: none !important; color: #111 !important; }
+.vault .v-case span { font-family: var(--dsp) !important; font-weight: 400 !important; letter-spacing: .06em !important; margin-right: 0 !important; }
+.vault .v-lobby .seat b { font-family: var(--dsp) !important; font-weight: 400 !important; }
+.vault .seat .muted, .vault .seat .small { font-family: var(--cmc) !important; font-size: 15px !important; }
+
+/* ---- HUD strip v2: solid cream tiles with dark ink so locks, cards, hero and points read at a glance ---- */
+.vault-rack .rack-inner.rack-inner { background: #ffe500 !important; background-image: radial-gradient(rgba(0,0,0,.13) 22%, transparent 26%) !important; background-size: 8px 8px !important; border: 4px solid #111 !important; box-shadow: 6px 6px 0 #ff1f8e, 6px 6px 0 3px #111 !important; }
+.vault-rack .rack-inner .tile, .vault-rack .rack-inner .tiles > *, .vault-rack .rack-inner .card, .vault-rack .rack-inner .cardbtn, .vault-rack .rack-inner .rack-card,
+.vault-rack .rack-inner .hero-chip, .vault-rack .rack-inner .class-ico, .vault-rack .rack-inner .btn.sm { background: #fff !important; color: #111 !important; border: 3px solid #111 !important; border-radius: 4px !important; box-shadow: 3px 3px 0 #111 !important; text-shadow: none !important; font-family: var(--dsp) !important; opacity: 1 !important; }
+.vault-rack .rack-inner .tile * , .vault-rack .rack-inner .card *, .vault-rack .rack-inner .btn.sm * { color: #111 !important; text-shadow: none !important; }
+.vault-rack .rack-inner .tile.glitch { background: #ff1f8e !important; color: #fff !important; }
+.vault-rack .rack-inner *, .vault-rack .rack-inner .label { color: #111 !important; }
+.vault-rack .rack-inner .sect-label { background: #111 !important; color: #fff !important; border-color: #111 !important; }
+.vault-rack .rack-inner .rack-pts, .vault-rack .rack-inner .rack-pts * { color: #fff !important; background: none; text-shadow: 2px 2px 0 #111, -1px -1px 0 #111 !important; font-size: 30px; }
+.vault-rack .rack-inner .rack-pts { background: #ff1f8e !important; border: 3px solid #111; padding: 0 12px; border-radius: 4px; transform: skewX(-6deg); }
+
+/* phase transition slash: pink sheet sweeps in, covers the swap, sweeps out */
+.vc-phasewipe { position: fixed; inset: -10%; z-index: 995; pointer-events: none; background: #ff1f8e; background-image: radial-gradient(#d4006f 30%, transparent 34%); background-size: 12px 12px;
+  border-left: 14px solid #111; border-right: 14px solid #ffd400; transform: translateX(-130%) skewX(-18deg); animation: vc-phasewipe .8s cubic-bezier(.65,0,.35,1) forwards; }
+@keyframes vc-phasewipe { 0% { transform: translateX(-130%) skewX(-18deg); } 45%, 55% { transform: translateX(0) skewX(-18deg); } 100% { transform: translateX(130%) skewX(-18deg); } }
+.vault > * { animation: vc-enter .45s .25s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes vc-enter { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .vc-phasewipe { display: none; } .vault > * { animation: none; } }
+
+/* ---- lobby v2: side scenery cropped straight from the lobby mockup (CCTV wall + desk, blueprint + lamp + books) ---- */
+@media (min-width: 900px) {
+  .vault.p-lobby::before, .vault.p-lobby::after { content: '' !important; display: block !important; position: fixed !important; z-index: 1 !important; pointer-events: none; border: 0 !important; border-radius: 0 !important; filter: none !important;
+    background-color: transparent !important; background-repeat: no-repeat !important; aspect-ratio: auto !important; top: auto !important; bottom: 0 !important; }
+  .vault.p-lobby::before { left: 0 !important; width: calc((100vh - 96px) * .499) !important; height: calc(100vh - 96px) !important; background-image: url(/art/comic/lobby-left.webp) !important; background-size: 100% 100% !important; }
+  .vault.p-lobby::after { right: 0 !important; left: auto !important; width: calc((100vh - 250px) * .482) !important; height: calc(100vh - 250px) !important; background-image: url(/art/comic/lobby-right.webp) !important; background-size: 100% 100% !important; }
+}
+@media (max-width: 899px) { .vault.p-lobby::before, .vault.p-lobby::after { display: none !important; } }
+
+/* lobby v2.1: soft inner edges on scenery, torn floor in code, bigger case file, settings tab top-right like the mockup */
+@media (min-width: 900px) {
+  .vault.p-lobby::before { -webkit-mask-image: linear-gradient(90deg, #000 78%, transparent 100%); mask-image: linear-gradient(90deg, #000 78%, transparent 100%); }
+  .vault.p-lobby::after { -webkit-mask-image: linear-gradient(270deg, #000 70%, transparent 100%); mask-image: linear-gradient(270deg, #000 70%, transparent 100%); }
+  .vault.p-lobby .lobby-top > .col { zoom: 1.4; }
+  .vault.p-lobby .lobby-qr { zoom: 1.35; }
+  .vault.vault.p-lobby .lobby-drawer, .vault.vault.p-lobby .v-lobby .lobby-drawer { position: absolute !important; inset: 10px -300px auto auto !important; width: 280px !important; max-width: 290px !important; transform: none !important; z-index: 6; }
+}
+.vault.p-lobby .v-lobby::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; height: 9vh; z-index: 0; pointer-events: none;
+  background: #ff1f8e radial-gradient(#d4006f 30%, transparent 34%) 0 0 / 11px 11px;
+  clip-path: polygon(0 28%, 4% 12%, 8% 30%, 13% 8%, 18% 26%, 24% 10%, 30% 28%, 36% 6%, 42% 24%, 48% 10%, 54% 30%, 60% 8%, 66% 26%, 72% 12%, 78% 30%, 84% 8%, 90% 26%, 95% 12%, 100% 28%, 100% 100%, 0 100%); }
+
+/* quit = defeat end screen that waits for a choice */
+.quit-end { position: fixed; inset: 0; z-index: 1200; display: grid; place-items: center; padding: 20px; background: #e5002b; background-image: repeating-conic-gradient(from 0deg at 50% 45%, rgba(255,255,255,.14) 0 6deg, transparent 6deg 18deg), radial-gradient(rgba(0,0,0,.18) 22%, transparent 26%); background-size: auto, 10px 10px; animation: vc-enter .4s both; }
+.quit-end-card { background: #f4f1e8; border: 5px solid #111; box-shadow: 10px 10px 0 #111; padding: 28px 34px 30px; max-width: 560px; width: 100%; text-align: center; transform: rotate(-1.2deg); }
+.quit-end-tag { display: inline-block; background: #ff1f8e; color: #fff; font-family: 'LL Display','Luckiest Guy',Impact,sans-serif; padding: 4px 16px; border: 3px solid #111; transform: skewX(-8deg); letter-spacing: .06em; }
+.quit-end-card h2 { margin: 14px 0 8px; font-family: 'LL Display','Luckiest Guy',Impact,sans-serif; font-weight: 400; font-size: clamp(36px, 7vw, 64px); line-height: 1; color: #fff; -webkit-text-stroke: .06em #111; paint-order: stroke fill; text-shadow: .05em .05em 0 #e5002b, .1em .1em 0 #111; }
+.quit-end-card p { font-family: 'LL Comic', Bangers, Impact, sans-serif; font-size: 20px; letter-spacing: .04em; color: #111; margin: 0 0 20px; }
+.quit-end-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.quit-end-btns .btn { text-decoration: none; }
+
+/* finale declutter: big title, three compact awards, one clean score card; recap/summary/rivalry tucked away */
+.vault.p-finished .recap, .vault.p-finished .summary, .vault.p-finished .rivalry, .vault.p-finished .team-final + .rivalry { display: none !important; }
+.vault.p-finished .winner h1 { font-size: clamp(44px, 8vw, 96px) !important; line-height: .95; margin: 6px 0 4px; }
+.vault.p-finished .podium { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 720px; margin: 14px auto; }
+.vault.p-finished .podium .award { background: #fff !important; border: 4px solid var(--k) !important; box-shadow: 5px 5px 0 var(--k) !important; padding: 10px 8px !important; }
+.vault.p-finished .podium .award .muted { display: none; }
+.vault.p-finished .locks-table { max-width: 720px; margin: 10px auto; padding: 12px 16px; }
+.vault.p-finished .locks-row { padding: 6px 0; border-bottom: 2px dashed rgba(0,0,0,.25); }
+.vault.p-finished .locks-row:last-child { border-bottom: 0; }
+.vault.p-finished .xp-row, .vault.p-finished .xp { max-width: 720px; margin: 8px auto; }
+.vault.p-finished .v-content > * + * { margin-top: 10px; }
+
+.quit-end .quit-end-btns .btn { font-family: 'LL Display','Luckiest Guy',Impact,sans-serif !important; font-weight: 400 !important; text-transform: uppercase; font-size: 22px !important; letter-spacing: .04em; border: 4px solid #111 !important; border-radius: 3px !important; padding: 10px 26px !important; transform: skewX(-6deg); background: #ff1f8e !important; color: #fff !important; box-shadow: 5px 5px 0 #111 !important; text-shadow: 2px 2px 0 #111; }
+.quit-end .quit-end-btns .btn.ghost { background: #fff !important; color: #111 !important; text-shadow: none; }
+.quit-end .quit-end-btns .btn:hover { transform: skewX(-6deg) translateY(-3px) scale(1.05); }
+/* quit confirm dialog in comic style */
+.vault-shell .quit-sheet, .quit-sheet { background: #f4f1e8 !important; border: 5px solid #111 !important; border-radius: 3px !important; box-shadow: 8px 8px 0 #ff1f8e, 8px 8px 0 3px #111 !important; color: #111 !important; }
+.quit-sheet::before, .quit-sheet::after { display: none !important; }
+.quit-sheet h2 { font-family: 'LL Display','Luckiest Guy',Impact,sans-serif !important; font-weight: 400 !important; color: #fff !important; -webkit-text-stroke: .06em #111; paint-order: stroke fill; text-shadow: .05em .05em 0 #e5002b, .1em .1em 0 #111; }
+.quit-sheet p, .quit-sheet .muted { color: #111 !important; font-family: 'LL Comic', Bangers, Impact, sans-serif !important; font-size: 18px; letter-spacing: .03em; }
+.quit-sheet .quit-art { background: #ffd400 !important; border: 4px solid #111 !important; color: #111 !important; }
+.quit-sheet .btn { font-family: 'LL Display','Luckiest Guy',Impact,sans-serif !important; font-weight: 400 !important; text-transform: uppercase; border: 4px solid #111 !important; border-radius: 3px !important; box-shadow: 4px 4px 0 #111 !important; transform: skewX(-6deg); background: #fff !important; color: #111 !important; text-shadow: none !important; }
+.quit-sheet .btn.danger { background: #e5002b !important; color: #fff !important; text-shadow: 2px 2px 0 #111 !important; }
+
+/* finale v3: two-column, fits one screen like the victory mockup */
+.vault.p-finished .stats-table, .vault.p-finished .new-ach, .vault.p-finished .xp-card .muted { display: none !important; }
+@media (min-width: 900px) {
+  .vault.p-finished .v-content { display: grid !important; grid-template-columns: 1.1fr 1fr; grid-auto-rows: min-content; column-gap: 28px; row-gap: 12px; max-width: 1060px; margin: 0 auto;
+    background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; align-items: start; }
+  .vault.p-finished .v-content > .winner { grid-column: 1; grid-row: 1 / span 3; align-self: center; }
+  .vault.p-finished .v-content > .podium { grid-column: 2; grid-row: 1; margin: 0; max-width: none; }
+  .vault.p-finished .v-content > .locks-table { grid-column: 2; grid-row: 2; margin: 0; max-width: none; }
+  .vault.p-finished .v-content > .xp-card { grid-column: 2; grid-row: 3; margin: 0; max-width: none; }
+  .vault.p-finished .v-content > .row { grid-column: 1 / -1; }
+}
+.vault.p-finished .v-content > .locks-table, .vault.p-finished .v-content > .xp-card, .vault.p-finished .v-content > .podium .award { background: #f4f1e8 !important; border: 4px solid #111 !important; box-shadow: 5px 5px 0 #111 !important; border-radius: 3px; }
+.vault.p-finished .v-content > .xp-card { padding: 10px 14px !important; }
+.vault.p-finished .v-content > .podium .award .who { font-family: var(--dsp); font-size: 20px; }
+.vault.p-finished .v-content > .locks-table .label::after { content: ''; }
+.vault.p-finished .winner h1 { text-align: center; }
+
+/* lobby settings drawer in comic style */
+.vault .lobby-drawer, .vault-shell .lobby-drawer { background: #f4f1e8 !important; border: 4px solid #111 !important; border-radius: 3px !important; box-shadow: 6px 6px 0 #111 !important; color: #111 !important; backdrop-filter: none !important; }
+.lobby-drawer .drawer-bar { background: #ff1f8e !important; color: #fff !important; font-family: var(--dsp) !important; }
+.lobby-drawer .drawer-bar *, .lobby-drawer .drawer-bar b { color: #fff !important; }
+.lobby-drawer .drawer-body, .lobby-drawer .drawer-body * { color: #111 !important; text-shadow: none !important; }
+.lobby-drawer .drawer-body { background: #f4f1e8 !important; font-family: var(--cmc); }
+.lobby-drawer .drawer-body .label, .lobby-drawer .drawer-body .sect-label { color: #fff !important; background: #111 !important; padding: 2px 8px; display: inline-block; font-family: var(--dsp) !important; }
+.lobby-drawer .drawer-body button, .lobby-drawer .drawer-body .btn, .lobby-drawer .drawer-body select, .lobby-drawer .drawer-body .chip { background: #fff !important; border: 3px solid #111 !important; border-radius: 3px !important; box-shadow: 3px 3px 0 #111 !important; font-family: var(--cmc) !important; }
+.lobby-drawer .drawer-body .on, .lobby-drawer .drawer-body [aria-checked='true'], .lobby-drawer .drawer-body button.sel { background: #ff1f8e !important; }
+.lobby-drawer .drawer-body .on *, .lobby-drawer .drawer-body [aria-checked='true'] * { color: #fff !important; }
+
+/* reward medals: comic starburst badges; Einstein is the higher (legend) tier */
+.vault.p-finished .podium { margin-top: 30px !important; }
+.vault.p-finished .podium .award { position: relative; padding-top: 34px !important; }
+.vault.p-finished .podium .award .medal { display: grid !important; place-items: center; position: absolute; left: 50%; top: -26px; width: 54px; height: 54px; margin: 0 !important; transform: translateX(-50%) rotate(-6deg);
+  background: var(--mc, #ffd400) !important; color: #111 !important; border: 4px solid #111; border-radius: 50%; box-shadow: 3px 3px 0 #111; }
+.vault.p-finished .podium .award .medal::before { content: ''; position: absolute; inset: -12px; z-index: -1; background: var(--mc, #ffd400); border: 0;
+  clip-path: polygon(50% 0, 60% 22%, 82% 10%, 78% 34%, 100% 40%, 82% 56%, 94% 78%, 70% 74%, 62% 100%, 50% 80%, 38% 100%, 30% 74%, 6% 78%, 18% 56%, 0 40%, 22% 34%, 18% 10%, 40% 22%); filter: drop-shadow(0 0 0 #111); }
+.vault.p-finished .podium .award .medal.tier-champ { --mc: #ffd400; }
+.vault.p-finished .podium .award .medal.tier-vil { --mc: #ff4f6e; color: #fff !important; }
+.vault.p-finished .podium .award .medal.tier-ein { --mc: #ffe27a; width: 66px; height: 66px; top: -34px; border-width: 5px; background: linear-gradient(135deg, #fff6b8, #ffc700 55%, #ff9d00) !important; box-shadow: 4px 4px 0 #111, 0 0 0 4px #ff1f8e; }
+.vault.p-finished .podium .award .medal.tier-ein::before { inset: -18px; background: repeating-conic-gradient(#fff 0 8deg, #ffc700 8deg 16deg); }
+.vault.p-finished .podium .award:has(.tier-ein) { border-color: #ff1f8e !important; box-shadow: 5px 5px 0 #111, 0 0 0 3px #ffd400 !important; background: linear-gradient(180deg, #fff9d6, #f4f1e8 60%) !important; padding-top: 44px !important; }
+.vault.p-finished .podium .award .tier-ribbon { position: absolute; right: -8px; top: 6px; background: #ff1f8e; color: #fff; border: 2px solid #111; padding: 0 8px; font-family: var(--cmc); letter-spacing: .1em; font-size: 13px; text-transform: uppercase; transform: rotate(8deg); box-shadow: 2px 2px 0 #111; }
+
+/* finish actions: Replay (host) + Share (everyone) always visible */
+.fin-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; align-items: center; margin: 10px auto 4px; position: relative; z-index: 5; }
+.vault .fin-actions .btn { font-family: var(--dsp) !important; font-weight: 400 !important; text-transform: uppercase; font-size: 22px !important; letter-spacing: .04em; border: 4px solid #111 !important; border-radius: 3px !important; padding: 10px 28px !important; transform: skewX(-6deg); box-shadow: 5px 5px 0 #111 !important; transition: transform .15s cubic-bezier(.2,1.8,.4,1); }
+.vault .fin-actions .fin-replay { background: #ff1f8e !important; color: #fff !important; text-shadow: 2px 2px 0 #111; animation: fin-pulse 1.6s ease-in-out 1.4s 3; }
+.vault .fin-actions .fin-share { background: #fff !important; color: #111 !important; text-shadow: none; }
+.vault .fin-actions .btn:hover { transform: skewX(-6deg) translateY(-3px) scale(1.05); }
+.vault .fin-actions .btn:active { transform: skewX(-6deg) translateY(2px); box-shadow: 2px 2px 0 #111 !important; }
+.fin-wait { background: #fff; border: 3px dashed #111; padding: 8px 14px; font-family: var(--cmc); font-size: 18px; letter-spacing: .04em; color: #111; }
+@keyframes fin-pulse { 50% { transform: skewX(-6deg) scale(1.07); } }
+
+/* cinematic reveal: stamp slams in, then the winner panel; defeat is slower and desaturated */
+.vault.p-finished .winner.victory-stage { position: relative; }
+.vault.p-finished .winner.fin-win { animation: fin-flash .7s ease-out both; }
+.vault.p-finished .winner.fin-lose { animation: fin-sink .9s ease-out both; }
+.vault.p-finished .podium .award { animation: fin-pop .5s cubic-bezier(.2,1.6,.4,1) both; }
+.vault.p-finished .podium .award:nth-child(2) { animation-delay: .15s; } .vault.p-finished .podium .award:nth-child(3) { animation-delay: .3s; }
+@keyframes fin-stamp { from { transform: translateX(-50%) rotate(-5deg) scale(3); opacity: 0; } to { transform: translateX(-50%) rotate(-5deg) scale(1); opacity: 1; } }
+@keyframes fin-flash { 0% { filter: brightness(2.2); transform: scale(.94); } 100% { filter: none; transform: none; } }
+@keyframes fin-sink { 0% { transform: translateY(-14px) scale(1.04); filter: saturate(0); } 100% { transform: none; filter: none; } }
+@keyframes fin-pop { from { transform: translateY(28px) scale(.85); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .vault.p-finished .winner.fin-win, .vault.p-finished .winner.fin-lose, .vault.p-finished .podium .award, .vault .fin-actions .fin-replay { animation: none !important; }
+}
+
+/* ---- HUD tray v3: cream torn-paper strip with four ruled sections (locks | cards | hero | points), like the approved mockup ---- */
+.vault-rack .rack { filter: drop-shadow(5px 6px 0 #111); }
+.vault-rack .rack-inner.rack-inner.rack-inner { background: #f4f1e8 !important; background-image: radial-gradient(rgba(0,0,0,.07) 20%, transparent 24%) !important; background-size: 7px 7px !important;
+  border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding-top: 18px !important;
+  clip-path: polygon(0 10px, 3% 3px, 7% 11px, 12% 2px, 17% 10px, 23% 3px, 29% 11px, 35% 2px, 41% 9px, 47% 3px, 53% 11px, 59% 2px, 65% 10px, 71% 3px, 77% 11px, 83% 2px, 89% 10px, 95% 3px, 100% 9px, 100% 100%, 0 100%); }
+.vault-rack .rack-inner .sep { width: 3px !important; align-self: stretch; background: #111 !important; border: 0 !important; opacity: .85; }
+.vault-rack .rack-inner .sect-label { background: none !important; color: #111 !important; border: 0 !important; transform: rotate(-3deg); font-size: 17px !important; letter-spacing: .06em; padding: 0 !important; }
+.vault-rack .rack-inner .perkbtn, .vault-rack .rack-inner .perkbtn:disabled { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+.vault-rack .rack-inner .perkbtn .class-ico, .vault-rack .rack-inner .perkbtn > svg:first-child, .vault-rack .rack-inner .perkbtn > img:first-child {
+  background: #111 !important; border: 3px solid #111 !important; border-radius: 50% !important; padding: 3px; box-shadow: 2px 2px 0 #ff1f8e !important; color: #fff !important; }
+.vault-rack .rack-inner .perkbtn small { background: #d9d6cc; color: #111 !important; padding: 1px 8px; border-radius: 99px; font-family: var(--cmc); display: inline-block; }
+.vault-rack .rack-inner .perkbtn:not(:disabled) small { background: #ffd400; border: 2px solid #111; }
+.vault-rack .rack-inner .rack-pts { background: none !important; border: 0 !important; transform: none !important; text-align: center; }
+.vault-rack .rack-inner .rack-pts, .vault-rack .rack-inner .rack-pts * { color: #111 !important; text-shadow: none !important; font-size: 40px; line-height: 1; }
+.vault-rack .rack-inner .rack-pts .label, .vault-rack .rack-inner .rack-pts span { font-size: 17px !important; background: none !important; }
+/* locks pop in like inked stamps; a freshly cracked/placed lock thumps */
+.vault-rack .rack-inner .tile { animation: hud-stamp .35s cubic-bezier(.2,1.8,.4,1) both; }
+.vault-rack .rack-inner .tile:nth-child(2) { animation-delay: .05s; } .vault-rack .rack-inner .tile:nth-child(3) { animation-delay: .1s; } .vault-rack .rack-inner .tile:nth-child(4) { animation-delay: .15s; } .vault-rack .rack-inner .tile:nth-child(5) { animation-delay: .2s; }
+@keyframes hud-stamp { from { transform: scale(1.7) rotate(-10deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.vault-rack .rack-inner .cardbtn:not(:disabled):hover, .vault-rack .rack-inner .rack-card:not(:disabled):hover { transform: translateY(-4px) rotate(-2deg); }
+
+/* typing feedback: answer field inks a thick underline and wobbles on each key; Lock it in pulses once a word is ready */
+.vault .answer-input:focus, .vault input.input:focus { outline: 0; box-shadow: 0 5px 0 var(--p); }
+.vault .answer-input.typing, .vault input.input.typing { animation: hud-key .09s ease-out; }
+@keyframes hud-key { 50% { transform: translateY(-2px) rotate(-.4deg); } }
+
+/* attack / block popups: comic burst panels */
+.vault .action-banner, .action-feed .action-banner { background: #fff !important; color: #111 !important; border: 4px solid #111 !important; border-radius: 3px !important; box-shadow: 6px 6px 0 #111 !important; backdrop-filter: none !important;
+  font-family: var(--cmc, Bangers, Impact), sans-serif; letter-spacing: .03em; transform: rotate(-1.5deg); position: relative; overflow: visible; }
+.action-feed .action-banner::before { content: ''; position: absolute; z-index: -1; inset: -16px -22px; background: #ffd400; opacity: .95;
+  clip-path: polygon(0 50%, 6% 30%, 3% 8%, 16% 22%, 24% 0, 33% 20%, 44% 4%, 50% 22%, 60% 2%, 67% 22%, 78% 6%, 83% 24%, 96% 10%, 93% 34%, 100% 50%, 94% 68%, 98% 92%, 84% 78%, 76% 100%, 66% 80%, 55% 98%, 48% 80%, 38% 100%, 30% 80%, 18% 94%, 16% 76%, 4% 88%, 7% 66%); animation: fd-burst .35s cubic-bezier(.2,1.8,.4,1) both; }
+.action-feed .action-banner.hit::before { background: #ff1f4a; }
+.action-feed .action-banner.hack::before { background: #7bff4a; }
+.action-feed .action-banner.block::before, .action-feed .action-banner.absorb::before { background: #34d8f0; }
+.action-feed .action-banner.cleanse::before { background: #b69cff; }
+.action-feed .action-banner .txt { font-size: 21px; color: #111 !important; }
+.action-feed .action-banner .txt em { color: #c4006b !important; opacity: 1; }
+.action-feed .action-banner .arrow { border: 3px solid #111; color: #fff; }
+.action-feed .action-banner.block .arrow, .action-feed .action-banner.absorb .arrow { background: #0b6f8a; animation: fd-clang .5s ease-out .1s; }
+.action-feed .action-banner.hit { animation: fd-shake .3s ease-out; }
+@keyframes fd-burst { from { transform: scale(.3) rotate(-12deg); opacity: 0; } to { transform: none; opacity: .95; } }
+@keyframes fd-clang { 0% { transform: scale(1); } 25% { transform: scale(1.5) rotate(-14deg); } 50% { transform: scale(.9) rotate(8deg); } 100% { transform: none; } }
+@keyframes fd-shake { 0%, 100% { translate: 0; } 20% { translate: -6px 2px; } 40% { translate: 5px -2px; } 60% { translate: -3px 1px; } 80% { translate: 2px 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .vault-rack .rack-inner .tile, .action-feed .action-banner::before, .action-feed .action-banner .arrow, .action-feed .action-banner.hit, .vault input.input.typing { animation: none !important; }
+}
+@media (max-width: 700px) { .action-feed .action-banner .txt { font-size: 17px; } .vault-rack .rack-inner .rack-pts, .vault-rack .rack-inner .rack-pts * { font-size: 30px; } }
+
+/* fixes from live check: medals sit above the card, Share text visible */
+.vault.p-finished .podium { margin-top: 44px !important; }
+.vault.p-finished .podium .award { padding-top: 28px !important; }
+.vault.p-finished .podium .award:has(.tier-ein) { padding-top: 36px !important; }
+.vault.p-finished .podium .award .medal { top: -40px; width: 50px; height: 50px; }
+.vault.p-finished .podium .award .medal.tier-ein { top: -50px; width: 62px; height: 62px; }
+.vault .fin-actions .btn.fin-share, .vault .fin-actions .btn.fin-share * { color: #111 !important; -webkit-text-fill-color: #111 !important; text-shadow: none !important; }
+.vault .fin-actions .btn.fin-replay { -webkit-text-fill-color: #fff !important; }
+.vault.p-finished .podium .award::before { display: none !important; }
+
+/* phone: Replay/Share stay on screen; compact finale in landscape; tidy the crowded header */
+@media (max-width: 899px) and (orientation: portrait) {
+  .vault.p-finished .fin-actions.fin-actions { position: sticky !important; bottom: 12px; z-index: 30; padding: 6px 0; }
+  .vault.p-finished .fin-actions .btn { font-size: 19px !important; padding: 8px 20px !important; }
+}
+@media (max-width: 520px) {
+  .vault-shell .topbar .wordmark, .vault-shell .topbar .logo { display: none !important; }
+  .vault.p-finished .podium { gap: 8px; }
+  .vault.p-finished .podium .award .who { font-size: 16px; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .vault.p-finished .v-verdict b { font-size: clamp(34px, 9vh, 56px) !important; }
+  .vault.p-finished .winner h1 { font-size: clamp(30px, 9vh, 48px) !important; }
+  .vault.p-finished .winner > div:first-child { transform: scale(.6); margin: -26px 0; }
+  .vault.p-finished .v-content { display: grid !important; grid-template-columns: 1fr 1.2fr; gap: 8px 16px; }
+  .vault.p-finished .v-content > .winner { grid-column: 1; grid-row: 1 / span 3; }
+  .vault.p-finished .v-content > .podium, .vault.p-finished .v-content > .locks-table, .vault.p-finished .v-content > .xp-card { grid-column: 2; margin: 0; }
+  .vault.p-finished .v-content > .fin-actions { grid-column: 1 / -1; }
+}
+
+/* HUD tray on phones: 2x2 grid (locks | cards / hero | points); landscape: one slim row */
+@media (max-width: 700px) {
+  .vault-rack .rack-inner.rack-inner.rack-inner { display: grid !important; grid-template-columns: 1fr 1fr; gap: 6px 10px; padding: 18px 10px 10px !important; }
+  .vault-rack .rack-inner .sep { display: none !important; }
+  .vault-rack .rack-inner .rack-pts { display: flex !important; flex-direction: column; align-items: center; justify-content: center; grid-column: 2; }
+  .vault-rack .rack-inner .rack-pts, .vault-rack .rack-inner .rack-pts * { font-size: 28px; }
+  .vault-rack .rack-inner .rack-pts .label, .vault-rack .rack-inner .rack-pts span { font-size: 14px !important; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .vault-rack .rack-inner.rack-inner.rack-inner { display: flex !important; flex-wrap: nowrap; align-items: center; gap: 8px; padding: 14px 10px 6px !important; }
+  .vault-rack .rack-inner .sep { display: block !important; }
+  .vault-rack .rack-inner .rack-pts { display: flex !important; flex-direction: row; gap: 6px; align-items: baseline; margin-left: auto; }
+  .vault-rack .rack-inner .rack-pts, .vault-rack .rack-inner .rack-pts * { font-size: 24px; }
+  .vault-rack .rack-inner .rack-pts .label, .vault-rack .rack-inner .rack-pts span { font-size: 13px !important; }
+  .vault-rack .rack-inner .sect-label { font-size: 14px !important; }
+  .vault-rack .rack-inner .perkbtn small, .vault-rack .rack-inner .cardbtn small { display: none; }
+}
+
+/* keep play content clear of the fixed HUD tray; tidy header in short landscape */
+@media (max-width: 700px) { .vault:not(.p-finished):not(.p-lobby) .v-content { padding-bottom: 150px !important; } }
+@media (max-height: 520px) and (orientation: landscape) {
+  .vault:not(.p-finished):not(.p-lobby) .v-content { padding-bottom: 80px !important; }
+  .vault-shell .topbar .wordmark, .vault-shell .topbar .logo { display: none !important; }
+}
+
+/* Classic answer phase: restrained heist tension. Everything is pointer-events:none, behind the UI, low contrast. */
+@keyframes vc-laser { 0% { transform: translateY(-4vh); opacity: 0; } 8% { opacity: .55; } 50% { opacity: .55; } 92% { opacity: .55; } 100% { transform: translateY(104vh); opacity: 0; } }
+@keyframes vc-dialturn { to { transform: rotate(360deg); } }
+.vault.p-answer::before { content: ''; position: fixed; left: 0; right: 0; top: 0; height: 3px; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg, transparent, #ff1f8e 15%, #ff1f8e 85%, transparent); box-shadow: 0 0 10px 2px rgba(255,31,142,.55); animation: vc-laser 7s linear infinite; }
+.vault.p-answer.tense::before { animation-duration: 3.5s; background: linear-gradient(90deg, transparent, #e5002b 15%, #e5002b 85%, transparent); box-shadow: 0 0 12px 3px rgba(229,0,43,.6); }
+/* blueprint corner ticks + halftone */
+.vault.p-answer::after { content: ''; position: fixed; inset: 10px; z-index: 1; pointer-events: none; opacity: .4;
+  background:
+    linear-gradient(#111,#111) top left / 34px 3px no-repeat, linear-gradient(#111,#111) top left / 3px 34px no-repeat,
+    linear-gradient(#111,#111) top right / 34px 3px no-repeat, linear-gradient(#111,#111) top right / 3px 34px no-repeat,
+    linear-gradient(#111,#111) bottom left / 34px 3px no-repeat, linear-gradient(#111,#111) bottom left / 3px 34px no-repeat,
+    linear-gradient(#111,#111) bottom right / 34px 3px no-repeat, linear-gradient(#111,#111) bottom right / 3px 34px no-repeat; }
+.vault.p-answer .v-dial svg { transform-origin: 50% 50%; animation: vc-dialturn 24s linear infinite; }
+.vault.p-answer .v-dial.urgent svg { animation-duration: 3s; }
+.vault.p-answer .v-dial-num { position: relative; }
+@media (prefers-reduced-motion: reduce) {
+  .vault.p-answer::before { animation: none; opacity: 0; }
+  .vault.p-answer .v-dial svg { animation: none; }
+}
+
+/* attack / ability pickers: light comic panel so names + cards are always readable above the rack */
+.vault-rack .rack-inner .popover, .vault .popover {
+  background: #fff !important; background-image: none !important; color: #111 !important;
+  border: 4px solid #111 !important; border-radius: 4px !important; box-shadow: 5px 5px 0 #ff1f8e, 5px 5px 0 3px #111 !important;
+  z-index: 60 !important; max-height: min(52vh, 360px); overflow-y: auto; min-width: min(220px, 80vw); padding: 10px 12px;
+}
+.vault-rack .rack-inner .popover *, .vault .popover * { color: #111 !important; text-shadow: none !important; opacity: 1 !important; }
+.vault-rack .rack-inner .popover .label, .vault .popover .label { background: #ffe500 !important; border: 2px solid #111; padding: 2px 8px; align-self: flex-start; font-family: var(--dsp); letter-spacing: .06em; text-transform: uppercase; font-size: 12px; }
+.vault-rack .rack-inner .popover .btn, .vault .popover .btn { background: #f4f1e8 !important; border: 3px solid #111 !important; box-shadow: 3px 3px 0 #111 !important; border-radius: 3px !important; justify-content: flex-start; min-height: 40px; }
+.vault-rack .rack-inner .popover .btn:hover, .vault .popover .btn:hover { background: #ffe500 !important; }
+.vault-rack, .vault-rack .rack, .vault-rack .rack-inner { overflow: visible !important; }
+.vault-rack { z-index: 40; }
+
+/* the torn-paper clip-path on the rack cuts off anything that rises above it: lift it while a picker is open */
+.vault-rack .rack-inner:has(.popover), .rack-inner:has(.popover) { clip-path: none !important; -webkit-clip-path: none !important; }

@@ -7,18 +7,20 @@ import { Wordmark } from '@/components/ui';
 import { CARD_INFO, CLASSES, CLASS_ORDER } from '@/lib/classes';
 import { Rich, useT } from '@/lib/i18n/react';
 import type { CardKind } from '@/lib/types';
+import '@/app/comic.css';
+import '@/app/rules-comic.css';
 
 const CDN = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU';
 const MODE_VIDEOS = [
-  { id: '264c39d9-823b-4fcf-81ae-739cb8789067', name: 'Classic', blurb: 'Lock a secret word, crack your rivals.' },
-  { id: '3599d026-942b-447e-a9bf-dffa609bd95c', name: 'Duel', blurb: 'One street, two players, fastest draw.' },
-  { id: '79313477-bf76-4532-95f2-efe9ff10bc1c', name: 'Mastermind', blurb: 'Hide a word, drop clues, crack it first.' },
+  { id: '264c39d9-823b-4fcf-81ae-739cb8789067', name: 'Classic', blurb: 'Lock a secret word, crack your rivals.', soon: false },
+  { id: '3599d026-942b-447e-a9bf-dffa609bd95c', name: 'Duel', blurb: 'One street, two players, fastest draw.', soon: true },
+  { id: '79313477-bf76-4532-95f2-efe9ff10bc1c', name: 'Mastermind', blurb: 'Hide a word, drop clues, crack it first.', soon: true },
 ];
 
 export default function HowToPlay() {
   const t = useT();
   return (
-    <main className="shell narrow rules">
+    <main className="shell narrow rules rules-comic">
       <header className="topbar">
         <Wordmark />
         <Link href="/" className="btn sm">{t('rl.play')}</Link>
@@ -28,8 +30,8 @@ export default function HowToPlay() {
       <section className="mode-videos" aria-label="Mode walkthroughs">
         {MODE_VIDEOS.map((v) => (
           <figure key={v.id} className="mode-video">
-            <video controls playsInline preload="metadata" src={`${CDN}/${v.id}.mp4`} aria-label={`${v.name} how to play`} />
-            <figcaption><b>{v.name}</b> — {v.blurb}</figcaption>
+            <video controls playsInline preload="metadata" src={`${CDN}/${v.id}.mp4#t=0.1`} aria-label={`${v.name} how to play`} />
+            <figcaption><b>{v.name}</b>{v.soon ? <em className="mv-soon">Coming soon</em> : null} — {v.blurb}</figcaption>
           </figure>
         ))}
       </section>
@@ -84,15 +86,6 @@ export default function HowToPlay() {
           <span><b>{CLASSES[c].name}</b> — {CLASSES[c].perk} <i className="muted">{t('rl.catch')}</i> {CLASSES[c].cost}</span>
         </div>
       ))}
-
-      <h2>{t('rl.duel')}</h2>
-      <p><Rich k="rl.duel_p" /></p>
-      <h2>{t('tm.rules_title')}</h2>
-      <p><Rich k="tm.rules_p" /></p>
-      <h2>{t('rl.1v1')}</h2>
-      <p><Rich k="rl.1v1_p" /></p>
-      <h2>{t('rl.chaos')}</h2>
-      <p><Rich k="rl.chaos_p" /></p>
 
       <h2>{t('rl.titles')}</h2>
       <div className="line"><span style={{ color: '#ffcf4a' }}><Icon name="trophy" size={24} /></span><span><Rich k="rl.t_champ" /></span></div>

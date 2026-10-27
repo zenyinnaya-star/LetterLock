@@ -2,10 +2,13 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { AvatarPicker } from '@/components/AvatarPicker';
 import { LoadoutEditor } from '@/components/LoadoutEditor';
 import { BackLink, Header } from '@/components/ui';
 import { ClassIcon, Icon } from '@/components/icons';
+import '@/app/profile-comic.css';
 import { ACHIEVEMENTS } from '@/lib/achievements';
+import { loadAvatar, saveAvatar } from '@/lib/avatar';
 import { useT } from '@/lib/i18n/react';
 import { CLASSES } from '@/lib/classes';
 import { badgeLabel, nextTierXp, tierName, TIER_XP, type Mastery } from '@/lib/mastery';
@@ -19,6 +22,8 @@ export default function ProfilePage() {
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [copied, setCopied] = useState(false);
   const [m, setM] = useState<Mastery | null>(null);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  useEffect(() => { setAvatar(loadAvatar()); }, []);
 
   const load = () => { void fetchProfile().then((x) => { setP(x); setReady(true); }); void fetchMastery().then(setM); };
   useEffect(() => { if (getStored()) load(); else setReady(true); }, []);
@@ -50,6 +55,9 @@ export default function ProfilePage() {
       <BackLink />
       <div className="sheet profile-page pf2">
         <h1 className="stage-title">{t('pf.prof')}</h1>
+        <div className="pf-avatar" style={{ display: 'flex', justifyContent: 'center', margin: '14px 0 16px', padding: '0 14px' }}>
+          <AvatarPicker name={p?.name ?? ''} url={avatar} onChange={(u) => { setAvatar(u); saveAvatar(u); }} />
+        </div>
         {ready && !p && <p className="muted center">{t('pf.empty')}</p>}
         {p && (
           <>

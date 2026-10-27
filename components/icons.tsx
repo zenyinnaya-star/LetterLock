@@ -162,6 +162,9 @@ function ClassBadge({ cls, size, className }: { cls: PlayerClass; size: number; 
 }
 
 /** Painted Higgsfield portrait with a class-coloured ring; falls back to the SVG badge if the art is missing. */
+const comicOk = new Set<PlayerClass>();
+const comicBad = new Set<PlayerClass>();
+
 export function ClassIcon({ cls, size = 32, className }: { cls: PlayerClass; size?: number; className?: string }) {
   const [broken, setBroken] = useState(() => failedArt.has(cls));
   if (broken) return <ClassBadge cls={cls} size={size} className={className} />;
@@ -171,9 +174,13 @@ export function ClassIcon({ cls, size = 32, className }: { cls: PlayerClass; siz
       style={{ width: size, height: size, borderRadius: Math.max(8, size * 0.26), boxShadow: `0 0 0 ${size >= 60 ? 3 : 2}px ${a}` }}
       aria-hidden>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={`/art/class-${cls}.webp`} alt="" width={size} height={size} draggable={false}
+      <img src={comicOk.has(cls) || !comicBad.has(cls) ? `/art/comic/class-${cls}.webp` : `/art/class-${cls}.webp`} alt="" width={size} height={size} draggable={false}
         ref={(el) => { if (el && el.complete && el.naturalWidth === 0) queueMicrotask(() => { failedArt.add(cls); setBroken(true); }); }}
-        onError={() => { failedArt.add(cls); setBroken(true); }} />
+        onLoad={() => { comicOk.add(cls); }}
+        onError={(e) => {
+          if (!comicBad.has(cls)) { comicBad.add(cls); e.currentTarget.src = `/art/class-${cls}.webp`; return; }
+          failedArt.add(cls); setBroken(true);
+        }} />
     </span>
   );
 }

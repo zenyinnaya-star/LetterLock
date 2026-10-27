@@ -32,6 +32,9 @@ import '@/app/siege.css';
 import { SiegeFinale, TeamSiege } from './TeamSiege';
 import { siegeArtVars } from '@/lib/siegeArt';
 import '@/app/vault.css';
+import '@/app/vault-comic.css';
+import '@/app/comic.css';
+import { burst, shake } from '@/lib/comicFx';
 import { VaultFinale, VaultHeist, VaultShowdown } from './VaultHeist';
 import { vaultArtVars } from '@/lib/vaultArt';
 import { TeamHud, teamLabel } from './team';
@@ -79,6 +82,37 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
   const vault = classic && !west && ['duel_intro', 'answer', 'reveal', 'guess', 'react'].includes(phase);
   const vaultLobby = classic && phase === 'lobby' && !storyLobby;
   const vaultEnd = classic && phase === 'finished' && !westEnd;
+  // comic slash sweeps across on every phase change so screens never pop-swap
+  const lastPhase = useRef(phase);
+  useEffect(() => {
+    if (lastPhase.current === phase) return;
+    lastPhase.current = phase;
+    if (!(vault || vaultLobby || vaultEnd)) return;
+    try { if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch { /* ignore */ }
+    const w = document.createElement('div'); w.className = 'vc-phasewipe'; document.body.appendChild(w);
+    window.setTimeout(() => w.remove(), 900);
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Comic Pop VFX: POW / BAM bursts on taps, and a screen shake + big burst on the big moments
+  useEffect(() => {
+    if (!(vault || vaultLobby || vaultEnd)) return;
+    const words = ['POW!', 'BAM!', 'ZAP!', 'WHAM!'];
+    let n = 0;
+    const onClick = (e: MouseEvent) => {
+      const el = (e.target as HTMLElement | null)?.closest?.('.vault .btn, .vault .key, .vault .target, .v-lobby .btn');
+      if (el) burst(e.clientX, e.clientY, words[n++ % words.length]);
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, [vault, vaultLobby, vaultEnd]);
+  useEffect(() => {
+    if (!(vault || vaultEnd)) return;
+    const t = window.setTimeout(() => {
+      const root = document.querySelector<HTMLElement>('.vault');
+      if (phase === 'reveal') { burst(window.innerWidth / 2, window.innerHeight * 0.38, 'BOOM!'); shake(root); }
+      if (phase === 'finished') { burst(window.innerWidth / 2, window.innerHeight * 0.3, 'KA-POW!'); shake(root); }
+    }, 350);
+    return () => window.clearTimeout(t);
+  }, [phase, vault, vaultEnd]);
 
   const act: Act = useCallback(async (fn, okMsg) => {
     audio.unlock();
@@ -238,6 +272,13 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
     if (token) { try { await rpc.leave(token); } catch { /* ignore */ } }
     clearSession(state.room.code);
     window.setTimeout(() => { window.location.href = '/'; }, delayMs);
+  }
+  // quitting mid-game: show the defeat end screen and wait for the player to choose, never bounce home on a timer
+  const [quitEnd, setQuitEnd] = useState(false);
+  async function quitToEnd() {
+    setQuitEnd(true);
+    if (token) { try { await rpc.leave(token); } catch { /* ignore */ } }
+    clearSession(state.room.code);
   }
 
   const midGame = phase !== 'lobby' && phase !== 'finished' && !!me && !me.eliminated;
@@ -416,6 +457,19 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
       <Reactions state={state} token={token} />
       {state.room.settings?.mode === 'team' && <TeamVoice state={state} token={token} />}
       <ActionFeed state={state} token={token} />
+      {quitEnd && (
+        <div className="quit-end" role="dialog" aria-modal="true" aria-label="You quit">
+          <div className="quit-end-card">
+            <span className="quit-end-tag">GAME OVER</span>
+            <h2>YOU CHICKENED OUT</h2>
+            <p>You left the heist. The crew plays on without you.</p>
+            <div className="quit-end-btns">
+              <a className="btn lg" href="/play">PLAY AGAIN</a>
+              <a className="btn ghost lg" href="/">BACK TO HOME</a>
+            </div>
+          </div>
+        </div>
+      )}
       <AnimatePresence>
         {confirmQuit && (
           <motion.div className="sheet-backdrop" onClick={() => setConfirmQuit(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -429,7 +483,7 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
               <p className="muted">{t('gm.quit_body')}</p>
               <div className="row" style={{ justifyContent: 'center', gap: 10 }}>
                 <button className="btn ghost" onClick={() => setConfirmQuit(false)}>{t('gm.keep')}</button>
-                <button className="btn danger" onClick={() => { audio.chicken(); setConfirmQuit(false); void leave(2400); }}>{t('gm.quit_anyway')}</button>
+                <button className="btn danger" onClick={() => { audio.chicken(); setConfirmQuit(false); void quitToEnd(); }}>{t('gm.quit_anyway')}</button>
               </div>
               {canSitOut && (
                 <button className="btn sm ghost" style={{ marginTop: 12 }} onClick={() => { setConfirmQuit(false); if (token) void act(() => rpc.setHostMode(token, false)); }}>

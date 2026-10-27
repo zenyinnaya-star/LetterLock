@@ -9,6 +9,7 @@ import { prepareAnswer } from '@/lib/answer';
 import { Rich, useT } from '@/lib/i18n/react';
 import type { Key } from '@/lib/i18n/en';
 import { rpc } from '@/lib/rpc';
+import { shareOrigin } from '@/lib/site';
 import { useTeamExtra } from '@/hooks/useTeamExtra';
 import { narrator } from '@/lib/narrator';
 import type { RoomState } from '@/lib/types';
@@ -171,7 +172,7 @@ export function AnswerPhase({ state, token, msLeft, act }: PhaseProps) {
           <form className="col" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
             <input ref={inputRef} className="input word" value={word} maxLength={30} autoCapitalize="off" autoComplete="off"
               autoCorrect="off" spellCheck={false} placeholder={t('ph.type')} lang={lang}
-              onChange={(e) => { setWord(e.target.value); sendDraft(e.target.value); }} aria-label={t('ph.your_answer')} />
+              onChange={(e) => { const el = e.target; setWord(el.value); sendDraft(el.value); el.classList.remove('typing'); void el.offsetWidth; el.classList.add('typing'); }} aria-label={t('ph.your_answer')} />
             {(lang === 'ja' || lang === 'zh' || lang === 'es' || lang === 'fr' || lang === 'de') && (
               <div className="muted small input-hint">{lang === 'ja' ? t('ph.input_ja') : lang === 'zh' ? t('ph.input_zh') : t('ph.input_accents')}</div>
             )}
@@ -515,6 +516,23 @@ export function Finished({ state, token, act }: PhaseProps) {
   const teamMode = state.room.settings.mode === 'team' && (state.teams?.length ?? 0) === 2;
   const wt = teamMode ? state.teams!.find((x) => x.idx === state.room.winner_team) : undefined;
   const tie = teamMode && !wt;
+  const [shared, setShared] = useState<null | 'ok' | 'fail'>(null);
+  const me = state.me;
+  const result = !me ? 'spec' : teamMode ? (wt && me.team_id === wt.id ? 'win' : 'lose') : state.room.winner_id === me.id ? 'win' : 'lose';
+  async function shareResult() {
+    const url = `${shareOrigin()}/play`;
+    const top = winner ? `${winner.name} cracked the vault` : 'The vault is open';
+    const text = result === 'win' ? `I won on LetterLock! Can you beat me?` : `${top} on LetterLock. Think you can do better?`;
+    try {
+      if (typeof navigator !== 'undefined' && navigator.share) { await navigator.share({ title: 'LetterLock', text, url }); return; }
+    } catch (e) { if ((e as Error)?.name === 'AbortError') return; }
+    const msg = `${text} ${url}`;
+    let ok = false;
+    try { await Promise.race([navigator.clipboard.writeText(msg), new Promise((_, rej) => window.setTimeout(() => rej(new Error('timeout')), 1500))]); ok = true; } catch {
+      try { const ta = document.createElement('textarea'); ta.value = msg; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch { /* blocked */ }
+    }
+    setShared(ok ? 'ok' : 'fail'); window.setTimeout(() => setShared(null), 2600);
+  }
   const awards = [
     { key: 'champ', icon: 'trophy' as const, color: '#ffcf4a', title: t('fn.champ'), who: tt?.champion, sub: t('fn.champ_sub') },
     { key: 'ein', icon: 'bulb' as const, color: '#b69cff', title: t('fn.ein'), who: tt?.einstein, sub: t('fn.ein_sub') },
@@ -522,7 +540,7 @@ export function Finished({ state, token, act }: PhaseProps) {
   ];
   return (
     <>
-      <div className="winner victory-stage">
+      <div className={`winner victory-stage fin-${result}`}>
         {teamMode && wt && (
           <motion.div initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 14 }}>
             <TeamImage team={wt} size={120} />
@@ -552,7 +570,7 @@ export function Finished({ state, token, act }: PhaseProps) {
       <div className="podium">
         {awards.map((a, i) => (
           <motion.div key={a.key} className="award" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ ...spring, delay: 0.45 + i * 0.15 }}>
-            <div className="medal" style={{ background: `${a.color}22`, color: a.color }}><Icon name={a.icon} size={28} /></div>
+            <div className={`medal tier-${a.key}`} style={{ ['--mc' as string]: a.color }}><Icon name={a.icon} size={a.key === 'ein' ? 34 : 28} /></div>{a.key === 'ein' && <span className="tier-ribbon">Legend</span>}
             <div className="title">{a.title}</div>
             <div className="who">{a.who ? nameOf(state, a.who) : t('fn.nobody')}</div>
             <div className="muted small">{a.sub}</div>
@@ -571,10 +589,11 @@ export function Finished({ state, token, act }: PhaseProps) {
           </div>
         ))}
       </div>
-      <div className="row" style={{ justifyContent: 'center' }}>
+      <div className="fin-actions">
         {isHost && token
-          ? <button className="btn lg" onClick={() => void act(() => rpc.playAgain(token))}>{t('fn.again')}</button>
-          : <span className="muted">{t('fn.wait')}</span>}
+          ? <button className="btn lg fin-replay" onClick={() => void act(() => rpc.playAgain(token))}>{t('fn.again')}</button>
+          : <span className="fin-wait">{t('fn.wait')}</span>}
+        <button type="button" className="btn lg fin-share" onClick={() => void shareResult()}>{shared === 'ok' ? 'Link copied!' : shared === 'fail' ? 'Copy failed' : 'Share'}</button>
       </div>
     </>
   );
