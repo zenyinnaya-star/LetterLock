@@ -1,5 +1,6 @@
 'use client';
 
+import '@/app/settings-comic.css';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { getPrefs, setPref, type Prefs } from '@/lib/prefs';

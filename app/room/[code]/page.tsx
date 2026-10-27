@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { linkProfile } from '@/lib/profile';
 import { STARTERS, fetchHeroState } from '@/lib/loadout';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AvatarPicker } from '@/components/AvatarPicker';
 import { Game } from '@/components/Game';
@@ -18,6 +18,7 @@ import { useT } from '@/lib/i18n/react';
 import { rpc } from '@/lib/rpc';
 import { clearSession, loadName, loadSession, saveName, saveSession } from '@/lib/session';
 import type { PlayerClass } from '@/lib/types';
+import '@/app/comic.css';
 import { ComingSoon } from '@/components/ComingSoon';
 import { isLockedRoom } from '@/lib/modes';
 
@@ -65,12 +66,20 @@ export default function RoomPage() {
   if (isLockedRoom(state.room.settings)) return <ComingSoon name={state.room.settings.mode === 'duel' ? 'Duel' : state.room.settings.mode === 'team' ? 'Siege' : 'Twist rooms'} />;
 
   if (!state.me && state.room.phase === 'lobby') {
-    return <JoinHere code={code} onJoined={(tk) => { setToken(tk); void refresh(); }} />;
+    return <JoinRedirect code={code} />;
   }
 
   return <Game state={state} token={state.me ? token : null} offset={offset} refresh={refresh} bots={botIds} botInfo={botInfo} pingBots={pingBots} />;
 }
 
+/** QR / link joins use the comic class-select screen so every entry path looks the same. */
+function JoinRedirect({ code }: { code: string }) {
+  const router = useRouter();
+  useEffect(() => { router.replace(`/play/class?mode=join&code=${code}`); }, [router, code]);
+  return <main className="cp cp-pick"><div className="cp-sky" aria-hidden /></main>;
+}
+
+// kept for reference of the old join form; no longer rendered
 function JoinHere({ code, onJoined }: { code: string; onJoined: (token: string) => void }) {
   const t = useT();
   const [name, setName] = useState('');

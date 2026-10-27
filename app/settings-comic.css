@@ -1,0 +1,20 @@
+/* Settings sheet: Comic Pop skin (shared by lobby and in-game) */
+.sheet-backdrop { background: rgba(17,17,17,.62) !important; backdrop-filter: none !important; z-index: 1300; }
+.sheet-backdrop .msheet { background: #f4f1e8 !important; background-image: radial-gradient(rgba(0,0,0,.06) 20%, transparent 24%) !important; background-size: 7px 7px !important; color: #111 !important;
+  border: 5px solid #111 !important; border-left-width: 5px !important; border-radius: 3px !important; box-shadow: 9px 9px 0 #ff1f8e, 9px 9px 0 4px #111 !important; max-height: min(86vh, 760px); overflow-y: auto; }
+.sheet-backdrop .msheet::before, .sheet-backdrop .msheet::after { display: none !important; }
+.sheet-backdrop .msheet .sheet-head { background: #ff1f8e; margin: -4px -4px 14px; padding: 10px 14px; border-bottom: 5px solid #111; display: flex; align-items: center; justify-content: space-between; position: sticky; top: -4px; z-index: 2; }
+.sheet-backdrop .msheet .sheet-head h2 { margin: 0; font-family: 'LL Display','Luckiest Guy',Impact,sans-serif; font-weight: 400; font-size: 28px; color: #fff; -webkit-text-stroke: .05em #111; paint-order: stroke fill; text-shadow: 3px 3px 0 #111; text-transform: uppercase; display: flex; gap: 8px; align-items: center; }
+.sheet-backdrop .msheet .iconbtn { background: #fff !important; color: #111 !important; border: 3px solid #111 !important; border-radius: 3px !important; box-shadow: 3px 3px 0 #111 !important; }
+.sheet-backdrop .msheet, .sheet-backdrop .msheet * { text-shadow: none; }
+.sheet-backdrop .msheet .sheet-head h2 { text-shadow: 3px 3px 0 #111; }
+.sheet-backdrop .msheet .label, .sheet-backdrop .msheet .set-label { color: #111 !important; font-family: 'LL Comic', Bangers, Impact, sans-serif; letter-spacing: .08em; font-size: 18px; text-transform: uppercase; }
+.sheet-backdrop .msheet .muted, .sheet-backdrop .msheet .small { color: #3a3a3a !important; }
+.sheet-backdrop .msheet .set-row { border-bottom: 3px dashed rgba(0,0,0,.25); padding: 10px 0; }
+.sheet-backdrop .msheet .seg { background: transparent !important; border: 0 !important; gap: 6px; display: flex; flex-wrap: wrap; }
+.sheet-backdrop .msheet .seg button, .sheet-backdrop .msheet .btn, .sheet-backdrop .msheet select, .sheet-backdrop .msheet input[type=text], .sheet-backdrop .msheet .input {
+  background: #fff !important; color: #111 !important; border: 3px solid #111 !important; border-radius: 3px !important; box-shadow: 3px 3px 0 #111 !important; font-family: 'LL Comic', Bangers, Impact, sans-serif; letter-spacing: .04em; font-size: 17px; min-height: 40px; }
+.sheet-backdrop .msheet .seg button[aria-checked='true'], .sheet-backdrop .msheet .seg button.on, .sheet-backdrop .msheet .btn.on { background: #ff1f8e !important; color: #fff !important; text-shadow: 2px 2px 0 #111; }
+.sheet-backdrop .msheet input[type=range] { accent-color: #ff1f8e; }
+.sheet-backdrop .msheet input[type=checkbox] { accent-color: #ff1f8e; width: 22px; height: 22px; }
+@media (max-width: 600px) { .sheet-backdrop .msheet { width: calc(100vw - 20px) !important; max-height: 88vh; } }
