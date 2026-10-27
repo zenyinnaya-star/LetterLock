@@ -274,3 +274,14 @@
 .vault .podium .award::before { background: var(--y); border: 3px solid var(--k); color: var(--k); font-family: var(--dsp); font-size: 12px; }
 .vault .summary, .vault .locks-table, .vault .recap { background: #f4f1e8 !important; }
 .vault.p-finished .btn { font-size: 22px; }
+
+/* notes must stay readable: dark ink on the pastel comic fills */
+.vault .note, .vault .note.ok, .vault .note.bad, .vault .note.info,
+.vault .banner, .vault .banner.out, .vault .banner.info, .vault .hint {
+  color: var(--k) !important; font-family: var(--cmc); font-size: 17px; letter-spacing: .02em; }
+.vault .note.bad { background: #ffc2cf !important; border-color: var(--alarm) !important; }
+.vault .note.ok { background: #b6f5c9 !important; }
+.vault .note *, .vault .banner *, .vault .hint * { color: var(--k) !important; }
+/* HUD labels: horizontal yellow comic tags, never sideways */
+.vault-rack .sect-label, .vault-rack .rack .sect-label { writing-mode: horizontal-tb !important; text-orientation: mixed !important; transform: skewX(-8deg) !important; white-space: nowrap; }
+.vault-rack .rack-pts .label, .vault-rack .rack-pts span { background: var(--y) !important; color: var(--k) !important; font-family: var(--dsp) !important; padding: 2px 9px; border: 2px solid var(--k); transform: skewX(-8deg); display: inline-block; font-size: 13px !important; text-shadow: none !important; }
