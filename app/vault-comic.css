@@ -285,3 +285,17 @@
 /* HUD labels: horizontal yellow comic tags, never sideways */
 .vault-rack .sect-label, .vault-rack .rack .sect-label { writing-mode: horizontal-tb !important; text-orientation: mixed !important; transform: skewX(-8deg) !important; white-space: nowrap; }
 .vault-rack .rack-pts .label, .vault-rack .rack-pts span { background: var(--y) !important; color: var(--k) !important; font-family: var(--dsp) !important; padding: 2px 9px; border: 2px solid var(--k); transform: skewX(-8deg); display: inline-block; font-size: 13px !important; text-shadow: none !important; }
+
+/* finale readability: subtitle, winner line, XP strip and stats on the pink band */
+.vault.p-finished .v-verdict span, .vault.p-finished .winner .muted { color: var(--k) !important; background: #fff; display: inline-block; padding: 3px 14px; border: 3px solid var(--k); transform: skewX(-6deg); font-size: 16px; box-shadow: 3px 3px 0 var(--k); }
+.vault.p-finished .winner h1 { color: #fff !important; -webkit-text-fill-color: #fff !important; -webkit-text-stroke: .07em var(--k);
+  text-shadow: .04em .04em 0 var(--p), .08em .08em 0 var(--k) !important; }
+/* everything below the awards sits on a white comic slab so it is always legible */
+.vault.p-finished .summary, .vault.p-finished .recap, .vault.p-finished .xp-row, .vault.p-finished .xp, .vault.p-finished .locks-table {
+  background: #f4f1e8 !important; border: 3px solid var(--k) !important; box-shadow: 4px 4px 0 var(--k); padding: 10px 14px; }
+.vault.p-finished .summary *, .vault.p-finished .recap *, .vault.p-finished .xp-row *, .vault.p-finished .xp * { color: var(--k) !important; text-shadow: none !important; }
+.vault.p-finished .v-door .v-content > * { position: relative; z-index: 2; }
+.vault.p-finished .v-content { background: rgba(255,255,255,.92); border: 4px solid var(--k); box-shadow: 6px 6px 0 var(--k); padding: 16px 18px; margin-top: 10px; }
+.vault.p-finished .v-content, .vault.p-finished .v-content * { color: var(--k) !important; }
+.vault.p-finished .v-content .btn { color: #fff !important; }
+.vault.p-finished .v-content .btn.ghost { color: var(--k) !important; }
