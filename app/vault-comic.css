@@ -308,3 +308,16 @@
 .vault-shell .topbar .textbtn:hover { background: #ffd400 !important; color: #111 !important; }
 .vault-shell .topbar .textbtn.danger { background: #ff1f8e !important; color: #fff !important; }
 .vault-shell .topbar .textbtn.danger:hover { background: #e5002b !important; color: #fff !important; }
+
+/* Next.js can emit this chunk before vault.css, so the comic tokens must not
+   depend on source order. Doubled class + !important beats the base sheet. */
+.vault.vault, .vault-shell.vault-shell {
+  --y: #ffd400 !important; --p: #ff1f8e !important; --k: #111 !important; --alarm: #e5002b !important;
+  --dsp: 'LL Display', 'Luckiest Guy', Impact, sans-serif !important;
+  --cmc: 'LL Comic', Bangers, Impact, sans-serif !important;
+  --display: 'LL Display', 'Luckiest Guy', Impact, sans-serif !important;
+  --mono: 'LL Comic', Bangers, Impact, sans-serif !important;
+  --body: 'LL Comic', Bangers, Impact, sans-serif !important;
+  --teal: #ff1f8e !important; --brass: #111 !important; --steel-hi: #111 !important; --steel: #111 !important;
+}
+.vault.vault { background: #ffd400 !important; background-image: none !important; color: #111 !important; }
