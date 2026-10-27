@@ -6,6 +6,7 @@ import { AvatarPicker } from '@/components/AvatarPicker';
 import { LoadoutEditor } from '@/components/LoadoutEditor';
 import { BackLink, Header } from '@/components/ui';
 import { ClassIcon, Icon } from '@/components/icons';
+import '@/app/profile-comic.css';
 import { ACHIEVEMENTS } from '@/lib/achievements';
 import { loadAvatar, saveAvatar } from '@/lib/avatar';
 import { useT } from '@/lib/i18n/react';

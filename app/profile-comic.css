@@ -1,0 +1,28 @@
+/* Profile: Comic Pop skin */
+body:has(.pf-shell) { background: #ffd400 radial-gradient(rgba(0,0,0,.12) 22%, transparent 26%) 0 0 / 9px 9px !important; background-attachment: fixed !important; }
+.pf-shell { color: #111; --pk: #ff1f8e; }
+.pf-shell .pf-bg, .pf-shell::before { display: none !important; }
+.pf-shell .topbar, .pf-shell header.topbar { background: none !important; border: 0 !important; }
+.pf-shell .pf-card, .pf-shell .pf-hero, .pf-shell .pf-stats > div, .pf-shell .sheet, .pf-shell .pf-m, .pf-shell .pf-col, .pf-shell .code-box, .pf-shell .pf-best {
+  background: #f4f1e8 !important; background-image: radial-gradient(rgba(0,0,0,.06) 20%, transparent 24%) !important; background-size: 7px 7px !important; color: #111 !important;
+  border: 4px solid #111 !important; border-radius: 3px !important; box-shadow: 6px 6px 0 #111 !important; backdrop-filter: none !important; }
+.pf-shell .pf-hero { box-shadow: 8px 8px 0 var(--pk), 8px 8px 0 4px #111 !important; transform: rotate(-.4deg); }
+.pf-shell .pf-stats > div:nth-child(odd) { transform: rotate(-.8deg); } .pf-shell .pf-stats > div:nth-child(even) { transform: rotate(.8deg); }
+.pf-shell, .pf-shell p, .pf-shell span, .pf-shell small, .pf-shell .muted, .pf-shell .label, .pf-shell li { color: #111 !important; text-shadow: none !important; }
+.pf-shell .stage-title, .pf-shell .pf-h, .pf-shell h1, .pf-shell h2, .pf-shell h3 { font-family: 'LL Display','Luckiest Guy',Impact,sans-serif !important; font-weight: 400 !important; text-transform: uppercase; }
+.pf-shell .pf-who .pp-name { color: #fff !important; -webkit-text-stroke: .05em #111; paint-order: stroke fill; text-shadow: 3px 3px 0 var(--pk) !important; font-size: clamp(34px, 6vw, 56px); -webkit-text-fill-color: #fff; background: none !important; }
+.pf-shell .pf-stats b, .pf-shell .pf-sv { font-family: 'LL Display','Luckiest Guy',Impact,sans-serif !important; color: var(--pk) !important; -webkit-text-fill-color: var(--pk); text-shadow: 2px 2px 0 #111 !important; }
+.pf-shell .pf-stats span, .pf-shell .pf-h { font-family: 'LL Comic', Bangers, Impact, sans-serif !important; letter-spacing: .08em; }
+.pf-shell .pf-ring { background: conic-gradient(var(--pk) var(--pct), #d9d6cc 0) !important; border: 4px solid #111; box-shadow: 4px 4px 0 #111; }
+.pf-shell .pf-ring > div { background: #fff !important; border: 3px solid #111; }
+.pf-shell .pf-ring b { color: #111 !important; text-shadow: none !important; -webkit-text-fill-color: #111; }
+.pf-shell .pf-pill { background: #ffd400 !important; color: #111 !important; border: 3px solid #111 !important; border-radius: 3px !important; font-family: 'LL Comic', Bangers, Impact, sans-serif; transform: skewX(-6deg); box-shadow: 2px 2px 0 #111; }
+.pf-shell .pf-pill.bad { background: #ff4f6e !important; color: #fff !important; }
+.pf-shell .xp-bar { background: #fff !important; border: 3px solid #111 !important; border-radius: 3px !important; height: 16px; }
+.pf-shell .xp-bar i { background: repeating-linear-gradient(135deg, var(--pk) 0 8px, #ff6fb4 8px 16px) !important; }
+.pf-shell .btn, .pf-shell .btn.ghost, .pf-shell .input { background: #fff !important; color: #111 !important; border: 3px solid #111 !important; border-radius: 3px !important; box-shadow: 3px 3px 0 #111 !important; font-family: 'LL Comic', Bangers, Impact, sans-serif; letter-spacing: .05em; text-transform: uppercase; }
+.pf-shell .btn:not(.ghost):not(.sm) { background: var(--pk) !important; color: #fff !important; }
+.pf-shell .btn:hover { transform: translateY(-2px) rotate(-1deg); }
+.pf-shell .pf-hex, .pf-shell .ach-ico { border: 3px solid #111 !important; box-shadow: 2px 2px 0 #111; }
+.pf-shell .pf-a:not(.on) { filter: grayscale(.9); opacity: .55; }
+.pf-shell svg { color: #111; }
