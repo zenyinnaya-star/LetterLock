@@ -20,7 +20,7 @@ import { rpc } from '@/lib/rpc';
 import { loadName, saveName, saveSession } from '@/lib/session';
 import type { PlayerClass, RoomSettings } from '@/lib/types';
 import { ComingSoon } from '@/components/ComingSoon';
-import { isClassicKind } from '@/lib/modes';
+import { isClassicKind, isLockedRoom } from '@/lib/modes';
 import { STARTERS, fetchHeroState } from '@/lib/loadout';
 import '@/app/class-comic.css';
 import '@/app/comic.css';
@@ -111,6 +111,11 @@ function Select() {
     try { window.localStorage.setItem(LAST, cls); } catch { /* ignore */ }
     setBusy(true); setErr(null);
     try {
+      if (kind === 'join') {
+        // refuse locked rooms (Duel, Siege, twists) before taking a seat in them
+        const peek = await rpc.getState(code, null).catch(() => null);
+        if (peek && isLockedRoom(peek.room.settings)) { setErr('That room is a mode that is coming soon. Classic only for now.'); setBusy(false); return; }
+      }
       const r = kind === 'join' ? await rpc.joinRoom(code, name.trim(), cls) : await rpc.createRoom(name.trim(), hostOnly ? 'hero' : cls);
       if (hostOnly) await rpc.setHostMode(r.token, false);
       if (kind === 'duel') await rpc.updateSettings(r.token, { mode: 'duel', max_players: 2 });
