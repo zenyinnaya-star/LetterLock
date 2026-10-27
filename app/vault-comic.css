@@ -397,3 +397,31 @@
 .quit-sheet .quit-art { background: #ffd400 !important; border: 4px solid #111 !important; color: #111 !important; }
 .quit-sheet .btn { font-family: 'LL Display','Luckiest Guy',Impact,sans-serif !important; font-weight: 400 !important; text-transform: uppercase; border: 4px solid #111 !important; border-radius: 3px !important; box-shadow: 4px 4px 0 #111 !important; transform: skewX(-6deg); background: #fff !important; color: #111 !important; text-shadow: none !important; }
 .quit-sheet .btn.danger { background: #e5002b !important; color: #fff !important; text-shadow: 2px 2px 0 #111 !important; }
+
+/* finale v3: two-column, fits one screen like the victory mockup */
+.vault.p-finished .stats-table, .vault.p-finished .new-ach, .vault.p-finished .xp-card .muted { display: none !important; }
+@media (min-width: 900px) {
+  .vault.p-finished .v-content { display: grid !important; grid-template-columns: 1.1fr 1fr; grid-auto-rows: min-content; column-gap: 28px; row-gap: 12px; max-width: 1060px; margin: 0 auto;
+    background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; align-items: start; }
+  .vault.p-finished .v-content > .winner { grid-column: 1; grid-row: 1 / span 3; align-self: center; }
+  .vault.p-finished .v-content > .podium { grid-column: 2; grid-row: 1; margin: 0; max-width: none; }
+  .vault.p-finished .v-content > .locks-table { grid-column: 2; grid-row: 2; margin: 0; max-width: none; }
+  .vault.p-finished .v-content > .xp-card { grid-column: 2; grid-row: 3; margin: 0; max-width: none; }
+  .vault.p-finished .v-content > .row { grid-column: 1 / -1; }
+}
+.vault.p-finished .v-content > .locks-table, .vault.p-finished .v-content > .xp-card, .vault.p-finished .v-content > .podium .award { background: #f4f1e8 !important; border: 4px solid #111 !important; box-shadow: 5px 5px 0 #111 !important; border-radius: 3px; }
+.vault.p-finished .v-content > .xp-card { padding: 10px 14px !important; }
+.vault.p-finished .v-content > .podium .award .who { font-family: var(--dsp); font-size: 20px; }
+.vault.p-finished .v-content > .locks-table .label::after { content: ''; }
+.vault.p-finished .winner h1 { text-align: center; }
+
+/* lobby settings drawer in comic style */
+.vault .lobby-drawer, .vault-shell .lobby-drawer { background: #f4f1e8 !important; border: 4px solid #111 !important; border-radius: 3px !important; box-shadow: 6px 6px 0 #111 !important; color: #111 !important; backdrop-filter: none !important; }
+.lobby-drawer .drawer-bar { background: #ff1f8e !important; color: #fff !important; font-family: var(--dsp) !important; }
+.lobby-drawer .drawer-bar *, .lobby-drawer .drawer-bar b { color: #fff !important; }
+.lobby-drawer .drawer-body, .lobby-drawer .drawer-body * { color: #111 !important; text-shadow: none !important; }
+.lobby-drawer .drawer-body { background: #f4f1e8 !important; font-family: var(--cmc); }
+.lobby-drawer .drawer-body .label, .lobby-drawer .drawer-body .sect-label { color: #fff !important; background: #111 !important; padding: 2px 8px; display: inline-block; font-family: var(--dsp) !important; }
+.lobby-drawer .drawer-body button, .lobby-drawer .drawer-body .btn, .lobby-drawer .drawer-body select, .lobby-drawer .drawer-body .chip { background: #fff !important; border: 3px solid #111 !important; border-radius: 3px !important; box-shadow: 3px 3px 0 #111 !important; font-family: var(--cmc) !important; }
+.lobby-drawer .drawer-body .on, .lobby-drawer .drawer-body [aria-checked='true'], .lobby-drawer .drawer-body button.sel { background: #ff1f8e !important; }
+.lobby-drawer .drawer-body .on *, .lobby-drawer .drawer-body [aria-checked='true'] * { color: #fff !important; }
