@@ -211,5 +211,9 @@
 .vault.p-lobby .qr-frame { background: #fff; border: 4px solid var(--k) !important; border-radius: 0 !important; }
 .vault.p-lobby .lobby-qr > span { background: var(--k); color: #fff !important; padding: 3px 10px; transform: skewX(-8deg); }
 .vault.p-lobby .v-lobby .seats { border: 4px solid var(--k) !important; }
-/* torn pink floor at the bottom, like the mockup */
-.vault.p-lobby::after { content: '' !important; display: block !important; position: fixed; left: 0; right: 0; bottom: 0; height: 13vh; z-index: 0; pointer-events: none; background: var(--p) !important; background-image: radial-gradient(#d4006f 30%, transparent 34%) !important; background-size: 10px 10px !important; clip-path: polygon(0 40%,4% 30%,8% 42%,12% 26%,16% 38%,21% 22%,25% 34%,30% 18%,34% 30%,39% 14%,43% 26%,48% 10%,52% 22%,57% 8%,61% 20%,66% 4%,70% 18%,75% 2%,79% 14%,84% 0%,88% 12%,93% 4%,97% 14%,100% 6%,100% 100%,0 100%) !important; }
+/* torn pink floor at the bottom, like the mockup (on the lobby column so it does not cover the blueprint pseudo) */
+.vault.p-lobby .v-lobby::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; height: 13vh; z-index: -1; pointer-events: none; background: var(--p); background-image: radial-gradient(#d4006f 30%, transparent 34%); background-size: 10px 10px; clip-path: polygon(0 40%,4% 30%,8% 42%,12% 26%,16% 38%,21% 22%,25% 34%,30% 18%,34% 30%,39% 14%,43% 26%,48% 10%,52% 22%,57% 8%,61% 20%,66% 4%,70% 18%,75% 2%,79% 14%,84% 0%,88% 12%,93% 4%,97% 14%,100% 6%,100% 100%,0 100%); }
+.vault-shell .topbar, .vault-shell .topbar * { opacity: 1 !important; filter: none !important; }
+.vault-shell .topbar .room-chip { background: #fff !important; color: var(--k) !important; }
+.vault-shell .topbar .textbtn { color: var(--k) !important; }
+.vault-shell .topbar .textbtn.danger, .vault-shell .topbar .textbtn:last-child { color: #fff !important; }
