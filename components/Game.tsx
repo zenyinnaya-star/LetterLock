@@ -82,6 +82,16 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
   const vault = classic && !west && ['duel_intro', 'answer', 'reveal', 'guess', 'react'].includes(phase);
   const vaultLobby = classic && phase === 'lobby' && !storyLobby;
   const vaultEnd = classic && phase === 'finished' && !westEnd;
+  // comic slash sweeps across on every phase change so screens never pop-swap
+  const lastPhase = useRef(phase);
+  useEffect(() => {
+    if (lastPhase.current === phase) return;
+    lastPhase.current = phase;
+    if (!(vault || vaultLobby || vaultEnd)) return;
+    try { if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch { /* ignore */ }
+    const w = document.createElement('div'); w.className = 'vc-phasewipe'; document.body.appendChild(w);
+    window.setTimeout(() => w.remove(), 900);
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
   // Comic Pop VFX: POW / BAM bursts on taps, and a screen shake + big burst on the big moments
   useEffect(() => {
     if (!(vault || vaultLobby || vaultEnd)) return;

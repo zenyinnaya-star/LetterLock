@@ -335,3 +335,11 @@
 .vault-rack .rack-inner .sect-label { background: #111 !important; color: #fff !important; border-color: #111 !important; }
 .vault-rack .rack-inner .rack-pts, .vault-rack .rack-inner .rack-pts * { color: #fff !important; background: none; text-shadow: 2px 2px 0 #111, -1px -1px 0 #111 !important; font-size: 30px; }
 .vault-rack .rack-inner .rack-pts { background: #ff1f8e !important; border: 3px solid #111; padding: 0 12px; border-radius: 4px; transform: skewX(-6deg); }
+
+/* phase transition slash: pink sheet sweeps in, covers the swap, sweeps out */
+.vc-phasewipe { position: fixed; inset: -10%; z-index: 995; pointer-events: none; background: #ff1f8e; background-image: radial-gradient(#d4006f 30%, transparent 34%); background-size: 12px 12px;
+  border-left: 14px solid #111; border-right: 14px solid #ffd400; transform: translateX(-130%) skewX(-18deg); animation: vc-phasewipe .8s cubic-bezier(.65,0,.35,1) forwards; }
+@keyframes vc-phasewipe { 0% { transform: translateX(-130%) skewX(-18deg); } 45%, 55% { transform: translateX(0) skewX(-18deg); } 100% { transform: translateX(130%) skewX(-18deg); } }
+.vault > * { animation: vc-enter .45s .25s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes vc-enter { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .vc-phasewipe { display: none; } .vault > * { animation: none; } }
