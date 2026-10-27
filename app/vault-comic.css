@@ -343,3 +343,13 @@
 .vault > * { animation: vc-enter .45s .25s cubic-bezier(.2,1.4,.4,1) both; }
 @keyframes vc-enter { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .vc-phasewipe { display: none; } .vault > * { animation: none; } }
+
+/* ---- lobby v2: side scenery cropped straight from the lobby mockup (CCTV wall + desk, blueprint + lamp + books) ---- */
+@media (min-width: 900px) {
+  .vault.p-lobby::before, .vault.p-lobby::after { content: '' !important; display: block !important; position: fixed !important; z-index: 1 !important; pointer-events: none; border: 0 !important; border-radius: 0 !important; filter: none !important;
+    background-color: transparent !important; background-repeat: no-repeat !important; aspect-ratio: auto !important; top: auto !important; bottom: 0 !important; }
+  .vault.p-lobby::before { left: 0 !important; width: calc((100vh - 96px) * .499) !important; height: calc(100vh - 96px) !important; background-image: url(/art/comic/lobby-left.webp) !important; background-size: 100% 100% !important; }
+  .vault.p-lobby::after { right: 0 !important; left: auto !important; width: calc((100vh - 250px) * .482) !important; height: calc(100vh - 250px) !important; background-image: url(/art/comic/lobby-right.webp) !important; background-size: 100% 100% !important; }
+}
+@media (max-width: 899px) { .vault.p-lobby::before, .vault.p-lobby::after { display: none !important; } }
+.vault.p-lobby .v-lobby::after { background: url(/art/comic/lobby-floor.webp) bottom / 100% 100% no-repeat !important; height: 11vh !important; }
