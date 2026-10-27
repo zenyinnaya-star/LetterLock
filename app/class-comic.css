@@ -146,3 +146,6 @@
 .selpage .sel-more .cs-tips li { background: #fff; border: 2px solid #111; border-radius: 3px; padding: 5px 8px; font-size: 13px; color: #111 !important; }
 .selpage .sel-more, .selpage .sel-more p, .selpage .sel-more b, .selpage .sel-more li { color: #111 !important; text-shadow: none !important; }
 @media (max-width: 899px) { .selpage .sel-facts .sel-box.how p { font-size: 14px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; } }
+.selpage details.cs-more.sel-more, .selpage details.cs-more.sel-more[open] { background: #fff !important; color: #111 !important; padding: 2px 6px 8px !important; }
+.selpage details.cs-more.sel-more > summary { background: transparent !important; color: #111 !important; }
+.selpage details.cs-more.sel-more .sel-box { background: #f4f1e8 !important; box-shadow: none; }
