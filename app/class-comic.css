@@ -149,3 +149,9 @@
 .selpage details.cs-more.sel-more, .selpage details.cs-more.sel-more[open] { background: #fff !important; color: #111 !important; padding: 2px 6px 8px !important; }
 .selpage details.cs-more.sel-more > summary { background: transparent !important; color: #111 !important; }
 .selpage details.cs-more.sel-more .sel-box { background: #f4f1e8 !important; box-shadow: none; }
+
+/* class tiles: full face visible. Portrait on top, name underneath, headroom so the lifted tile is never clipped */
+.selpage .sel-cards { padding-top: 16px !important; align-items: flex-end; }
+.selpage .sel-cards .sel-card, .selpage .sel-strip .sel-card { height: auto !important; flex-direction: column; gap: 3px; padding: 0 0 3px !important; overflow: visible; }
+.selpage .sel-card .sel-card-art { position: relative !important; inset: auto !important; width: 100% !important; height: auto !important; aspect-ratio: 1 / 1; object-fit: cover; object-position: 50% 18%; display: block; }
+.selpage .sel-card b { position: static !important; background: none !important; font-size: 11px; line-height: 1; color: #fff !important; text-shadow: 1px 1px 0 #000; }
