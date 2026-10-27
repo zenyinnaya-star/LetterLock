@@ -54,6 +54,9 @@ export default function ProfilePage() {
       <BackLink />
       <div className="sheet profile-page pf2">
         <h1 className="stage-title">{t('pf.prof')}</h1>
+        <div className="pf-avatar" style={{ display: 'flex', justifyContent: 'center', margin: '14px 0 16px', padding: '0 14px' }}>
+          <AvatarPicker name={p?.name ?? ''} url={avatar} onChange={(u) => { setAvatar(u); saveAvatar(u); }} />
+        </div>
         {ready && !p && <p className="muted center">{t('pf.empty')}</p>}
         {p && (
           <>
@@ -72,10 +75,6 @@ export default function ProfilePage() {
                 <div className="muted small">{t('pf.xp', { a: p.xp, b: p.level_next })}</div>
               </div>
             </section>
-
-            <div className="pf-avatar" style={{ display: 'flex', justifyContent: 'center', margin: '4px 0 10px' }}>
-              <AvatarPicker name={p.name} url={avatar} onChange={(u) => { setAvatar(u); saveAvatar(u); }} />
-            </div>
 
             <div className="pf-stats">
               <div><Icon name="cards" size={26} /><span className="pf-sv"><b>{p.games}</b><span>{t('pf.games')}</span></span></div>
