@@ -1,0 +1,356 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>Letterlock Comic Pop mockups</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@500;700;800;900&display=swap" rel=stylesheet>
+<style>
+:root{--y:#ffd400;--p:#ff2e8a;--k:#111;--w:#fff;--o:#ff7a00;--r:#e8344a;--b:#2e7bff;--v:#7a3cff;--g:#16c47f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:#2a2a2a;color:var(--k)}
+/* viewer chrome */
+.bar{position:sticky;top:0;z-index:99;background:#111;display:flex;gap:6px;padding:8px;overflow-x:auto;align-items:center}
+.bar button{flex:none;border:0;border-radius:999px;padding:7px 12px;font:700 12px Inter;color:#ccc;background:#222;cursor:pointer;white-space:nowrap}
+.bar button.on{background:var(--y);color:#111}
+.bar .sp{flex:1}
+.stage{display:flex;justify-content:center;padding:18px 0 40px}
+.frame{width:100%;max-width:1200px;min-height:760px;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+body.phone .frame{max-width:390px;min-height:844px;border-radius:34px;border:10px solid #000}
+.pg{display:none;min-height:inherit;position:relative}.pg.on{display:block}
+/* ===== comic pop system ===== */
+.sky{position:absolute;inset:0;background:var(--y);overflow:hidden;z-index:0}
+.sky:before{content:'';position:absolute;inset:-60%;background:repeating-conic-gradient(rgba(255,255,255,.22) 0 7deg,transparent 7deg 18deg);animation:spin 90s linear infinite}
+.sky:after{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,0,.12) 2px,transparent 2.5px);background-size:14px 14px;-webkit-mask-image:linear-gradient(160deg,#000,transparent 55%)}
+.sky.pink{background:var(--p)}.sky.ink{background:#161616}.sky.ink:before{background:repeating-conic-gradient(rgba(255,212,0,.06) 0 7deg,transparent 7deg 18deg)}
+.sky.blue{background:var(--b)}.sky.violet{background:var(--v)}
+.wrap{position:relative;z-index:2;padding:18px 18px 110px;max-width:1100px;margin:0 auto}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.logo{font:400 26px Bangers;letter-spacing:.05em;color:var(--w);text-shadow:2px 2px 0 var(--p),4px 4px 0 var(--k);transform:rotate(-3deg)}
+.icons{display:flex;gap:6px}.ib{width:38px;height:38px;display:grid;place-items:center;background:var(--k);color:var(--y);border:3px solid var(--w);font:900 15px Inter;transform:skewX(-8deg);box-shadow:3px 3px 0 rgba(0,0,0,.4)}
+.ib>*{transform:skewX(8deg)}
+.back{display:inline-flex;align-items:center;gap:6px;font:400 20px Bangers;letter-spacing:.06em;background:var(--w);border:3px solid var(--k);padding:3px 14px;transform:skewX(-10deg);box-shadow:4px 4px 0 var(--k)}
+.back>span{transform:skewX(10deg)}
+.band{position:absolute;left:-5%;top:0;width:110%;height:130px;background:var(--k);transform:skewY(-4deg) translateY(-36px);z-index:1}
+.h1{font:400 clamp(44px,8vw,96px)/.95 Bangers;letter-spacing:.04em;color:var(--w);text-shadow:4px 4px 0 var(--p),8px 8px 0 var(--k);transform:rotate(-3deg);text-align:center}
+.h2{font:400 clamp(32px,5vw,52px)/1 Bangers;letter-spacing:.04em;color:var(--w);text-shadow:3px 3px 0 var(--p),6px 6px 0 var(--k);transform:rotate(-2deg)}
+.h3{font:400 24px/1 Bangers;letter-spacing:.06em}
+.plate{display:inline-block;font:400 18px Bangers;letter-spacing:.12em;background:var(--w);border:3px solid var(--k);padding:3px 14px;transform:rotate(-2deg) skewX(-10deg);box-shadow:4px 4px 0 var(--k)}
+.panel{background:var(--w);border:4px solid var(--k);box-shadow:7px 7px 0 var(--k);padding:16px;position:relative}
+.panel.skew{transform:skewX(-4deg)}.panel.skew>*{transform:skewX(4deg)}
+.panel.dark{background:var(--k);color:var(--w);border-color:var(--k);box-shadow:7px 7px 0 rgba(0,0,0,.35)}
+.tagl{position:absolute;top:-16px;left:14px;font:400 17px Bangers;letter-spacing:.1em;background:var(--p);color:var(--w);border:3px solid var(--k);padding:1px 10px;transform:rotate(-3deg)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:4px solid var(--w);background:var(--k);color:var(--y);font:400 30px Bangers;letter-spacing:.08em;padding:6px 34px;transform:skewX(-10deg);box-shadow:5px 5px 0 rgba(0,0,0,.45);cursor:pointer;min-height:54px}
+.btn>span{display:inline-block;transform:skewX(10deg)}
+.btn.pink{background:var(--p);color:var(--w);border-color:var(--k);box-shadow:5px 5px 0 var(--k)}
+.btn.white{background:var(--w);color:var(--k);border-color:var(--k);box-shadow:5px 5px 0 var(--k)}
+.btn.sm{font-size:20px;padding:2px 18px;min-height:42px;border-width:3px}
+.btn.full{width:100%}
+.chip{display:inline-block;font:800 12px Inter;letter-spacing:.06em;text-transform:uppercase;background:var(--k);color:var(--y);padding:4px 9px;transform:skewX(-10deg)}
+.chip.p{background:var(--p);color:var(--w)}.chip.w{background:var(--w);color:var(--k);border:2px solid var(--k)}
+.muted{color:#555;font-weight:600}.small{font-size:13px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.col{display:flex;flex-direction:column;gap:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tear{position:absolute;left:0;right:0;bottom:0;height:150px;background:var(--p);clip-path:polygon(0 30%,5% 22%,11% 34%,18% 20%,26% 32%,34% 18%,43% 30%,51% 17%,60% 31%,69% 19%,78% 32%,87% 21%,100% 30%,100% 100%,0 100%);z-index:1}
+.tear.k{background:var(--k)}
+.dock{position:absolute;left:0;right:0;bottom:0;z-index:5;padding:14px 16px 16px;display:flex;justify-content:center;gap:12px}
+/* avatars */
+.av{width:46px;height:46px;flex:none;display:grid;place-items:center;font:400 24px Bangers;color:var(--w);border:3px solid var(--k);transform:skewX(-8deg);box-shadow:3px 3px 0 var(--k);position:relative}
+.av>b{transform:skewX(8deg);font-weight:400}.av.lg{width:96px;height:96px;font-size:52px;box-shadow:6px 6px 0 var(--k);border-width:4px}
+.av .crown{position:absolute;top:-14px;left:50%;transform:translateX(-50%) skewX(8deg);font-size:16px}
+/* letter tiles */
+.tiles{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.t{width:44px;height:50px;display:grid;place-items:center;background:var(--w);border:3px solid var(--k);box-shadow:3px 4px 0 var(--k);font:400 30px Bangers;color:var(--k);position:relative}
+.t.lock{background:var(--k);color:#666}.t.lock:after{content:'🔒';position:absolute;font-size:14px;right:-6px;top:-8px}
+.t.hit{background:var(--p);color:var(--w)}.t.y{background:var(--y)}
+.t.sm{width:30px;height:34px;font-size:20px;box-shadow:2px 3px 0 var(--k);border-width:2px}
+/* keyboard */
+.kbd{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+.kbd .k{height:46px;display:grid;place-items:center;background:var(--w);border:3px solid var(--k);box-shadow:2px 3px 0 var(--k);font:400 22px Bangers}
+.kbd .k.x{background:var(--k);color:#555;box-shadow:none}.kbd .k.wide{grid-column:span 2;font-size:16px;background:var(--p);color:var(--w)}
+/* timer */
+.timer{width:74px;height:74px;border-radius:50%;background:conic-gradient(var(--p) 0 68%,var(--k) 68% 100%);display:grid;place-items:center;border:4px solid var(--k);box-shadow:4px 4px 0 var(--k)}
+.timer b{width:52px;height:52px;border-radius:50%;background:var(--y);display:grid;place-items:center;font:400 28px Bangers;border:3px solid var(--k)}
+/* world cards */
+.wcards{display:flex;gap:16px;justify-content:center}
+.wc{flex:1 1 0;min-width:0;max-width:240px;transform:skewX(-6deg);background:var(--k);padding:5px;box-shadow:8px 8px 0 rgba(0,0,0,.85);position:relative}
+.wc .art{display:block;width:100%;aspect-ratio:3/4;background-size:cover;background-position:center;border:3px solid var(--w)}
+.wc .l{display:block;text-align:center;font:400 22px Bangers;letter-spacing:.08em;color:var(--w);padding:6px 0 2px;transform:skewX(6deg)}
+.wc .n{position:absolute;right:9px;top:3px;font:400 46px Bangers;color:var(--w);text-shadow:3px 3px 0 var(--k);transform:skewX(6deg)}
+.wc.sel{background:var(--p);transform:skewX(-6deg) translateY(-12px) scale(1.05);z-index:2}
+.wc.lockd .art{filter:grayscale(1) brightness(.6)}
+/* mode tiles */
+.mode{position:relative;overflow:hidden;min-height:120px;display:flex;flex-direction:column;justify-content:flex-end;padding:12px 14px;color:var(--w);border:4px solid var(--k);box-shadow:6px 6px 0 var(--k);transform:skewX(-5deg)}
+.mode>*{transform:skewX(5deg);position:relative}.mode .h3{font-size:28px;text-shadow:3px 3px 0 var(--k)}
+.mode:before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.25) 2px,transparent 2.4px);background-size:11px 11px;-webkit-mask-image:linear-gradient(200deg,#000,transparent 60%)}
+.mode .big{position:absolute;right:10px;top:-6px;font:400 90px Bangers;opacity:.25;transform:skewX(5deg)}
+/* class cards */
+.cls{background:var(--w);border:4px solid var(--k);box-shadow:5px 5px 0 var(--k);padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transform:skewX(-4deg);cursor:pointer}
+.cls>*{transform:skewX(4deg)}.cls .em{width:56px;height:56px;display:grid;place-items:center;font-size:30px;border:3px solid var(--k);background:var(--c)}
+.cls b{font:400 20px Bangers;letter-spacing:.06em}.cls span{font:600 11px Inter;color:#555}
+.cls.sel{background:var(--y);transform:skewX(-4deg) translateY(-6px);box-shadow:7px 9px 0 var(--k)}
+/* player rows */
+.pl{display:flex;align-items:center;gap:12px;background:var(--w);border:3px solid var(--k);box-shadow:4px 4px 0 var(--k);padding:8px 12px;transform:skewX(-6deg)}
+.pl>*{transform:skewX(6deg)}.pl .nm{font:800 16px Inter;flex:1}
+.pl.me{background:var(--y)}.pl.out{opacity:.5;filter:grayscale(1)}
+.bar-xp{height:16px;background:var(--k);border:3px solid var(--k);transform:skewX(-12deg);overflow:hidden}.bar-xp i{display:block;height:100%;background:repeating-linear-gradient(135deg,var(--p) 0 10px,#ff5ca5 10px 20px)}
+.speech{position:relative;background:var(--w);border:4px solid var(--k);padding:12px 16px;font:800 18px Inter;box-shadow:5px 5px 0 var(--k);border-radius:18px}
+.speech:after{content:'';position:absolute;left:28px;bottom:-18px;border:9px solid transparent;border-top:12px solid var(--k)}
+.boom{display:inline-block;font:400 40px Bangers;color:var(--y);text-shadow:3px 3px 0 var(--k);-webkit-text-stroke:2px var(--k);transform:rotate(-8deg)}
+.burst{display:grid;place-items:center;width:120px;height:120px;background:var(--y);clip-path:polygon(50% 0,61% 20%,83% 10%,80% 33%,100% 40%,84% 56%,96% 77%,72% 76%,64% 100%,50% 84%,36% 100%,28% 76%,4% 77%,16% 56%,0 40%,20% 33%,17% 10%,39% 20%)}
+.burst b{font:400 28px Bangers;transform:rotate(-8deg)}
+.pod{display:flex;align-items:flex-end;justify-content:center;gap:10px}
+.pod .s{display:flex;flex-direction:column;align-items:center;gap:6px}
+.pod .blk{width:110px;display:grid;place-items:center;font:400 54px Bangers;color:var(--w);border:4px solid var(--k);box-shadow:6px 6px 0 var(--k);text-shadow:3px 3px 0 var(--k)}
+.stat{background:var(--k);color:var(--w);padding:10px 12px;transform:skewX(-6deg);border:3px solid var(--k);box-shadow:4px 4px 0 var(--p)}
+.stat>*{transform:skewX(6deg);display:block}.stat b{font:400 34px Bangers;color:var(--y);line-height:1}.stat span{font:700 11px Inter;letter-spacing:.08em;text-transform:uppercase;color:#bbb}
+.inp{width:100%;font:800 20px Inter;padding:12px 14px;border:4px solid var(--k);background:var(--w);box-shadow:4px 4px 0 var(--k);outline:0}
+.code{font:400 64px Bangers;letter-spacing:.14em;color:var(--w);text-shadow:4px 4px 0 var(--k);background:var(--p);border:4px solid var(--k);padding:0 18px;transform:skewX(-8deg);display:inline-block;box-shadow:6px 6px 0 var(--k)}
+.feed{display:flex;flex-direction:column;gap:6px}.feed div{font:700 13px Inter;background:var(--w);border:2px solid var(--k);padding:6px 10px;transform:skewX(-6deg)}
+.feed div>span{display:inline-block;transform:skewX(6deg)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.cal div{aspect-ratio:1;display:grid;place-items:center;font:400 18px Bangers;background:var(--w);border:3px solid var(--k)}
+.cal .d{background:var(--g);color:var(--w)}.cal .t{width:auto;height:auto;background:var(--p);color:var(--w);box-shadow:none}
+.peg{width:42px;height:42px;border-radius:50%;border:3px solid var(--k);box-shadow:2px 3px 0 var(--k)}
+.mmrow{display:flex;gap:8px;align-items:center;background:var(--w);border:3px solid var(--k);padding:8px 10px;box-shadow:4px 4px 0 var(--k)}
+.fb{display:grid;grid-template-columns:repeat(2,12px);gap:3px;margin-left:auto}.fb i{width:12px;height:12px;border-radius:50%;border:2px solid var(--k)}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* phone adjustments (both real phones and the phone frame) */
+.phone .grid2,.phone .grid3{grid-template-columns:1fr}.phone .grid4{grid-template-columns:1fr 1fr}
+.phone .wcards{gap:6px}.phone .wc{padding:3px}.phone .wc .l{font-size:12px}.phone .wc .n{font-size:24px}
+.phone .wrap{padding:14px 12px 120px}.phone .btn{font-size:26px;padding:4px 24px}
+.phone .code{font-size:46px}.phone .pod .blk{width:84px}.phone .hide-ph{display:none!important}
+.phone .kbd .k{height:42px;font-size:19px}.phone .t{width:38px;height:44px;font-size:26px}
+.phone .mode{min-height:96px}.phone .mode .h3{font-size:22px}
+.desk-only{}.phone .desk-only{display:none}
+.phone #rv .t.sm,.phone #gp .t.sm{width:22px;height:26px;font-size:15px;border-width:2px;box-shadow:1px 2px 0 var(--k)}.phone #rv .row{flex-wrap:nowrap}.phone #rv .pl{gap:8px;padding:8px}
+@media (max-width:700px){body:not(.desk) .frame{max-width:100%;border:0;border-radius:0}}
+</style></head><body>
+<div class=bar id=bar><span class=sp></span></div>
+<div class=stage><div class=frame id=frame>
+
+<!-- 1 LANDING -->
+<section class=pg data-t="Landing">
+ <div class=sky></div><div class=band></div>
+ <div class=wrap style="text-align:center">
+  <div class=top style="position:relative;z-index:3"><span></span><div class=icons><span class=ib><span>♪</span></span><span class=ib><span>⚙</span></span></div></div>
+  <div class=h1>LETTERLOCK</div><div style="margin:12px 0 26px"><span class=plate>SAME LOCK. DIFFERENT WORLDS.</span></div>
+  <div class=wcards id=wl></div>
+  <div style="position:relative;z-index:3;margin-top:44px;color:#fff"><div class=h2 id=wlname style="transform:none;font-size:34px">BANK</div><p style="font:800 15px Inter;margin-top:4px" id=wldesc></p></div>
+ </div>
+ <div class=tear style="height:220px"></div>
+ <div class=dock style="flex-direction:column;align-items:center"><span class=btn><span>PLAY!</span></span><div class=row style="justify-content:center;gap:18px;margin-top:6px"><span style="font:400 18px Bangers;color:#fff;letter-spacing:.1em">DAILY CHALLENGE</span><span style="font:400 18px Bangers;color:#fff;letter-spacing:.1em">HOW TO PLAY</span></div></div>
+</section>
+
+<!-- 2 PLAY MENU -->
+<section class=pg data-t="Play menu">
+ <div class=sky></div>
+ <div class=wrap>
+  <div class=top><span class=back><span>◀ BACK</span></span><span class=logo>LETTERLOCK</span></div>
+  <div class=h2 style="margin:6px 0 18px">PICK A GAME</div>
+  <div class="panel skew" style="background:var(--o);color:#fff;padding:0;overflow:hidden;min-height:190px;display:flex">
+   <div style="flex:1;padding:18px 20px;display:flex;flex-direction:column;justify-content:center;gap:8px">
+    <span class=chip>MOST PLAYED</span><div class=h3 style="font-size:46px;color:#fff;text-shadow:3px 3px 0 var(--k)">CLASSIC</div>
+    <p style="font:800 14px Inter;max-width:340px">2–10 players. Dodge your locked letters, crack everyone else's. Last one standing wins.</p>
+    <div class=row><span class="btn sm"><span>CREATE ROOM</span></span><span class="btn sm white"><span>JOIN WITH CODE</span></span></div>
+   </div>
+   <div class=desk-only style="width:36%;background:url(H0) center/cover;border-left:4px solid var(--k)"></div>
+  </div>
+  <div class=h3 style="margin:26px 0 12px;color:var(--k)">MORE WAYS TO PLAY</div>
+  <div class=grid3>
+   <div class=mode style="background:var(--r)"><span class=big>1v1</span><span class=h3>DUEL</span><span class=small style="font-weight:800">Saloon showdown</span></div>
+   <div class=mode style="background:var(--b)"><span class=big>⚔</span><span class=h3>SIEGE</span><span class=small style="font-weight:800">Teams storm the castle</span></div>
+   <div class=mode style="background:var(--v)"><span class=big>?</span><span class=h3>MASTERMIND</span><span class=small style="font-weight:800">Crack the hidden word</span></div>
+   <div class=mode style="background:var(--g)"><span class=big>★</span><span class=h3>STORY</span><span class=small style="font-weight:800">Solo RPG run</span></div>
+   <div class=mode style="background:var(--p)"><span class=big>☀</span><span class=h3>DAILY</span><span class=small style="font-weight:800">One word a day</span></div>
+   <div class=mode style="background:#555"><span class=big>⚗</span><span class=h3>EXPERIMENTS</span><span class=small style="font-weight:800">Unfinished stuff</span></div>
+  </div>
+ </div>
+</section>
+
+<!-- 3 JOIN / NAME -->
+<section class=pg data-t="Join room">
+ <div class="sky pink"></div>
+ <div class=wrap style="max-width:560px">
+  <div class=top><span class=back><span>◀ BACK</span></span><span class=logo>LETTERLOCK</span></div>
+  <div style="text-align:center;margin:10px 0 24px"><div class=muted style="color:#fff;font:800 14px Inter;letter-spacing:.2em">JOINING ROOM</div><div class=code style="margin-top:8px">KVDR</div></div>
+  <div class="panel col" style="gap:16px">
+   <span class=tagl>WHO ARE YOU?</span>
+   <div class=row style="flex-wrap:nowrap"><div class=av style="width:72px;height:72px;font-size:38px;background:var(--o)"><b>Z</b></div>
+    <div class=col style="gap:6px"><span class="btn sm white"><span>📷 UPLOAD PHOTO</span></span><span class="muted small">Your class stays secret either way.</span></div></div>
+   <div><div class=h3 style="font-size:18px;margin-bottom:6px">YOUR NAME</div><input class=inp value="Zachary"></div>
+   <span class="btn pink full"><span>JUMP IN!</span></span>
+  </div>
+ </div>
+</section>
+
+<!-- 4 CLASS PICK -->
+<section class=pg data-t="Class pick">
+ <div class=sky></div>
+ <div class=wrap>
+  <div class=top><span class=back><span>◀ BACK</span></span><span class=chip>ROOM KVDR</span></div>
+  <div class=h2 style="margin-bottom:6px">CHOOSE YOUR CLASS</div><p class=muted style="color:#111;font-weight:800;margin-bottom:18px">Pick 3 for your hand. Everyone's class stays secret until the end.</p>
+  <div class=grid4 id=cl></div>
+ </div>
+ <div class=dock style="background:var(--k);border-top:4px solid var(--w)"><div class=row style="flex:1;max-width:900px;justify-content:space-between;flex-wrap:nowrap"><div class=col style="gap:2px;color:#fff"><span class=h3 style="color:var(--y)">THIEF</span><span class=small style="font-weight:700">Steal letters. Pass the hot potato.</span></div><span class="btn pink sm"><span>LOCK IN ▶</span></span></div></div>
+</section>
+
+<!-- 5 LOBBY -->
+<section class=pg data-t="Lobby">
+ <div class=sky></div>
+ <div class=wrap>
+  <div class=top><span class=back><span>◀ LEAVE</span></span><div class=icons><span class=ib><span>⚙</span></span><span class=ib><span>♪</span></span></div></div>
+  <div class=grid2 style="align-items:start">
+   <div class=col style="gap:18px">
+    <div class=panel style="text-align:center"><span class=tagl>ROOM CODE</span><div class=code style="margin:10px 0 8px">KVDR</div>
+     <div class=row style="justify-content:center"><span class="btn sm"><span>🔗 SHARE LINK</span></span><span class="btn sm white"><span>QR</span></span></div></div>
+    <div class="panel dark"><div class=h3 style="color:var(--y);margin-bottom:8px">HOUSE RULES</div><div class=row style="gap:6px"><span class="chip p">CLASSIC</span><span class="chip w">45S ANSWERS</span><span class="chip w">3 STRIKES</span><span class="chip w">CARDS ON</span><span class="chip w">PERKS ON</span></div></div>
+   </div>
+   <div class=col style="gap:10px"><div class=h3 style="color:#111">PLAYERS <span class=chip>5/10</span></div><div class=col id=lob style="gap:10px"></div>
+    <div class=pl style="background:transparent;border-style:dashed;box-shadow:none"><span class=nm class=muted>Waiting for a player…</span><span class="btn sm white" style="min-height:34px"><span>+ BOT</span></span></div></div>
+  </div>
+ </div>
+ <div class=tear style="height:110px"></div>
+ <div class=dock><span class=btn><span>START GAME · 5 PLAYERS</span></span></div>
+</section>
+
+<!-- 6 ANSWER -->
+<section class=pg data-t="Answer">
+ <div class=sky></div>
+ <div class=wrap style="padding-bottom:300px">
+  <div class=top><div class=row style="gap:8px"><span class=chip>ROUND 3</span><span class="chip p">ANSWER</span></div><div class=timer><b>21</b></div></div>
+  <div class=row style="gap:8px;margin-bottom:16px;flex-wrap:nowrap;overflow:hidden" id=strip></div>
+  <div class="speech" style="max-width:640px;margin:0 auto 26px;text-align:center"><div class=muted style="font-size:12px;letter-spacing:.2em">THE PROMPT</div>Something you'd find in a <span style="background:var(--y);padding:0 6px">KITCHEN</span></div>
+  <div style="text-align:center"><div class=tiles id=word></div><p style="font:800 13px Inter;margin-top:12px"><span class="chip p">EPIC</span> +14 · Streak ×2</p></div>
+ </div>
+ <div style="position:absolute;left:0;right:0;bottom:0;z-index:5;background:var(--k);padding:12px 12px 16px;border-top:5px solid var(--w)">
+  <div class=row style="justify-content:space-between;margin-bottom:10px;flex-wrap:nowrap"><div class=row style="gap:4px;flex-wrap:nowrap"><span style="font:400 16px Bangers;color:var(--y);letter-spacing:.1em;margin-right:6px">YOUR LOCKS</span><span class="t sm lock">E</span><span class="t sm lock">R</span><span class="t sm lock">S</span></div><span class="btn pink sm" style="min-height:40px"><span>LOCK IT IN</span></span></div>
+  <div class=kbd id=kb></div>
+ </div>
+</section>
+
+<!-- 7 REVEAL -->
+<section class=pg data-t="Reveal">
+ <div class="sky pink"></div>
+ <div class=wrap>
+  <div class=top><div class=row style="gap:8px"><span class=chip>ROUND 3</span><span class="chip w">REVEAL</span></div><span class=logo>LETTERLOCK</span></div>
+  <div style="text-align:center;margin:4px 0 18px"><div class=h2>THE ANSWERS ARE IN!</div></div>
+  <div class=col id=rv style="gap:12px;max-width:760px;margin:0 auto"></div>
+ </div>
+</section>
+
+<!-- 8 GUESS -->
+<section class=pg data-t="Guess">
+ <div class=sky></div>
+ <div class=wrap style="padding-bottom:180px">
+  <div class=top><div class=row style="gap:8px"><span class=chip>ROUND 3</span><span class="chip p">GUESS</span></div><div class=timer><b>12</b></div></div>
+  <div class=h2 style="margin-bottom:4px">CRACK SOMEONE'S LOCK</div><p style="font:800 14px Inter;margin-bottom:18px">One guess. Hit a banned letter and you draw a card.</p>
+  <div class=grid2 style="align-items:start">
+   <div class=col style="gap:10px"><div class=h3 style="font-size:18px">1 · PICK A PLAYER</div><div class=col id=gp style="gap:10px"></div></div>
+   <div class=col style="gap:10px"><div class=h3 style="font-size:18px">2 · PICK A LETTER</div><div class="panel" style="padding:12px"><div class=kbd id=gk></div></div>
+    <div class=feed><div><span>🔓 <b>Ada</b> cracked <b>Mo</b>'s “T”</span></div><div><span>💨 <b>Kai</b> missed on Zachary</span></div></div></div>
+  </div>
+ </div>
+ <div class=tear style="height:120px"></div>
+ <div class=dock><span class=btn><span>GUESS “A” ON ADA</span></span></div>
+</section>
+
+<!-- 9 RESULTS -->
+<section class=pg data-t="Results">
+ <div class=sky></div><div class=band style="height:160px"></div>
+ <div class=wrap style="text-align:center">
+  <div class=h1 style="margin-top:4px;position:relative;z-index:3">ADA WINS!</div>
+  <div style="margin:14px 0 26px;position:relative;z-index:3"><span class=plate>SHE WAS THE THIEF ALL ALONG</span></div>
+  <div class=pod>
+   <div class=s><div class=av style="background:var(--b)"><b>M</b></div><b style="font:800 14px Inter">Mo</b><div class=blk style="height:110px;background:var(--b)">2</div></div>
+   <div class=s><div class="av lg" style="background:var(--p)"><b>A</b><span class=crown>👑</span></div><b style="font:800 16px Inter">Ada · 128</b><div class=blk style="height:160px;background:var(--p)">1</div></div>
+   <div class=s><div class=av style="background:var(--g)"><b>Z</b></div><b style="font:800 14px Inter">Zachary</b><div class=blk style="height:80px;background:var(--g)">3</div></div>
+  </div>
+  <div class=grid4 style="max-width:820px;margin:28px auto 0;text-align:left">
+   <div class=stat><b>“QUIXOTIC”</b><span>Best word · Ada</span></div><div class=stat><b>×5</b><span>Longest streak · Mo</span></div><div class=stat><b>7</b><span>Locks cracked · Kai</span></div><div class=stat><b>+64 XP</b><span>You earned</span></div>
+  </div>
+ </div>
+ <div class=tear style="height:120px"></div>
+ <div class=dock><span class="btn"><span>PLAY AGAIN</span></span><span class="btn white hide-ph"><span>MENU</span></span></div>
+</section>
+
+<!-- 10 PROFILE -->
+<section class=pg data-t="Profile">
+ <div class=sky></div>
+ <div class=wrap>
+  <div class=top><span class=back><span>◀ BACK</span></span><span class=logo>LETTERLOCK</span></div>
+  <div class="panel skew" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+   <div class="av lg" style="background:var(--o)"><b>Z</b></div>
+   <div class=col style="gap:8px;flex:1;min-width:200px"><div class=h3 style="font-size:36px">ZACHARY</div><div class=row style="gap:6px"><span class=chip>LVL 7</span><span class="chip p">LOCKPICKER</span><span class="chip w">THIEF · TIER 2</span></div>
+    <div class=bar-xp><i style="width:62%"></i></div><span class="muted small">2,180 / 2,940 XP</span></div>
+   <span class="btn sm white"><span>📷 CHANGE PHOTO</span></span>
+  </div>
+  <div class=grid4 style="margin:22px 0">
+   <div class=stat><b>42</b><span>Games</span></div><div class=stat><b>11</b><span>Wins</span></div><div class=stat><b>318</b><span>Words played</span></div><div class=stat><b>×6</b><span>Best streak</span></div>
+  </div>
+  <div class=grid2>
+   <div class=panel><span class=tagl>BADGES</span><div class=row style="gap:10px;margin-top:8px"><div class=burst style="width:70px;height:70px"><b style="font-size:16px">FIRST!</b></div><div class=burst style="width:70px;height:70px;background:var(--p)"><b style="font-size:16px;color:#fff">x5</b></div><div class=burst style="width:70px;height:70px;background:#ccc"><b style="font-size:16px">???</b></div></div></div>
+   <div class=panel><span class=tagl>RECOVERY CODE</span><p class="muted small" style="margin:8px 0">Use this on another device to bring your profile.</p><div class=row style="flex-wrap:nowrap"><input class=inp value="ZK7-Q2M" style="font-size:18px"><span class="btn sm"><span>COPY</span></span></div></div>
+  </div>
+ </div>
+</section>
+
+<!-- 11 DAILY -->
+<section class=pg data-t="Daily">
+ <div class="sky blue"></div>
+ <div class=wrap style="max-width:720px">
+  <div class=top><span class=back><span>◀ BACK</span></span><span class=chip>OCT 27</span></div>
+  <div style="text-align:center"><div class=h2>DAILY CHALLENGE</div><p style="font:800 14px Inter;color:#fff;margin:8px 0 18px">One prompt. Everyone in the world plays the same one today.</p></div>
+  <div class="speech" style="text-align:center;margin-bottom:24px">An animal that <span style="background:var(--y);padding:0 6px">can't use E</span></div>
+  <div class=grid2>
+   <div class=panel><span class=tagl>YOUR STREAK</span><div class=row style="margin:6px 0 10px"><span class=boom>🔥 9 DAYS</span></div><div class=cal id=cal></div></div>
+   <div class=panel><span class=tagl>TODAY'S TOP</span><div class=col style="gap:8px;margin-top:6px">
+    <div class=row style="flex-wrap:nowrap"><b style="font:400 24px Bangers">1</b><div class=av style="width:32px;height:32px;font-size:16px;background:var(--p)"><b>A</b></div><b style="flex:1">Ada</b><span class="chip p">CHINCHILLA</span></div>
+    <div class=row style="flex-wrap:nowrap"><b style="font:400 24px Bangers">2</b><div class=av style="width:32px;height:32px;font-size:16px;background:var(--g)"><b>K</b></div><b style="flex:1">Kai</b><span class=chip>WOMBAT</span></div>
+    <div class=row style="flex-wrap:nowrap"><b style="font:400 24px Bangers">3</b><div class=av style="width:32px;height:32px;font-size:16px;background:var(--b)"><b>M</b></div><b style="flex:1">Mo</b><span class=chip>PANDA</span></div></div></div>
+  </div>
+ </div>
+ <div class=dock><span class="btn pink"><span>PLAY TODAY'S WORD</span></span></div>
+</section>
+
+<!-- 12 MASTERMIND -->
+<section class=pg data-t="Mastermind">
+ <div class="sky violet"></div>
+ <div class=wrap style="max-width:760px">
+  <div class=top><span class=back><span>◀ LEAVE</span></span><div class=row style="gap:8px"><span class=chip>ROOM 2CXN</span><span class="chip w">HOST · SITTING OUT</span></div></div>
+  <div style="text-align:center;margin-bottom:16px"><div class=h2>CRACK THE CODE</div><p style="font:800 14px Inter;color:#fff;margin-top:6px">5-letter word · 6 tries · green = right spot, yellow = in the word</p></div>
+  <div class=col id=mm style="gap:10px"></div>
+ </div>
+ <div class=dock style="background:var(--k);border-top:4px solid var(--w)"><div class=row style="gap:8px;flex-wrap:nowrap"><input class=inp value="BLA" style="max-width:220px;font:400 26px Bangers;letter-spacing:.3em"><span class="btn pink sm"><span>GUESS</span></span></div></div>
+</section>
+
+</div></div>
+<script>
+const H='https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_';
+const ART=['020055_afa4549e-7af7-484c-9c17-5a188d39a5e7','020119_c6adde07-372f-4108-a920-edb73df4c37f','020119_ab7779df-a236-4da3-8050-10300b620648','020119_99132e11-5487-4681-b899-9a0a3b4c4707'].map(i=>H+i+'.png');
+document.body.innerHTML=document.body.innerHTML.replace('url(H0)','url('+ART[0]+')');
+const $=s=>document.querySelector(s);
+const W=[['BANK','Crack the vault. Pick the locks, grab the loot.'],['SALOON','High noon. Fastest word wins the duel.'],['CASTLE','Defend the walls, word by word.'],['INTERROGATION','One lamp, one table. Find the liar.']];
+$('#wl').innerHTML=W.map((w,i)=>`<div class="wc ${i?'':'sel'}" data-i=${i}><span class=art style="background-image:url(${ART[i]})"></span><span class=l>${w[0]}</span><span class=n>${i+1}</span></div>`).join('');
+const wsel=i=>{document.querySelectorAll('#wl .wc').forEach((c,j)=>c.classList.toggle('sel',i==j));$('#wlname').textContent=W[i][0];$('#wldesc').textContent=W[i][1]};
+document.querySelectorAll('#wl .wc').forEach(c=>c.onmouseenter=c.onclick=()=>wsel(+c.dataset.i));wsel(0);
+const C=[['Ninja','🥷','#9aa4ff','Hide a letter'],['Mastermind','🧠','#ffb3d9','Peek at locks'],['Hero','🦸','#ffd400','Shield the weak'],['Villain','😈','#ff8a8a','Hit hardest'],['Hacker','💻','#7dffb0','Hide their locks'],['Mimic','🎭','#d0b3ff','Copy a word'],['Gambler','🎲','#ffcf7a','Go all in'],['Thief','🦝','#ff9a5c','Steal letters'],['Parasite','🦠','#b9f27a','Leech points'],['Oracle','🔮','#a7e7ff','See the future'],['Wildcard','🃏','#ffe58a','Random perk'],['Jester','🤡','#ffb0b0','Chaos clown']];
+$('#cl').innerHTML=C.map((c,i)=>`<div class="cls ${i==7?'sel':''}" style="--c:${c[2]}"><span class=em>${c[1]}</span><b>${c[0].toUpperCase()}</b><span>${c[3]}</span></div>`).join('');
+const P=[['Zachary','#ff7a00',1,0],['Ada','#ff2e8a',0,0],['Mo','#2e7bff',0,0],['Kai','#16c47f',0,0],['Bot Rex','#555',0,1]];
+$('#lob').innerHTML=P.map((p,i)=>`<div class="pl ${i==0?'me':''}"><div class=av style="background:${p[1]}"><b>${p[0][0]}</b>${i==0?'<span class=crown>👑</span>':''}</div><span class=nm>${p[0]}${i==0?' <span class=chip>HOST</span>':''}${p[3]?' <span class="chip w">BOT</span>':''}</span><span class="chip w">🎭 SECRET</span></div>`).join('');
+$('#strip').innerHTML=P.slice(0,5).map((p,i)=>`<div class=col style="align-items:center;gap:4px;flex:none"><div class=av style="width:40px;height:40px;font-size:20px;background:${p[1]}"><b>${p[0][0]}</b></div><span style="font:800 11px Inter">${p[0].split(' ')[0]}</span><span style="font:700 10px Inter">${i==3?'✅ locked':'✏️ typing'}</span></div>`).join('');
+$('#word').innerHTML='PANCAKE'.split('').map((l,i)=>`<span class="t ${i==6?'lock':''}">${l}</span>`).join('');
+const K='QWERTYUIOPASDFGHJKLZXCVBNM';const LK='ERS';
+$('#kb').innerHTML=K.split('').map(k=>`<span class="k ${LK.includes(k)?'x':''}">${k}</span>`).join('')+'<span class="k wide">⌫</span><span class="k wide" style="background:var(--y);color:#111">✓</span>';
+$('#gk').innerHTML=K.split('').map(k=>`<span class="k ${'TQZ'.includes(k)?'x':''}" style="${k=='A'?'background:var(--p);color:#fff':''}">${k}</span>`).join('');
+const R=[['Ada','#ff2e8a','QUIXOTIC','LEGENDARY','+38','var(--y)'],['Mo','#2e7bff','PANCAKE','EPIC','+14',''],['Zachary','#ff7a00','KETTLE','','+8',''],['Kai','#16c47f','SPOON','','✗ used a lock','']];
+$('#rv').innerHTML=R.map((r,i)=>`<div class=pl style="${i==0?'background:var(--y)':''};${i==3?'opacity:.7':''}"><div class=av style="background:${r[1]}"><b>${r[0][0]}</b></div><div class=col style="gap:4px;flex:1"><span style="font:800 14px Inter">${r[0]}</span><div class=row style="gap:3px">${r[2].split('').map(l=>`<span class="t sm ${i==3&&l=='S'?'hit':''}">${l}</span>`).join('')}</div></div>${r[3]?`<span class="chip ${r[3]=='LEGENDARY'?'p':''}">${r[3]}</span>`:''}<b style="font:400 26px Bangers">${r[4]}</b></div>`).join('')+'<div style="text-align:center;margin-top:8px"><span class=boom>KAI TAKES A STRIKE!</span></div>';
+$('#gp').innerHTML=P.slice(1,5).map((p,i)=>`<div class="pl ${i==0?'me':''} ${i==3?'out':''}"><div class=av style="background:${p[1]}"><b>${p[0][0]}</b></div><span class=nm>${p[0]}</span><div class=row style="gap:3px">${i==0?'<span class="t sm hit">T</span>':''}<span class="t sm lock">?</span><span class="t sm lock">?</span></div></div>`).join('');
+$('#cal').innerHTML='MTWTFSS'.split('').map(d=>`<div style="background:var(--k);color:var(--y);border-color:var(--k)">${d}</div>`).join('')+Array.from({length:28},(_,i)=>`<div class="${i<26&&i>16?'d':''} ${i==26?'t':''}">${i+1}</div>`).join('');
+const G=[['CRANE',['x','y','x','x','g']],['BLAME',['g','g','g','x','g']]];const cl={g:'#16c47f',y:'#ffd400',x:'#bbb'};
+$('#mm').innerHTML=G.map(g=>`<div class=mmrow><div class=row style="gap:5px;flex-wrap:nowrap">${g[0].split('').map((l,i)=>`<span class="t" style="background:${cl[g[1][i]]};${g[1][i]!='x'?'color:#fff;text-shadow:2px 2px 0 #111':''}">${l}</span>`).join('')}</div><span class="muted small" style="margin-left:auto">Kai</span></div>`).join('')+Array.from({length:4},()=>`<div class=mmrow style="opacity:.5"><div class=row style="gap:5px;flex-wrap:nowrap">${'     '.split('').map(()=>'<span class=t></span>').join('')}</div></div>`).join('');
+// viewer
+const pages=[...document.querySelectorAll('.pg')],bar=$('#bar');
+pages.forEach((p,i)=>{const b=document.createElement('button');b.textContent=`${i+1} · ${p.dataset.t}`;b.onclick=()=>show(i);bar.insertBefore(b,bar.lastChild)});
+const tog=document.createElement('button');tog.id='tog';bar.appendChild(tog);
+const setMode=m=>{document.body.classList.toggle('phone',m=='phone');document.body.classList.toggle('desk',m!='phone');document.querySelector('#frame').classList.toggle('phone',m=='phone');tog.textContent=m=='phone'?'📱 Phone · switch to desktop':'🖥 Desktop · switch to phone';window.__m=m;};
+tog.onclick=()=>setMode(window.__m=='phone'?'desk':'phone');
+setMode(matchMedia('(max-width:700px)').matches?'phone':'desk');
+function show(i){pages.forEach((p,j)=>p.classList.toggle('on',i==j));bar.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('on',i==j));try{history.replaceState(null,'','#'+(i+1))}catch(e){}}
+show(Math.max(0,(+location.hash.slice(1)||1)-1));
+</script></body></html>
