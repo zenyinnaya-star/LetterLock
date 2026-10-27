@@ -13,6 +13,7 @@ let want: Track = 'none';
 let quiet = false; // in-game: sit the theme lower under the announcer
 let gestureHooked = false;
 let switchTimer = 0;
+const unlocked: Partial<Record<'theme' | 'vault', boolean>> = {};
 const dbgLog: string[] = [];
 function note(m: string) { dbgLog.push(`${new Date().toISOString().slice(14, 19)} ${m}`); if (dbgLog.length > 8) dbgLog.shift(); }
 const fades = new Map<HTMLAudioElement, number>();
@@ -55,7 +56,17 @@ function hookGesture() {
   if (gestureHooked || typeof window === 'undefined') return;
   gestureHooked = true;
   // iOS/Android only unlock audio on touchend/click (not pointerdown), and each track needs its own unlock: keep listening
-  const go = () => { apply(); };
+  // the first real tap/key both starts the wanted track and "unlocks" the other ambient track, so later
+  // switches (landing -> Classic lobby, round -> end screen) can start by themselves without another tap (iOS needs this)
+  const go = () => {
+    (['theme', 'vault'] as const).forEach((t) => {
+      if (unlocked[t] || want === t) return;
+      const a = el(t);
+      a.muted = true;
+      a.play().then(() => { if (want !== t) { a.pause(); a.currentTime = 0; } a.muted = false; unlocked[t] = true; }).catch(() => { a.muted = false; });
+    });
+    apply();
+  };
   ['pointerdown', 'touchend', 'click', 'keydown'].forEach((ev) => window.addEventListener(ev, go, { passive: true }));
 }
 
@@ -68,7 +79,7 @@ function apply() {
       const x = el(t);
       if (x.paused) {
         note(`play ${t}`);
-        x.play().catch((e: unknown) => { note(`blocked ${t}: ${(e as Error)?.name ?? e}`); hookGesture(); }); // autoplay blocked until the first tap/key
+        x.play().then(() => { if (t === 'theme' || t === 'vault') unlocked[t] = true; }).catch((e: unknown) => { note(`blocked ${t}: ${(e as Error)?.name ?? e}`); hookGesture(); }); // autoplay blocked until the first tap/key
       }
       fade(x, target(t), 900);
     } else if (a && !a.paused) {
