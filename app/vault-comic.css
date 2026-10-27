@@ -352,7 +352,6 @@
   .vault.p-lobby::after { right: 0 !important; left: auto !important; width: calc((100vh - 250px) * .482) !important; height: calc(100vh - 250px) !important; background-image: url(/art/comic/lobby-right.webp) !important; background-size: 100% 100% !important; }
 }
 @media (max-width: 899px) { .vault.p-lobby::before, .vault.p-lobby::after { display: none !important; } }
-.vault.p-lobby .v-lobby::after { background: url(/art/comic/lobby-floor.webp) bottom / 100% 100% no-repeat !important; height: 11vh !important; }
 
 /* lobby v2.1: soft inner edges on scenery, torn floor in code, bigger case file, settings tab top-right like the mockup */
 @media (min-width: 900px) {
@@ -360,7 +359,7 @@
   .vault.p-lobby::after { -webkit-mask-image: linear-gradient(270deg, #000 70%, transparent 100%); mask-image: linear-gradient(270deg, #000 70%, transparent 100%); }
   .vault.p-lobby .lobby-top > .col { zoom: 1.4; }
   .vault.p-lobby .lobby-qr { zoom: 1.35; }
-  .vault.p-lobby .lobby-drawer { left: auto !important; right: 24px !important; top: 64px !important; width: 290px !important; z-index: 6; }
+  .vault.vault.p-lobby .lobby-drawer, .vault.vault.p-lobby .v-lobby .lobby-drawer { position: fixed !important; inset: 64px 24px auto auto !important; width: 290px !important; max-width: 290px !important; transform: none !important; z-index: 6; }
 }
 .vault.p-lobby .v-lobby::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; height: 9vh; z-index: 0; pointer-events: none;
   background: #ff1f8e radial-gradient(#d4006f 30%, transparent 34%) 0 0 / 11px 11px;
