@@ -1,7 +1,15 @@
 'use client';
 
-import { TutorialCoach } from './TutorialCoach';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import { CLASSIC_ONLY } from '@/lib/modes';
+// parked / story-only screens load on demand so Classic never downloads them
+const Battle = dynamic(() => import('./Battle').then((m) => m.Battle), { ssr: false });
+const DuelWest = dynamic(() => import('./DuelWest').then((m) => m.DuelWest), { ssr: false });
+const WestFinale = dynamic(() => import('./DuelWest').then((m) => m.WestFinale), { ssr: false });
+const TeamSiege = dynamic(() => import('./TeamSiege').then((m) => m.TeamSiege), { ssr: false });
+const SiegeFinale = dynamic(() => import('./TeamSiege').then((m) => m.SiegeFinale), { ssr: false });
+const TutorialCoach = dynamic(() => import('./TutorialCoach').then((m) => m.TutorialCoach), { ssr: false });
 import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCountdown } from '@/hooks/useCountdown';
@@ -18,18 +26,15 @@ import { clearSession } from '@/lib/session';
 import type { PublicPlayer, RoomState } from '@/lib/types';
 import { Icon } from './icons';
 import { Lobby } from './Lobby';
-import { Battle } from './Battle';
 import { Reactions } from './Reactions';
 import { ActionFeed } from './ActionFeed';
 import { DuelHud } from './DuelHud';
 import { TeamVoice } from './TeamVoice';
 import { Spectate } from './Spectate';
-import { DuelWest, WestFinale } from './DuelWest';
 import { westArtVars } from '@/lib/westArt';
 import '@/app/west.css';
 import '@/app/team.css';
 import '@/app/siege.css';
-import { SiegeFinale, TeamSiege } from './TeamSiege';
 import { siegeArtVars } from '@/lib/siegeArt';
 import '@/app/vault.css';
 import '@/app/vault-comic.css';
@@ -90,7 +95,7 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
     if (!(vault || vaultLobby || vaultEnd)) return;
     try { if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch { /* ignore */ }
     const w = document.createElement('div'); w.className = 'vc-phasewipe'; document.body.appendChild(w);
-    window.setTimeout(() => w.remove(), 900);
+    window.setTimeout(() => w.remove(), 400);
   }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
   // Comic Pop VFX: POW / BAM bursts on taps, and a screen shake + big burst on the big moments
   useEffect(() => {
@@ -291,7 +296,7 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
     case 'guess': main = <GuessPhase {...props} />; break;
     case 'react': main = <ReactPhase {...props} />; break;
     case 'duel_intro': main = vault ? <VaultShowdown state={state} msLeft={msLeft} /> : <DuelIntro {...props} />; break;
-    case 'finished': main = <Battle {...props} fallback={<Finished {...props} />} />; break;
+    case 'finished': main = CLASSIC_ONLY ? <Finished {...props} /> : <Battle {...props} fallback={<Finished {...props} />} />; break;
     case 'battle': main = <Battle {...props} />; break;
   }
   const total = phase === 'answer' ? state.room.answer_seconds : PHASE_TOTAL[phase] ?? 0;
