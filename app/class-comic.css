@@ -61,3 +61,16 @@
 .selpage .cs-more .sel-box, .selpage .cs-more .cs-box { background: #f4f1e8 !important; color: var(--k) !important; }
 .selpage .sel-lock { font-size: clamp(20px, 2.2vw, 30px); padding: 10px 26px; }
 @media (max-width: 760px) { .selpage .sel-card { width: 92px; } }
+
+/* ---- layout fixes ---- */
+.selpage .sel-top { display: flex; align-items: flex-start; gap: 14px; flex-wrap: wrap; padding-top: 10px; }
+.selpage .sel-top h1 { color: #fff !important; -webkit-text-fill-color: #fff; -webkit-text-stroke: .07em var(--k); paint-order: stroke fill;
+  text-shadow: .04em .04em 0 var(--p), .08em .08em 0 var(--k) !important; font-size: clamp(34px, 4.4vw, 62px); max-width: 9ch; line-height: .95; order: 2; flex: 0 0 auto; }
+.selpage .play-back { order: 1; align-self: flex-start; }
+.selpage .sel-strip { position: relative; z-index: 5; padding-bottom: 10px; }
+.selpage .sel-cards { flex-wrap: wrap; }
+.selpage .sel-card { width: clamp(96px, 9vw, 132px); }
+.selpage .sel-bg-img { top: 16%; bottom: 26%; }
+.selpage .sel-name { color: #fff !important; -webkit-text-fill-color: #fff; text-shadow: .04em .04em 0 var(--p), .08em .08em 0 var(--k) !important; }
+.selpage .sel-right { padding-right: 10px; }
+.selpage .sel-info .cs-oneline { padding: 10px 12px; line-height: 1.35; }
