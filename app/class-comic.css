@@ -76,3 +76,34 @@
 .selpage .sel-info .cs-oneline { padding: 10px 12px; line-height: 1.35; }
 .selpage .sel-bg-img { top: 14%; bottom: 32%; right: 32%; width: min(26vw, 340px); }
 .selpage .sel-card { width: clamp(88px, 8vw, 118px); }
+
+/* ---- v3: full-bleed hero portrait behind everything, small square icon tiles ---- */
+.selpage .sel-bg-img { position: absolute !important; inset: 0 !important; right: 0 !important; left: 0 !important; top: 0 !important; bottom: 0 !important; width: 100% !important; height: 100% !important;
+  border: 0 !important; box-shadow: none !important; transform: none !important; opacity: 1 !important; z-index: 1; overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 22%, #000 100%); mask-image: linear-gradient(90deg, transparent 0, #000 22%, #000 100%); }
+.selpage .sel-bg-img img { width: 100%; height: 100%; object-fit: cover; object-position: 62% 18%; }
+.selpage .sel-bg::before { opacity: .7; }
+/* readable left column over the portrait */
+.selpage .sel-top, .selpage .sel-main, .selpage .sel-strip { position: relative; z-index: 3; }
+/* bottom pink torn floor */
+.selpage .sel-strip { background: linear-gradient(180deg, transparent 0, transparent 30%, var(--p) 30.5%) !important; border-top: 0;
+  clip-path: none; padding-top: 18px; }
+.selpage .sel-strip::before { display: block !important; content: ''; position: absolute; left: 0; right: 0; top: 24%; height: 14px; z-index: -1;
+  background: conic-gradient(from 135deg at 50% 100%, var(--p) 0 90deg, transparent 90deg) 0 0 / 28px 14px repeat-x; }
+.selpage .sel-cards { gap: 10px; flex-wrap: nowrap; }
+/* small square icon tiles */
+.selpage .sel-card { width: clamp(64px, 6vw, 86px) !important; aspect-ratio: 1 !important; transform: none !important; animation: none !important; border: 4px solid var(--k) !important; border-radius: 4px !important; box-shadow: 4px 4px 0 var(--k); }
+.selpage .sel-card:nth-child(2n) { transform: none !important; }
+.selpage .sel-card:hover { transform: translateY(-6px) scale(1.08) !important; }
+.selpage .sel-card-art { object-position: 50% 15%; }
+.selpage .sel-card b { left: 0; right: 0; bottom: 0; text-align: center; border: 0; border-top: 3px solid var(--k); background: rgba(17,17,17,.88); font-size: clamp(9px, .8vw, 12px); padding: 1px 0; transform: none; }
+.selpage .sel-card.on { box-shadow: 0 0 0 4px var(--p), 0 0 0 8px var(--k) !important; transform: translateY(-6px) !important; }
+/* title + panels sit on the art */
+.selpage .sel-left .sel-mode, .selpage .sel-left .sel-you { max-width: 340px; }
+.selpage .sel-info .sel-name { font-size: clamp(48px, 7vw, 110px); }
+@media (max-width: 760px) {
+  .selpage .sel-bg-img { -webkit-mask-image: none; mask-image: none; }
+  .selpage .sel-bg-img img { object-position: 50% 10%; }
+  .selpage .sel-card { width: 54px !important; }
+  .selpage .sel-cards { gap: 6px; overflow-x: auto; }
+}
