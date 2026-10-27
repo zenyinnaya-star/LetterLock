@@ -19,7 +19,7 @@
   background-size: 11px 11px, 100% 100%;
   -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 45%, transparent 25%, rgba(0,0,0,.6) 60%, #000 95%); mask-image: radial-gradient(ellipse 62% 58% at 50% 45%, transparent 25%, rgba(0,0,0,.6) 60%, #000 95%); }
 .vault.tense .v-shade { background: radial-gradient(ellipse 60% 55% at 50% 44%, #ffd6d6 0%, #ff6b6b 45%, #e5002b 90%) !important; }
-.v-lasers, .v-beacons, .v-glints, .vault.p-lobby::before, .vault.p-lobby::after { display: none !important; }
+.v-lasers, .v-beacons, .v-glints { display: none !important; }
 .v-alarm-flash { background: radial-gradient(ellipse at 50% 50%, rgba(255,31,142,.2), rgba(255,31,142,.6)) !important; }
 
 /* shared comic helpers */
@@ -181,3 +181,15 @@
   .vault .kbd .key { border-width: 2px; box-shadow: 0 3px 0 var(--k); }
 }
 @media (prefers-reduced-motion: reduce) { .vault *, .vault *::before, .vault *::after { animation: none !important; } }
+
+/* lobby: keep the CCTV wall and blueprint from the real hideout; header text readable on yellow */
+.vault.p-lobby::before, .vault.p-lobby::after { filter: drop-shadow(4px 4px 0 var(--k)) !important; border: 4px solid var(--k); border-radius: 3px; background-color: #fff; }
+.vault.p-lobby { padding-bottom: 60px; }
+.vault.p-lobby::after { background-color: #1d4fd1 !important; }
+.vault-shell .topbar .textbtn, .vault-shell .topbar .textbtn:hover, .vault-shell .topbar .room-chip { color: var(--k) !important; }
+.vault-shell .topbar .textbtn.danger { color: var(--alarm) !important; }
+.vault.p-lobby::before { display: block; }
+.vault.p-lobby::after { display: block; }
+/* turn the flat pink floor into a torn-paper edge */
+.vault.p-lobby .v-shade::before { top: 40%; }
+.vault.p-lobby .v-shade::after { background-image: radial-gradient(#f7a400 30%, transparent 35%), linear-gradient(180deg, transparent 88%, #fff 88%, #fff 89.5%, #ff1f8e 89.5%); background-size: 11px 11px, 100% 100%; }
