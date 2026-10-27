@@ -67,6 +67,7 @@ function CardArt({ cls }: { cls: PlayerClass }) {
 
 function Select() {
   const router = useRouter();
+  useEffect(() => { router.prefetch('/room/AAAA'); }, [router]); // warm the room bundle so Lock in lands instantly
   const t = useT();
   const sp = useSearchParams();
   const kind = (META[sp.get('mode') as Kind] ? sp.get('mode') : 'create') as Kind;
