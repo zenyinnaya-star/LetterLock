@@ -67,7 +67,12 @@ function CardArt({ cls }: { cls: PlayerClass }) {
 
 function Select() {
   const router = useRouter();
-  useEffect(() => { router.prefetch('/room/AAAA'); }, [router]); // warm the room bundle so Lock in lands instantly
+  // warm the room screen while the player is choosing, so Lock in lands without a script download
+  useEffect(() => {
+    router.prefetch('/room/AAAA');
+    const id = window.setTimeout(() => { void import('@/components/Game'); }, 300);
+    return () => window.clearTimeout(id);
+  }, [router]);
   const t = useT();
   const sp = useSearchParams();
   const kind = (META[sp.get('mode') as Kind] ? sp.get('mode') : 'create') as Kind;
