@@ -353,3 +353,15 @@
 }
 @media (max-width: 899px) { .vault.p-lobby::before, .vault.p-lobby::after { display: none !important; } }
 .vault.p-lobby .v-lobby::after { background: url(/art/comic/lobby-floor.webp) bottom / 100% 100% no-repeat !important; height: 11vh !important; }
+
+/* lobby v2.1: soft inner edges on scenery, torn floor in code, bigger case file, settings tab top-right like the mockup */
+@media (min-width: 900px) {
+  .vault.p-lobby::before { -webkit-mask-image: linear-gradient(90deg, #000 78%, transparent 100%); mask-image: linear-gradient(90deg, #000 78%, transparent 100%); }
+  .vault.p-lobby::after { -webkit-mask-image: linear-gradient(270deg, #000 70%, transparent 100%); mask-image: linear-gradient(270deg, #000 70%, transparent 100%); }
+  .vault.p-lobby .lobby-top > .col { zoom: 1.4; }
+  .vault.p-lobby .lobby-qr { zoom: 1.35; }
+  .vault.p-lobby .lobby-drawer { left: auto !important; right: 24px !important; top: 64px !important; width: 290px !important; z-index: 6; }
+}
+.vault.p-lobby .v-lobby::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; height: 9vh; z-index: 0; pointer-events: none;
+  background: #ff1f8e radial-gradient(#d4006f 30%, transparent 34%) 0 0 / 11px 11px;
+  clip-path: polygon(0 28%, 4% 12%, 8% 30%, 13% 8%, 18% 26%, 24% 10%, 30% 28%, 36% 6%, 42% 24%, 48% 10%, 54% 30%, 60% 8%, 66% 26%, 72% 12%, 78% 30%, 84% 8%, 90% 26%, 95% 12%, 100% 28%, 100% 100%, 0 100%); }
