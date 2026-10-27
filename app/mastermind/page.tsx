@@ -10,6 +10,7 @@ import { mm, mmError, saveToken } from '@/lib/mastermind';
 import { loadName, saveName } from '@/lib/session';
 import { mmArtVars } from '@/lib/mmArt';
 import './mastermind.css';
+import './mm-comic.css';
 
 function MastermindHomeInner() {
   const router = useRouter();

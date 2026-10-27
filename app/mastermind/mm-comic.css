@@ -1,0 +1,105 @@
+/* ===== Mastermind: comic-noir skin (matches the approved mockups) =====
+   Layout, rules and structure stay in mastermind.css. This only changes paint: ink outlines, halftone, navy + mustard + pink. */
+@font-face { font-family: 'LL Display'; src: url(/fonts/luckiest-guy.woff2) format('woff2'); font-display: swap; }
+@font-face { font-family: 'LL Comic'; src: url(/fonts/bangers.woff2) format('woff2'); font-display: swap; }
+
+.mm-room { --mk: #0b0d1a; --mn: #15213f; --mn2: #0d1530; --my: #ffd23f; --mp: #ff1f8e; --mpaper: #f6ecd2; --mdsp: 'LL Display', 'Luckiest Guy', Impact, sans-serif; --mcmc: 'LL Comic', Bangers, Impact, sans-serif;
+  --paper: var(--mpaper); --ink: var(--mk); --string: #e5002b; --amber: var(--my);
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 38%, rgba(255,210,63,.20), transparent 70%),
+    radial-gradient(rgba(255,255,255,.07) 28%, transparent 32%) 0 0 / 9px 9px,
+    linear-gradient(180deg, var(--mn) 0%, var(--mn2) 100%); }
+/* the painted photo room and its smoke/dust give way to the comic plate */
+.mm-room .mm-light, .mm-room .mm-dust, .mm-room .mm-vignette:not(:has(*)) { display: none !important; }
+.mm-room .mm-vignette { background: radial-gradient(ellipse 85% 80% at 50% 45%, transparent 60%, rgba(5,8,22,.7)); }
+.mm-room::before { content: ''; position: fixed; inset: auto 0 0 0; height: 11vh; z-index: 0; pointer-events: none; background: var(--mp);
+  background-image: radial-gradient(#d4006f 28%, transparent 32%); background-size: 10px 10px;
+  clip-path: polygon(0 24%, 5% 10%, 11% 26%, 18% 8%, 26% 24%, 34% 6%, 42% 22%, 50% 8%, 58% 26%, 66% 8%, 74% 24%, 83% 10%, 91% 26%, 100% 12%, 100% 100%, 0 100%); }
+
+/* topbar: comic wordmark chip row stays, remove the smoky gradient */
+.shell:has(.mm-room) .topbar { background: none; }
+
+/* titles */
+.mm-room .mm-title, .mm-room h1.mm-title { font-family: var(--mdsp); font-weight: 400; letter-spacing: .06em; color: var(--my); text-shadow: none; -webkit-text-stroke: 3px var(--mk); paint-order: stroke fill;
+  filter: drop-shadow(5px 5px 0 var(--mp)); transform: rotate(-2deg) skewX(-6deg); }
+.mm-room .mm-sub, .mm-room .mm-or, .mm-room .mm-kicker { color: #fff; text-shadow: 2px 2px 0 var(--mk); font-family: var(--mcmc); letter-spacing: .08em; font-size: 15px; opacity: 1; }
+.mm-room .mm-or { text-align: center; text-transform: uppercase; }
+.mm-room .mm-err { color: #fff; background: #e5002b; border: 3px solid var(--mk); padding: 4px 10px; box-shadow: 3px 3px 0 var(--mk); font-family: var(--mcmc); letter-spacing: .06em; }
+
+/* case-file folders (create / join / dock) */
+.mm-room .mm-folder { background: var(--mpaper); color: var(--mk); border: 4px solid var(--mk); border-radius: 3px; box-shadow: 7px 7px 0 var(--mk); }
+.mm-room .mm-folder::before { background: var(--my); color: var(--mk); border: 3px solid var(--mk); border-bottom: 0; font-family: var(--mcmc); letter-spacing: .1em; box-shadow: none; text-shadow: none; }
+.mm-room .mm-folder .input { background: #fff; color: var(--mk); border: 3px solid var(--mk); border-radius: 2px; box-shadow: inset 3px 3px 0 rgba(0,0,0,.08); font-family: 'Courier New', monospace; font-weight: 700; }
+.mm-room .mm-toggle { color: var(--mk); font-family: var(--mcmc); letter-spacing: .05em; }
+
+/* buttons: ink-outlined mustard slabs with a hard shadow */
+.mm-room .btn { font-family: var(--mdsp); letter-spacing: .06em; text-transform: uppercase; background: var(--my); color: var(--mk); border: 4px solid var(--mk); border-radius: 3px;
+  box-shadow: 5px 5px 0 var(--mk); text-shadow: none; transform: skewX(-6deg); transition: transform .12s, box-shadow .12s; }
+.mm-room .btn:hover:not(:disabled) { transform: skewX(-6deg) translate(-2px, -2px); box-shadow: 7px 7px 0 var(--mk); }
+.mm-room .btn:active:not(:disabled) { transform: skewX(-6deg) translate(3px, 3px); box-shadow: 2px 2px 0 var(--mk); }
+.mm-room .btn:disabled { background: #cfc7ae; color: #6a6450; box-shadow: 3px 3px 0 var(--mk); }
+.mm-room .btn.ghost { background: var(--mp); color: #fff; -webkit-text-stroke: 1px var(--mk); paint-order: stroke fill; }
+.mm-room .btn:focus-visible { outline: 4px dashed #fff; outline-offset: 3px; }
+
+/* HUD + case tag */
+.mm-room .mm-casetag { background: var(--my); color: var(--mk); border: 4px solid var(--mk); box-shadow: 5px 5px 0 var(--mk); padding: 4px 12px; transform: rotate(-2deg); border-radius: 3px; }
+.mm-room .mm-casetag span, .mm-room .mm-casetag em { color: var(--mk); font-family: var(--mcmc); letter-spacing: .1em; opacity: 1; }
+.mm-room .mm-casetag b { color: var(--mk); font-family: var(--mdsp); text-shadow: none; letter-spacing: .06em; }
+
+/* cork board = framed comic panel */
+.mm-room .mm-cork { border: 6px solid var(--mk); border-radius: 3px; box-shadow: 9px 9px 0 var(--mk); outline: 4px solid var(--my); outline-offset: -12px; }
+.mm-room .mm-cork::after { display: none; }
+.mm-room .mm-cork-title { background: var(--mpaper); color: var(--mk); border: 4px solid var(--mk); box-shadow: 5px 5px 0 var(--mk); font-family: var(--mdsp); letter-spacing: .05em; transform: rotate(-1.5deg); }
+.mm-room .mm-cork-title small { font-family: var(--mcmc); letter-spacing: .1em; color: #b3005f; }
+.mm-room .mm-strings path { stroke: var(--string); stroke-width: 3; }
+
+/* polaroids */
+.mm-room .mm-photo { border: 3px solid var(--mk); border-radius: 2px; box-shadow: 5px 5px 0 var(--mk); background: #fff; }
+.mm-room .mm-photo .cap { color: var(--mk); font-family: var(--mcmc); letter-spacing: .06em; font-size: 15px; }
+.mm-room .mm-photo.me { box-shadow: 0 0 0 4px var(--mp), 6px 6px 0 4px var(--mk); }
+.mm-room .mm-photo.empty { background: rgba(255,255,255,.55); border-style: dashed; }
+
+/* invite plate / QR */
+.mm-room .mm-invite { background: var(--my); border: 4px solid var(--mk); box-shadow: 6px 6px 0 var(--mk); border-radius: 3px; }
+.mm-room .mm-plate { background: var(--mk); border: 3px solid var(--mk); }
+.mm-room .mm-plate span { color: var(--my); font-family: var(--mcmc); letter-spacing: .12em; }
+.mm-room .mm-plate b { color: #fff; font-family: var(--mdsp); letter-spacing: .12em; text-shadow: 2px 2px 0 var(--mp); }
+.mm-room .mm-qr { border: 3px solid var(--mk); background: #fff; }
+.mm-room .mm-qr svg { background: #fff; }
+.mm-room .mm-invite-txt b { color: var(--mk); font-family: var(--mcmc); letter-spacing: .1em; }
+
+/* side panels (detectives / behind the glass) */
+.mm-room .mm-side .tag, .mm-room .mm-glass .tag { color: #fff; font-family: var(--mcmc); letter-spacing: .14em; text-shadow: 2px 2px 0 var(--mk); }
+.mm-room .mm-glass, .mm-room .mm-side > div { border: 4px solid var(--mk); border-radius: 3px; box-shadow: 5px 5px 0 var(--mk); background: rgba(21,33,63,.88); color: #fff; backdrop-filter: none; }
+
+/* clues = typed paper cards */
+.mm-room .mm-card { background: var(--mpaper); color: var(--mk); border: 3px solid var(--mk); border-radius: 2px; box-shadow: 5px 5px 0 var(--mk); font-family: 'Courier New', monospace; font-weight: 700; }
+.mm-room .mm-card.reveal { background: #fff3c4; box-shadow: 0 0 0 3px var(--my), 6px 6px 0 3px var(--mk); }
+.mm-room .mm-card.empty { background: rgba(255,255,255,.18); color: #fff; border-style: dashed; box-shadow: none; }
+
+/* letter slots */
+.mm-room .mm-slots .slot { background: var(--mpaper); color: var(--mk); border: 4px solid var(--mk); border-radius: 3px; box-shadow: 4px 4px 0 var(--mk); font-family: 'Courier New', monospace; font-weight: 900; }
+.mm-room .mm-slots .slot.unknown { background: #cfc7ae; }
+.mm-room .mm-slots .slot.lit { background: var(--my); }
+.mm-room .mm-slots .slot.typed { background: #fff; color: #b3005f; }
+
+/* evidence log */
+.mm-room .mm-log { border: 3px solid var(--mk); border-left-width: 8px; border-left-color: var(--mp); box-shadow: 5px 5px 0 var(--mk); }
+.mm-room .mm-log .hd { color: var(--mp); font-family: var(--mcmc); letter-spacing: .16em; font-size: 14px; }
+
+/* timer */
+.mm-room .mm-clock .face { fill: var(--mpaper); stroke: var(--mk); stroke-width: 4; }
+.mm-room .mm-clock text { fill: var(--mk); font-family: var(--mdsp); }
+
+/* stamps */
+.mm-room .mm-stamp { font-family: var(--mdsp); border-width: 8px; -webkit-mask-image: none; mask-image: none; background: rgba(255,255,255,.92); box-shadow: 6px 6px 0 var(--mk); }
+.mm-room .mm-stamp.good { color: #00a550; border-color: #00a550; text-shadow: none; }
+.mm-room .mm-stamp.bad { color: #e5002b; border-color: #e5002b; }
+
+/* toast + hint */
+.mm-room .mm-toast { background: var(--my); color: var(--mk); border: 3px solid var(--mk); box-shadow: 4px 4px 0 var(--mk); font-family: var(--mcmc); letter-spacing: .06em; }
+.mm-room .mm-hint { color: #fff; text-shadow: 2px 2px 0 var(--mk); font-family: var(--mcmc); letter-spacing: .06em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-room .btn { transition: none; }
+}
