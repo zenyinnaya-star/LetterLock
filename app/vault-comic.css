@@ -385,3 +385,15 @@
 .vault.p-finished .locks-row:last-child { border-bottom: 0; }
 .vault.p-finished .xp-row, .vault.p-finished .xp { max-width: 720px; margin: 8px auto; }
 .vault.p-finished .v-content > * + * { margin-top: 10px; }
+
+.quit-end .quit-end-btns .btn { font-family: 'LL Display','Luckiest Guy',Impact,sans-serif !important; font-weight: 400 !important; text-transform: uppercase; font-size: 22px !important; letter-spacing: .04em; border: 4px solid #111 !important; border-radius: 3px !important; padding: 10px 26px !important; transform: skewX(-6deg); background: #ff1f8e !important; color: #fff !important; box-shadow: 5px 5px 0 #111 !important; text-shadow: 2px 2px 0 #111; }
+.quit-end .quit-end-btns .btn.ghost { background: #fff !important; color: #111 !important; text-shadow: none; }
+.quit-end .quit-end-btns .btn:hover { transform: skewX(-6deg) translateY(-3px) scale(1.05); }
+/* quit confirm dialog in comic style */
+.vault-shell .quit-sheet, .quit-sheet { background: #f4f1e8 !important; border: 5px solid #111 !important; border-radius: 3px !important; box-shadow: 8px 8px 0 #ff1f8e, 8px 8px 0 3px #111 !important; color: #111 !important; }
+.quit-sheet::before, .quit-sheet::after { display: none !important; }
+.quit-sheet h2 { font-family: 'LL Display','Luckiest Guy',Impact,sans-serif !important; font-weight: 400 !important; color: #fff !important; -webkit-text-stroke: .06em #111; paint-order: stroke fill; text-shadow: .05em .05em 0 #e5002b, .1em .1em 0 #111; }
+.quit-sheet p, .quit-sheet .muted { color: #111 !important; font-family: 'LL Comic', Bangers, Impact, sans-serif !important; font-size: 18px; letter-spacing: .03em; }
+.quit-sheet .quit-art { background: #ffd400 !important; border: 4px solid #111 !important; color: #111 !important; }
+.quit-sheet .btn { font-family: 'LL Display','Luckiest Guy',Impact,sans-serif !important; font-weight: 400 !important; text-transform: uppercase; border: 4px solid #111 !important; border-radius: 3px !important; box-shadow: 4px 4px 0 #111 !important; transform: skewX(-6deg); background: #fff !important; color: #111 !important; text-shadow: none !important; }
+.quit-sheet .btn.danger { background: #e5002b !important; color: #fff !important; text-shadow: 2px 2px 0 #111 !important; }
