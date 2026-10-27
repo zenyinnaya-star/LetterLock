@@ -25,6 +25,12 @@ export const COMIC_ART: Partial<Record<PlayerClass, string>> = {
   villain: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_035819_2d2393ce-5945-4848-8e1e-2b6bea88d619.png',
   hacker: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_035648_6257e2f0-0a6c-4bd1-9404-9cb37797cfee.png',
   thief: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_035647_2c5aa729-1a1c-4c18-bfdc-bf081d15db92.png',
+  jester: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_174112_4c8d23db-cbec-47f3-9a4c-3e4245731dfe.png',
+  parasite: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_173945_a446d2e3-b3aa-431e-a5df-5f07bf21ea1d.png',
+  wildcard: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_173943_f6b23a33-9712-4831-8fb7-d67980932ae5.png',
+  oracle: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_174112_7cd0a925-69e8-42b5-a59b-9e5d68fa237e.png',
+  gambler: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_173945_44fbd97d-ac69-4fd0-98c3-6238436ba52c.png',
+  mimic: 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261027_173944_8c295f7c-a512-44b1-a4cf-f0e44eaeced2.png',
 };
 
 /** Order to try: local self-hosted file, then the CDN scene, then the portrait. */
