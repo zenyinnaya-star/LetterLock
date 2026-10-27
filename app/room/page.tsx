@@ -42,13 +42,10 @@ export default function RoomRoute() {
 
 function RoomPage({ code }: { code: string }) {
   const t = useT();
-  const [token, setToken] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setToken(loadSession(code)?.token ?? null);
-    setLoaded(true);
-  }, [code]);
+  // RoomPage only renders on the client once the code is known, so the saved seat can be read up front:
+  // one state fetch with the right token instead of a token-less one followed by a second
+  const [token, setToken] = useState<string | null>(() => loadSession(code)?.token ?? null);
+  const loaded = true;
 
   const { state, error, refresh, offset, stateToken, botIds, botInfo, pingBots } = useRoom(code, loaded ? token : null);
 
