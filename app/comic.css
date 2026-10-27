@@ -192,3 +192,10 @@
 @media (prefers-reduced-motion: reduce) {
   .cp *, .cp *::before, .cp *::after, .cp-sky::before { animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
 }
+
+/* locked modes (Classic only for now) */
+.cp-card.soon { cursor: not-allowed; }
+.cp-card.soon .art img, .cp-card.soon .art video { filter: grayscale(.85) contrast(.9) brightness(.8); }
+.cp-soon { position: absolute; z-index: 3; left: 50%; top: 38%; transform: translate(-50%, -50%) rotate(-6deg); background: var(--p, #ff1f8e); color: #fff; border: 3px solid #111;
+  padding: 4px 12px; font-family: var(--cmc, Bangers, Impact), sans-serif; letter-spacing: .08em; text-transform: uppercase; box-shadow: 3px 3px 0 #111; white-space: nowrap; pointer-events: none; }
+.cp-create:disabled, .cp-mini:disabled { opacity: .55; cursor: not-allowed; filter: grayscale(.4); }

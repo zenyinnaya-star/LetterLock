@@ -93,7 +93,7 @@ export function ActionFeed({ state, token }: { state: RoomState; token?: string 
       if (next.from_class === 'villain') audio.file('villain-laugh', 0.35);
     } else if (next.type === 'hack' && aimedAtMe) audio.file('access-denied');
     else if (next.type === 'bet') audio.file('money');
-    else if (next.type === 'block') audio.file('metal-clang');
+    else if (next.type === 'block') audio.file('block', 0, 0.85);
     else if (next.type === 'steal') audio.file('coin-swipe');
     else if (next.type === 'oracle') audio.file('mystical-harp');
     else if (next.type === 'swap') audio.file('boing');

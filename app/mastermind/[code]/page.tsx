@@ -1,5 +1,8 @@
 'use client';
 
+import { ComingSoon } from '@/components/ComingSoon';
+import { CLASSIC_ONLY } from '@/lib/modes';
+
 import { shareOrigin } from '@/lib/site';
 import { memo, use, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -56,7 +59,7 @@ const FloatEmoji = memo(function FloatEmoji({ f }: { f: Float }) {
   return <div className="mm-float" style={{ left: `${f.x}%`, ['--rot' as string]: `${(f.x % 20) - 10}deg` }}>{f.emoji}<span>{f.name}</span></div>;
 });
 
-export default function MastermindRoom({ params }: { params: Promise<{ code: string }> }) {
+function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) {
   const { code: raw } = use(params);
   const code = raw.toUpperCase();
   const router = useRouter();
@@ -539,3 +542,5 @@ export default function MastermindRoom({ params }: { params: Promise<{ code: str
     </main>
   );
 }
+
+export default function MastermindRoom(props: { params: Promise<{ code: string }> }) { return CLASSIC_ONLY ? <ComingSoon name="Mastermind" /> : <MastermindRoomInner {...props} />; }

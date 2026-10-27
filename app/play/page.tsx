@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { pveUnlocked, tryUnlockPve } from '@/lib/pveGate';
+import { isClassicKind } from '@/lib/modes';
 import { ComicTop } from '@/components/ComicTop';
 import { audio } from '@/lib/audio';
 import { burst, wipe } from '@/lib/comicFx';
@@ -27,9 +27,6 @@ const SVG = {
   cal: <svg viewBox="0 0 24 24" aria-hidden><rect x="3.5" y="5" width="17" height="15" rx="1.5" /><path d="M3.5 10h17M8 3v4M16 3v4M7.5 13.5h2M11 13.5h2M14.5 13.5h2M7.5 16.5h2M11 16.5h2" /></svg>,
   flask: <svg viewBox="0 0 24 24" aria-hidden><path d="M9.5 3h5M10.5 3v6L5 19a1.5 1.5 0 0 0 1.3 2h11.4A1.5 1.5 0 0 0 19 19l-5.5-10V3" /><path d="M7.5 15h9" /></svg>,
 };
-const LAB: { kind: Kind; k: string }[] = [
-  { kind: 'solo', k: 'solo' }, { kind: 'reverse', k: 'reverse' }, { kind: 'chaos', k: 'chaos' }, { kind: 'memory', k: 'memory' }, { kind: 'jester', k: 'jester' },
-];
 
 export default function Play() {
   const router = useRouter();
@@ -37,13 +34,7 @@ export default function Play() {
   const [sel, setSel] = useState(0);
   const [live, setLive] = useState<number | null>(null);
   const [code, setCode] = useState('');
-  const [unlocked, setUnlocked] = useState(false);
-  const [askPw, setAskPw] = useState(false);
-  const [pw, setPw] = useState('');
-  const [pwErr, setPwErr] = useState(false);
-  const [labOpen, setLabOpen] = useState(false);
   const vids = useRef<(HTMLVideoElement | null)[]>([]);
-  useEffect(() => { setUnlocked(pveUnlocked()); }, []);
 
   // only the "live" door plays its loop; the rest rewind to the still frame
   useEffect(() => {
@@ -54,11 +45,8 @@ export default function Play() {
     });
   }, [live]);
 
-  async function submitPw() {
-    if (await tryUnlockPve(pw)) { setUnlocked(true); setAskPw(false); setPw(''); setPwErr(false); router.push('/play/class?mode=story'); }
-    else setPwErr(true);
-  }
   function start(kind: Kind | 'join') {
+    if (!isClassicKind(kind === 'create' ? 'create' : kind)) return;
     audio.unlock();
     wipe(() => {
       if (kind === 'mastermind') router.push('/mastermind');
@@ -85,8 +73,8 @@ export default function Play() {
 
         <div className="cp-cards">
           {DOORS.map((m, i) => (
-            <button key={m.kind} type="button" className={`cp-card${i === sel ? ' sel' : ''}${i === live ? ' live' : ''}`} style={{ ['--i' as string]: i }}
-              aria-pressed={i === sel} aria-label={`${m.name}, ${m.players}`}
+            <button key={m.kind} type="button" className={`cp-card${i === sel ? ' sel' : ''}${i === live ? ' live' : ''}${m.kind !== 'create' ? ' soon' : ''}`} style={{ ['--i' as string]: i }}
+              aria-pressed={i === sel} aria-label={m.kind === 'create' ? `${m.name}, ${m.players}` : `${m.name}, coming soon`}
               onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setSel(i); setLive(i); } }}
               onPointerMove={tilt}
               onPointerLeave={(e) => { e.currentTarget.style.transform = ''; if (e.pointerType === 'mouse') setLive(null); }}
@@ -94,6 +82,7 @@ export default function Play() {
                 e.currentTarget.style.transform = '';
                 burst(e.clientX, e.clientY, m.pow);
                 const mouse = (e.nativeEvent as PointerEvent).pointerType === 'mouse';
+                if (m.kind !== 'create') { setSel(i); return; }
                 if (i === sel && (mouse || live === i)) { start(m.kind); return; }
                 setSel(i); setLive(i);
               }}>
@@ -106,6 +95,7 @@ export default function Play() {
                     <source src={`/art/comic/${m.art}.webm`} type="video/webm" />
                   </video>
                 </span>
+                {m.kind !== 'create' && <span className="cp-soon">Coming soon</span>}
                 <span className="lbl">{m.name}</span>
               </span>
               <span className="num cp-xt" aria-hidden>{i + 1}</span>
@@ -114,8 +104,8 @@ export default function Play() {
         </div>
 
         <div className="cp-bar">
-          <div className="cp-info"><b>{d.name}</b><p>{d.desc}</p></div>
-          <button type="button" className="cp-create" onClick={(e) => { burst(e.clientX, e.clientY, d.pow); start(d.kind); }}>{SVG.people}<span>{d.cta}</span></button>
+          <div className="cp-info"><b>{d.name}</b><p>{d.kind === 'create' ? d.desc : 'Coming soon. Classic is the only playable mode for now.'}</p></div>
+          <button type="button" className="cp-create" disabled={d.kind !== 'create'} onClick={(e) => { burst(e.clientX, e.clientY, d.pow); start(d.kind); }}>{SVG.people}<span>{d.kind === 'create' ? d.cta : 'Coming soon'}</span></button>
           <span className="cp-or">or</span>
           <label className="cp-join">
             <span>{SVG.key} Join with code</span>
@@ -128,36 +118,12 @@ export default function Play() {
           </label>
           <span className="cp-div" aria-hidden />
           <div className="cp-minis">
-            <button type="button" className="cp-mini" onClick={() => (unlocked ? start('story') : (audio.unlock(), setAskPw(true)))}>{SVG.book}<span>Story</span></button>
-            <Link href="/daily" className="cp-mini">{SVG.cal}<span>Daily</span></Link>
-            <button type="button" className="cp-mini" aria-expanded={labOpen} onClick={() => setLabOpen((o) => !o)}>{SVG.flask}<span>Lab</span></button>
+            <button type="button" className="cp-mini soon" disabled>{SVG.book}<span>Story · soon</span></button>
+            <button type="button" className="cp-mini soon" disabled>{SVG.cal}<span>Daily · soon</span></button>
+            <button type="button" className="cp-mini soon" disabled>{SVG.flask}<span>Lab · soon</span></button>
           </div>
         </div>
-        {labOpen && (
-          <div className="cp-lab">
-            {LAB.map((m) => (
-              <button key={m.kind} type="button" disabled={m.kind === 'jester'} title={t(`pl.${m.k}_d` as Key)} onClick={() => start(m.kind)}>
-                {t(`pl.${m.k}` as Key)}{m.kind === 'jester' ? ' · soon' : ''}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
-
-      {askPw && (
-        <div className="pve-lock" role="dialog" aria-modal="true" onClick={() => setAskPw(false)}>
-          <form onClick={(e) => e.stopPropagation()} onSubmit={(e) => { e.preventDefault(); void submitPw(); }}>
-            <h2>Story Mode — Coming Soon</h2>
-            <p>This mode is locked for now. Enter the password to get in early.</p>
-            <input className="input" type="password" autoFocus autoComplete="off" value={pw} placeholder="Password" onChange={(e) => { setPw(e.target.value); setPwErr(false); }} />
-            {pwErr && <div className="note bad">Wrong password.</div>}
-            <div className="row">
-              <button type="button" className="btn" onClick={() => setAskPw(false)}>Cancel</button>
-              <button type="submit" className="btn lg" disabled={!pw.trim()}>Unlock</button>
-            </div>
-          </form>
-        </div>
-      )}
     </main>
   );
 }

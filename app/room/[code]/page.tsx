@@ -18,6 +18,8 @@ import { useT } from '@/lib/i18n/react';
 import { rpc } from '@/lib/rpc';
 import { clearSession, loadName, loadSession, saveName, saveSession } from '@/lib/session';
 import type { PlayerClass } from '@/lib/types';
+import { ComingSoon } from '@/components/ComingSoon';
+import { isLockedRoom } from '@/lib/modes';
 
 export default function RoomPage() {
   const params = useParams<{ code: string }>();
@@ -59,6 +61,8 @@ export default function RoomPage() {
   if (token && stateToken !== token) {
     return <main className="shell narrow"><Header /><div className="sheet center muted">{t('room.seat')}</div></main>;
   }
+
+  if (isLockedRoom(state.room.settings)) return <ComingSoon name={state.room.settings.mode === 'duel' ? 'Duel' : state.room.settings.mode === 'team' ? 'Siege' : 'Twist rooms'} />;
 
   if (!state.me && state.room.phase === 'lobby') {
     return <JoinHere code={code} onJoined={(tk) => { setToken(tk); void refresh(); }} />;

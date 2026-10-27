@@ -1,5 +1,8 @@
 'use client';
 
+import { ComingSoon } from '@/components/ComingSoon';
+import { CLASSIC_ONLY } from '@/lib/modes';
+
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/ui';
@@ -8,7 +11,7 @@ import { loadName, saveName } from '@/lib/session';
 import { mmArtVars } from '@/lib/mmArt';
 import './mastermind.css';
 
-export default function MastermindHome() {
+function MastermindHomeInner() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
@@ -49,3 +52,5 @@ export default function MastermindHome() {
     </main>
   );
 }
+
+export default function MastermindHome() { return CLASSIC_ONLY ? <ComingSoon name="Mastermind" /> : <MastermindHomeInner />; }

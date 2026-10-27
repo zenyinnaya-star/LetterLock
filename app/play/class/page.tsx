@@ -19,8 +19,8 @@ import { linkProfile } from '@/lib/profile';
 import { rpc } from '@/lib/rpc';
 import { loadName, saveName, saveSession } from '@/lib/session';
 import type { PlayerClass, RoomSettings } from '@/lib/types';
-import { StoryHeroSelect } from '@/components/StoryHeroSelect';
-import { pveUnlocked } from '@/lib/pveGate';
+import { ComingSoon } from '@/components/ComingSoon';
+import { isClassicKind } from '@/lib/modes';
 import { STARTERS, fetchHeroState } from '@/lib/loadout';
 import '@/app/class-comic.css';
 import '@/app/comic.css';
@@ -104,6 +104,7 @@ function Select() {
   }
 
   async function lockIn() {
+    if (!isClassicKind(kind)) return;
     if (!name.trim()) { setErr(t('home.err_name')); return; }
     if (kind === 'join' && code.length !== 4) { router.replace('/play'); return; }
     audio.unlock(); audio.success();
@@ -190,15 +191,17 @@ function Select() {
               </div>
               <p className="sel-tag">{info.tagline}</p>
               <p className="cs-oneline">{info.perk}</p>
-              <details className="cs-more sel-more">
-                <summary>{t('cs.how')} <Icon name="eye" size={14} /></summary>
+              <div className="sel-facts">
                 <div className="cs-box minus"><b>{t('cs.price')}</b><p>{info.cost}</p></div>
-                <div className="sel-box"><p>{guide.how}</p></div>
+                <div className="sel-box counter"><b><Icon name="target" size={14} /> {t('cs.counter')}</b><p>{guide.counter}</p></div>
                 <div className="sel-box">
                   <b>{t('cs.tips')}</b>
                   <ol className="cs-tips">{guide.tips.slice(0, 3).map((x) => <li key={x}>{x}</li>)}</ol>
                 </div>
-                <div className="sel-box counter"><b><Icon name="target" size={14} /> {t('cs.counter')}</b><p>{guide.counter}</p></div>
+              </div>
+              <details className="cs-more sel-more">
+                <summary>{t('cs.how')} <Icon name="eye" size={14} /></summary>
+                <div className="sel-box"><p>{guide.how}</p></div>
               </details>
             </div>
         </section>
@@ -228,11 +231,8 @@ function Select() {
 
 function Router() {
   const sp = useSearchParams();
-  const rt = useRouter();
-  const story = sp.get('mode') === 'story';
-  const [ok, setOk] = useState<boolean | null>(null);
-  useEffect(() => { const u = pveUnlocked(); setOk(u); if (story && !u) rt.replace('/play'); }, [story, rt]);
-  if (story) return ok ? <StoryHeroSelect /> : null;
+  const mode = sp.get('mode');
+  if (!isClassicKind(mode)) return <ComingSoon name="This mode" />;
   return <Select />;
 }
 
