@@ -22,6 +22,8 @@ import type { PlayerClass, RoomSettings } from '@/lib/types';
 import { StoryHeroSelect } from '@/components/StoryHeroSelect';
 import { pveUnlocked } from '@/lib/pveGate';
 import { STARTERS, fetchHeroState } from '@/lib/loadout';
+import '@/app/class-comic.css';
+import '@/app/comic.css';
 
 type Kind = 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory' | 'join';
 const META: Record<Kind, { icon: IconName; k: string }> = {

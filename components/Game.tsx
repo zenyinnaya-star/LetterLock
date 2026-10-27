@@ -32,6 +32,9 @@ import '@/app/siege.css';
 import { SiegeFinale, TeamSiege } from './TeamSiege';
 import { siegeArtVars } from '@/lib/siegeArt';
 import '@/app/vault.css';
+import '@/app/vault-comic.css';
+import '@/app/comic.css';
+import { burst, shake } from '@/lib/comicFx';
 import { VaultFinale, VaultHeist, VaultShowdown } from './VaultHeist';
 import { vaultArtVars } from '@/lib/vaultArt';
 import { TeamHud, teamLabel } from './team';
@@ -79,6 +82,27 @@ export function Game({ state: fullState, token, offset, refresh, bots = [], botI
   const vault = classic && !west && ['duel_intro', 'answer', 'reveal', 'guess', 'react'].includes(phase);
   const vaultLobby = classic && phase === 'lobby' && !storyLobby;
   const vaultEnd = classic && phase === 'finished' && !westEnd;
+  // Comic Pop VFX: POW / BAM bursts on taps, and a screen shake + big burst on the big moments
+  useEffect(() => {
+    if (!(vault || vaultLobby || vaultEnd)) return;
+    const words = ['POW!', 'BAM!', 'ZAP!', 'WHAM!'];
+    let n = 0;
+    const onClick = (e: MouseEvent) => {
+      const el = (e.target as HTMLElement | null)?.closest?.('.vault .btn, .vault .key, .vault .target, .v-lobby .btn');
+      if (el) burst(e.clientX, e.clientY, words[n++ % words.length]);
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, [vault, vaultLobby, vaultEnd]);
+  useEffect(() => {
+    if (!(vault || vaultEnd)) return;
+    const t = window.setTimeout(() => {
+      const root = document.querySelector<HTMLElement>('.vault');
+      if (phase === 'reveal') { burst(window.innerWidth / 2, window.innerHeight * 0.38, 'BOOM!'); shake(root); }
+      if (phase === 'finished') { burst(window.innerWidth / 2, window.innerHeight * 0.3, 'KA-POW!'); shake(root); }
+    }, 350);
+    return () => window.clearTimeout(t);
+  }, [phase, vault, vaultEnd]);
 
   const act: Act = useCallback(async (fn, okMsg) => {
     audio.unlock();
