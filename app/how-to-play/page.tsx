@@ -30,7 +30,7 @@ export default function HowToPlay() {
       <section className="mode-videos" aria-label="Mode walkthroughs">
         {MODE_VIDEOS.map((v) => (
           <figure key={v.id} className="mode-video">
-            <video controls playsInline preload="metadata" src={`${CDN}/${v.id}.mp4`} aria-label={`${v.name} how to play`} />
+            <video controls playsInline preload="metadata" src={`${CDN}/${v.id}.mp4#t=0.1`} aria-label={`${v.name} how to play`} />
             <figcaption><b>{v.name}</b>{v.soon ? <em className="mv-soon">Coming soon</em> : null} — {v.blurb}</figcaption>
           </figure>
         ))}
