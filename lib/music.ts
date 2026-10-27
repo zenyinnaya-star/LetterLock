@@ -5,7 +5,7 @@ import { getPrefs } from './prefs';
 
 export type Track = 'theme' | 'vault' | 'duel' | 'battle' | 'none';
 
-const SRC: Record<Exclude<Track, 'none'>, string> = { theme: '/audio/theme.mp3', vault: '/audio/classic-epic.mp3', duel: '/audio/duel.mp3', battle: '/audio/story.mp3' };
+const SRC: Record<Exclude<Track, 'none'>, string> = { theme: '/audio/theme.mp3', vault: '/audio/classic-epic-m.mp3', duel: '/audio/duel.mp3', battle: '/audio/story.mp3' };
 const LEVEL: Record<Exclude<Track, 'none'>, number> = { theme: 0.32, vault: 0.4, duel: 0.55, battle: 0.5 };
 
 let els: Partial<Record<Exclude<Track, 'none'>, HTMLAudioElement>> = {};
@@ -21,6 +21,8 @@ function el(t: Exclude<Track, 'none'>): HTMLAudioElement {
     a = new Audio(SRC[t]);
     a.loop = true;
     // dedicated RPG track is optional: if the story track fails to load, the duel track stands in
+    // the Classic track is optional too: if it can't load (slow/mobile network), the site theme stands in
+    if (t === 'vault') a.addEventListener('error', () => { if (!a!.src.endsWith('theme.mp3')) { a!.src = SRC.theme; a!.load(); if (want === 'vault') void a!.play().catch(() => hookGesture()); } }, { once: true });
     if (t === 'battle') a.addEventListener('error', () => { if (!a!.src.endsWith('duel.mp3')) { a!.src = SRC.duel; a!.load(); if (want === 'battle') void a!.play().catch(() => undefined); } }, { once: true });
     a.preload = 'auto';
     a.volume = 0;
@@ -50,9 +52,9 @@ function target(t: Exclude<Track, 'none'>) {
 function hookGesture() {
   if (gestureHooked || typeof window === 'undefined') return;
   gestureHooked = true;
+  // iOS/Android only unlock audio on touchend/click (not pointerdown), and each track needs its own unlock: keep listening
   const go = () => { apply(); };
-  window.addEventListener('pointerdown', go);
-  window.addEventListener('keydown', go);
+  ['pointerdown', 'touchend', 'click', 'keydown'].forEach((ev) => window.addEventListener(ev, go, { passive: true }));
 }
 
 function apply() {
@@ -79,6 +81,7 @@ if (typeof window !== 'undefined') {
 export const music = {
   play(t: Track, opts: { quiet?: boolean } = {}) {
     const q = !!opts.quiet;
+    hookGesture();
     if (t === want && q === quiet) return;
     want = t;
     quiet = q;
