@@ -11,7 +11,7 @@ export function ComingSoon({ name = 'This mode' }: { name?: string }) {
       <div className="cp-tear short" aria-hidden />
       <div className="cp-pw" style={{ textAlign: 'center', display: 'grid', gap: 18, justifyItems: 'center', paddingTop: '14vh' }}>
         <h1 className="cp-title cp-xt">Coming soon</h1>
-        <p className="cp-info" style={{ maxWidth: 440 }}><b>{name}</b> is locked while we polish Classic. Break the vault in Classic for now.</p>
+        <p className="cp-info" style={{ maxWidth: 440, color: "#111", fontSize: 20 }}><b>{name}</b> is locked while we polish Classic. Break the vault in Classic for now.</p>
         <Link href="/play" className="cp-create"><span>Play Classic</span></Link>
       </div>
     </main>
