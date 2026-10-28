@@ -40,6 +40,7 @@ import { siegeArtVars } from '@/lib/siegeArt';
 import '@/app/vault.css';
 import '@/app/vault-comic.css';
 import '@/app/vault-ref.css';
+import '@/app/comic-kit.css';
 import '@/app/comic.css';
 import { burst, shake } from '@/lib/comicFx';
 import { VaultFinale, VaultHeist, VaultShowdown } from './VaultHeist';

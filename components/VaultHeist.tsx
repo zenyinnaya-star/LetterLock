@@ -6,6 +6,7 @@ import { audio } from '@/lib/audio';
 import { useT } from '@/lib/i18n/react';
 import type { PublicPlayer, RoomState } from '@/lib/types';
 import { vaultArtVars } from '@/lib/vaultArt';
+import { comicKitVars } from '@/lib/comicKit';
 import { narrator } from '@/lib/narrator';
 import { PlayerAvatar } from './PlayerAvatar';
 import { actionSources } from '@/lib/classAction';
@@ -150,7 +151,7 @@ export function VaultHeist({ state, msLeft, children }: { state: RoomState; msLe
 
   const rootRef = useRackPad();
   return (
-    <div ref={rootRef} className={`vault p-${phase}${secs <= 5 && secs > 0 ? ' tense' : ''}`} style={vaultArtVars}>
+    <div ref={rootRef} className={`vault p-${phase}${secs <= 5 && secs > 0 ? ' tense' : ''}`} style={{ ...vaultArtVars, ...comicKitVars }}>
       <div className="v-shade" aria-hidden />
       <div className="v-lasers" aria-hidden><i /><i /><i /></div>
       {alarm > 0 && <div key={alarm} className="v-alarm-flash" aria-hidden />}
@@ -187,7 +188,7 @@ export function VaultFinale({ state, children }: { state: RoomState; children: R
   }, [iLost]);
   const rootRef = useRackPad();
   return (
-    <div ref={rootRef} className={`vault p-finished${iLost ? ' lost' : ' won'}`} style={vaultArtVars}>
+    <div ref={rootRef} className={`vault p-finished${iLost ? ' lost' : ' won'}`} style={{ ...vaultArtVars, ...comicKitVars }}>
       <div className="v-shade" aria-hidden />
       {iLost && <div className="v-beacons" aria-hidden><i /><i /></div>}
       {!iLost && <div className="v-glints" aria-hidden>{Array.from({ length: 14 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>}

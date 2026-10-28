@@ -1,0 +1,16 @@
+/* Classic: art-based furniture. Replaces the CSS-drawn panels/HUD/buttons/bursts with the generated comic kit. */
+.vault .v-city{background:var(--k-skyline) bottom/100% 100% no-repeat!important}
+.vault .v-door{background:var(--k-panel) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;padding:clamp(28px,4vw,56px)!important;filter:drop-shadow(8px 9px 0 rgba(0,0,0,.4))}
+.vault-rack .rack{filter:none!important}
+.vault-rack .rack-inner.rack-inner.rack-inner.rack-inner{background:var(--k-hud) center bottom/100% 100% no-repeat!important;clip-path:none!important;padding-top:34px!important}
+.vault .btn.lg.block:not(:disabled),.vault .btn.lg.block:disabled{background:var(--k-button) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;color:#fff;min-height:68px;text-shadow:2px 2px 0 #111;font-family:var(--dsp);filter:drop-shadow(3px 4px 0 rgba(0,0,0,.35))}
+.vault .btn.lg.block:disabled{filter:grayscale(.8) drop-shadow(3px 4px 0 rgba(0,0,0,.2));opacity:.75}
+.vault .kbd .key{background:var(--k-key) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;border-radius:0!important;color:#111}
+.vault .kbd .key:disabled{opacity:.35}
+.vault .kbd .key.sel,.vault .kbd .key[aria-pressed="true"]{filter:hue-rotate(300deg) saturate(2)}
+.vault .tier-tag{background:var(--k-burst-p) center/100% 100% no-repeat!important;clip-path:none!important;padding:18px 26px!important;color:#fff!important}
+.vault .reveal-row .score{background:var(--k-burst-y) center/100% 100% no-repeat!important;clip-path:none!important;min-width:86px;min-height:86px}
+.vault .reveal-row.bad .score{filter:grayscale(1)}
+/* class select */
+.selpage .sel-strip::before{background:var(--k-hud) center bottom/100% 100% no-repeat!important;clip-path:none!important;border:0!important}
+.selpage .sel-lock{background:var(--k-button) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;color:#fff!important;text-shadow:2px 2px 0 #111;min-width:260px;min-height:84px;filter:drop-shadow(3px 4px 0 rgba(0,0,0,.35))}

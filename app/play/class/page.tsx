@@ -17,6 +17,7 @@ import type { Key } from '@/lib/i18n';
 import { narrator } from '@/lib/narrator';
 import { linkProfile } from '@/lib/profile';
 import { rpc } from '@/lib/rpc';
+import { comicKitVars } from '@/lib/comicKit';
 import { loadName, saveName, saveSession } from '@/lib/session';
 import type { PlayerClass, RoomSettings } from '@/lib/types';
 import { ComingSoon } from '@/components/ComingSoon';
@@ -25,6 +26,7 @@ import { STARTERS, fetchHeroState } from '@/lib/loadout';
 import '@/app/class-comic.css';
 import '@/app/comic.css';
 import '@/app/class-ref.css';
+import '@/app/comic-kit.css';
 
 type Kind = 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory' | 'join';
 const META: Record<Kind, { icon: IconName; k: string }> = {
@@ -147,7 +149,7 @@ function Select() {
   });
 
   return (
-    <main className={`selpage${hostOnly ? ' host-only' : ''}`} style={{ ['--ca' as string]: ca, ['--cb' as string]: cb }}>
+    <main className={`selpage${hostOnly ? ' host-only' : ''}`} style={{ ['--ca' as string]: ca, ['--cb' as string]: cb, ...comicKitVars }}>
       <Art cls={cls} />
       <header className="sel-top">
         <Link href="/play" className="play-back" aria-label={t('pl.back')}><Icon name="logout" size={18} /> {t('pl.back')}</Link>
