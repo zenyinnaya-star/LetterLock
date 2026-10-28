@@ -338,7 +338,7 @@
 
 /* phase transition slash: pink sheet sweeps in, covers the swap, sweeps out */
 .vc-phasewipe { position: fixed; inset: -10%; z-index: 995; pointer-events: none; background: #ff1f8e; background-image: radial-gradient(#d4006f 30%, transparent 34%); background-size: 12px 12px;
-  border-left: 14px solid #111; border-right: 14px solid #ffd400; transform: translateX(-130%) skewX(-18deg); animation: vc-phasewipe .8s cubic-bezier(.65,0,.35,1) forwards; }
+  border-left: 14px solid #111; border-right: 14px solid #ffd400; transform: translateX(-130%) skewX(-18deg); animation: vc-phasewipe .34s cubic-bezier(.65,0,.35,1) forwards; }
 @keyframes vc-phasewipe { 0% { transform: translateX(-130%) skewX(-18deg); } 45%, 55% { transform: translateX(0) skewX(-18deg); } 100% { transform: translateX(130%) skewX(-18deg); } }
 .vault > * { animation: vc-enter .45s .25s cubic-bezier(.2,1.4,.4,1) both; }
 @keyframes vc-enter { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
@@ -609,3 +609,13 @@
 .vault .kbd .key { min-width: 0 !important; padding: 0 !important; font-size: clamp(15px, 5.2vw, 22px) !important; aspect-ratio: 1 / 1.05; }
 @media (min-width: 700px) { .vault .kbd { grid-template-columns: repeat(13, minmax(0, 1fr)) !important; max-width: 760px !important; } }
 .v-alarm-flash { pointer-events: none; }
+
+/* word tiers (EPIC / LEGENDARY / MYTHIC / GODLIKE) + speed/streak chips: bold comic stickers that read on white */
+.vault .bonus-chips { margin-top: 8px; }
+.vault .bchip, .vault .tier-tag, .vault .unstop-tag { border: 3px solid #111 !important; border-radius: 4px !important; box-shadow: 3px 3px 0 #111 !important; font-family: var(--dsp) !important; letter-spacing: .08em; text-transform: uppercase; font-size: 13px !important; padding: 3px 10px !important; transform: rotate(-2deg); text-shadow: none !important; }
+.vault .bchip.speed { background: #ffd400 !important; color: #111 !important; }
+.vault .bchip.streak { background: #ff9a3c !important; color: #111 !important; }
+.vault .bchip.tier.epic, .vault .tier-tag.epic { color: #111 !important; }
+.vault .bchip.tier.legendary, .vault .tier-tag.legendary { color: #111 !important; }
+.vault .bchip.tier.mythic, .vault .tier-tag.mythic { color: #fff !important; text-shadow: 1px 1px 0 #111 !important; }
+.vault .bchip *, .vault .tier-tag * { color: inherit !important; }

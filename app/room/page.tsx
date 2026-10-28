@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { linkProfile } from '@/lib/profile';
 import { STARTERS, fetchHeroState } from '@/lib/loadout';
-import { useParams, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AvatarPicker } from '@/components/AvatarPicker';
 import { Game } from '@/components/Game';
@@ -22,17 +22,30 @@ import '@/app/comic.css';
 import { ComingSoon } from '@/components/ComingSoon';
 import { isLockedRoom } from '@/lib/modes';
 
-export default function RoomPage() {
-  const params = useParams<{ code: string }>();
-  const code = String(params.code ?? '').toUpperCase();
+/**
+ * One prebuilt page serves every room: next.config rewrites /room/:code here, so entering a room is a CDN hit
+ * instead of an on-demand server render. The code comes from the address bar.
+ */
+export default function RoomRoute() {
+  const pn = usePathname();
+  const router = useRouter();
   const t = useT();
-  const [token, setToken] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState(false);
-
+  const [code, setCode] = useState('');
   useEffect(() => {
-    setToken(loadSession(code)?.token ?? null);
-    setLoaded(true);
-  }, [code]);
+    const seg = (window.location.pathname.split('/')[2] ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+    if (!seg) { router.replace('/play'); return; }
+    setCode(seg);
+  }, [pn, router]);
+  if (!code) return <RoomBoot label={t('room.loading', { code: '' })} />;
+  return <RoomPage key={code} code={code} />;
+}
+
+function RoomPage({ code }: { code: string }) {
+  const t = useT();
+  // RoomPage only renders on the client once the code is known, so the saved seat can be read up front:
+  // one state fetch with the right token instead of a token-less one followed by a second
+  const [token, setToken] = useState<string | null>(() => loadSession(code)?.token ?? null);
+  const loaded = true;
 
   const { state, error, refresh, offset, stateToken, botIds, botInfo, pingBots } = useRoom(code, loaded ? token : null);
 

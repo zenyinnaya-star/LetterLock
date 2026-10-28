@@ -1683,7 +1683,7 @@ h3{font-weight:700;color:var(--gold-hi)}
 @media(max-width:600px){.lp-hero-img{margin:0 -7%}.lp-hero-img.h0,.lp-hero-img.h4{display:none}}
 
 /* generated world art as real backgrounds */
-body{background-image:linear-gradient(180deg,rgba(4,6,10,.7),rgba(4,6,10,.88)),url('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261008_131257_851376aa-3c7c-4b25-92af-b27a37825f08.png'),radial-gradient(ellipse 80% 55% at 50% -10%,rgba(201,164,92,.20),transparent 65%),linear-gradient(180deg,#0a0d16,#04060a);background-size:auto,cover,auto,auto;background-position:center,center top,center,center;background-attachment:fixed;image-rendering:pixelated}
+body{background-image:linear-gradient(180deg,rgba(4,6,10,.7),rgba(4,6,10,.88)),radial-gradient(ellipse 80% 55% at 50% -10%,rgba(201,164,92,.20),transparent 65%),linear-gradient(180deg,#0a0d16,#04060a);background-size:auto,auto,auto;background-position:center,center,center;background-attachment:fixed;image-rendering:pixelated}
 .hs-page{position:relative;isolation:isolate}
 .hs-bgimg{position:fixed;inset:0;z-index:-1;background-size:cover;background-position:center;filter:saturate(1.1) brightness(.62);animation:slpan 50s ease-in-out infinite alternate}
 .hs-bgimg::after{content:"";position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 40%,transparent,rgba(3,5,12,.85)),linear-gradient(to top,#05070f,transparent 45%)}
