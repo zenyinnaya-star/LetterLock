@@ -1,0 +1,69 @@
+/* Classic play screens — reference pass (Answer / Guess / Reveal). Loaded after vault-comic.css. */
+.vault{--y:#ffd400;--p:#ff1f8e;--k:#111;--c:#19d3f3;isolation:isolate}
+/* inked city skyline behind the action */
+.vault .v-city{position:absolute;left:0;right:0;bottom:calc(var(--rack-h,120px) - 10px);height:clamp(70px,16vh,170px);background:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'%3E%3Cpath fill='%23111' d='M0 200V120h40V80h50v40h30V60h20V30h4V60h26v70h40V90h60v-30h40v50h30V70h50v60h40V40h30v-20h4v20h26v90h50V100h60V70h40v70h40V90h50v40h60V50h30V20h4v30h26v80h40V110h60V80h50v60h40V100h60v100z'/%3E%3C/svg%3E") bottom/100% 100% no-repeat;opacity:.9;pointer-events:none;z-index:0}
+/* hero portrait panel (own class art) with speech bubble */
+.vault .v-hero{display:none;position:absolute;left:clamp(8px,2vw,40px);bottom:calc(var(--rack-h,120px) + 12px);width:clamp(150px,15vw,240px);margin:0;z-index:1;transform:rotate(-3deg);pointer-events:none}
+.vault .v-hero img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;object-position:50% 18%;border:5px solid var(--k);background:#fff;box-shadow:8px 8px 0 var(--p)}
+.vault .v-hero figcaption{position:absolute;left:62%;top:-14px;max-width:150px;background:#fff;border:3px solid var(--k);padding:3px 9px;font-family:var(--cmc);font-size:14px;line-height:1.1;text-transform:uppercase;color:var(--k);transform:rotate(4deg);box-shadow:3px 3px 0 var(--k)}
+.vault .v-hero figcaption::after{content:'';position:absolute;left:14px;bottom:-12px;border:6px solid transparent;border-top:9px solid var(--k)}
+@media (min-width:1250px){.vault .v-hero{display:block}}
+/* action panel: angled white card, heavy ink */
+.vault .v-door{transform:rotate(-.5deg);border:6px solid var(--k)!important;box-shadow:10px 10px 0 var(--k)!important}
+.vault .phase-tag{transform:skewX(-10deg) rotate(-2deg)}
+/* crack-phase keys: round, like the reference */
+.vault .kbd .key{border-radius:50%!important;aspect-ratio:1/1;border-width:3px!important;font-family:var(--dsp)}
+.vault .kbd .key:not(:disabled):hover{transform:translateY(-3px) scale(1.08)}
+/* reveal: tier + points as bursts */
+.vault .tier-tag{clip-path:polygon(50% 0,61% 14%,79% 8%,80% 27%,98% 33%,88% 50%,98% 67%,80% 73%,79% 92%,61% 86%,50% 100%,39% 86%,21% 92%,20% 73%,2% 67%,12% 50%,2% 33%,20% 27%,21% 8%,39% 14%);padding:12px 20px!important;border:0!important;background:var(--y)!important;color:var(--k)!important;font-family:var(--dsp);text-transform:uppercase}
+.vault .tier-tag.epic{background:var(--p)!important;color:#fff!important}
+.vault .tier-tag.legendary,.vault .tier-tag.mythic,.vault .tier-tag.godlike{background:var(--c)!important}
+.vault .reveal-row .score{clip-path:polygon(50% 0,63% 16%,82% 10%,82% 30%,100% 38%,88% 55%,100% 72%,80% 76%,78% 96%,60% 86%,50% 100%,38% 86%,20% 96%,18% 76%,0 72%,12% 55%,0 38%,18% 30%,18% 10%,37% 16%);background:var(--y)!important;color:var(--k)!important;min-width:74px;min-height:74px;display:grid;place-items:center;font-family:var(--dsp);border:0!important;box-shadow:none!important}
+.vault .reveal-row.bad .score{background:#ddd!important}
+/* pink torn HUD */
+.vault-rack .rack{filter:drop-shadow(0 -4px 0 var(--k))!important}
+.vault-rack .rack-inner.rack-inner.rack-inner.rack-inner{background:var(--p)!important;background-image:radial-gradient(rgba(0,0,0,.14) 22%,transparent 26%)!important;background-size:8px 8px!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding-top:22px!important;clip-path:polygon(0 8px,3% 0,7% 9px,12% 1px,18% 10px,25% 0,31% 9px,38% 1px,45% 10px,52% 0,58% 9px,66% 1px,72% 10px,80% 0,87% 9px,94% 1px,100% 8px,100% 100%,0 100%)!important}
+.vault-rack .rack-inner.rack-inner.rack-inner.rack-inner:has(.popover){clip-path:none!important}
+.vault-rack .rack-inner .sect-label{background:var(--k)!important;color:var(--y)!important;padding:1px 10px!important;transform:skewX(-8deg)!important;border:0!important}
+.vault-rack .rack-inner .sep{background:var(--k)!important}
+.vault-rack .rack-inner .rack-pts,.vault-rack .rack-inner .rack-pts *{color:#fff!important;-webkit-text-stroke:.05em var(--k);paint-order:stroke fill;text-shadow:2px 2px 0 var(--k)!important}
+.vault-rack .rack-inner .perkbtn small{background:var(--k)!important;color:var(--y)!important}
+@media (prefers-reduced-motion:reduce){.vault .v-hero,.vault .v-city{animation:none!important}}
+.vault .v-city,.vault .v-hero{position:fixed!important;inset-inline:auto}
+.vault .v-city{left:0!important;right:0!important;width:100%}
+.vault .v-hero{top:auto!important;right:auto!important}
+.vault .v-door,.vault .v-board,.vault .v-content{position:relative;z-index:2}
+/* HUD sits above the panel and stays one row on wide screens */
+.vault-rack,.vault-rack .rack{z-index:30!important}
+@media (min-width:1000px){
+  .vault-rack .rack-inner.rack-inner.rack-inner.rack-inner{flex-wrap:nowrap!important;align-items:center!important;gap:14px!important;padding:24px 28px 10px!important}
+  .vault-rack .rack-inner .rack-pts{margin-left:auto}
+}
+.vault-rack .rack-inner .tiles{flex-wrap:nowrap!important;width:auto!important;flex:0 0 auto}
+.vault-rack .rack-inner .sect{flex:0 0 auto}
+.vault-rack .rack-inner .rack-pts small{white-space:nowrap}
+@media (min-width:1000px){.vault-rack .rack-inner.rack-inner.rack-inner.rack-inner{max-width:1200px!important;width:calc(100% - 24px)}}
+.vault{padding-bottom:calc(var(--rack-h,120px) + 70px)!important}
+/* phones + small landscape: HUD = row 1 locks | ability | points, row 2 cards (scrolls sideways) */
+@media (max-width:999px){
+  .vault-rack .rack-inner.rack-inner.rack-inner.rack-inner{display:flex!important;flex-wrap:wrap!important;align-items:center;justify-content:space-between;gap:6px 10px!important;padding:20px 10px calc(8px + env(safe-area-inset-bottom))!important;max-width:none!important;width:100%}
+  .vault-rack .rack-inner .sep{display:none!important}
+  .vault-rack .rack-inner .sect{order:1;flex:0 0 auto}
+  .vault-rack .rack-inner .sect:nth-of-type(2){order:3;flex:1 1 100%;overflow-x:auto;scrollbar-width:none}
+  .vault-rack .rack-inner .sect:nth-of-type(2) .sect-label{display:none}
+  .vault-rack .rack-inner .sect .tiles{flex-wrap:nowrap!important}
+  .vault-rack .rack-inner .sect:nth-of-type(3){order:2}
+  .vault-rack .rack-inner .rack-pts{order:2;margin-left:auto;grid-column:auto!important;flex-direction:column}
+  .vault-rack .rack-inner .rack-pts,.vault-rack .rack-inner .rack-pts *{font-size:26px!important}
+  .vault-rack .rack-inner .rack-pts small{font-size:12px!important}
+  .vault-rack .rack-inner .sect .sect-label{font-size:13px!important}
+}
+@media (max-width:999px) and (max-height:500px){.vault{padding-bottom:calc(var(--rack-h,100px) + 30px)!important}}
+/* short landscape screens: HUD scrolls with the page (does not eat the viewport), header clears the player chips */
+@media (max-height:500px){
+  .vault-rack,.vault-rack .rack{position:static!important}
+  .vault{padding:56px 8px 12px!important}
+  .vault-rack .rack-inner .minicard small,.vault-rack .rack-inner .minicard span+span{display:none}
+  .vault .v-city{display:none}
+  .vault .v-door{transform:none}
+}

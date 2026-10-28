@@ -8,6 +8,23 @@ import type { PublicPlayer, RoomState } from '@/lib/types';
 import { vaultArtVars } from '@/lib/vaultArt';
 import { narrator } from '@/lib/narrator';
 import { PlayerAvatar } from './PlayerAvatar';
+import { actionSources } from '@/lib/classAction';
+import { CLASSES } from '@/lib/classes';
+
+/** The player's own class portrait, framed like a comic panel beside the action (decorative; real art, no new assets). */
+function HeroPanel({ cls }: { cls: NonNullable<RoomState['me']>['class'] }) {
+  const srcs = actionSources(cls);
+  const [i, setI] = useState(0);
+  useEffect(() => setI(0), [cls]);
+  if (i >= srcs.length) return null;
+  return (
+    <figure className="v-hero" aria-hidden>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={srcs[i]} alt="" draggable={false} onError={() => setI((n) => n + 1)} />
+      <figcaption>{CLASSES[cls].tagline}</figcaption>
+    </figure>
+  );
+}
 
 /**
  * Classic mode, vault-heist skin. The existing phase screens render inside a steel vault door; every player is a
@@ -144,6 +161,8 @@ export function VaultHeist({ state, msLeft, children }: { state: RoomState; msLe
         </AnimatePresence>
       </div>
 
+      <div className="v-city" aria-hidden />
+      {me && !me.is_spectator && <HeroPanel cls={me.class} />}
       <div className="v-door">
         <i className="v-bolt b1" /><i className="v-bolt b2" /><i className="v-bolt b3" /><i className="v-bolt b4" />
         <div className={`v-dial-slot${spin ? ' spin' : ''}`} key={`d${spin}`}><VaultDial msLeft={msLeft} total={total} /></div>

@@ -107,3 +107,13 @@
   .selpage .sel-portrait{max-height:30vh}
 }
 .selpage .sel-you .input{min-width:110px;flex:1}
+/* short landscape: strip flows with the page, Lock in stays pinned bottom-right */
+@media (max-height:500px){
+  .selpage .sel-strip{position:relative!important;flex-direction:row!important;margin-top:8px}
+  .selpage .sel-strip::before{inset:10px 0 0}
+  .selpage{padding-bottom:64px}
+  .selpage .sel-lock{position:fixed;right:12px;bottom:10px;z-index:40;font-size:20px;padding:6px 18px;width:auto;margin:0}
+  .selpage .sel-top h1{font-size:30px}
+  .selpage .sel-sub{display:none}
+  .selpage .sel-portrait{aspect-ratio:16/9;max-height:none}
+}
