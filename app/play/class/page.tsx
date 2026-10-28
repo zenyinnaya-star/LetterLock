@@ -155,6 +155,7 @@ function Select() {
       </header>
 
       <div className="sel-main">
+        <div className="sel-leftcol">
         <figure key={`p${cls}`} className="sel-portrait" aria-label={info.name}>
           <PortraitArt cls={cls} />
           <figcaption className="sp-tag"><span className="sp-name">{info.name}</span><span className="sp-line">{info.tagline}</span></figcaption>
@@ -163,6 +164,34 @@ function Select() {
             <span>{guide.difficulty === 1 ? t('cs.easy') : guide.difficulty === 2 ? t('cs.medium') : t('cs.hard')}</span>
           </div>
         </figure>
+          <div className="sel-left">
+          <div className="sel-mode">
+            <span className="mc-ico"><Icon name={meta.icon} size={20} /></span>
+            <span className="col" style={{ gap: 2 }}>
+              <span className="label">{t('sel.mode')}</span>
+              <b>{kind === 'join' ? t('sel.room', { code }) : t(`pl.${meta.k}` as Key)}</b>
+            </span>
+          </div>
+          <div className="sel-you">
+            <AvatarPicker name={name} url={avatar} compact onChange={(u) => { setAvatar(u); saveAvatar(u); }} />
+            <label className="col" style={{ flex: 1, minWidth: 0 }}>
+              <span className="label">{t('sel.you')}</span>
+              <input className="input" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} placeholder={t('home.name_ph')} autoComplete="nickname" />
+            </label>
+          </div>
+          {kind === 'create' && (
+            <div className="sel-who" role="radiogroup" aria-label="Play or just host">
+              <button type="button" role="radio" aria-checked={!hostOnly} className={!hostOnly ? 'on' : ''} onClick={() => setHostOnly(false)}>
+                <b>Play</b><span>Pick a hero and join in</span>
+              </button>
+              <button type="button" role="radio" aria-checked={hostOnly} className={hostOnly ? 'on' : ''} onClick={() => setHostOnly(true)}>
+                <b>Just host</b><span>Run the room, no hero needed</span>
+              </button>
+            </div>
+          )}
+          {err && <motion.div className="note bad" initial={{ x: -8 }} animate={{ x: [8, -6, 4, 0] }}>{err}</motion.div>}
+        </div>
+        </div>
 
         <section className="sel-right">
           <div key={cls} className="sel-info">
@@ -180,33 +209,6 @@ function Select() {
                 <ol className="cs-tips">{guide.tips.slice(0, 3).map((x) => <li key={x}>{x}</li>)}</ol>
               </div>
             </details>
-          </div>
-          <div className="sel-left">
-            <div className="sel-mode">
-              <span className="mc-ico"><Icon name={meta.icon} size={20} /></span>
-              <span className="col" style={{ gap: 2 }}>
-                <span className="label">{t('sel.mode')}</span>
-                <b>{kind === 'join' ? t('sel.room', { code }) : t(`pl.${meta.k}` as Key)}</b>
-              </span>
-            </div>
-            <div className="sel-you">
-              <AvatarPicker name={name} url={avatar} compact onChange={(u) => { setAvatar(u); saveAvatar(u); }} />
-              <label className="col" style={{ flex: 1, minWidth: 0 }}>
-                <span className="label">{t('sel.you')}</span>
-                <input className="input" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} placeholder={t('home.name_ph')} autoComplete="nickname" />
-              </label>
-            </div>
-            {kind === 'create' && (
-              <div className="sel-who" role="radiogroup" aria-label="Play or just host">
-                <button type="button" role="radio" aria-checked={!hostOnly} className={!hostOnly ? 'on' : ''} onClick={() => setHostOnly(false)}>
-                  <b>Play</b><span>Pick a hero and join in</span>
-                </button>
-                <button type="button" role="radio" aria-checked={hostOnly} className={hostOnly ? 'on' : ''} onClick={() => setHostOnly(true)}>
-                  <b>Just host</b><span>Run the room, no hero needed</span>
-                </button>
-              </div>
-            )}
-            {err && <motion.div className="note bad" initial={{ x: -8 }} animate={{ x: [8, -6, 4, 0] }}>{err}</motion.div>}
           </div>
         </section>
       </div>

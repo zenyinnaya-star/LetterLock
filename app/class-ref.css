@@ -73,3 +73,37 @@
   .selpage .sel-lock{width:auto;margin-left:auto}
 }
 @media (prefers-reduced-motion:reduce){.selpage *{animation:none!important;transition:none!important}}
+/* v2 fit-to-screen */
+.selpage .sel-leftcol{display:flex;flex-direction:column;gap:14px;min-width:0}
+.selpage .sel-leftcol .sel-left{flex-direction:row}
+.selpage .sel-top h1{font-size:clamp(30px,4.2vw,60px)}
+.selpage .sel-titlebox{transform:rotate(-2deg) skewX(-4deg);padding-top:6px}
+.selpage .sel-portrait{max-height:min(44vh,470px);aspect-ratio:16/10}
+.selpage .sel-facts .sel-box{padding:9px 14px;box-shadow:5px 5px 0 var(--k)}
+.selpage .sel-facts .sel-box p{font-size:clamp(13px,1.1vw,16px)}
+.selpage .sel-facts .sel-box b{font-size:clamp(16px,1.5vw,22px);margin-bottom:2px}
+@media (min-width:900px){
+  .selpage .sel-strip{position:relative;margin-top:auto}
+  .selpage .sel-main{flex:1}
+}
+/* v3 compact controls + mobile strip */
+.selpage .sel-leftcol .sel-left{align-items:flex-start;gap:8px}
+.selpage .sel-leftcol .sel-left>*{flex:1 1 200px}
+.selpage .sel-mode{display:flex;align-items:center;gap:10px;flex:0 1 150px!important;padding:6px 10px!important;min-height:0}
+.selpage .sel-you{display:flex;flex-direction:row;align-items:center;gap:10px;padding:6px 10px!important;flex:2 1 260px!important}
+.selpage .sel-you .input{padding:6px 10px;font-size:16px}
+.selpage .sel-who button{padding:6px 12px!important}
+.selpage .sel-who button span{display:none}
+.selpage .sel-portrait{max-height:min(40vh,420px)}
+@media (max-width:899px){
+  .selpage .sel-strip{padding-top:20px;gap:6px}
+  .selpage .sel-change{display:none}
+  .selpage .sel-cards{padding-top:8px!important;gap:8px;justify-content:center}
+  .selpage .sel-cards .sel-card,.selpage .sel-strip .sel-card{width:52px!important;flex-basis:52px!important}
+  .selpage .sel-card b{font-size:9px}
+  .selpage .sel-lock{font-size:20px;padding:8px 14px}
+  .selpage{padding-bottom:0}
+  .selpage .sel-main{padding-bottom:12px}
+  .selpage .sel-portrait{max-height:30vh}
+}
+.selpage .sel-you .input{min-width:110px;flex:1}
