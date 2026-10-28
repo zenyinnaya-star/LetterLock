@@ -13,6 +13,7 @@ import type { PublicPlayer, RoomState } from '@/lib/types';
 import { westArtVars } from '@/lib/westArt';
 import type { PhaseProps } from './phases';
 import { nameOf } from './ui';
+import { actionSources } from '@/lib/classAction';
 import { GameSummary } from './GameSummary';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -54,16 +55,30 @@ function Cylinder({ lives, max, flip }: { lives: number; max: number; flip?: boo
   );
 }
 
-function Gunslinger({ p, side, me, max, hit, portraitRef }: { p: PublicPlayer; side: 'left' | 'right'; me: boolean; max: number; hit: number; portraitRef: React.RefObject<HTMLDivElement | null> }) {
+/** Comic class portrait when the class is known (own seat, or revealed), else the player's photo, else the stock face. */
+function GunPortrait({ p, cls }: { p: PublicPlayer; cls?: PublicPlayer['class'] }) {
+  const c = p.class ?? cls ?? null;
+  const srcs = useMemo(() => (c ? actionSources(c) : []), [c]);
+  const [i, setI] = useState(0);
+  useEffect(() => setI(0), [c]);
+  if (i < srcs.length) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={srcs[i]} alt="" draggable={false} onError={() => setI((n) => n + 1)} />;
+  }
+  if (p.avatar_url) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={p.avatar_url} alt="" draggable={false} />;
+  }
+  return <span className="w-portrait-fallback" />;
+}
+
+function Gunslinger({ p, side, me, max, hit, portraitRef, myClass }: { myClass?: PublicPlayer['class']; p: PublicPlayer; side: 'left' | 'right'; me: boolean; max: number; hit: number; portraitRef: React.RefObject<HTMLDivElement | null> }) {
   const t = useT();
   const lives = Math.max(0, max - p.strikes);
   return (
     <div className={`w-gun ${side}${me ? ' me' : ''}`}>
       <div ref={portraitRef} className={`w-portrait${hit ? ' hit' : ''}`} key={`p${hit}`}>
-        {p.avatar_url
-          // eslint-disable-next-line @next/next/no-img-element
-          ? <img src={p.avatar_url} alt="" draggable={false} />
-          : <span className="w-portrait-fallback" />}
+        <GunPortrait p={p} cls={me ? myClass : null} />
       </div>
       <Cylinder lives={lives} max={max} flip={side === 'right'} />
       <div className="w-name"><b>{me ? t('wst.you') : p.name}</b><span>{t('du.pts', { n: p.points })}</span></div>
@@ -405,9 +420,9 @@ export function DuelWest({ state, token, msLeft, act }: PhaseProps) {
       <AnimatePresence>{shot > 0 && <motion.div key={shot} className="w-flash" initial={{ opacity: 0.85 }} animate={{ opacity: 0 }} transition={{ duration: 0.5 }} onAnimationComplete={() => setShot(0)} />}</AnimatePresence>
 
       <div className="w-top">
-        <Gunslinger p={left} side="left" me={left.id === me?.id} max={max} hit={hitL} portraitRef={lRef} />
+        <Gunslinger p={left} side="left" me={left.id === me?.id} max={max} hit={hitL} portraitRef={lRef} myClass={state.me?.class} />
         <TownClock msLeft={msLeft} total={total} />
-        <Gunslinger p={right} side="right" me={right.id === me?.id} max={max} hit={hitR} portraitRef={rRef} />
+        <Gunslinger p={right} side="right" me={right.id === me?.id} max={max} hit={hitR} portraitRef={rRef} myClass={state.me?.class} />
       </div>
 
       <div className="w-post">

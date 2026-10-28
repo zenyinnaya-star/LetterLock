@@ -33,6 +33,7 @@ import { TeamVoice } from './TeamVoice';
 import { Spectate } from './Spectate';
 import { westArtVars } from '@/lib/westArt';
 import '@/app/west.css';
+import '@/app/duel-comic.css';
 import '@/app/team.css';
 import '@/app/siege.css';
 import { siegeArtVars } from '@/lib/siegeArt';

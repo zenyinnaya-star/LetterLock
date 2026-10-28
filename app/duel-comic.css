@@ -1,0 +1,87 @@
+/* Duel — orange comic western skin (loaded after west.css). Real DOM, real data; art = generated comic backdrops + class portraits. */
+.west.west{--ink:#111;--y:#ffd400;--p:#ff1f8e;--o:#ff8a1f;--paper:#fff6dc;
+  background:#f59a2b var(--w-street-comic) center/cover no-repeat;color:var(--ink)}
+.west.west::after{background:linear-gradient(180deg,rgba(255,255,255,.18),transparent 30%,transparent 70%,rgba(120,40,0,.35))}
+.west.west .w-vignette{background:radial-gradient(ellipse 80% 70% at 50% 45%,transparent 50%,rgba(120,40,0,.45))}
+.west.west.tense .w-vignette{background:radial-gradient(ellipse 70% 62% at 50% 45%,transparent 38%,rgba(190,20,40,.55))}
+.west.west .w-dust{opacity:.35}
+.west.west.p-lobby{background-image:var(--w-saloon-comic);background-size:cover}
+.west.west.p-finished.won{background-image:var(--w-sunset-comic);background-size:cover;background-position:center}
+.west.west.p-finished.lost{background-image:var(--w-sunset-comic)!important;background-size:cover!important;filter:saturate(.55) brightness(.85)}
+/* portraits: framed comic panels */
+.west.west .w-portrait{width:clamp(96px,22vw,150px);height:clamp(96px,22vw,150px);border-radius:3px;border:5px solid var(--ink);background:#fff;box-shadow:6px 6px 0 var(--p);transform:rotate(-3deg)}
+.west.west .w-gun.right .w-portrait{transform:rotate(3deg);box-shadow:-6px 6px 0 var(--p)}
+.west.west .w-gun.me .w-portrait{box-shadow:6px 6px 0 var(--y),0 0 0 3px var(--ink)}
+.west.west .w-portrait img{object-position:50% 18%}
+.west.west .w-name{align-items:flex-start;text-shadow:none}
+.west.west .w-name b{font:400 clamp(18px,2.4vw,30px) 'LL Display','Luckiest Guy',Impact,sans-serif;text-transform:uppercase;color:var(--ink);background:var(--y);border:3px solid var(--ink);padding:1px 14px;transform:skewX(-8deg);max-width:220px;letter-spacing:.02em}
+.west.west .w-gun.right .w-name b{background:#e83fd0;color:#fff}
+.west.west .w-name span{color:var(--ink);background:#fff;border:2px solid var(--ink);padding:0 8px;opacity:1;font-weight:800;margin-top:3px}
+.west.west .w-cyl{width:44px;height:44px}
+/* timer = sunburst medallion */
+.west.west .w-clock{filter:drop-shadow(4px 4px 0 var(--ink))}
+.west.west .w-time{font:400 28px 'LL Display','Luckiest Guy',Impact,sans-serif;color:var(--ink);text-shadow:none}
+/* prompt card + bounty poster as cream comic cards */
+.west.west .w-note{background:var(--paper);filter:none;border:5px solid var(--ink);border-radius:2px;box-shadow:7px 7px 0 var(--ink);margin-top:10px;width:min(92%,460px);padding:16px 18px;transform-origin:50% 0}
+.west.west .w-note-big{font:400 clamp(22px,3.2vw,40px)/1.05 'LL Display','Luckiest Guy',Impact,sans-serif;text-transform:uppercase;font-style:normal;color:var(--ink)}
+.west.west .w-note-mid{font:700 17px/1.25 'LL Comic',Bangers,Impact,sans-serif;font-style:normal;color:var(--ink);letter-spacing:.03em}
+.west.west .w-note small{color:var(--ink);opacity:1}
+.west.west .w-poster{background:var(--paper);border:5px solid var(--ink);box-shadow:6px 6px 0 var(--p);aspect-ratio:auto;min-height:120px;transform:rotate(1.5deg)}
+.west.west .w-poster-body{position:static;padding:10px 12px 12px;color:var(--ink)}
+.west.west .w-wanted-name,.west.west .w-reward{color:var(--ink);font:400 clamp(16px,2vw,22px) 'LL Display','Luckiest Guy',Impact,sans-serif;text-transform:uppercase;text-shadow:none}
+.west.west .w-tiles.bounty .w-tile{background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:2px 2px 0 var(--ink)}
+.west.west .w-tiles.bounty .w-tile.on{background:var(--y)}
+/* answer bar */
+.west.west .w-bar{background:var(--o);border:5px solid var(--ink);box-shadow:8px 8px 0 var(--ink);filter:none;border-radius:2px;padding:28px 22px 18px}
+.west.west .w-plate{font:400 16px 'LL Display','Luckiest Guy',Impact,sans-serif;letter-spacing:.06em;color:#fff;background:var(--ink);border-radius:0;box-shadow:3px 3px 0 var(--p);transform:translateX(-50%) skewX(-8deg)}
+.west.west .w-tiles.typing .w-tile{background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.west.west .w-tiles.typing .w-tile.on{box-shadow:3px 3px 0 var(--ink)}
+.west.west .w-tiles.typing .w-tile.bad{background:var(--p);color:#fff}
+.west.west .w-tiles.typing .w-tile.caret::after{background:var(--p)}
+.west.west .w-key{background:#fff;color:var(--ink);border:3px solid var(--ink);border-radius:50%;aspect-ratio:1;box-shadow:2px 2px 0 var(--ink);font-family:'LL Display','Luckiest Guy',Impact,sans-serif}
+.west.west .w-key.sel{background:var(--p);color:#fff;box-shadow:0 0 0 3px var(--y),2px 2px 0 3px var(--ink)}
+.west.west .w-bar-msg,.west.west .w-status{color:var(--ink);font:700 16px 'LL Comic',Bangers,Impact,sans-serif;font-style:normal;letter-spacing:.04em;text-shadow:none}
+.west.west .w-bar-msg.ok{color:#0a6b1d}.west.west .w-bar-msg.bad{color:#b0002e}
+.west.west .w-draw{background:var(--y);color:var(--ink);border:4px solid var(--ink);border-radius:2px;box-shadow:5px 5px 0 var(--p),5px 5px 0 4px var(--ink);font:400 clamp(22px,3vw,34px) 'LL Display','Luckiest Guy',Impact,sans-serif;letter-spacing:.04em;transform:rotate(-3deg) skewX(-6deg)}
+.west.west .w-draw:hover:not(:disabled){transform:rotate(-3deg) skewX(-6deg) translateY(-3px) scale(1.05)}
+.west.west .w-draw:focus-visible,.west.west .w-key:focus-visible{outline:4px solid #19d3f3;outline-offset:3px}
+/* rack as an orange comic dock */
+.west-rack .rack-inner{background:var(--o)!important;border:4px solid var(--ink)!important;box-shadow:6px 6px 0 var(--ink)!important;color:var(--ink)}
+.west-rack .rack-inner *{color:var(--ink)}
+/* wide screens: head-to-head composition */
+@media (min-width:900px) and (min-aspect-ratio:1/1){
+  .west.west{display:grid;grid-template-columns:1fr minmax(340px,520px) 1fr;grid-template-rows:auto 1fr auto;column-gap:clamp(12px,3vw,48px);align-items:start;justify-items:center;padding:60px clamp(16px,4vw,64px) calc(var(--rack-h,0px) + 12px)}
+  .west.west .w-top{display:contents}
+  .west.west .w-clock{grid-column:2;grid-row:1;justify-self:center}
+  .west.west .w-gun.left{grid-column:1;grid-row:2;justify-self:end}
+  .west.west .w-gun.right{grid-column:3;grid-row:2;justify-self:start}
+  .west.west .w-gun{grid-template-columns:1fr;justify-items:start}
+  .west.west .w-gun .w-portrait{width:clamp(170px,19vw,290px);height:clamp(210px,24vw,360px)}
+  .west.west .w-gun.right{justify-items:end}.west.west .w-gun.right .w-name{align-items:flex-end}
+  .west.west .w-post{grid-column:2;grid-row:2;width:100%;gap:14px;margin-top:0}
+  .west.west .w-note{order:-1}
+  .west.west .w-poster{width:min(100%,300px)}
+  .west.west .w-bar{grid-column:1/-1;grid-row:3;width:min(760px,100%);justify-self:center;margin-top:12px}
+}
+@media (prefers-reduced-motion:reduce){.west.west .w-draw,.west.west .w-portrait{transition:none!important}}
+/* medallion timer: flat comic disc, no photo bezel */
+.west.west .w-clock{background:radial-gradient(circle,#fff6a8 0 55%,var(--y) 56%);border:5px solid var(--ink);border-radius:50%;width:96px;height:96px;box-shadow:4px 4px 0 var(--p)}
+.west.west .w-clock svg{opacity:.18}
+.west.west .w-time{text-shadow:none!important;-webkit-text-stroke:0;font-size:26px}
+.west.west .w-clock.urgent .w-time{color:#d0002f}
+/* HUD dock stays one row so it never covers the answer bar */
+.west-rack .rack-inner .tiles{flex-wrap:nowrap!important}
+.west-rack .rack-inner .sect{flex:0 0 auto}
+
+/* ---- generated comic art kit (blank art; real text sits on top) ---- */
+.west.west .w-note{background:var(--w-c-card) center/100% 100% no-repeat;border:0;box-shadow:none;padding:30px 34px;filter:drop-shadow(5px 6px 0 rgba(0,0,0,.35))}
+.west.west .w-poster{background:var(--w-c-poster) center/100% 100% no-repeat;border:0;box-shadow:none;padding:26px 24px 22px;filter:drop-shadow(5px 6px 0 rgba(0,0,0,.35))}
+.west.west .w-clock{background:var(--w-c-timer) center/contain no-repeat;border:0;box-shadow:none;width:112px;height:112px;filter:drop-shadow(3px 4px 0 rgba(0,0,0,.35))}
+.west.west .w-clock svg{display:none}
+.west.west .w-name b{background:var(--w-c-bany) center/100% 100% no-repeat;border:0;padding:6px 26px;transform:none;min-width:130px;text-align:center}
+.west.west .w-gun.right .w-name b{background:var(--w-c-banm) center/100% 100% no-repeat;color:#fff}
+.west.west .w-bar{background:var(--w-c-panel) center/100% 100% no-repeat;border:0;box-shadow:none;padding:38px 46px 30px}
+.west.west .w-draw{background:var(--w-c-fire) center/100% 100% no-repeat;border:0;box-shadow:none;min-width:190px;min-height:84px;padding:14px 34px;transform:rotate(-2deg);filter:drop-shadow(3px 4px 0 rgba(0,0,0,.35))}
+.west.west .w-draw:hover:not(:disabled){transform:rotate(-2deg) scale(1.06)}
+.west-rack .rack-inner .tiles{flex-wrap:nowrap!important}
+.west-rack .rack-inner .sect{flex:0 0 auto}
