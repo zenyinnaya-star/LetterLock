@@ -24,6 +24,7 @@ import { isClassicKind, isLockedRoom } from '@/lib/modes';
 import { STARTERS, fetchHeroState } from '@/lib/loadout';
 import '@/app/class-comic.css';
 import '@/app/comic.css';
+import '@/app/class-ref.css';
 
 type Kind = 'create' | 'duel' | 'team' | 'story' | 'solo' | 'reverse' | 'chaos' | 'memory' | 'join';
 const META: Record<Kind, { icon: IconName; k: string }> = {
@@ -35,25 +36,16 @@ const LAST = 'letterlock:lastclass';
 
 function Art({ cls }: { cls: PlayerClass }) {
   const [a, b] = CLASS_COLORS[cls];
+  return <div className="sel-bg" style={{ ['--ca' as string]: a, ['--cb' as string]: b }} aria-hidden />;
+}
+
+function PortraitArt({ cls }: { cls: PlayerClass }) {
   const srcs = actionSources(cls);
   const [i, setI] = useState(0);
   useEffect(() => setI(0), [cls]);
-  const ok = i < srcs.length;
-  return (
-    <div className="sel-bg" style={{ ['--ca' as string]: a, ['--cb' as string]: b }} aria-hidden>
-      <AnimatePresence>
-        <motion.div key={cls} className="sel-bg-img" initial={{ opacity: 0, scale: 1.08 }} animate={{ opacity: 1, scale: 1.0 }} exit={{ opacity: 0 }}
-          transition={{ opacity: { duration: 0.5 }, scale: { duration: 7, ease: 'easeOut' } }}>
-          {ok
-            // eslint-disable-next-line @next/next/no-img-element
-            ? <img src={srcs[i]} alt="" draggable={false} onError={() => setI((n) => n + 1)} />
-            : <div className="sel-bg-fallback"><ClassIcon cls={cls} size={260} /></div>}
-        </motion.div>
-      </AnimatePresence>
-      <div key={`f${cls}`} className="sel-flash" />
-      <div className="sel-shade" />
-    </div>
-  );
+  if (i >= srcs.length) return <div className="sp-fallback"><ClassIcon cls={cls} size={200} /></div>;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img className="sp-img" src={srcs[i]} alt="" draggable={false} onError={() => setI((n) => n + 1)} />;
 }
 
 function CardArt({ cls }: { cls: PlayerClass }) {
@@ -159,63 +151,63 @@ function Select() {
       <Art cls={cls} />
       <header className="sel-top">
         <Link href="/play" className="play-back" aria-label={t('pl.back')}><Icon name="logout" size={18} /> {t('pl.back')}</Link>
-        <h1>{t('sel.title')}</h1>
+        <div className="sel-titlebox"><h1>Pick Your Class</h1><p className="sel-sub">One hero. Your legend.</p></div>
       </header>
 
       <div className="sel-main">
-        <aside className="sel-left">
-          <div className="sel-mode">
-            <span className="mc-ico"><Icon name={meta.icon} size={20} /></span>
-            <span className="col" style={{ gap: 2 }}>
-              <span className="label">{t('sel.mode')}</span>
-              <b>{kind === 'join' ? t('sel.room', { code }) : t(`pl.${meta.k}` as Key)}</b>
-            </span>
+        <figure key={`p${cls}`} className="sel-portrait" aria-label={info.name}>
+          <PortraitArt cls={cls} />
+          <figcaption className="sp-tag"><span className="sp-name">{info.name}</span><span className="sp-line">{info.tagline}</span></figcaption>
+          <div className="sp-diff" aria-label={`Difficulty: ${guide.difficulty === 1 ? t('cs.easy') : guide.difficulty === 2 ? t('cs.medium') : t('cs.hard')}`}>
+            {[1, 2, 3].map((n) => <span key={n} className={`cs-dot${n <= guide.difficulty ? ' on' : ''}`} />)}
+            <span>{guide.difficulty === 1 ? t('cs.easy') : guide.difficulty === 2 ? t('cs.medium') : t('cs.hard')}</span>
           </div>
-          <div className="sel-you">
-            <AvatarPicker name={name} url={avatar} compact onChange={(u) => { setAvatar(u); saveAvatar(u); }} />
-            <label className="col" style={{ flex: 1, minWidth: 0 }}>
-              <span className="label">{t('sel.you')}</span>
-              <input className="input" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} placeholder={t('home.name_ph')} autoComplete="nickname" />
-            </label>
-          </div>
-          {kind === 'create' && (
-            <div className="sel-who" role="radiogroup" aria-label="Play or just host">
-              <button type="button" role="radio" aria-checked={!hostOnly} className={!hostOnly ? 'on' : ''} onClick={() => setHostOnly(false)}>
-                <b>Play</b><span>Pick a hero and join in</span>
-              </button>
-              <button type="button" role="radio" aria-checked={hostOnly} className={hostOnly ? 'on' : ''} onClick={() => setHostOnly(true)}>
-                <b>Just host</b><span>Run the room, no hero needed</span>
-              </button>
-            </div>
-          )}
-          {err && <motion.div className="note bad" initial={{ x: -8 }} animate={{ x: [8, -6, 4, 0] }}>{err}</motion.div>}
-        </aside>
-
-        <div className="sel-spacer" />
+        </figure>
 
         <section className="sel-right">
-                      <div key={cls} className="sel-info">
-              <span className="sel-role">{guide.style}</span>
-              <h2 className="sel-name">{info.name}</h2>
-              <div className="sel-diff">
-                {[1, 2, 3].map((n) => <span key={n} className={`cs-dot${n <= guide.difficulty ? ' on' : ''}`} />)}
-                <span>{guide.difficulty === 1 ? t('cs.easy') : guide.difficulty === 2 ? t('cs.medium') : t('cs.hard')}</span>
-              </div>
-              <p className="sel-tag">{info.tagline}</p>
-              <p className="cs-oneline">{info.perk}</p>
-              <div className="sel-facts">
-                <div className="sel-box how"><b><Icon name="play" size={14} /> {t('cs.how')}</b><p>{guide.how}</p></div>
-                <div className="cs-box minus"><b>{t('cs.price')}</b><p>{info.cost}</p></div>
-              </div>
-              <details className="cs-more sel-more">
-                <summary>{t('cs.counter')} &amp; {t('cs.tips')} <Icon name="eye" size={14} /></summary>
-                <div className="sel-box counter"><b><Icon name="target" size={14} /> {t('cs.counter')}</b><p>{guide.counter}</p></div>
-                <div className="sel-box">
-                  <b>{t('cs.tips')}</b>
-                  <ol className="cs-tips">{guide.tips.slice(0, 3).map((x) => <li key={x}>{x}</li>)}</ol>
-                </div>
-              </details>
+          <div key={cls} className="sel-info">
+            <span className="sel-role">{guide.style}</span>
+            <div className="sel-facts">
+              <div className="sel-box perk"><span className="sel-ico"><ClassIcon cls={cls} size={44} /></span><div><b>Perk</b><p>{info.perk}</p></div></div>
+              <div className="sel-box price"><span className="sel-ico coin" aria-hidden>$</span><div><b>{t('cs.price')}</b><p>{info.cost}</p><em className="own">In your loadout</em></div></div>
+              <div className="sel-box how"><div><b><Icon name="play" size={14} /> {t('cs.how')}</b><p>{guide.how}</p></div></div>
             </div>
+            <details className="cs-more sel-more">
+              <summary>{t('cs.counter')} &amp; {t('cs.tips')} <Icon name="eye" size={14} /></summary>
+              <div className="sel-box counter"><b><Icon name="target" size={14} /> {t('cs.counter')}</b><p>{guide.counter}</p></div>
+              <div className="sel-box">
+                <b>{t('cs.tips')}</b>
+                <ol className="cs-tips">{guide.tips.slice(0, 3).map((x) => <li key={x}>{x}</li>)}</ol>
+              </div>
+            </details>
+          </div>
+          <div className="sel-left">
+            <div className="sel-mode">
+              <span className="mc-ico"><Icon name={meta.icon} size={20} /></span>
+              <span className="col" style={{ gap: 2 }}>
+                <span className="label">{t('sel.mode')}</span>
+                <b>{kind === 'join' ? t('sel.room', { code }) : t(`pl.${meta.k}` as Key)}</b>
+              </span>
+            </div>
+            <div className="sel-you">
+              <AvatarPicker name={name} url={avatar} compact onChange={(u) => { setAvatar(u); saveAvatar(u); }} />
+              <label className="col" style={{ flex: 1, minWidth: 0 }}>
+                <span className="label">{t('sel.you')}</span>
+                <input className="input" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} placeholder={t('home.name_ph')} autoComplete="nickname" />
+              </label>
+            </div>
+            {kind === 'create' && (
+              <div className="sel-who" role="radiogroup" aria-label="Play or just host">
+                <button type="button" role="radio" aria-checked={!hostOnly} className={!hostOnly ? 'on' : ''} onClick={() => setHostOnly(false)}>
+                  <b>Play</b><span>Pick a hero and join in</span>
+                </button>
+                <button type="button" role="radio" aria-checked={hostOnly} className={hostOnly ? 'on' : ''} onClick={() => setHostOnly(true)}>
+                  <b>Just host</b><span>Run the room, no hero needed</span>
+                </button>
+              </div>
+            )}
+            {err && <motion.div className="note bad" initial={{ x: -8 }} animate={{ x: [8, -6, 4, 0] }}>{err}</motion.div>}
+          </div>
         </section>
       </div>
 
