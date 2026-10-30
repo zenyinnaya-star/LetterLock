@@ -62,3 +62,7 @@ body:has(.siege:not(.p-lobby)) .tv-dock .tv-head,body:has(.siege:not(.p-lobby)) 
 .siege .s-wall .s-stones{padding-top:12px}
 .siege .s-stone{background:#fff6d8!important;color:#111!important;border:3px solid #111!important;border-radius:4px;font-family:'LL Display','Luckiest Guy',Impact,sans-serif}
 .siege .s-wall{min-height:230px}
+
+/* voice dock: compact pill on small screens (lobby too) so it never covers banners */
+@media (max-width:899px){body:has(.siege.p-lobby) .tv-dock{top:auto;bottom:14px;left:10px;width:58px;height:46px;overflow:hidden}
+body:has(.siege.p-lobby) .tv-dock .tv-head,body:has(.siege.p-lobby) .tv-dock .tv-members{display:none}}
