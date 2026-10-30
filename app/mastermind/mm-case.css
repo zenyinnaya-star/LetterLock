@@ -332,3 +332,12 @@
 }
 .mx-plaque, .mx-plaque * { text-shadow: none; }
 .mx-plaque:disabled { filter: saturate(.7) brightness(.95); color: #2a2a2a; opacity: 1; }
+
+/* ---- lobby pass 2: footer on-screen, monogram fits, room-code label inside the folder ---- */
+.mx-stage { box-sizing: border-box; }
+@media (min-width: 1000px) {
+  .mx.lobby .mx-polaroid .pic .mono { font-size: clamp(36px, 4.2vw, 64px); }
+  .mx-folder { width: min(380px, 80%); margin-bottom: 40px; }
+  .mx-folder .l2 { font-size: clamp(14px, 1.5vw, 22px); letter-spacing: .04em; }
+  .mx.lobby .mx-stage { padding-bottom: 70px; }
+}
