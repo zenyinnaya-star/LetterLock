@@ -10,14 +10,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Header } from '@/components/ui';
 import { audio } from '@/lib/audio';
-import { loadToken, mm, mmError, REACTIONS, saveToken, type MmState } from '@/lib/mastermind';
+import { loadToken, mm, mmAvatars, mmError, REACTIONS, saveToken, type MmState } from '@/lib/mastermind';
 import { mmArtVars } from '@/lib/mmArt';
 import { westArtVars } from '@/lib/westArt';
 import { comicKitVars } from '@/lib/comicKit';
 import { loadName } from '@/lib/session';
-import { actionSources } from '@/lib/classAction';
-import { CLASS_ORDER } from '@/lib/classes';
-import type { PlayerClass } from '@/lib/types';
+import { avatarColors, loadAvatar } from '@/lib/avatar';
 import '../mastermind.css';
 import '../mm-comic.css';
 import '../mm-case.css';
@@ -38,18 +36,15 @@ function Watch({ secs, total }: { secs: number; total: number }) {
   );
 }
 
-/** Polaroid portrait: each detective gets a hero from the class roster, stable per player. */
-function portraitFor(id: string): PlayerClass {
-  let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
-  return CLASS_ORDER[Math.abs(h) % CLASS_ORDER.length];
-}
-function Portrait({ id }: { id: string }) {
-  const srcs = useMemo(() => actionSources(portraitFor(id)), [id]);
-  const [i, setI] = useState(0);
-  if (i >= srcs.length) return <span className="sil" />;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={srcs[i]} alt="" draggable={false} onError={() => setI((n) => n + 1)} />;
+/** Polaroid photo: the player's own uploaded profile picture, or a coloured monogram when they have none. */
+function Portrait({ name, url }: { name: string; url?: string }) {
+  const [bad, setBad] = useState(false);
+  if (url && !bad) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={url} alt="" draggable={false} onError={() => setBad(true)} />;
+  }
+  const [c1, c2] = avatarColors(name);
+  return <span className="mono" style={{ background: `linear-gradient(145deg, ${c1}, ${c2})` }}>{(name.trim()[0] ?? '?').toUpperCase()}</span>;
 }
 
 /** Index card whose text types out like a typewriter the first time it appears. */
@@ -103,6 +98,8 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   const [glowSlot, setGlowSlot] = useState<number[]>([]);
   const offset = useRef(0);
   const [joinName, setJoinName] = useState('');
+  const [photos, setPhotos] = useState<Record<string, string>>({});
+  const sentAvatar = useRef<string | null>(null);
   const prev = useRef({ clues: 0, guesses: 0, status: '', round: 0, tick: -1, react: 0, slots: '' as string, points: {} as Record<string, number> });
 
   useEffect(() => { setToken(loadToken(code)); setJoinName(loadName()); setReady(true); }, [code]);
@@ -151,6 +148,23 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
     const id = window.setInterval(() => setNow(Date.now() + offset.current), 250);
     return () => window.clearInterval(id);
   }, []);
+
+  // share my uploaded photo with the room once, and pick up everyone else's (best effort: older servers just show initials)
+  const playerCount = s?.players.length ?? 0;
+  useEffect(() => {
+    if (!token || !s) return;
+    let live = true;
+    (async () => {
+      try {
+        const mine = loadAvatar();
+        if (mine && sentAvatar.current !== `${token}:${mine}`) { await mmAvatars.set(token, mine); sentAvatar.current = `${token}:${mine}`; }
+        const all = await mmAvatars.get(token);
+        if (live) setPhotos(all);
+      } catch { /* migration 098 not applied: keep monograms */ }
+    })();
+    return () => { live = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, playerCount, s?.room.status]);
 
   const secsLeft = s?.room.round_ends ? Math.max(0, Math.ceil((s.room.round_ends - now) / 1000)) : 0;
   const tense = s?.room.status === 'round' && secsLeft > 0 && secsLeft <= 10;
@@ -419,7 +433,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                     initial={{ y: -80, opacity: 0, rotate: -20 }} animate={{ y: 0, opacity: 1, rotate: i % 2 ? 4 : -4 }}
                     transition={{ delay: 0.35 + i * 0.12, type: 'spring', stiffness: 200, damping: 10 }} whileHover={{ rotate: 0, scale: 1.07, zIndex: 6 }}>
                     <i className="pin" aria-hidden />
-                    <div className="pic"><Portrait id={p.id} /></div>
+                    <div className="pic"><Portrait name={p.name} url={photos[p.id]} /></div>
                     <span className="cap">{p.id === me.id ? 'YOU' : p.name}{p.is_host ? ' ★' : ''}{p.sitting ? ' (watching)' : ''}</span>
                   </motion.div>
                 ))}
@@ -514,7 +528,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                     initial={{ y: -60, opacity: 0, rotate: -14 }} animate={hitId === p.id ? { x: [0, -10, 10, -6, 0], rotate: i % 2 ? 4 : -4, opacity: 1, y: 0 } : { y: 0, opacity: 1, rotate: i % 2 ? 4 : -4 }}
                     transition={{ type: 'spring', stiffness: 220, damping: 12, delay: i * 0.08 }} whileHover={{ rotate: 0, scale: 1.08, zIndex: 6 }}>
                     <i className="pin" aria-hidden />
-                    <div className="pic"><Portrait id={p.id} />{p.out && inRound && <b className="x" aria-hidden>✗</b>}</div>
+                    <div className="pic"><Portrait name={p.name} url={photos[p.id]} />{p.out && inRound && <b className="x" aria-hidden>✗</b>}</div>
                     <span className="cap">{p.id === me.id ? 'YOU' : p.name}</span>
                     <span className="meta">{p.is_mastermind ? 'MASTERMIND' : inRound ? `${'❤'.repeat(Math.max(0, p.hp))}${'♡'.repeat(Math.max(0, 3 - p.hp))}` : ''}</span>
                     <b className="pts">{p.points}</b>
@@ -585,7 +599,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
             </motion.div>
             <motion.article className="mx-paper" initial={{ y: 160, rotate: 10, opacity: 0, scale: 0.7 }} animate={{ y: 0, rotate: -1.5, opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 110, damping: 14 }}>
               <figure className="mx-det">
-                <div className="pic">{champ ? <Portrait id={champ.id} /> : null}</div>
+                <div className="pic">{champ ? <Portrait name={champ.name} url={photos[champ.id]} /> : null}</div>
                 <figcaption>{champ ? `${champ.name} · detective on the case` : 'Detective on the case'}</figcaption>
               </figure>
               <h2 className="mx-head">CASE CLOSED</h2>

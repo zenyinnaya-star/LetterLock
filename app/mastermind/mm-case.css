@@ -290,3 +290,19 @@
 }
 .mx-file { background-image: var(--mk-file); padding: clamp(46px, 7.5%, 84px) clamp(28px, 5%, 70px) clamp(22px, 4%, 44px); }
 .mx-file .tab { left: 7%; top: 8%; }
+
+/* ---- photos / monograms on polaroids ---- */
+.mx-polaroid .pic .mono { position: absolute; inset: 0; display: grid; place-items: center; font: 400 clamp(40px, 5vw, 72px) var(--dsp); color: #fff; text-shadow: 3px 3px 0 #111; }
+
+/* ---- compare-to-mockup fixes: bigger folder with tiles inside, readable notes + guess bar ---- */
+@media (min-width: 1000px) and (min-height: 600px) {
+  .mx.play .mx-file { aspect-ratio: 16 / 8.4; padding: 15% 9% 6%; align-self: start; min-height: 0; }
+  .mx-file .tab { left: 9%; top: 6%; }
+  .mx-tile { max-width: clamp(40px, 4.4vw, 76px); }
+  .mx-kicker { position: absolute; left: 22%; right: 12%; top: 6.5%; margin: 0; text-align: left; font-size: clamp(10px, .9vw, 13px); }
+  .mx-clues { margin-top: 12px; }
+}
+.mx-slip { background: var(--mk-slip) center / 100% 100% no-repeat, #fffaf0; background-blend-mode: multiply; filter: drop-shadow(3px 4px 0 rgba(0,0,0,.4)); border: 2px solid #3a2a18; border-radius: 3px; color: #111; }
+.mx-slip.empty { opacity: .8; } .mx-slip.empty span { color: #5a4630; }
+.mx-input::placeholder { color: #5a4a34 !important; opacity: 1 !important; }
+.mx-input { background: #fffaf0 !important; }

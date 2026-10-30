@@ -23,6 +23,15 @@ export interface MmState {
 export const REACTIONS = ['😱', '🤔', '🔥', '😂', '🕵️', '👀'] as const;
 export interface MmJoin { code: string; token: string; player_id: string }
 
+/** Profile photos live in their own calls so an older server (without migration 098) just shows initials. */
+export const mmAvatars = {
+  set: (token: string, url: string | null) => call<void>('mm_set_avatar', { p_token: token, p_url: url }),
+  get: async (token: string): Promise<Record<string, string>> => {
+    const rows = await call<{ player_id: string; avatar_url: string }[]>('mm_avatars', { p_token: token });
+    return Object.fromEntries((rows ?? []).map((r) => [r.player_id, r.avatar_url]));
+  },
+};
+
 export const mm = {
   create: (name: string, quick: boolean) => call<MmJoin>('mm_create', { p_name: name, p_quick: quick }),
   join: (code: string, name: string) => call<MmJoin>('mm_join', { p_code: code, p_name: name }),
