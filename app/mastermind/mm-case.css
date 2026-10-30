@@ -353,3 +353,11 @@
 .mx-slip b { color: #111; }
 .mx-polaroid .meta { font-size: 10px; letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mx-pad h3, .mx-pad .h { padding-top: 14px; }
+
+/* ---- round pass 2 ---- */
+@media (min-width: 1000px) and (min-height: 600px) {
+  .mx-kicker { left: 27%; max-width: 68%; }
+  .mx-slip { font-size: clamp(11px, .95vw, 14px); padding: 12px 22px 10px 16px; }
+  .mx-slip.empty span { display: block; line-height: 1.15; }
+}
+.mx-polaroid.mm .meta { color: #fff; background: #6a2bd8; padding: 0 4px; width: fit-content; margin: 2px auto 0; }
