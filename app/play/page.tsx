@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { isClassicKind } from '@/lib/modes';
+import { isClassicKind, CLASSIC_ONLY } from '@/lib/modes';
 import { ComicTop } from '@/components/ComicTop';
 import { audio } from '@/lib/audio';
 import { burst, wipe } from '@/lib/comicFx';
@@ -73,8 +73,8 @@ export default function Play() {
 
         <div className="cp-cards">
           {DOORS.map((m, i) => (
-            <button key={m.kind} type="button" className={`cp-card${i === sel ? ' sel' : ''}${i === live ? ' live' : ''}${m.kind !== 'create' ? ' soon' : ''}`} style={{ ['--i' as string]: i }}
-              aria-pressed={i === sel} aria-label={m.kind === 'create' ? `${m.name}, ${m.players}` : `${m.name}, coming soon`}
+            <button key={m.kind} type="button" className={`cp-card${i === sel ? ' sel' : ''}${i === live ? ' live' : ''}${CLASSIC_ONLY && m.kind !== 'create' ? ' soon' : ''}`} style={{ ['--i' as string]: i }}
+              aria-pressed={i === sel} aria-label={!CLASSIC_ONLY || m.kind === 'create' ? `${m.name}, ${m.players}` : `${m.name}, coming soon`}
               onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setSel(i); setLive(i); } }}
               onPointerMove={tilt}
               onPointerLeave={(e) => { e.currentTarget.style.transform = ''; if (e.pointerType === 'mouse') setLive(null); }}
@@ -95,7 +95,7 @@ export default function Play() {
                     <source src={`/art/comic/${m.art}.webm`} type="video/webm" />
                   </video>
                 </span>
-                {m.kind !== 'create' && <span className="cp-soon">Coming soon</span>}
+                {CLASSIC_ONLY && m.kind !== 'create' && <span className="cp-soon">Coming soon</span>}
                 <span className="lbl">{m.name}</span>
               </span>
               <span className="num cp-xt" aria-hidden>{i + 1}</span>
@@ -104,8 +104,8 @@ export default function Play() {
         </div>
 
         <div className="cp-bar">
-          <div className="cp-info"><b>{d.name}</b><p>{d.kind === 'create' ? d.desc : 'Coming soon. Classic is the only playable mode for now.'}</p></div>
-          <button type="button" className="cp-create" disabled={d.kind !== 'create'} onClick={(e) => { burst(e.clientX, e.clientY, d.pow); start(d.kind); }}>{SVG.people}<span>{d.kind === 'create' ? d.cta : 'Coming soon'}</span></button>
+          <div className="cp-info"><b>{d.name}</b><p>{!CLASSIC_ONLY || d.kind === 'create' ? d.desc : 'Coming soon. Classic is the only playable mode for now.'}</p></div>
+          <button type="button" className="cp-create" disabled={CLASSIC_ONLY && d.kind !== 'create'} onClick={(e) => { burst(e.clientX, e.clientY, d.pow); start(d.kind); }}>{SVG.people}<span>{!CLASSIC_ONLY || d.kind === 'create' ? d.cta : 'Coming soon'}</span></button>
           <span className="cp-or">or</span>
           <label className="cp-join">
             <span>{SVG.key} Join with code</span>
