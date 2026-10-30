@@ -134,3 +134,7 @@
 .mm-room .mm-cta:not(:disabled){background:var(--w-c-fire) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;color:#111!important;min-height:84px;font-family:'LL Display','Luckiest Guy',Impact,sans-serif}
 .mm-room .mm-lobby-board,.mm-room .mm-qr,.mm-room .mm-invite{color:#111}
 .mm-room .mm-qr{background:var(--w-c-card) center/100% 100% no-repeat;padding:20px}
+
+/* contrast fix: pale buttons need dark ink */
+.mm-room .mm-cta,.mm-room .mm-cta:disabled,.mm-room .btn.lg.block{color:#111!important;text-shadow:none!important;font-weight:400}
+.mm-room .mm-cta:disabled{opacity:.85}
