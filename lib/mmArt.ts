@@ -9,7 +9,8 @@ const src = {
   silhouette: CDN + 'hf_20261016_170055_40d173ce-3955-4727-b5eb-bc140d1fb586.png',
   polaroid: CDN + 'hf_20261016_170055_b6d7279f-5bea-4fc4-b89b-1180a794fcd9.png',
 };
-export const img = (u: string, w = 1920) => `/_next/image?url=${encodeURIComponent(u)}&w=${w}&q=75`; // Next 16 only accepts the configured qualities (default [75])
+const WIDTHS = [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840]; // Next only serves its configured widths; anything else 400s
+export const img = (u: string, w = 1920) => `/_next/image?url=${encodeURIComponent(u)}&w=${WIDTHS.find((x) => x >= w) ?? 3840}&q=75`; // Next 16 only accepts the configured qualities (default [75])
 const css = (u: string, w?: number) => `url("${img(u, w)}")`;
 
 /** CSS custom properties consumed by app/mastermind/mastermind.css */
