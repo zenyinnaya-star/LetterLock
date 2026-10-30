@@ -260,3 +260,14 @@
   .mx-lamp, .mx-rain, .mx-watch .face, .mx-watch .digital, .mx-polaroid.empty .who, .mx-file, .mx-type, .mx-tile { animation: none !important; }
   .mx-rain { display: none; }
 }
+
+/* ---- fit-to-screen pass (desktop): everything incl. the CTA visible without scrolling ---- */
+@media (min-width: 1000px) and (min-height: 600px) {
+  .mx-stage { padding-bottom: 96px; }
+  .mx.lobby .mx-stage { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); grid-template-rows: auto minmax(0, 1fr) auto auto; min-height: 100dvh; }
+  .mx-folder { width: auto; height: min(52vh, 440px); max-width: 100%; }
+  .mx.lobby .mx-board { aspect-ratio: 4 / 3; max-height: 62vh; }
+  .mx.lobby .mx-polaroid { width: clamp(118px, 11vw, 168px); }
+  .mx-cta { padding-top: 4px; }
+  .mx-plaque.big { min-height: clamp(70px, 8vh, 104px); }
+}
