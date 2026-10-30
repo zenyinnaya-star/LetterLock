@@ -177,3 +177,16 @@
   .mm-room:not(.s-lobby):not(.s-finished) .mm-photo.suspect{display:none}
   .mm-room:not(.s-lobby):not(.s-finished) .mm-side.right{display:none}
 }
+
+/* ---- readability pass (desktop case file) ---- */
+@media (min-width:1000px) and (min-height:620px){
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-kicker{color:#2a1c0c!important;font:700 15px 'Courier New',monospace!important;letter-spacing:.16em;text-shadow:none!important;opacity:1!important}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-card .num,.mm-room:not(.s-lobby):not(.s-finished) .mm-card .txt{color:#3a2a18!important;opacity:1!important;text-shadow:none!important;font-style:normal}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-card.empty .txt{color:#6a5a44!important;font:600 14px 'Courier New',monospace}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-slots .slot:not(.lit):not(.typed){background:#5a5f75;border-color:#2a2f3a}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-suspect{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:8px;min-height:104px;padding:20px 34px 34px;margin-bottom:8px;transform:rotate(-1.2deg)}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-suspect:nth-child(even){transform:rotate(1.4deg)}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-suspect .mug{background:#cfd4e0;border:3px solid #111;width:48px;height:48px;border-radius:4px;display:grid;place-items:center;font-weight:700}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-suspect .nm,.mm-room:not(.s-lobby):not(.s-finished) .mm-suspect .hp,.mm-room:not(.s-lobby):not(.s-finished) .mm-suspect .pts{color:#111!important;text-shadow:none!important;font-family:'LL Comic',Bangers,Impact,sans-serif}
+  .mm-hud .mm-clockwrap{z-index:7!important;right:400px!important;top:60px!important}
+}
