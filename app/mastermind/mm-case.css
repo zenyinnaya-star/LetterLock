@@ -317,3 +317,18 @@
 .mx-paper { gap: 6px clamp(14px, 2vw, 28px); padding-block: clamp(18px, 2.2vw, 34px); }
 @media (max-width: 999px) { .mx-solved { right: 6%; bottom: 36%; left: auto; top: auto; } }
 @media (max-width: 560px) { .mx-solved { right: 4%; bottom: 44%; left: auto; top: auto; } .mx-word { flex-wrap: wrap; } }
+
+/* ---- lobby pass (mockup compare): count under the title, bigger centred polaroids, folder + CTA clear of footer ---- */
+@media (min-width: 1000px) {
+  .mx.lobby .mx-stage { padding-bottom: 84px; }
+  .mx-count { left: auto; right: clamp(14px, 3vw, 44px); top: 62px; }
+  .mx.lobby .mx-board { margin-top: 22px; }
+  .mx.lobby .mx-mugs { padding: 4% 4% 0; justify-content: center; align-content: center; gap: 22px 26px; height: 100%; }
+  .mx.lobby .mx-polaroid { width: clamp(130px, 13vw, 200px); }
+  .mx.lobby .mx-polaroid .pic .mono { font-size: clamp(60px, 7vw, 110px); }
+  .mx-folder { width: min(430px, 88%); margin-bottom: 14px; }
+  .mx-folder .code { font-size: clamp(54px, 6.4vw, 100px); }
+  .mx-cta .mx-plaque.big { color: #111 !important; }
+}
+.mx-plaque, .mx-plaque * { text-shadow: none; }
+.mx-plaque:disabled { filter: saturate(.7) brightness(.95); color: #2a2a2a; opacity: 1; }
