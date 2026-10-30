@@ -341,3 +341,15 @@
   .mx-folder .l2 { font-size: clamp(14px, 1.5vw, 22px); letter-spacing: .04em; }
   .mx.lobby .mx-stage { padding-bottom: 70px; }
 }
+
+/* ---- round pass: labels on dark plates, slips are just the paper art, caption fits ---- */
+@media (min-width: 1000px) and (min-height: 600px) {
+  .mx-file .tab, .mx-kicker { top: 1.5%; background: rgba(12,14,24,.88); color: #f6ecd2; padding: 3px 10px; border: 2px solid #111; z-index: 5; text-shadow: none; white-space: nowrap; }
+  .mx-file .tab { left: 7%; }
+  .mx-kicker { left: 24%; right: auto; max-width: 64%; overflow: hidden; text-overflow: ellipsis; }
+}
+.mx-slip { background: var(--mk-slip) center / 100% 100% no-repeat; background-blend-mode: normal; border: 0; border-radius: 0; filter: brightness(1.12) drop-shadow(3px 4px 0 rgba(0,0,0,.4)); }
+.mx-slip.empty { opacity: 1; }
+.mx-slip b { color: #111; }
+.mx-polaroid .meta { font-size: 10px; letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mx-pad h3, .mx-pad .h { padding-top: 14px; }
