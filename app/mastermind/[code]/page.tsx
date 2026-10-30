@@ -371,6 +371,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
 
             {(inRound || room.status === 'between') && (
               <div className="mm-evidence">
+                <div className="mm-folder-bg" aria-hidden />
                 <div data-pin className="mm-photo suspect">
                   <div className="pic polaroid" /><div className="cap">{me.is_mastermind ? 'You' : mmPlayer?.name ?? '?'}<small>holds the secret</small></div>
                 </div>

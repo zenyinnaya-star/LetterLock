@@ -138,3 +138,42 @@
 /* contrast fix: pale buttons need dark ink */
 .mm-room .mm-cta,.mm-room .mm-cta:disabled,.mm-room .btn.lg.block{color:#111!important;text-shadow:none!important;font-weight:400}
 .mm-room .mm-cta:disabled{opacity:.85}
+
+/* ======== Mastermind in play — desktop case-file layout (mockup): notepad | manila folder | corkboard ======== */
+.mm-folder-bg{display:none}
+@media (min-width:1000px) and (min-height:620px){
+  .mm-room.stage:not(.s-lobby):not(.s-finished){
+    grid-template-columns:minmax(230px,300px) minmax(0,1fr) minmax(260px,340px);
+    grid-template-rows:auto auto minmax(0,1fr) auto;
+    grid-template-areas:"log slots board" "log cards board" "log . board" "log dock board";
+    gap:6px 26px;padding-top:70px}
+  .mm-room.stage:not(.s-lobby):not(.s-finished) :is(.mm-wall,.mm-cork,.mm-evidence){display:contents}
+  .mm-room.stage:not(.s-lobby):not(.s-finished) .mm-strings{display:none}
+  /* folder backdrop spans slots + cards + dock */
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-folder-bg{display:block;grid-column:2;grid-row:1/5;z-index:0;margin:-18px -22px -12px;background:var(--mk-folder) center/100% 100% no-repeat;filter:drop-shadow(6px 8px 0 rgba(0,0,0,.4));pointer-events:none}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-folder-bg::after{content:'CASE FILE';position:absolute;left:11%;top:5.5%;font:700 15px 'Courier New',monospace;letter-spacing:.18em;color:#3a2a18}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-tabletop{grid-column:2;grid-row:1;padding:56px 56px 4px;z-index:2}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-kicker{background:none;color:#3a2a18;text-shadow:none}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-slots .slot{background:#fff6d8;border:4px solid #3a2a18;color:#111;width:clamp(54px,6vw,82px);height:clamp(64px,7vw,96px);font:700 clamp(30px,3.6vw,52px) 'Courier New',monospace;box-shadow:3px 4px 0 rgba(0,0,0,.35)}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-slots .slot:not(.lit):not(.typed){background:#4a4f63;color:#c9ccd8}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-cards{grid-column:2;grid-row:2;z-index:2;padding:6px 56px 8px;gap:12px}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-card{background:#fffaf0!important;border:2px solid #3a2a18;color:#111!important;box-shadow:3px 4px 0 rgba(0,0,0,.35);transform:rotate(-1.5deg)}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-card:nth-child(2){transform:rotate(1deg)}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-card.empty{background:rgba(255,250,240,.55)!important;color:#5a4a36!important;box-shadow:none;border-style:dashed}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-dock{grid-column:2;grid-row:4;z-index:2;max-width:none;width:100%;padding:0 52px 38px;min-height:0}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-dock .mm-folder{background:#2a2f3a!important;border:4px solid #111!important;border-radius:8px;padding:16px 20px!important;filter:none;width:100%}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-dock .mm-folder *{color:inherit}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-dock .mm-folder .mm-hint{background:none;color:#e8dcc0!important}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-dock .mm-folder .input{background:#fffaf0;color:#111!important;border:3px solid #111}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-dock .mm-folder .btn{background:#ffd23f!important;color:#111!important;border:3px solid #111;box-shadow:3px 3px 0 #111;font-family:'LL Display','Luckiest Guy',Impact,sans-serif;text-transform:uppercase}
+  /* evidence log = spiral notepad, left */
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-log{grid-area:log;align-self:end;z-index:2;transform:rotate(-2.5deg);background:repeating-linear-gradient(#fffdf5 0 27px,#9bc3e6 27px 28px);border:3px solid #111;border-left:14px dotted #333;padding:18px 16px;min-height:260px;box-shadow:5px 6px 0 rgba(0,0,0,.4)}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-log .hd{font:700 20px 'LL Display','Luckiest Guy',Impact,sans-serif;color:#111;letter-spacing:.04em}
+  /* suspects = polaroids pinned on the cork, right */
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-side.left{grid-area:board;z-index:2;align-self:stretch;justify-content:center;background:#8a5a2c var(--art-cork) center/cover;border:8px solid #3b2412;box-shadow:0 0 0 3px #1c1008,6px 8px 0 rgba(0,0,0,.4);padding:16px;border-radius:6px}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-side.left .tag{color:#fff2d6}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-suspect{background:var(--mk-polaroid) center/100% 100% no-repeat;border:0;box-shadow:none;color:#111;padding:14px 16px 20px;filter:drop-shadow(3px 4px 0 rgba(0,0,0,.4))}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-suspect *{color:#111}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-photo.suspect{display:none}
+  .mm-room:not(.s-lobby):not(.s-finished) .mm-side.right{display:none}
+}
