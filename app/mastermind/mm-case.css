@@ -271,3 +271,20 @@
   .mx-cta { padding-top: 4px; }
   .mx-plaque.big { min-height: clamp(70px, 8vh, 104px); }
 }
+
+/* ---- play-screen fit + readability pass ---- */
+.mx-tiles { flex-wrap: nowrap; }
+.mx-tile { width: auto; flex: 1 1 0; min-width: 0; max-width: clamp(46px, 5.8vw, 92px); }
+.mx-slip { filter: brightness(1.22) contrast(.92) drop-shadow(3px 4px 0 rgba(0,0,0,.35)); }
+.mx-pad h3 { color: #111 !important; }
+@media (min-width: 1000px) and (min-height: 600px) {
+  .mx.play .mx-stage { padding-bottom: 84px; grid-template-rows: auto minmax(0, 1fr) auto auto; row-gap: 8px; }
+  .mx.play .mx-title.small b { font-size: clamp(34px, 4.2vw, 64px); }
+  .mx.play .mx-file { min-height: 0; align-self: stretch; }
+  .mx-kicker { margin-bottom: 8px; }
+  .mx-clues { margin-top: 10px; }
+  .mx-slip { min-height: 70px; }
+  .mx.play .mx-pad { max-width: 270px; align-self: end; }
+  .mx.play .mx-board { max-height: 56vh; }
+  .mx-type { padding: 14px 54px 20px; }
+}
