@@ -37,9 +37,9 @@ body:has(.siege:not(.p-lobby)) .tv-dock .tv-head,body:has(.siege:not(.p-lobby)) 
 .siege .s-war-banner::before{display:none}
 .siege .s-war-banner span{font:400 clamp(40px,8vw,72px) 'LL Display','Luckiest Guy',Impact,sans-serif!important;letter-spacing:.12em!important;color:#3a3a46!important;text-shadow:2px 2px 0 rgba(255,255,255,.5)!important}
 .s-lobby .team-lobby.s-camp{background:none!important;border:0!important;backdrop-filter:none!important;padding:0!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center}
-.s-camp .team-card{background:center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;outline:0!important;min-height:440px;padding:84px 38px 74px!important;color:#fff;filter:drop-shadow(6px 8px 0 rgba(0,0,0,.4))}
-.s-camp .team-card.b{order:1;background-image:var(--sk-red)!important}
-.s-camp .team-card.a{order:3;background-image:var(--sk-blue)!important}
+.s-camp .team-card{background:center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;outline:0!important;min-height:470px;padding:96px 44px 90px!important;color:#fff;filter:drop-shadow(6px 8px 0 rgba(0,0,0,.4))}
+.s-camp .team-card.b{order:1;background-image:var(--sk-ban-r)!important}
+.s-camp .team-card.a{order:3;background-image:var(--sk-ban-b)!important}
 .s-camp .tl-vs{order:2}
 .s-camp .tc-name b,.s-camp .tc-pn{color:#fff!important;font-family:'LL Display','Luckiest Guy',Impact,sans-serif!important;text-shadow:2px 2px 0 #111;letter-spacing:.04em}
 .s-camp .tc-member{background:#fff6d8!important;border:3px solid #111!important;color:#111!important;border-radius:4px}

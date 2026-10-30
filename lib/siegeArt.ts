@@ -35,4 +35,6 @@ export const siegeArtVars = {
   '--sk-castle-b': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_192106_0928d6c2-87ac-4617-adba-095e07cbf62a.png', 828),
   '--sk-plaque': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_192108_8f3e0615-cfdf-4fb9-b246-c5c8ee07563b.png', 1080),
   '--sk-lobby': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_192026_86105bc3-bf90-424f-a7d3-61c8e8fe2b02.png', 2048),
+  '--sk-ban-r': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_192649_6fffd46b-c507-4e65-830e-c596920b5fb2.png', 828),
+  '--sk-ban-b': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_192651_00c52bb8-0238-4f9d-b9be-f4963d4c4f88.png', 828),
 } as React.CSSProperties;
