@@ -29,3 +29,36 @@
 .siege .s-bar button[type=submit],.siege .s-bar .btn{color:#111;text-shadow:none}
 @media (max-width:899px){body:has(.siege:not(.p-lobby)) .tv-dock{top:auto;bottom:78px;left:auto;right:8px;width:56px;overflow:hidden;height:46px}
 body:has(.siege:not(.p-lobby)) .tv-dock .tv-head,body:has(.siege:not(.p-lobby)) .tv-dock .tv-members{display:none}}
+
+/* ===== Siege lobby — matches the mockup: red/blue hanging banners, stone code plaque, VS burst, STORM THE GATE ===== */
+.siege.p-lobby{background:#241a3a var(--sk-lobby) center/cover no-repeat!important}
+.siege.p-lobby .s-lobby{--ink:#111}
+.siege .s-war-banner{background:var(--sk-plaque) center/100% 100% no-repeat!important;clip-path:none!important;box-shadow:none!important;padding:34px 64px 38px;filter:drop-shadow(5px 6px 0 rgba(0,0,0,.45))}
+.siege .s-war-banner::before{display:none}
+.siege .s-war-banner span{font:400 clamp(40px,8vw,72px) 'LL Display','Luckiest Guy',Impact,sans-serif!important;letter-spacing:.12em!important;color:#3a3a46!important;text-shadow:2px 2px 0 rgba(255,255,255,.5)!important}
+.s-lobby .team-lobby.s-camp{background:none!important;border:0!important;backdrop-filter:none!important;padding:0!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center}
+.s-camp .team-card{background:center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;outline:0!important;min-height:440px;padding:84px 38px 74px!important;color:#fff;filter:drop-shadow(6px 8px 0 rgba(0,0,0,.4))}
+.s-camp .team-card.b{order:1;background-image:var(--sk-red)!important}
+.s-camp .team-card.a{order:3;background-image:var(--sk-blue)!important}
+.s-camp .tl-vs{order:2}
+.s-camp .tc-name b,.s-camp .tc-pn{color:#fff!important;font-family:'LL Display','Luckiest Guy',Impact,sans-serif!important;text-shadow:2px 2px 0 #111;letter-spacing:.04em}
+.s-camp .tc-member{background:#fff6d8!important;border:3px solid #111!important;color:#111!important;border-radius:4px}
+.s-camp .tc-member *{color:#111!important}
+.s-camp .tc-member.throne{background:#ffd23f!important}
+.s-camp .tl-vs{width:clamp(84px,12vw,150px);aspect-ratio:1;display:grid;place-items:center;background:var(--k-burst-y) center/contain no-repeat!important;font:400 clamp(26px,4vw,44px) 'LL Display','Luckiest Guy',Impact,sans-serif!important;color:#111!important;text-shadow:none!important;transform:rotate(-6deg)}
+.s-lobby .btn.lg.block{background:var(--k-burst-y) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;color:#111!important;text-shadow:none!important;width:min(340px,92%);min-height:150px;margin-inline:auto;font:400 clamp(22px,3.4vw,34px) 'LL Display','Luckiest Guy',Impact,sans-serif!important;text-transform:uppercase;filter:drop-shadow(4px 5px 0 rgba(0,0,0,.4))}
+.s-lobby .btn.lg.block:disabled{filter:grayscale(.6) drop-shadow(4px 5px 0 rgba(0,0,0,.4));opacity:.85}
+@media (max-width:700px){
+  .s-lobby .team-lobby.s-camp{grid-template-columns:1fr 1fr;grid-template-areas:"b a"}
+  .s-camp .tl-vs{display:none}
+  .s-camp .team-card{min-height:0;padding:60px 18px 56px!important}
+  .siege .s-war-banner{padding:24px 34px 28px}
+}
+
+/* ===== Siege match — castles with gates, as in the mockup ===== */
+.siege .s-wall::before{display:none!important}
+.siege .s-wall::after{inset:-70px -26px -6px!important;z-index:-1;background:var(--sk-castle-b) center bottom/contain no-repeat!important;box-shadow:none!important;border-radius:0!important;filter:drop-shadow(5px 6px 0 rgba(0,0,0,.35))}
+.siege .s-wall:has(.s-flag.c1)::after{background-image:var(--sk-castle-r)!important}
+.siege .s-wall .s-stones{padding-top:12px}
+.siege .s-stone{background:#fff6d8!important;color:#111!important;border:3px solid #111!important;border-radius:4px;font-family:'LL Display','Luckiest Guy',Impact,sans-serif}
+.siege .s-wall{min-height:230px}
