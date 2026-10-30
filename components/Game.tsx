@@ -36,6 +36,7 @@ import '@/app/west.css';
 import '@/app/duel-comic.css';
 import '@/app/team.css';
 import '@/app/siege.css';
+import '@/app/siege-comic.css';
 import { siegeArtVars } from '@/lib/siegeArt';
 import '@/app/vault.css';
 import '@/app/vault-comic.css';

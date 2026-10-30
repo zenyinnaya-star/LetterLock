@@ -9,6 +9,8 @@ import { Header } from '@/components/ui';
 import { mm, mmError, saveToken } from '@/lib/mastermind';
 import { loadName, saveName } from '@/lib/session';
 import { mmArtVars } from '@/lib/mmArt';
+import { westArtVars } from '@/lib/westArt';
+import { comicKitVars } from '@/lib/comicKit';
 import './mastermind.css';
 import './mm-comic.css';
 
@@ -30,7 +32,7 @@ function MastermindHomeInner() {
   return (
     <main className="shell narrow">
       <Header />
-      <div className="mm-room simple" style={mmArtVars}>
+      <div className="mm-room simple" style={{ ...mmArtVars, ...westArtVars, ...comicKitVars }}>
         <div className="mm-center">
         <h1 className="mm-title">Mastermind</h1>
         <p className="mm-sub">One of you holds the secret word. Three clues. Everyone else races to crack it.</p>

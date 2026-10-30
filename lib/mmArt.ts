@@ -22,4 +22,7 @@ export const mmArtVars = {
   '--art-folder': css(src.folder, 1200),
   '--art-sil': css(src.silhouette, 384),
   '--art-polaroid': css(src.polaroid, 384),
+  '--mk-room': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_182417_a98d58d7-bf33-47a9-9051-e9901eff65d5.png', 2048),
+  '--mk-folder': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_182519_b88441fa-03df-4b6e-b84d-5f0fe2ace8f0.png', 1200),
+  '--mk-polaroid': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_182537_ff69af91-b1b9-4ade-810f-bea0f84e6690.png', 500),
 } as React.CSSProperties;

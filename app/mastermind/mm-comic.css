@@ -121,3 +121,16 @@
 .mm-room .mm-hint { background: var(--mpaper); color: var(--mk); text-shadow: none; padding: 2px 8px; border: 2px solid var(--mk); display: inline-block; }
 .mm-room .mm-qr + .mm-invite-txt b, .mm-room .mm-invite-txt b { color: var(--mk) !important; opacity: 1 !important; }
 .mm-room .mm-side .name, .mm-room .mm-side b { color: #fff; }
+
+/* ---- generated noir comic art (room, case folder, polaroids) ---- */
+.mm-room{background:#1b2547 var(--mk-room) center/cover no-repeat!important}
+.mm-room .mm-folder{background:var(--mk-folder) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;color:#1f150b;padding:34px 46px 28px!important;filter:drop-shadow(5px 6px 0 rgba(0,0,0,.4))}
+.mm-room .mm-folder *{color:#1f150b}
+.mm-room .mm-folder .btn{color:#fff}
+.mm-room .mm-photo{background:var(--mk-polaroid) center/100% 100% no-repeat!important;box-shadow:none!important;padding:22px 20px 26px!important;width:132px;filter:drop-shadow(3px 5px 0 rgba(0,0,0,.4))}
+.mm-room .mm-photo::before{display:none}
+.mm-room .mm-photo .pic{aspect-ratio:1;border:0}
+.mm-room .mm-photo .cap{color:#111}
+.mm-room .mm-cta:not(:disabled){background:var(--w-c-fire) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;color:#111!important;min-height:84px;font-family:'LL Display','Luckiest Guy',Impact,sans-serif}
+.mm-room .mm-lobby-board,.mm-room .mm-qr,.mm-room .mm-invite{color:#111}
+.mm-room .mm-qr{background:var(--w-c-card) center/100% 100% no-repeat;padding:20px}

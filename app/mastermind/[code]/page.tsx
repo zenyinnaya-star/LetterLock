@@ -12,6 +12,8 @@ import { Header } from '@/components/ui';
 import { audio } from '@/lib/audio';
 import { loadToken, mm, mmError, REACTIONS, saveToken, type MmState } from '@/lib/mastermind';
 import { mmArtVars } from '@/lib/mmArt';
+import { westArtVars } from '@/lib/westArt';
+import { comicKitVars } from '@/lib/comicKit';
 import { loadName } from '@/lib/session';
 import '../mastermind.css';
 import '../mm-comic.css';
@@ -269,7 +271,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   if (!token) {
     return (
       <main className="shell narrow"><Header />
-        <div className="mm-room simple" style={mmArtVars}>
+        <div className="mm-room simple" style={{ ...mmArtVars, ...westArtVars, ...comicKitVars }}>
           <div className="mm-center">
             <h1 className="mm-title">Case {code}</h1>
             <div className="mm-folder" data-tab="Join">
@@ -284,7 +286,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
       </main>
     );
   }
-  if (!s) return <main className="shell narrow"><Header /><div className="mm-room simple" style={mmArtVars}><div className="mm-center"><p className="mm-sub">{err ?? 'Setting up the room…'}</p></div></div></main>;
+  if (!s) return <main className="shell narrow"><Header /><div className="mm-room simple" style={{ ...mmArtVars, ...westArtVars, ...comicKitVars }}><div className="mm-center"><p className="mm-sub">{err ?? 'Setting up the room…'}</p></div></div></main>;
 
   const { room, me, players } = s;
   const mmPlayer = players.find((p) => p.is_mastermind);
@@ -317,7 +319,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
 
   return (
     <main className="shell narrow"><Header />
-      <div className={`mm-room stage s-${room.status}${tense ? ' tense' : ''}`} style={mmArtVars}>
+      <div className={`mm-room stage s-${room.status}${tense ? ' tense' : ''}`} style={{ ...mmArtVars, ...westArtVars, ...comicKitVars }}>
         <div className="mm-light" key={flicker} data-flicker={flicker ? '1' : undefined} aria-hidden />
         <div className="mm-dust" aria-hidden>{Array.from({ length: 14 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>
         <div className="mm-vignette" aria-hidden />
