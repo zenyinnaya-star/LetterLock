@@ -39,4 +39,5 @@ export const mmArtVars = {
   '--mk-typer': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194333_d61a9476-9015-4b04-bc2c-a3a32a5dd200.png', 1200),
   '--mk-burst': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194100_31f3f1a6-c448-49d6-bfac-2d1fb9774b6a.png', 2048),
   '--mk-badge': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194334_3b0d81c9-5cff-4972-b3ae-154d07728baf.png', 256),
+  '--mk-file': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_195104_09e738c6-9dba-402a-b9f6-1efe69b38dd0.png', 1920),
 } as React.CSSProperties;
