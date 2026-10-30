@@ -190,3 +190,15 @@
   .mm-room:not(.s-lobby):not(.s-finished) .mm-suspect .nm,.mm-room:not(.s-lobby):not(.s-finished) .mm-suspect .hp,.mm-room:not(.s-lobby):not(.s-finished) .mm-suspect .pts{color:#111!important;text-shadow:none!important;font-family:'LL Comic',Bangers,Impact,sans-serif}
   .mm-hud .mm-clockwrap{z-index:7!important;right:400px!important;top:60px!important}
 }
+
+/* ======== Finale — "CASE CLOSED" newspaper with red SOLVED stamp (mockup) ======== */
+.mm-room.s-finished .mm-cork{background:#efe6cf var(--mk-paper) center/100% 100% no-repeat!important;box-shadow:0 0 0 4px #111,10px 12px 0 rgba(0,0,0,.45)!important;border-radius:2px;transform:rotate(-.8deg)}
+.mm-room.s-finished .mm-cork::after{display:none}
+.mm-room.s-finished .mm-strings{display:none}
+.mm-room.s-finished .mm-podium::before{content:'CASE CLOSED';position:absolute;left:0;right:0;top:20px;text-align:center;font:400 clamp(40px,7vw,96px)/1 'LL Display','Luckiest Guy',Impact,sans-serif;color:#111;letter-spacing:.02em}
+.mm-room.s-finished .mm-podium{position:relative;padding-top:clamp(120px,16vw,170px)}
+.mm-room.s-finished .mm-stamp.closed{color:#d12b24!important;text-shadow:none;border:7px solid #d12b24;background:rgba(255,255,255,.08);font-size:0!important;top:22%;rotate:-14deg;mix-blend-mode:multiply}
+.mm-room.s-finished .mm-stamp.closed::after{content:'SOLVED';font:400 clamp(44px,6vw,80px) 'LL Display','Luckiest Guy',Impact,sans-serif;letter-spacing:.06em}
+.mm-room.s-finished .mm-podium .block{border:3px solid #111;box-shadow:4px 5px 0 #111;border-radius:2px}
+.mm-room.s-finished .mm-podium .mm-photo .cap{color:#111}
+.mm-room.s-finished .mm-kicker{background:#111;color:#ffd23f;padding:6px 14px;font-family:'LL Comic',Bangers,Impact,sans-serif;letter-spacing:.06em}
