@@ -306,3 +306,14 @@
 .mx-slip.empty { opacity: .8; } .mx-slip.empty span { color: #5a4630; }
 .mx-input::placeholder { color: #5a4a34 !important; opacity: 1 !important; }
 .mx-input { background: #fffaf0 !important; }
+
+/* ---- finale pass: monogram everywhere, stamp no longer buries the headline, tighter so Share is visible ---- */
+.mx-det .pic { position: relative; }
+.mx-det .pic .mono, .mx-polaroid .pic .mono { position: absolute; inset: 0; display: grid; place-items: center; font: 400 clamp(56px, 7vw, 110px) var(--dsp); color: #fff; text-shadow: 4px 4px 0 #111; }
+.mx-head { font-size: clamp(46px, 6.4vw, 100px); }
+.mx-solved { left: auto; right: 14%; top: auto; bottom: 30%; font-size: clamp(40px, 5vw, 84px); border-width: 6px; opacity: .92; }
+.mx-word { flex-wrap: nowrap; }
+.mx-word span { width: clamp(34px, 4vw, 60px); font-size: clamp(24px, 3.2vw, 46px); }
+.mx-paper { gap: 6px clamp(14px, 2vw, 28px); padding-block: clamp(18px, 2.2vw, 34px); }
+@media (max-width: 999px) { .mx-solved { right: 6%; bottom: 36%; left: auto; top: auto; } }
+@media (max-width: 560px) { .mx-solved { right: 4%; bottom: 44%; left: auto; top: auto; } .mx-word { flex-wrap: wrap; } }
