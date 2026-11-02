@@ -228,3 +228,6 @@
 .mm-start .mm-hint { margin: 0; font: 600 13px var(--type, monospace); color: #8a1a1a; }
 .mm-room.simple .mm-sub, .mm-room.simple .mm-or { display: none; }
 @media (prefers-reduced-motion: reduce) { .mm-start .mm-go { transition: none; } }
+.mm-start .mm-go { font-family: "LL Display", "Luckiest Guy", Impact, sans-serif; }
+.mm-room.simple .mm-start { margin-top: 6px; }
+@media (max-width: 640px) { .mm-room.simple .mm-center { padding-top: 8px !important; justify-content: flex-start !important; } .mm-room.simple .mm-title { margin-top: 4vh !important; } }
