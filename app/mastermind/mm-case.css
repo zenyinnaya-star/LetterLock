@@ -433,3 +433,28 @@
 .mm-room .mm-folder .btn:not(.ghost):not(:disabled) { color: #111; text-shadow: none; -webkit-text-stroke: 0; }
 .mm-room .mm-folder .btn.ghost:not(:disabled) { color: #fff; }
 .mx-role { padding-top: calc(var(--w) * .62); }
+
+/* =================== FINALE layout v2: everything on one screen, badges as a bottom row =================== */
+@media (min-width: 1000px) {
+  .mx-paper { width: min(1120px, 100%); grid-template-columns: minmax(150px, .8fr) minmax(0, 1.7fr) minmax(150px, .7fr);
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas: "det head stats" "det word stats" "badges badges badges" "btns btns btns";
+    gap: 6px clamp(14px, 2vw, 28px); padding: clamp(14px, 1.8vw, 26px) clamp(20px, 2.6vw, 44px); }
+  .mx-head { font-size: clamp(40px, 5.6vw, 84px); }
+  .mx-det { width: clamp(130px, 13vw, 190px); }
+  .mx-det .pic { aspect-ratio: 1; }
+  .mx-det figcaption { font-size: clamp(11px, 1vw, 15px); margin-top: -12px; }
+  .mx-word { align-self: center; }
+  .mx-stats { gap: 6px; align-self: center; }
+  .mx-stats span { padding: 8px 12px; font-size: clamp(13px, 1.2vw, 18px); }
+  .mx-badges { flex-wrap: nowrap; justify-content: center; align-items: flex-start; gap: 6px; }
+  .mx-badge { width: clamp(78px, 7vw, 104px); flex: 0 0 auto; padding: 16%; }
+  .mx-snail { width: clamp(78px, 7vw, 104px); flex: 0 0 auto; }
+  .mx-snail b { font-size: 8px; text-align: center; }
+  .mx-snail span { font-size: 9px; white-space: normal; max-width: 100%; line-height: 1.1; }
+  .mx-solved { right: 20%; bottom: 36%; font-size: clamp(34px, 4vw, 64px); }
+  .mx-btns { gap: 10px 20px; }
+  .mx.final .mx-plaque.big { min-width: 200px; padding-block: 8px; font-size: clamp(22px, 2.2vw, 32px); }
+  .mx-win { padding: 4px 22px; }
+}
+.mx-badge b, .mx-badge em, .mx-badge span { text-align: center; }
