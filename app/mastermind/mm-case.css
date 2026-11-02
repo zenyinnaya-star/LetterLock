@@ -601,3 +601,4 @@
 .mx-role b { font-size: clamp(13px, calc(var(--w) * .12), 18px) !important; line-height: 1.05; }
 .mx-role span, .mx-role small, .mx-role p { font-size: clamp(9px, calc(var(--w) * .085), 12px) !important; line-height: 1.15; }
 @media (max-height: 520px) and (orientation: landscape) { .mx-file .mx-slip { margin-left: 52px; margin-right: 48px; } .mx-file .mx-lock-row, .mx-file .mx-word { margin-left: 30px; margin-right: 30px; } }
+@media (max-height: 520px) and (orientation: landscape) { .mx-file .mx-slip { padding-left: 72px !important; } }
