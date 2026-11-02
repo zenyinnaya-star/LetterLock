@@ -522,3 +522,12 @@
 @media (max-height: 520px) and (orientation: landscape) {
   .mx.play .mx-stage { grid-template-areas: "title watch" "file board" "typer board" "pad role" "foot foot"; }
 }
+
+/* landscape phones: same single readable column as portrait (it scrolls) instead of a cramped two-column grid */
+@media (max-height: 520px) and (orientation: landscape) {
+  .mx.play .mx-stage { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "role" "watch" "file" "typer" "board" "pad" "foot"; }
+  .mx.lobby .mx-stage { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "title" "folder" "board" "cta" "foot"; }
+  .mx.lobby .mx-board, .mx.play .mx-board { aspect-ratio: auto; }
+  .mx-file { min-height: 0; }
+}
+@media (max-width: 999px) { .mx-slip { padding-left: 30px; padding-right: 22px; } }
