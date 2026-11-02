@@ -162,3 +162,12 @@
 @media (max-height:560px) and (orientation:landscape){
   .selpage .sel-lock{min-width:0!important;max-width:48%!important}
 }
+/* v6: portrait is a near-square frame (was a wide strip that cut the face in half); art anchored to the head */
+.selpage .sel-portrait{aspect-ratio:5/4!important;max-height:none!important;width:min(100%,calc(min(46vh,430px) * 1.25))!important;align-self:flex-start}
+.selpage .sel-portrait .sp-img{object-position:50% 12%!important}
+@media (max-width:899px){
+  .selpage .sel-portrait{width:100%!important;aspect-ratio:1/1!important;max-height:none!important}
+}
+@media (max-height:500px) and (orientation:landscape){
+  .selpage .sel-portrait{aspect-ratio:5/4!important;width:min(100%,calc(62vh * 1.25))!important}
+}
