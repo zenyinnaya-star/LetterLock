@@ -574,3 +574,5 @@
   .mx-envelope .lbl span { font-size: 9px; }
   .mx.lobby .mx-count { display: none; }
 }
+/* polaroid padding from its own width (percent padding used the board width and squashed the photo) */
+.mx.lobby .mx-polaroid { padding: calc(var(--w) * .09) calc(var(--w) * .09) calc(var(--w) * .05) !important; }
