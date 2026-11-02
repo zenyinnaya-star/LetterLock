@@ -576,3 +576,7 @@
 }
 /* polaroid padding from its own width (percent padding used the board width and squashed the photo) */
 .mx.lobby .mx-polaroid { padding: calc(var(--w) * .15) calc(var(--w) * .16) calc(var(--w) * .08) !important; }
+/* lobby polaroids: plain paper card that always wraps the photo exactly */
+.mx.lobby .mx-polaroid { background: #f4efe2 !important; border: 2px solid #111; box-shadow: 3px 4px 0 rgba(0,0,0,.45); filter: none;
+  padding: calc(var(--w) * .08) calc(var(--w) * .08) calc(var(--w) * .06) !important; }
+.mx.lobby .mx-polaroid .pin { top: -9px; }
