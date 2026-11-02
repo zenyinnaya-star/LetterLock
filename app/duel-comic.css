@@ -150,3 +150,5 @@
   .west.p-lobby .w-lobby .lobby-qr{display:none}
   .west.p-lobby .w-lobby .narrow-col .btn.lg{min-height:56px}
 }
+.west.west.p-lobby .w-lobby{grid-column:1/-1!important;justify-self:center!important}
+.west.p-lobby .w-lobby .lobby-qr>span{color:#fff!important;background:#111;padding:2px 10px;margin-top:6px;transform:rotate(-2deg)}
