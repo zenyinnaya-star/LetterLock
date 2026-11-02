@@ -231,3 +231,5 @@
 .mm-start .mm-go { font-family: "LL Display", "Luckiest Guy", Impact, sans-serif; }
 .mm-room.simple .mm-start { margin-top: 6px; }
 @media (max-width: 640px) { .mm-room.simple .mm-center { padding-top: 8px !important; justify-content: flex-start !important; } .mm-room.simple .mm-title { margin-top: 4vh !important; } }
+.mm-room.simple .mm-center { gap: 14px !important; margin-top: 6vh !important; }
+@media (max-width: 640px) { .mm-room.simple { padding-top: 64px !important; } .mm-room.simple .mm-center { margin-top: 2vh !important; } .mm-room.simple .mm-title { margin-top: 0 !important; } }

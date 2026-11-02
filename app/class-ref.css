@@ -154,7 +154,7 @@
   .selpage .sel-cards .sel-card,.selpage .sel-strip .sel-card{width:42px!important;flex-basis:42px!important}
 }
 @media (max-width:899px) and (orientation:portrait){
-  .selpage{padding-bottom:168px!important}
+  .selpage{padding-bottom:230px!important}
   .selpage .sel-strip{flex-direction:column!important;align-items:stretch!important;gap:8px!important}
   .selpage .sel-cards{justify-content:center!important;flex:0 0 auto}
   .selpage .sel-lock{width:100%!important;min-width:0!important;max-width:none!important;text-align:center;justify-content:center}
