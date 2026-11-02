@@ -594,3 +594,9 @@
 .mx-rules dd { margin: 2px 0 0; font: 600 15px/1.4 var(--type, monospace); }
 .mx-rules-close { margin-top: 16px; width: 100%; min-height: 50px; border: 4px solid #111; background: #ffd23f; color: #111; font: 400 22px var(--dsp, inherit); letter-spacing: .04em; box-shadow: 4px 4px 0 #111; cursor: pointer; }
 .mx-rules-close:focus-visible { outline: 3px solid #ff3d8b; outline-offset: 2px; }
+
+/* clue slips stay inside the folder (label no longer clipped), role card text sits below the wax seal */
+@media (max-width: 999px) { .mx-file .mx-slip { margin-left: 18px; margin-right: 12px; } }
+.mx-role { padding-top: calc(var(--w) * .74) !important; }
+.mx-role b { font-size: clamp(13px, calc(var(--w) * .12), 18px) !important; line-height: 1.05; }
+.mx-role span, .mx-role small, .mx-role p { font-size: clamp(9px, calc(var(--w) * .085), 12px) !important; line-height: 1.15; }
