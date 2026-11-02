@@ -2868,3 +2868,12 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
 }
 /* clarity: a disabled big button still reads clearly (it explains what's missing) */
 .btn.lg.block:disabled { opacity: 1 !important; background: #3a3a3a !important; color: #fff !important; -webkit-text-stroke: 0 !important; text-shadow: none !important; border-style: dashed !important; filter: none !important; cursor: not-allowed; }
+
+/* Avatars never resize with their container (flex/grid/motion parents used to squeeze them) */
+.pavatar{flex:0 0 auto!important;aspect-ratio:1/1;box-sizing:border-box}
+.pavatar-face{aspect-ratio:1/1}
+.pavatar-face img{min-width:100%;min-height:100%;max-width:none;object-fit:cover}
+.dh-fighter .pavatar{align-self:center}
+.dh-fighter img{border:0!important;box-shadow:none!important;border-radius:0!important}
+.dh-fighter .pavatar-face{border:2px solid var(--gold-lo);box-shadow:0 0 10px rgba(201,164,92,.25)}
+.dh-fighter.me .pavatar-face{border-color:var(--gold);box-shadow:0 0 14px rgba(201,164,92,.5)}
