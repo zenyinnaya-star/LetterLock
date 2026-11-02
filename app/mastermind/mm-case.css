@@ -561,3 +561,17 @@
 .mx.lobby .mx-polaroid, .mx.lobby .mx-envelope { --w: clamp(96px, 8vw, 122px); width: var(--w); }
 .mx.lobby .mx-mugs { gap: 30px 18px !important; }
 .mx.lobby .mx-qr { width: clamp(118px, 10vw, 150px); }
+/* monogram letter scales with the card so it is never cropped */
+.mx-polaroid .pic { container-type: inline-size; }
+.mx-polaroid .pic .mono { font-size: 62cqw !important; line-height: 1; }
+.mx-polaroid.empty .who { font-size: 56cqw; }
+.mx-polaroid .cap { overflow-wrap: break-word; word-break: normal; }
+@media (max-width: 999px) {
+  .mx.lobby .mx-polaroid, .mx.lobby .mx-envelope { --w: 108px; }
+  .mx.lobby .mx-polaroid .cap { font-size: 12px; letter-spacing: .02em; }
+  .mx.lobby .mx-mugs { gap: 26px 20px !important; }
+  .mx-envelope .lbl { margin: 0 2px; }
+  .mx-envelope .lbl b { font-size: 13px; }
+  .mx-envelope .lbl span { font-size: 9px; }
+  .mx.lobby .mx-count { display: none; }
+}
