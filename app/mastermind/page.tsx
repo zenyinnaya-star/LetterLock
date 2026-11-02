@@ -35,19 +35,26 @@ function MastermindHomeInner() {
       <div className="mm-room simple" style={{ ...mmArtVars, ...westArtVars, ...comicKitVars }}>
         <div className="mm-center">
         <h1 className="mm-title">Mastermind</h1>
-        <p className="mm-sub">One of you holds the secret word. Three clues. Everyone else races to crack it.</p>
-        <div className="mm-folder" data-tab="Open a case">
-          <input className="input" placeholder="Detective name" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} />
+        <div className="mm-start">
+          <ul className="mm-rules">
+            <li><b>Mastermind</b> hides a word and drops clues.</li>
+            <li><b>Detectives</b> crack it before time runs out.</li>
+            <li><b>1 Impostor</b> fakes guesses. Vote them out.</li>
+          </ul>
+          <p className="mm-need">4+ players</p>
+          <label className="mm-field">
+            <span>Your name</span>
+            <input className="input" placeholder="Detective name" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} autoComplete="nickname" />
+          </label>
           <label className="mm-toggle"><input type="checkbox" checked={quick} onChange={(e) => setQuick(e.target.checked)} /> Quick case (3 short rounds)</label>
-          <button className="btn lg" disabled={busy || !name.trim()} onClick={() => go(() => mm.create(name.trim(), quick))}>Open the case</button>
-        </div>
-        <div className="mm-or">or join an investigation</div>
-        <div className="mm-folder" data-tab="Join">
+          <button className="mm-go" disabled={busy || !name.trim()} onClick={() => go(() => mm.create(name.trim(), quick))}>Open a new case</button>
+          <div className="mm-div"><span>or join with a code</span></div>
           <div className="mm-row">
-            <input className="input" placeholder="CODE" maxLength={4} value={code} onChange={(e) => setCode(e.target.value.toUpperCase())}
+            <input className="input" placeholder="CODE" aria-label="Room code" maxLength={4} value={code} onChange={(e) => setCode(e.target.value.toUpperCase())}
               onKeyDown={(e) => { if (e.key === 'Enter' && !busy && name.trim() && code.length >= 4) go(() => mm.join(code, name.trim())); }} />
-            <button className="btn ghost" disabled={busy || !name.trim() || code.length < 4} onClick={() => go(() => mm.join(code, name.trim()))}>Join</button>
+            <button className="mm-go alt" disabled={busy || !name.trim() || code.length < 4} onClick={() => go(() => mm.join(code, name.trim()))}>Join</button>
           </div>
+          {!name.trim() && <p className="mm-hint">Type your name first.</p>}
         </div>
         {err && <p className="mm-err">{err}</p>}
         </div>

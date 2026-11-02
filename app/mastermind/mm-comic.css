@@ -202,3 +202,29 @@
 .mm-room.s-finished .mm-podium .block{border:3px solid #111;box-shadow:4px 5px 0 #111;border-radius:2px}
 .mm-room.s-finished .mm-podium .mm-photo .cap{color:#111}
 .mm-room.s-finished .mm-kicker{background:#111;color:#ffd23f;padding:6px 14px;font-family:'LL Comic',Bangers,Impact,sans-serif;letter-spacing:.06em}
+
+/* ===== start screen: one clear paper card, labelled field, one main button ===== */
+.mm-room.simple .mm-start { width: min(420px, 100%); margin: 14px auto 0; background: #f6efdc; color: #111; border: 4px solid #111; box-shadow: 8px 8px 0 #111;
+  padding: 20px 20px 18px; display: flex; flex-direction: column; gap: 12px; transform: rotate(-.6deg); }
+.mm-start .mm-rules { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font: 600 15px/1.3 var(--type, ui-monospace, monospace); }
+.mm-start .mm-rules li { padding-left: 18px; position: relative; }
+.mm-start .mm-rules li::before { content: ''; position: absolute; left: 0; top: .45em; width: 9px; height: 9px; background: #d42a2a; border-radius: 50%; }
+.mm-start .mm-rules b { font-weight: 800; }
+.mm-start .mm-need { margin: -4px 0 0; align-self: flex-start; background: #111; color: #ffd23f; font: 700 12px var(--type, monospace); letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; }
+.mm-start .mm-field { display: grid; gap: 4px; }
+.mm-start .mm-field > span { font: 800 12px var(--type, monospace); letter-spacing: .1em; text-transform: uppercase; }
+.mm-start .input { width: 100%; background: #fff; color: #111; border: 3px solid #111; font-size: 17px; padding: 10px 12px; min-height: 48px; }
+.mm-start .mm-toggle { display: flex; align-items: center; gap: 8px; font: 600 15px var(--type, monospace); color: #111; }
+.mm-start .mm-toggle input { width: 20px; height: 20px; accent-color: #d42a2a; }
+.mm-start .mm-go { min-height: 52px; border: 4px solid #111; background: #ffd23f; color: #111; font: 400 22px var(--dsp, inherit); letter-spacing: .04em; box-shadow: 5px 5px 0 #111; cursor: pointer; }
+.mm-start .mm-go.alt { background: #d42a2a; color: #fff; font-size: 20px; padding: 0 22px; }
+.mm-start .mm-go:disabled { opacity: .45; cursor: not-allowed; box-shadow: 2px 2px 0 #111; }
+.mm-start .mm-go:not(:disabled):hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 #111; }
+.mm-start .mm-go:focus-visible, .mm-start .input:focus-visible { outline: 3px solid #ff3d8b; outline-offset: 2px; }
+.mm-start .mm-div { display: flex; align-items: center; gap: 10px; font: 700 12px var(--type, monospace); letter-spacing: .08em; text-transform: uppercase; color: #555; }
+.mm-start .mm-div::before, .mm-start .mm-div::after { content: ''; flex: 1; height: 2px; background: #111; opacity: .3; }
+.mm-start .mm-row { display: flex; gap: 10px; }
+.mm-start .mm-row .input { flex: 1; min-width: 0; text-transform: uppercase; letter-spacing: .3em; font-weight: 800; text-align: center; }
+.mm-start .mm-hint { margin: 0; font: 600 13px var(--type, monospace); color: #8a1a1a; }
+.mm-room.simple .mm-sub, .mm-room.simple .mm-or { display: none; }
+@media (prefers-reduced-motion: reduce) { .mm-start .mm-go { transition: none; } }
