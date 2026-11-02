@@ -7,10 +7,12 @@ import { Wordmark } from '@/components/ui';
 import { CARD_INFO, CLASSES, CLASS_ORDER } from '@/lib/classes';
 import { Rich, useT } from '@/lib/i18n/react';
 import type { CardKind } from '@/lib/types';
+import { img } from '@/lib/mmArt';
 import '@/app/comic.css';
 import '@/app/rules-comic.css';
 
 const CDN = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU';
+const STAGE = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261102_151721_92488ad5-75da-4ed7-b406-19b63b030be0.png';
 const MODE_VIDEOS = [
   { id: '264c39d9-823b-4fcf-81ae-739cb8789067', name: 'Classic', blurb: 'Lock a secret word, crack your rivals.', soon: false },
   { id: '3599d026-942b-447e-a9bf-dffa609bd95c', name: 'Duel', blurb: 'One street, two players, fastest draw.', soon: true },
@@ -20,7 +22,7 @@ const MODE_VIDEOS = [
 export default function HowToPlay() {
   const t = useT();
   return (
-    <main className="shell narrow rules rules-comic">
+    <main className="shell narrow rules rules-comic" style={{ ['--rules-stage' as string]: `url("${img(STAGE, 1200)}")` }}>
       <header className="topbar">
         <Wordmark />
         <Link href="/" className="btn sm">{t('rl.play')}</Link>
