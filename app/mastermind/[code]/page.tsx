@@ -540,9 +540,8 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
             {inRound && (
               <motion.div key={`role${room.round}`} className={`mx-role ${role}`} initial={{ y: 80, rotate: -14, opacity: 0, scale: 0.7 }} animate={{ y: 0, rotate: -4, opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5, type: 'spring', stiffness: 180, damping: 12 }} whileHover={{ rotate: 0, scale: 1.06 }}>
-                <em>YOUR SECRET ROLE</em>
                 <b>{role === 'impostor' ? 'IMPOSTOR' : role === 'mastermind' ? 'MASTERMIND' : 'DETECTIVE'}</b>
-                <span>{role === 'impostor' ? `You know the word. Fool them. ${room.decoys_left ?? 0} decoy${(room.decoys_left ?? 0) === 1 ? '' : 's'} left.` : role === 'mastermind' ? 'Clear clues win. Spot the Impostor.' : 'Crack the word. Vote out the Impostor.'}</span>
+                <span>{role === 'impostor' ? `Fool them · ${room.decoys_left ?? 0} decoys` : role === 'mastermind' ? 'Clear clues win' : 'Find the Impostor'}</span>
               </motion.div>
             )}
 
@@ -577,7 +576,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                     autoCapitalize="off" autoComplete="off" spellCheck={false} onChange={(e) => { setText(e.target.value); audio.key(); }} />
                   <motion.button className="mx-plaque" disabled={busy || !guessOpen || !text.trim() || (isImp && (room.decoys_left ?? 0) <= 0)} whileTap={{ scale: 0.88, rotate: -4 }}>{isImp ? 'DECOY' : 'GUESS'}</motion.button>
                   <p className="mx-hint">{isImp
-                    ? <>You know the word. Decoys cost no heart and the log lies about them. Vote someone else out to stay hidden.</>
+                    ? <>Decoys cost no heart and the log lies about them.</>
                     : <><span className="hearts">{'❤'.repeat(Math.max(0, me.hp))}{'♡'.repeat(Math.max(0, 3 - me.hp))}</span> a wrong accusation costs a heart · tap VOTE on who you think is the Impostor</>}</p>
                 </form>
               )}
