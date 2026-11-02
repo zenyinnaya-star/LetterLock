@@ -336,6 +336,16 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   const behindGlass = inRound ? players.filter((p) => p.out && !p.is_mastermind) : [];
   const cards = Array.from({ length: room.clue_limit }, (_, i) => s.clues[i] ?? null);
   const guessing = inRound && !me.is_mastermind && !me.out;
+  const role = me.role ?? (me.is_mastermind ? 'mastermind' : 'detective');
+  const isImp = role === 'impostor' && inRound;
+  const guessOpen = s.clues.length >= 2;
+  const MIN = room.min_players ?? 4;
+  const needMore = Math.max(0, MIN - activeN);
+  const canVote = inRound && !me.is_mastermind && !me.sitting;
+  const impostor = room.impostor_id ? players.find((p) => p.id === room.impostor_id) : undefined;
+  const lazyMm = room.status === 'between' && !!room.lazy;
+  const lazyPlayers = board.filter((p) => (p.lazy_count ?? 0) > 0);
+  const topImp = [...board].sort((a, b) => (b.fooled_count ?? 0) - (a.fooled_count ?? 0))[0];
 
   // letter slots on the table
   const baseKnown = s.slots && s.slots.length ? s.slots : (s.word ? s.word.toUpperCase().split('') : null);
@@ -437,25 +447,29 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                     <span className="cap">{p.id === me.id ? 'YOU' : p.name}{p.is_host ? ' ★' : ''}{p.sitting ? ' (watching)' : ''}</span>
                   </motion.div>
                 ))}
-                <motion.div className="mx-polaroid empty" initial={{ opacity: 0 }} animate={{ opacity: 1, rotate: 3 }} transition={{ delay: 0.6 }}>
+                <motion.div className="mx-envelope" data-pin initial={{ y: -60, opacity: 0, rotate: 12 }} animate={{ y: 0, opacity: 1, rotate: 5 }} transition={{ delay: 0.5, type: 'spring', stiffness: 200, damping: 11 }}>
+                  <i className="pin" aria-hidden />
+                  <b>1 IMPOSTOR</b><span>hides in every case</span>
+                </motion.div>
+                {needMore > 0 && <motion.div className="mx-polaroid empty" initial={{ opacity: 0 }} animate={{ opacity: 1, rotate: 3 }} transition={{ delay: 0.6 }}>
                   <i className="pin" aria-hidden />
                   <div className="pic"><span className="who">?</span></div>
                   <span className="cap">WAITING…</span>
-                </motion.div>
+                </motion.div>}
               </div>
             </div>
 
             <div className="mx-cta">
               {me.is_host ? (
-                <motion.button className="mx-plaque big" disabled={busy || activeN < 2} onClick={() => act(() => mm.start(token))}
-                  whileHover={activeN >= 2 ? { scale: 1.05, rotate: -1 } : undefined} whileTap={{ scale: 0.94 }}
-                  animate={activeN >= 2 ? { rotate: [0, -1.5, 1.5, 0] } : {}} transition={{ repeat: activeN >= 2 ? Infinity : 0, repeatDelay: 2.4, duration: 0.5 }}>
-                  {activeN < 2 ? 'WAITING FOR SUSPECTS…' : 'OPEN THE CASE'}
+                <motion.button className="mx-plaque big" disabled={busy || needMore > 0} onClick={() => act(() => mm.start(token))}
+                  whileHover={needMore === 0 ? { scale: 1.05, rotate: -1 } : undefined} whileTap={{ scale: 0.94 }}
+                  animate={needMore === 0 ? { rotate: [0, -1.5, 1.5, 0] } : {}} transition={{ repeat: needMore === 0 ? Infinity : 0, repeatDelay: 2.4, duration: 0.5 }}>
+                  {needMore > 0 ? `NEED ${needMore} MORE DETECTIVE${needMore > 1 ? 'S' : ''}` : 'OPEN THE CASE'}
                 </motion.button>
               ) : <p className="mx-note">Waiting for the host to open the case…</p>}
             </div>
             <div className="mx-foot">
-              <span>{players.length < 2 ? 'Share the code. You need at least 2 detectives.' : `${players.length} detectives in the room`}</span>
+              <span>{needMore > 0 ? `Share the code. A case needs ${MIN} detectives, and one of them is secretly the Impostor.` : `${players.length} detectives in the room. One of you is the Impostor…`}</span>
               {err && <p className="mm-err">{err}</p>}
               {footButtons}
             </div>
@@ -481,6 +495,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                       <span className="w">{g.text.toUpperCase()}</span>
                       {!g.correct && g.hits !== undefined && <span className="n">({g.hits})</span>}
                       <small>{nameOf(g.player_id)}</small>
+                      {g.decoy && <em className="dec">DECOY</em>}
                       <b className="mark" aria-label={g.correct ? 'correct' : 'wrong'}>{g.correct ? '✓' : '✗'}</b>
                     </motion.li>
                   ))}
@@ -517,6 +532,9 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                   <motion.div key={stamp.k} className={`mx-stamp ${stamp.kind}`} initial={{ scale: 3.4, opacity: 0, rotate: -34 }} animate={{ scale: 1, opacity: 1, rotate: -12 }} exit={{ opacity: 0 }}
                     transition={{ type: 'spring', stiffness: 520, damping: 18 }}>{stamp.kind === 'good' ? 'CRACKED' : 'COLD CASE'}</motion.div>
                 )}
+                {lazyMm && (
+                  <motion.div key={`lazy${room.round}`} className="mx-stamp lazy" initial={{ scale: 3.4, opacity: 0, rotate: 20 }} animate={{ scale: 1, opacity: 1, rotate: 8 }} transition={{ delay: 0.9, type: 'spring', stiffness: 520, damping: 18 }}>LAZY MASTERMIND −5</motion.div>
+                )}
               </AnimatePresence>
             </section>
 
@@ -524,27 +542,43 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
               {stringsSvg}
               <div className="mx-mugs">
                 {players.filter((p) => !p.sitting).map((p, i) => (
-                  <motion.div key={p.id} data-pin className={`mx-polaroid${p.id === me.id ? ' me' : ''}${p.out && inRound ? ' out' : ''}${p.is_mastermind ? ' mm' : ''}`}
+                  <motion.div key={p.id} data-pin className={`mx-polaroid${p.id === me.id ? ' me' : ''}${p.out && inRound ? ' out' : ''}${p.is_mastermind ? ' mm' : ''}${p.is_impostor ? ' imp' : ''}`}
                     initial={{ y: -60, opacity: 0, rotate: -14 }} animate={hitId === p.id ? { x: [0, -10, 10, -6, 0], rotate: i % 2 ? 4 : -4, opacity: 1, y: 0 } : { y: 0, opacity: 1, rotate: i % 2 ? 4 : -4 }}
                     transition={{ type: 'spring', stiffness: 220, damping: 12, delay: i * 0.08 }} whileHover={{ rotate: 0, scale: 1.08, zIndex: 6 }}>
                     <i className="pin" aria-hidden />
                     <div className="pic"><Portrait name={p.name} url={photos[p.id]} />{p.out && inRound && <b className="x" aria-hidden>✗</b>}</div>
                     <span className="cap">{p.id === me.id ? 'YOU' : p.name}</span>
                     <span className="meta">{p.is_mastermind ? 'MASTERMIND' : inRound ? `${'❤'.repeat(Math.max(0, p.hp))}${'♡'.repeat(Math.max(0, 3 - p.hp))}` : ''}</span>
+                    {canVote && !p.is_mastermind && p.id !== me.id && (
+                      <button type="button" className={`mx-vote${me.vote === p.id ? ' on' : ''}`} disabled={busy} onClick={() => act(() => mm.vote(token, p.id), true)}>{me.vote === p.id ? '✓ VOTED' : 'VOTE'}</button>
+                    )}
+                    {inRound && p.voted && !p.is_mastermind && <i className="mx-voted" title="has voted" aria-label="has voted">🗳</i>}
+                    {room.status === 'between' && (p.votes ?? 0) > 0 && <small className="mx-tally">{p.votes} vote{p.votes === 1 ? '' : 's'}</small>}
+                    {room.status === 'between' && p.is_impostor && <motion.b className="mx-unmask" initial={{ scale: 3, opacity: 0, rotate: -40 }} animate={{ scale: 1, opacity: 1, rotate: -14 }} transition={{ delay: 0.9, type: 'spring', stiffness: 520, damping: 16 }}>IMPOSTOR</motion.b>}
                     <b className="pts">{p.points}</b>
                     <AnimatePresence>{deltas[p.id] > 0 && room.status === 'between' && <motion.span className="delta" initial={{ y: 10, opacity: 0, scale: 0.5 }} animate={{ y: -10, opacity: 1, scale: 1.2 }} exit={{ opacity: 0 }}>+{deltas[p.id]}</motion.span>}</AnimatePresence>
                   </motion.div>
                 ))}
               </div>
+              {inRound && (
+                <motion.div key={`role${room.round}`} className={`mx-role ${role}`} initial={{ y: 80, rotate: -14, opacity: 0, scale: 0.7 }} animate={{ y: 0, rotate: -4, opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5, type: 'spring', stiffness: 180, damping: 12 }} whileHover={{ rotate: 0, scale: 1.06 }}>
+                  <em>YOUR SECRET ROLE</em>
+                  <b>{role === 'impostor' ? 'IMPOSTOR' : role === 'mastermind' ? 'MASTERMIND' : 'DETECTIVE'}</b>
+                  <span>{role === 'impostor' ? `You know the word. Fool them. ${room.decoys_left ?? 0} decoy${(room.decoys_left ?? 0) === 1 ? '' : 's'} left.` : role === 'mastermind' ? 'Clear clues win. Spot the Impostor.' : 'Crack the word. Vote out the Impostor.'}</span>
+                </motion.div>
+              )}
             </div>
 
             <div className="mx-typer">
               {guessing && (
                 <form key={shake} className={`mx-type${shake ? ' shake' : ''}`} onSubmit={(e) => { e.preventDefault(); void guess(); }}>
-                  <input ref={guessRef} className="mx-input" placeholder="ENTER GUESS…" aria-label="Your guess" maxLength={unknownLen ? 20 : slots.length} value={text}
+                  <input ref={guessRef} className="mx-input" placeholder={guessOpen ? (isImp ? 'DECOY ACCUSATION…' : 'ENTER GUESS…') : 'WAITING FOR 2 CLUES…'} disabled={!guessOpen} aria-label="Your guess" maxLength={unknownLen ? 20 : slots.length} value={text}
                     autoCapitalize="off" autoComplete="off" spellCheck={false} onChange={(e) => { setText(e.target.value); audio.key(); }} />
-                  <motion.button className="mx-plaque" disabled={busy || !text.trim()} whileTap={{ scale: 0.88, rotate: -4 }}>GUESS</motion.button>
-                  <p className="mx-hint"><span className="hearts">{'❤'.repeat(Math.max(0, me.hp))}{'♡'.repeat(Math.max(0, 3 - me.hp))}</span> a wrong accusation costs a heart</p>
+                  <motion.button className="mx-plaque" disabled={busy || !guessOpen || !text.trim() || (isImp && (room.decoys_left ?? 0) <= 0)} whileTap={{ scale: 0.88, rotate: -4 }}>{isImp ? 'DECOY' : 'GUESS'}</motion.button>
+                  <p className="mx-hint">{isImp
+                    ? <>You know the word. Decoys cost no heart and the log lies about them. Vote someone else out to stay hidden.</>
+                    : <><span className="hearts">{'❤'.repeat(Math.max(0, me.hp))}{'♡'.repeat(Math.max(0, 3 - me.hp))}</span> a wrong accusation costs a heart · tap VOTE on who you think is the Impostor</>}</p>
                 </form>
               )}
               {inRound && me.is_mastermind && (
@@ -556,7 +590,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                     {room.can_reveal !== undefined && (
                       <button type="button" className="mx-reveal" disabled={busy || room.clues_left <= 0 || !room.can_reveal} onClick={() => act(() => mm.reveal(token), true)}>🔎 Reveal a letter instead (costs 1 clue)</button>
                     )}
-                    {room.clues_left} of {room.clue_limit} clues left · fewer clues = more points
+                    {room.clues_left} of {room.clue_limit} clues left · clear clues that get it solved = more points · two clues unlock guessing
                   </p>
                 </form>
               )}
@@ -572,6 +606,12 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
               )}
               {room.status === 'between' && (
                 <div className="mx-type col">
+                  {impostor && (
+                    <motion.div className={`mx-unmask-banner ${room.caught ? 'caught' : 'fooled'}`} initial={{ scale: 0.5, opacity: 0, rotate: -4 }} animate={{ scale: 1, opacity: 1, rotate: -1 }} transition={{ delay: 0.9, type: 'spring', stiffness: 300, damping: 14 }}>
+                      <b>THE IMPOSTOR WAS {impostor.name.toUpperCase()}</b>
+                      <span>{room.caught ? 'Caught! Everyone who pointed at them earns +4.' : room.accused_id ? `The table accused ${nameOf(room.accused_id)}. Wrong! The Impostor scores.` : 'Nobody was accused. The Impostor walks free.'}</span>
+                    </motion.div>
+                  )}
                   <div className="mx-recap" aria-label="Round recap">
                     {players.filter((p) => (deltas[p.id] ?? 0) > 0).map((p) => <span key={p.id}><b>{p.name}</b> +{deltas[p.id]}</span>)}
                     <span className="meta">{s.clues.length}/{room.clue_limit} clues used</span>
@@ -624,6 +664,16 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                     <span>{p.points} pts</span>
                   </motion.div>
                 ))}
+                {lazyPlayers.map((p) => (
+                  <motion.div key={`lz${p.id}`} className="mx-snail" initial={{ scale: 0, rotate: 100 }} animate={{ scale: 1, rotate: -4 }} transition={{ delay: 2.2, type: 'spring', stiffness: 240, damping: 12 }} whileHover={{ scale: 1.1, rotate: 6 }}>
+                    <i aria-hidden /><b>LAZY MASTERMIND</b><span>{p.name} ×{p.lazy_count}</span>
+                  </motion.div>
+                ))}
+                {topImp && (topImp.fooled_count ?? 0) > 0 && (
+                  <motion.div className="mx-snail imp" initial={{ scale: 0, rotate: -100 }} animate={{ scale: 1, rotate: 4 }} transition={{ delay: 2.4, type: 'spring', stiffness: 240, damping: 12 }} whileHover={{ scale: 1.1, rotate: -6 }}>
+                    <i aria-hidden /><b>MASTER IMPOSTOR</b><span>{topImp.name} fooled {topImp.fooled_count}×</span>
+                  </motion.div>
+                )}
               </div>
               <div className="mx-btns">
                 {me.is_host
