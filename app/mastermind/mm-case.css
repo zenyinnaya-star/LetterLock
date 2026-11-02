@@ -531,3 +531,4 @@
   .mx-file { min-height: 0; }
 }
 @media (max-width: 999px) { .mx-slip { padding-left: 30px; padding-right: 22px; } }
+@media (max-width: 999px) { .mx-slip { padding-left: 44px !important; padding-right: 28px !important; } }
