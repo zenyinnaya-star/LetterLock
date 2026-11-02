@@ -458,3 +458,13 @@
   .mx-win { padding: 4px 22px; }
 }
 .mx-badge b, .mx-badge em, .mx-badge span { text-align: center; }
+
+/* badges: size from their own width (percent padding was resolving against the wide paper) */
+.mx-badge, .mx-snail { --w: clamp(84px, 7.4vw, 108px); width: var(--w); height: var(--w); aspect-ratio: auto; box-sizing: border-box; }
+.mx-badge { padding: calc(var(--w) * .2); }
+.mx-snail { padding: calc(var(--w) * .06); }
+.mx-badge em { font-size: 8px; }
+.mx-badge b { font-size: 11px; }
+.mx-badge span { font-size: 10px; }
+.mx-badges { flex-wrap: wrap !important; }
+@media (max-width: 999px) { .mx-badge, .mx-snail { --w: 92px; } }
