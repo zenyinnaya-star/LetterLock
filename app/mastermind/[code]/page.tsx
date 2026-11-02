@@ -257,7 +257,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
     }));
   }, []);
   const clueCount = s?.clues.length ?? 0;
-  useLayoutEffect(() => { const a = window.setTimeout(measure, 450), b = window.setTimeout(measure, 1200); return () => { window.clearTimeout(a); window.clearTimeout(b); }; }, [measure, clueCount, s?.room.status, s?.room.round, s?.players.length]);
+  useLayoutEffect(() => { const t = [450, 1200, 2400, 4000].map((ms) => window.setTimeout(measure, ms)); return () => t.forEach((x) => window.clearTimeout(x)); }, [measure, clueCount, s?.room.status, s?.room.round, s?.players.length]);
   useEffect(() => {
     const ro = new ResizeObserver(() => measure());
     if (corkRef.current) ro.observe(corkRef.current);
@@ -537,6 +537,14 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                 )}
               </AnimatePresence>
             </section>
+            {inRound && (
+              <motion.div key={`role${room.round}`} className={`mx-role ${role}`} initial={{ y: 80, rotate: -14, opacity: 0, scale: 0.7 }} animate={{ y: 0, rotate: -4, opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, type: 'spring', stiffness: 180, damping: 12 }} whileHover={{ rotate: 0, scale: 1.06 }}>
+                <em>YOUR SECRET ROLE</em>
+                <b>{role === 'impostor' ? 'IMPOSTOR' : role === 'mastermind' ? 'MASTERMIND' : 'DETECTIVE'}</b>
+                <span>{role === 'impostor' ? `You know the word. Fool them. ${room.decoys_left ?? 0} decoy${(room.decoys_left ?? 0) === 1 ? '' : 's'} left.` : role === 'mastermind' ? 'Clear clues win. Spot the Impostor.' : 'Crack the word. Vote out the Impostor.'}</span>
+              </motion.div>
+            )}
 
             <div className="mx-board" ref={corkRef}>
               {stringsSvg}
@@ -560,14 +568,6 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                   </motion.div>
                 ))}
               </div>
-              {inRound && (
-                <motion.div key={`role${room.round}`} className={`mx-role ${role}`} initial={{ y: 80, rotate: -14, opacity: 0, scale: 0.7 }} animate={{ y: 0, rotate: -4, opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.5, type: 'spring', stiffness: 180, damping: 12 }} whileHover={{ rotate: 0, scale: 1.06 }}>
-                  <em>YOUR SECRET ROLE</em>
-                  <b>{role === 'impostor' ? 'IMPOSTOR' : role === 'mastermind' ? 'MASTERMIND' : 'DETECTIVE'}</b>
-                  <span>{role === 'impostor' ? `You know the word. Fool them. ${room.decoys_left ?? 0} decoy${(room.decoys_left ?? 0) === 1 ? '' : 's'} left.` : role === 'mastermind' ? 'Clear clues win. Spot the Impostor.' : 'Crack the word. Vote out the Impostor.'}</span>
-                </motion.div>
-              )}
             </div>
 
             <div className="mx-typer">
