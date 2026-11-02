@@ -87,7 +87,7 @@ function MmRules({ onClose }: { onClose: () => void }) {
       <div className="mx-rules" onClick={(e) => e.stopPropagation()}>
         <h2>How Mastermind works</h2>
         <dl>{MM_RULES.map((r) => <div key={r.h}><dt>{r.h}</dt><dd>{r.t}</dd></div>)}</dl>
-        <button type="button" className="mx-rules-close" autoFocus onClick={onClose}>Got it</button>
+        <button type="button" className="mx-rules-close" onClick={onClose}>Got it</button>
       </div>
     </div>
   );
