@@ -468,3 +468,18 @@
 .mx-badge span { font-size: 10px; }
 .mx-badges { flex-wrap: wrap !important; }
 @media (max-width: 999px) { .mx-badge, .mx-snail { --w: 92px; } }
+
+/* finale: use the spare height - bigger type and badges, stamp clear of the word */
+@media (min-width: 1000px) {
+  .mx-paper { padding-block: clamp(22px, 2.6vw, 40px); gap: 12px clamp(14px, 2vw, 28px); }
+  .mx-head { font-size: clamp(46px, 6.4vw, 96px); }
+  .mx-word span { width: clamp(46px, 4.8vw, 70px); font-size: clamp(28px, 3.6vw, 52px); }
+  .mx-stats span { font-size: clamp(15px, 1.4vw, 21px); padding: 10px 14px; }
+  .mx-det { width: clamp(150px, 15vw, 210px); }
+  .mx-solved { top: 6%; bottom: auto; right: 22%; font-size: clamp(34px, 4vw, 62px); }
+  .mx-badge, .mx-snail { --w: clamp(104px, 9.4vw, 136px); }
+  .mx-badge em { font-size: 10px; } .mx-badge b { font-size: 13px; } .mx-badge span { font-size: 12px; }
+  .mx-snail b { font-size: 10px; } .mx-snail span { font-size: 11px; }
+  .mx-btns { margin-top: 6px; }
+  .mx.final .mx-plaque.big { font-size: clamp(26px, 2.6vw, 38px); min-width: 230px; }
+}
