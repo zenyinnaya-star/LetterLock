@@ -249,11 +249,12 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   const measure = useCallback(() => {
     const cork = corkRef.current;
     if (!cork) return;
-    const box = cork.getBoundingClientRect();
-    setCorkSize({ w: box.width, h: box.height });
+    setCorkSize({ w: cork.offsetWidth, h: cork.offsetHeight });
+    // layout offsets (not getBoundingClientRect) so cards that are still springing in or hovered never drag the string off the board
     setPins([...cork.querySelectorAll<HTMLElement>('[data-pin]')].filter((el) => el.offsetWidth > 0).map((el) => {
-      const r = el.getBoundingClientRect();
-      return { x: r.left - box.left + r.width / 2, y: r.top - box.top + 4 };
+      let x = 0, y = 0; let n: HTMLElement | null = el;
+      while (n && n !== cork) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent as HTMLElement | null; }
+      return { x: x + el.offsetWidth / 2, y: y + 2 };
     }));
   }, []);
   const clueCount = s?.clues.length ?? 0;
@@ -375,7 +376,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   };
   const stringsSvg = (
     <svg className="mx-strings" width={corkSize.w} height={corkSize.h} aria-hidden>
-      {strings.map((d, i) => <motion.path key={`${room.round}-${i}-${d.length}`} d={d} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.7, delay: 0.2 + i * 0.12 }} />)}
+      {strings.map((d, i) => <motion.path key={`${room.round}-${i}`} d={d} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.7, delay: 0.2 + i * 0.12 }} />)}
     </svg>
   );
   const kicker = room.status === 'between'
@@ -433,7 +434,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
 
             <div className="mx-board" ref={corkRef}>
               {stringsSvg}
-              <motion.div className="mx-qr" data-pin initial={{ y: -50, rotate: -16, opacity: 0 }} animate={{ y: 0, rotate: -4, opacity: 1 }} transition={{ delay: 0.25, type: 'spring', stiffness: 240, damping: 12 }}>
+              <motion.div className="mx-qr" initial={{ y: -50, rotate: -16, opacity: 0 }} animate={{ y: 0, rotate: -4, opacity: 1 }} transition={{ delay: 0.25, type: 'spring', stiffness: 240, damping: 12 }}>
                 <QRCodeSVG value={inviteUrl} size={112} level="M" marginSize={1} bgColor="#ffffff" fgColor="#111111" />
                 <button type="button" onClick={() => void copyInvite(inviteUrl)}>Copy invite link</button>
               </motion.div>
@@ -447,9 +448,9 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                     <span className="cap">{p.id === me.id ? 'YOU' : p.name}{p.is_host ? ' ★' : ''}{p.sitting ? ' (watching)' : ''}</span>
                   </motion.div>
                 ))}
-                <motion.div className="mx-envelope" data-pin initial={{ y: -60, opacity: 0, rotate: 12 }} animate={{ y: 0, opacity: 1, rotate: 5 }} transition={{ delay: 0.5, type: 'spring', stiffness: 200, damping: 11 }}>
+                <motion.div className="mx-envelope" initial={{ y: -60, opacity: 0, rotate: 12 }} animate={{ y: 0, opacity: 1, rotate: 5 }} transition={{ delay: 0.5, type: 'spring', stiffness: 200, damping: 11 }}>
                   <i className="pin" aria-hidden />
-                  <b>1 IMPOSTOR</b><span>hides in every case</span>
+                  <span className="lbl"><b>1 IMPOSTOR</b><span>hides in every case</span></span>
                 </motion.div>
                 {needMore > 0 && <motion.div className="mx-polaroid empty" initial={{ opacity: 0 }} animate={{ opacity: 1, rotate: 3 }} transition={{ delay: 0.6 }}>
                   <i className="pin" aria-hidden />

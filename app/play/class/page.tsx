@@ -184,7 +184,7 @@ function Select() {
           {kind === 'create' && (
             <div className="sel-who" role="radiogroup" aria-label="Play or just host">
               <button type="button" role="radio" aria-checked={!hostOnly} className={!hostOnly ? 'on' : ''} onClick={() => setHostOnly(false)}>
-                <b>Play</b><span>Pick a hero and join in</span>
+                <b>Play a hero</b><span>Pick a hero and join in</span>
               </button>
               <button type="button" role="radio" aria-checked={hostOnly} className={hostOnly ? 'on' : ''} onClick={() => setHostOnly(true)}>
                 <b>Just host</b><span>Run the room, no hero needed</span>
@@ -197,7 +197,7 @@ function Select() {
 
         <section className="sel-right">
           <div key={cls} className="sel-info">
-            <span className="sel-role">{guide.style}</span>
+            <span className="sel-role">Playstyle · {guide.style}</span>
             <div className="sel-facts">
               <div className="sel-box perk"><span className="sel-ico"><ClassIcon cls={cls} size={44} /></span><div><b>Perk</b><p>{info.perk}</p></div></div>
               <div className="sel-box price"><span className="sel-ico coin" aria-hidden>$</span><div><b>{t('cs.price')}</b><p>{info.cost}</p><em className="own">In your loadout</em></div></div>

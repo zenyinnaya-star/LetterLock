@@ -133,3 +133,23 @@
 .selpage .sel-main{padding-bottom:12px}
 .selpage .sel-strip::before{top:14px!important;bottom:0!important;height:auto!important;background-size:auto!important;background-repeat:no-repeat!important;background-color:var(--p)!important;background-image:radial-gradient(rgba(0,0,0,.14) 22%,transparent 26%)!important;background-size:8px 8px!important}
 .selpage .sel-lock{background:#fff!important;color:var(--k)!important;text-shadow:none}.selpage .sel-lock:focus-visible,.selpage .sel-card:focus-visible{outline:4px solid var(--c);outline-offset:3px}
+/* v5 clarity: readable playstyle tag; on phones / short screens the hero row + Lock in is a solid bottom bar and the page reserves room for it, so it never sits on top of the perk / price text */
+.selpage .sel-info .sel-role{font-family:var(--cmc);font-size:13px!important;letter-spacing:.08em;padding:3px 10px;background:var(--k);color:#fff!important;transform:skewX(-6deg)}
+.selpage .sel-who button{font-family:var(--cmc);font-size:15px}
+.selpage .sel-who button:not(.on){background:#fff;color:var(--k)}
+@media (max-width:899px),(max-height:560px){
+  .selpage{padding-bottom:120px!important}
+  .selpage .sel-main{padding-bottom:16px!important}
+  .selpage .sel-strip{position:fixed!important;left:0;right:0;bottom:0;margin:0!important;z-index:30;padding:10px 12px calc(10px + env(safe-area-inset-bottom))!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;flex-wrap:nowrap!important;background:var(--p)!important;border-top:4px solid var(--k)}
+  .selpage .sel-strip::before{display:none!important}
+  .selpage .sel-cards{flex:1 1 auto;min-width:0;padding:6px 2px 2px!important;gap:8px!important;justify-content:flex-start!important}
+  .selpage .sel-cards .sel-card,.selpage .sel-strip .sel-card{width:50px!important;flex:0 0 50px!important;border-width:3px!important;box-shadow:3px 3px 0 var(--k)}
+  .selpage .sel-card.on{transform:translateY(-4px)!important;box-shadow:0 0 0 3px var(--y),3px 3px 0 3px var(--k)!important}
+  .selpage .sel-card b{font-size:9px!important}
+  .selpage .sel-change{display:none!important}
+  .selpage .sel-lock{position:static!important;flex:0 0 auto;width:auto!important;margin:0!important;font-size:18px!important;padding:8px 14px!important;transform:skewX(-6deg)!important;box-shadow:4px 4px 0 var(--k)!important}
+}
+@media (max-height:560px) and (orientation:landscape){
+  .selpage{padding-bottom:96px!important}
+  .selpage .sel-cards .sel-card,.selpage .sel-strip .sel-card{width:42px!important;flex-basis:42px!important}
+}

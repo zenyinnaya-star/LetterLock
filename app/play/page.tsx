@@ -110,7 +110,7 @@ export default function Play() {
           <label className="cp-join">
             <span>{SVG.key} Join with code</span>
             <span className="f">
-              <input maxLength={4} value={code} placeholder="Enter code…" aria-label={t('home.code')}
+              <input maxLength={4} value={code} placeholder="ABCD" aria-label={t('home.code')}
                 onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
                 onKeyDown={(e) => { if (e.key === 'Enter' && code.length === 4) start('join'); }} />
               <button type="button" disabled={code.length !== 4} onClick={(e) => { burst(e.clientX, e.clientY, 'IN!'); start('join'); }}>Go</button>

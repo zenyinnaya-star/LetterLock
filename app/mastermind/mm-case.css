@@ -532,3 +532,27 @@
 }
 @media (max-width: 999px) { .mx-slip { padding-left: 30px; padding-right: 22px; } }
 @media (max-width: 999px) { .mx-slip { padding-left: 44px !important; padding-right: 28px !important; } }
+
+/* =================== CLARITY PASS: lobby board =================== */
+/* string sits behind the cards, so it never crosses a name */
+.mx-strings { z-index: 1; }
+.mx-board > .mx-mugs { z-index: 2; }
+/* QR and players get their own columns instead of the QR floating over the first polaroid */
+.mx.lobby .mx-board { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px 4%; align-items: start; }
+.mx.lobby .mx-qr { position: relative; left: auto; top: auto; z-index: 2; align-self: start; }
+.mx.lobby .mx-mugs { padding: 6px 0 0 !important; justify-content: center !important; align-content: start !important; height: auto !important; gap: 26px 22px !important; }
+/* names: wrap onto two lines instead of "DETECTIVE ..." */
+.mx-polaroid .cap { white-space: normal; overflow: hidden; text-overflow: clip; line-height: 1.05; overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-height: 2.1em; font-size: clamp(13px, 1.05vw, 16px); }
+/* impostor note: text on its own label strip below the wax seal */
+.mx-envelope { display: flex; flex-direction: column; justify-content: flex-end; align-items: stretch; padding: 0 0 8px !important; }
+.mx-envelope .lbl { display: grid; gap: 1px; background: #111; color: #fff; padding: 5px 6px 6px; margin: 0 6px; transform: rotate(-2deg); text-align: center; }
+.mx-envelope .lbl b { color: #ff4057; font-size: clamp(14px, 1.2vw, 18px); line-height: 1; }
+.mx-envelope .lbl span { color: #fff; font-size: 10px; letter-spacing: .06em; line-height: 1.15; }
+/* QUICK CASE tag above the desk props */
+.mx-folder { z-index: 3; }
+.mx-folder .quick { position: relative; z-index: 2; }
+@media (max-width: 999px) {
+  .mx.lobby .mx-board { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .mx.lobby .mx-qr { margin: 0 auto; }
+}
