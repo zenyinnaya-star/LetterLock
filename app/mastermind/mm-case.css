@@ -416,3 +416,10 @@
   .mx-kicker { left: 38%; font-size: 10px; letter-spacing: .05em; max-width: 60%; }
 }
 .mx-stamp.lazy { translate: 0 0; left: auto; right: 2%; top: auto; bottom: -4%; font-size: clamp(16px, 1.8vw, 26px); }
+
+/* ---- impostor pass 3: compact role envelope with text on its label, hint on a plate ---- */
+.mx-role { aspect-ratio: 3 / 4; width: clamp(120px, 11vw, 160px); padding: 55% 15% 9%; align-content: start; justify-items: center; background-size: 100% 100%; }
+.mx-role b { font-size: clamp(14px, 1.3vw, 19px); margin: 0; }
+.mx-role span { font-size: clamp(8px, .75vw, 11px); line-height: 1.15; }
+.mx-typer .mx-hint { background: rgba(12,14,24,.82); color: #f6ecd2; padding: 3px 10px; text-shadow: none; width: fit-content; max-width: 100%; margin-inline: auto; }
+.mx-typer .mx-hint .hearts { color: #ff6b6b; }
