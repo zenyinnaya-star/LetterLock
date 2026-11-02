@@ -503,3 +503,22 @@
   .mx.final .mx-plaque.big { width: min(300px, 100%); }
   .mx.final .mx-foot { margin-top: 4px; }
 }
+
+/* =================== PLAY / LOBBY on phones and tablets: nothing wider than the screen, role card inline =================== */
+@media (max-width: 999px) {
+  .mx.play .mx-stage, .mx.lobby .mx-stage { grid-template-columns: minmax(0, 1fr); }
+  .mx-stage > * { min-width: 0; max-width: 100%; }
+  .mx.play .mx-stage { grid-template-areas: "title" "role" "watch" "file" "typer" "board" "pad" "foot"; }
+  .mx-role { grid-area: role; position: static; justify-self: center; margin: 0; --w: 104px; }
+  .mx-file { width: 100%; box-sizing: border-box; padding: 64px 14px 22px; }
+  .mx-file .tab { position: absolute; left: 14px; top: 16px; background: #111; color: #f6ecd2; padding: 2px 8px; z-index: 3; font-size: 12px; }
+  .mx-kicker { position: static; display: block; background: rgba(12,14,24,.88); color: #f6ecd2; padding: 3px 8px; margin: 0 0 10px; font-size: 11px; letter-spacing: .04em; text-align: center; }
+  .mx-tiles { flex-wrap: nowrap; justify-content: center; gap: 4px; }
+  .mx-tile { width: clamp(34px, 11vw, 54px); flex: 0 1 auto; }
+  .mx-clues { grid-template-columns: 1fr; gap: 6px; }
+  .mx-slip { min-height: 56px; }
+  .mx-pad { max-width: min(320px, 92%); justify-self: center; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .mx.play .mx-stage { grid-template-areas: "title watch" "file board" "typer board" "pad role" "foot foot"; }
+}
