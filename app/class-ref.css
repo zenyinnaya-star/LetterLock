@@ -171,3 +171,4 @@
 @media (max-height:500px) and (orientation:landscape){
   .selpage .sel-portrait{aspect-ratio:5/4!important;width:min(100%,calc(62vh * 1.25))!important}
 }
+.selpage .sel-portrait .sp-img{object-position:50% 0%!important}
