@@ -18,7 +18,7 @@ const DOORS: { kind: Kind; art: string; name: string; players: string; desc: str
   { kind: 'create', art: 'classic', name: 'Classic', players: '2–10 players', desc: 'Break the vault. Grab the cash. Get out.', cta: 'Create room', pow: 'POW!' },
   { kind: 'duel', art: 'duel', name: 'Duel', players: '2 players', desc: 'High noon. Fastest word wins the draw.', cta: 'Start a duel', pow: 'BANG!' },
   { kind: 'team', art: 'siege', name: 'Siege', players: '4–8 players', desc: 'Storm the castle. Every word hits the gate.', cta: 'Start a siege', pow: 'CLANG!' },
-  { kind: 'mastermind', art: 'mastermind', name: 'Mastermind', players: '3–12 players', desc: 'One lamp. One table. Crack the hidden word.', cta: 'Open a case', pow: 'ZAP!' },
+  { kind: 'mastermind', art: 'mastermind', name: 'Mastermind', players: '4–8 players', desc: 'One lamp. One table. Crack the hidden word.', cta: 'Open a case', pow: 'ZAP!' },
 ];
 const SVG = {
   people: <svg viewBox="0 0 24 24" aria-hidden><circle cx="8" cy="8" r="3.2" /><circle cx="16.5" cy="8.5" r="2.7" /><path d="M2 19c.4-3.6 2.9-5.6 6-5.6s5.6 2 6 5.6zM14.6 13.9c.6-.2 1.2-.3 1.9-.3 2.7 0 4.8 1.8 5.3 5.1h-6.1c-.1-1.9-.5-3.5-1.1-4.8z" /></svg>,
