@@ -153,20 +153,29 @@
 .west.west.p-lobby .w-lobby{grid-column:1/-1!important;justify-self:center!important}
 .west.p-lobby .w-lobby .lobby-qr>span{color:#fff!important;background:#111;padding:2px 10px;margin-top:6px;transform:rotate(-2deg)}
 
-/* ===== Duel v2: fit one viewport (gameplay + finale) ===== */
+/* ===== Duel v2: finale = one centred column, banner > poster > note > bar, always in view ===== */
+.west.west.p-finished{display:flex!important;flex-direction:column!important;align-items:center;justify-content:flex-start;gap:8px;padding:clamp(48px,8dvh,64px) 16px 12px!important;overflow:auto}
+.west.west.p-finished .w-post.finale{grid-column:auto!important;grid-row:auto!important;width:min(100%,420px)!important;margin:0!important;gap:0!important;display:flex;flex-direction:column;align-items:center;flex:0 1 auto}
+.west.west.p-finished .w-banner{order:0;margin:0 0 6px!important;padding:16px 40px 20px!important;scale:min(1, calc((100dvh - 520px) / 60 + .6))}
+.west.west.p-finished .w-banner span{font-size:clamp(26px,min(5vw,7dvh),52px)!important}
+.west.west.p-finished .w-poster{order:1;width:clamp(120px,min(26vw,26dvh),190px)!important;min-height:0!important;padding:14px 12px 12px!important;aspect-ratio:auto}
+.west.west.p-finished .w-poster-body{gap:4px!important}
+.west.west.p-finished .w-wanted-name{font-size:clamp(14px,2.2dvh,18px)!important}
+.west.west.p-finished .w-mug{width:clamp(56px,min(11dvh,12vw),84px)!important;height:clamp(56px,min(11dvh,12vw),84px)!important;aspect-ratio:1}
+.west.west.p-finished .w-reward{font-size:clamp(11px,1.9dvh,14px)!important;line-height:1.1;text-align:center;max-width:100%;overflow-wrap:anywhere}
+.west.west.p-finished .w-stamp{pointer-events:none;font-size:clamp(14px,2.4dvh,22px)!important;white-space:nowrap}
+.west.west.p-finished .w-note{order:2;order:2!important;margin-top:8px!important;width:min(100%,380px)!important;padding:20px 26px!important}
+.west.west.p-finished .w-show{grid-template-columns:minmax(44px,auto) 1fr;gap:0 10px}
+.west.west.p-finished .w-show span{white-space:nowrap}
+.west.west.p-finished .w-bar{grid-row:auto!important;margin:6px 0 0!important;width:min(100%,560px);padding:20px 30px 14px!important}
+@media (max-height:700px){.west.west.p-finished .w-note{padding:12px 20px!important}.west.west.p-finished .w-show em{display:none}}
+
+/* ===== Duel v2: gameplay fits one viewport on wide screens ===== */
 @media (min-width:900px) and (min-aspect-ratio:1/1) and (max-height:860px){
   .west.west.p-guess,.west.west.p-answer{padding-top:46px!important;row-gap:2px!important;padding-bottom:calc(var(--rack-h,86px) + 6px)!important}
   .west.west .w-clock{width:72px!important;height:72px!important}
   .west.west .w-gun .w-portrait{height:clamp(130px,calc(100dvh - 590px),300px)!important;width:calc(clamp(130px,calc(100dvh - 590px),300px)*.8)!important}
-  .west.west .w-poster{width:min(100%,200px)!important;min-height:0!important}
-  .west.west .w-note{padding:12px 22px!important;width:min(92%,340px)!important}
-  .west.west .w-bar{padding:20px 34px 12px!important;margin-top:0!important}
-  /* finale */
-  .west.west.p-finished .w-post.finale{gap:6px!important;padding-top:44px!important}
-  .west.west.p-finished .w-banner{transform-origin:center;scale:.8}
-  .west.west.p-finished .w-poster{width:min(100%,170px)!important}
-  .west.west.p-finished .w-mug{max-height:22dvh!important}
-  .west.west.p-finished .w-reward{font-size:14px!important;line-height:1.1}
-  .west.west.p-finished .w-note{padding:10px 18px!important}
-  .west.west.p-finished .w-bar{padding:18px 30px 10px!important}
+  .west.west.p-guess .w-poster,.west.west.p-answer .w-poster{width:min(100%,200px)!important;min-height:0!important}
+  .west.west.p-guess .w-note,.west.west.p-answer .w-note{padding:12px 22px!important;width:min(92%,340px)!important}
+  .west.west.p-guess .w-bar,.west.west.p-answer .w-bar{padding:20px 34px 12px!important;margin-top:0!important}
 }
