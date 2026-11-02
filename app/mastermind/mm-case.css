@@ -556,3 +556,8 @@
   .mx.lobby .mx-board { grid-template-columns: minmax(0, 1fr); justify-items: center; }
   .mx.lobby .mx-qr { margin: 0 auto; }
 }
+/* board grows with the players instead of letting cards fall off the frame */
+.mx.lobby .mx-board { aspect-ratio: auto !important; max-height: none !important; min-height: clamp(300px, 34vw, 420px); padding: 34px 30px 40px !important; }
+.mx.lobby .mx-polaroid, .mx.lobby .mx-envelope { --w: clamp(96px, 8vw, 122px); width: var(--w); }
+.mx.lobby .mx-mugs { gap: 30px 18px !important; }
+.mx.lobby .mx-qr { width: clamp(118px, 10vw, 150px); }
