@@ -2866,3 +2866,5 @@ html:has(.selpage),body:has(.selpage){overflow-x:clip;overflow-y:visible}
   .play-shell .mc-ico { width: 32px; height: 32px; }
   .wd-grid.one { width: min(260px, 70%); }
 }
+/* clarity: a disabled big button still reads clearly (it explains what's missing) */
+.btn.lg.block:disabled { opacity: 1 !important; background: #3a3a3a !important; color: #fff !important; -webkit-text-stroke: 0 !important; text-shadow: none !important; border-style: dashed !important; filter: none !important; cursor: not-allowed; }
