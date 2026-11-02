@@ -21,7 +21,7 @@ function MastermindHomeInner() {
   const [quick, setQuick] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  useEffect(() => { setName(loadName()); }, []);
+  useEffect(() => { setName(loadName()); if (new URLSearchParams(window.location.search).get('removed')) setErr('You were removed from that case.'); }, []);
 
   async function go(fn: () => Promise<{ code: string; token: string }>) {
     setBusy(true); setErr(null);

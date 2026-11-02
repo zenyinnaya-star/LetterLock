@@ -9,6 +9,7 @@ import { CARD_INFO, CLASSES, CLASS_ORDER } from '@/lib/classes';
 import { Rich, useT } from '@/lib/i18n/react';
 import type { CardKind } from '@/lib/types';
 import { img } from '@/lib/mmArt';
+import { MM_RULES } from '@/lib/mastermind';
 import '@/app/comic.css';
 import '@/app/rules-comic.css';
 
@@ -103,6 +104,11 @@ export default function HowToPlay() {
           <span><b>{CLASSES[c].name}</b> — {CLASSES[c].perk} <i className="muted">{t('rl.catch')}</i> {CLASSES[c].cost}</span>
         </div>
       ))}
+
+      <h2>Mastermind (coming soon)</h2>
+      <ul>
+        {MM_RULES.map((r) => <li key={r.h}><b>{r.h}.</b> {r.t}</li>)}
+      </ul>
 
       <h2>{t('rl.titles')}</h2>
       <div className="line"><span style={{ color: '#ffcf4a' }}><Icon name="trophy" size={24} /></span><span><Rich k="rl.t_champ" /></span></div>

@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Header } from '@/components/ui';
 import { audio } from '@/lib/audio';
-import { loadToken, mm, mmAvatars, mmError, REACTIONS, saveToken, type MmState } from '@/lib/mastermind';
+import { loadToken, mm, MM_RULES, mmAvatars, mmError, REACTIONS, saveToken, type MmState } from '@/lib/mastermind';
 import { mmArtVars } from '@/lib/mmArt';
 import { westArtVars } from '@/lib/westArt';
 import { comicKitVars } from '@/lib/comicKit';
@@ -73,6 +73,26 @@ const FloatEmoji = memo(function FloatEmoji({ f }: { f: Float }) {
   return <div className="mm-float" style={{ left: `${f.x}%`, ['--rot' as string]: `${(f.x % 20) - 10}deg` }}>{f.emoji}<span>{f.name}</span></div>;
 });
 
+
+
+
+function MmRules({ onClose }: { onClose: () => void }) {
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', k);
+    return () => window.removeEventListener('keydown', k);
+  }, [onClose]);
+  return (
+    <div className="mx-rules-back" role="dialog" aria-modal="true" aria-label="Mastermind rules" onClick={onClose}>
+      <div className="mx-rules" onClick={(e) => e.stopPropagation()}>
+        <h2>How Mastermind works</h2>
+        <dl>{MM_RULES.map((r) => <div key={r.h}><dt>{r.h}</dt><dd>{r.t}</dd></div>)}</dl>
+        <button type="button" className="mx-rules-close" autoFocus onClick={onClose}>Got it</button>
+      </div>
+    </div>
+  );
+}
+
 function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) {
   const { code: raw } = use(params);
   const code = raw.toUpperCase();
@@ -83,6 +103,9 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   const [text, setText] = useState('');
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [rulesOpen, setRulesOpen] = useState(false);
+  const [kickAsk, setKickAsk] = useState<string | null>(null);
+  useEffect(() => { if (!kickAsk) return; const t = window.setTimeout(() => setKickAsk(null), 3500); return () => window.clearTimeout(t); }, [kickAsk]);
   const [now, setNow] = useState(0);
   const [flash, setFlash] = useState<{ k: number; kind: 'good' | 'bad' } | null>(null);
   const [shake, setShake] = useState(0);
@@ -133,9 +156,12 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
       offset.current = st.room.server_now - Date.now();
       setS(st);
       setErr(null);
-    } catch (e) { if (mine >= applied.current) setErr(mmError(e)); }
+    } catch (e) {
+      if (e instanceof Error && e.message.includes('REMOVED')) { router.replace('/mastermind?removed=1'); return; }
+      if (mine >= applied.current) setErr(mmError(e));
+    }
     finally { inflight.current = false; }
-  }, [token]);
+  }, [token, router]);
 
   useEffect(() => {
     if (!token) return;
@@ -329,7 +355,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
 
   const { room, me, players } = s;
   const mmPlayer = players.find((p) => p.is_mastermind);
-  const nameOf = (id: string) => players.find((p) => p.id === id)?.name ?? '?';
+  const nameOf = (id: string) => players.find((p) => p.id === id)?.name ?? 'A player who left';
   const activeN = players.filter((p) => !p.sitting).length;
   const board = players.filter((p) => !p.sitting).sort((a, b) => b.points - a.points);
   const inRound = room.status === 'round';
@@ -389,7 +415,8 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
           {me.sitting ? 'Rejoin the game' : 'Sit out and keep hosting'}
         </button>
       )}
-      <button className="mx-link" onClick={() => router.push('/play')}>Leave</button>
+      <button className="mx-link" onClick={() => setRulesOpen(true)}>Rules</button>
+      <button className="mx-link" onClick={async () => { try { if (token) await mm.leave(token); } catch { /* leaving anyway */ } router.push('/play'); }}>Leave</button>
     </>
   );
 
@@ -397,6 +424,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
     <main className="shell narrow"><Header />
       <div className={`mm-room mx s-${room.status} ${scene}${tense ? ' tense' : ''}`} style={{ ...mmArtVars, ...westArtVars, ...comicKitVars }}>
         <div className="mx-bg" aria-hidden />
+        {rulesOpen && <MmRules onClose={() => setRulesOpen(false)} />}
         {scene !== 'final' && <div className="mx-lamp" key={flicker} data-flicker={flicker ? '1' : undefined} aria-hidden />}
         {scene === 'play' && <div className="mx-rain" aria-hidden />}
         {scene !== 'final' && <div className="mm-dust" aria-hidden>{Array.from({ length: 14 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>}
@@ -444,6 +472,12 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                     initial={{ y: -80, opacity: 0, rotate: -20 }} animate={{ y: 0, opacity: 1, rotate: i % 2 ? 4 : -4 }}
                     transition={{ delay: 0.35 + i * 0.12, type: 'spring', stiffness: 200, damping: 10 }} whileHover={{ rotate: 0, scale: 1.07, zIndex: 6 }}>
                     <i className="pin" aria-hidden />
+                    {me.is_host && p.id !== me.id && (
+                      <button type="button" className={`mx-kick${kickAsk === p.id ? ' ask' : ''}`} aria-label={`Remove ${p.name} from the case`}
+                        onClick={(e) => { e.stopPropagation(); if (kickAsk === p.id) { setKickAsk(null); void act(() => mm.kick(token, p.id)); } else setKickAsk(p.id); }}>
+                        {kickAsk === p.id ? 'REMOVE?' : '✕'}
+                      </button>
+                    )}
                     <div className="pic"><Portrait name={p.name} url={photos[p.id]} /></div>
                     <span className="cap">{p.id === me.id ? 'YOU' : p.name}{p.is_host ? ' ★' : ''}{p.sitting ? ' (watching)' : ''}</span>
                   </motion.div>
@@ -554,6 +588,12 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
                     initial={{ y: -60, opacity: 0, rotate: -14 }} animate={hitId === p.id ? { x: [0, -10, 10, -6, 0], rotate: i % 2 ? 4 : -4, opacity: 1, y: 0 } : { y: 0, opacity: 1, rotate: i % 2 ? 4 : -4 }}
                     transition={{ type: 'spring', stiffness: 220, damping: 12, delay: i * 0.08 }} whileHover={{ rotate: 0, scale: 1.08, zIndex: 6 }}>
                     <i className="pin" aria-hidden />
+                    {me.is_host && p.id !== me.id && (
+                      <button type="button" className={`mx-kick${kickAsk === p.id ? ' ask' : ''}`} aria-label={`Remove ${p.name} from the case`}
+                        onClick={(e) => { e.stopPropagation(); if (kickAsk === p.id) { setKickAsk(null); void act(() => mm.kick(token, p.id)); } else setKickAsk(p.id); }}>
+                        {kickAsk === p.id ? 'REMOVE?' : '✕'}
+                      </button>
+                    )}
                     <div className="pic"><Portrait name={p.name} url={photos[p.id]} />{p.out && inRound && <b className="x" aria-hidden>✗</b>}</div>
                     <span className="cap">{p.id === me.id ? 'YOU' : p.name}</span>
                     <span className="meta">{p.is_mastermind ? 'MASTERMIND' : inRound ? `${'❤'.repeat(Math.max(0, p.hp))}${'♡'.repeat(Math.max(0, 3 - p.hp))}` : ''}</span>

@@ -580,3 +580,17 @@
 .mx.lobby .mx-polaroid { background: #f4efe2 !important; border: 2px solid #111; box-shadow: 3px 4px 0 rgba(0,0,0,.45); filter: none;
   padding: calc(var(--w) * .08) calc(var(--w) * .08) calc(var(--w) * .06) !important; }
 .mx.lobby .mx-polaroid .pin { top: -9px; }
+
+/* =================== host kick + rules panel =================== */
+.mx-polaroid .mx-kick { position: absolute; top: -10px; right: -10px; z-index: 6; min-width: 28px; height: 28px; padding: 0 6px; border-radius: 14px; border: 2px solid #111; background: #fff; color: #111;
+  font: 800 14px var(--type, monospace); line-height: 1; cursor: pointer; box-shadow: 2px 2px 0 #111; }
+.mx-polaroid .mx-kick:hover, .mx-polaroid .mx-kick:focus-visible { background: #ffd23f; outline: 3px solid #ff3d8b; outline-offset: 2px; }
+.mx-polaroid .mx-kick.ask { background: #d42a2a; color: #fff; font-size: 11px; letter-spacing: .05em; }
+.mx-rules-back { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.72); display: grid; place-items: center; padding: 16px; overflow-y: auto; }
+.mx-rules { width: min(520px, 100%); max-height: calc(100dvh - 32px); overflow-y: auto; background: #f6efdc; color: #111; border: 4px solid #111; box-shadow: 8px 8px 0 #ff1f8e; padding: 20px 20px 18px; }
+.mx-rules h2 { margin: 0 0 12px; font: 400 clamp(26px, 6vw, 34px) var(--dsp, inherit); letter-spacing: .03em; color: #111; }
+.mx-rules dl { margin: 0; display: grid; gap: 10px; }
+.mx-rules dt { font: 800 13px var(--type, monospace); letter-spacing: .1em; text-transform: uppercase; color: #b5122c; }
+.mx-rules dd { margin: 2px 0 0; font: 600 15px/1.4 var(--type, monospace); }
+.mx-rules-close { margin-top: 16px; width: 100%; min-height: 50px; border: 4px solid #111; background: #ffd23f; color: #111; font: 400 22px var(--dsp, inherit); letter-spacing: .04em; box-shadow: 4px 4px 0 #111; cursor: pointer; }
+.mx-rules-close:focus-visible { outline: 3px solid #ff3d8b; outline-offset: 2px; }
