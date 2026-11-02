@@ -428,3 +428,8 @@
 .mx-role { --w: clamp(120px, 11vw, 160px); width: var(--w); height: calc(var(--w) * 1.33); aspect-ratio: auto; padding: calc(var(--w) * .56) calc(var(--w) * .16) calc(var(--w) * .08); box-sizing: border-box; overflow: hidden; }
 @media (max-width: 999px) { .mx-role { --w: 112px; } }
 .mx-envelope { --w: clamp(110px, 10vw, 150px); padding: calc(var(--w) * .3) calc(var(--w) * .12) calc(var(--w) * .1); }
+
+/* ---- create/join screen: dark ink on the yellow buttons (was pale gold on yellow) ---- */
+.mm-room .mm-folder .btn:not(.ghost):not(:disabled) { color: #111; text-shadow: none; -webkit-text-stroke: 0; }
+.mm-room .mm-folder .btn.ghost:not(:disabled) { color: #fff; }
+.mx-role { padding-top: calc(var(--w) * .62); }
