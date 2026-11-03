@@ -4,34 +4,47 @@ import { ComingSoon } from '@/components/ComingSoon';
 import { CLASSIC_ONLY } from '@/lib/modes';
 
 import { shareOrigin } from '@/lib/site';
-import { memo, use, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { memo, use, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Header } from '@/components/ui';
 import { audio } from '@/lib/audio';
-import { loadToken, mm, mmError, REACTIONS, saveToken, type MmState } from '@/lib/mastermind';
+import { loadToken, mm, MM_RULES, mmAvatars, mmError, REACTIONS, saveToken, type MmState } from '@/lib/mastermind';
 import { mmArtVars } from '@/lib/mmArt';
+import { westArtVars } from '@/lib/westArt';
+import { comicKitVars } from '@/lib/comicKit';
 import { loadName } from '@/lib/session';
+import { avatarColors, loadAvatar } from '@/lib/avatar';
 import '../mastermind.css';
 import '../mm-comic.css';
+import '../mm-case.css';
 
-const CIRC = 2 * Math.PI * 44;
-
-function Clock({ secs, total }: { secs: number; total: number }) {
+function Watch({ secs, total }: { secs: number; total: number }) {
   const frac = Math.max(0, Math.min(1, total > 0 ? secs / total : 0));
+  const m = Math.floor(secs / 60), sec = secs % 60;
   return (
-    <div className="mm-clockwrap">
-      <svg className={`mm-clock${secs <= 10 && secs > 0 ? ' urgent' : ''}`} viewBox="0 0 100 100" role="timer" aria-label={`${secs} seconds left`}>
-        <circle className="face" cx="50" cy="50" r="46" />
-        {Array.from({ length: 12 }, (_, i) => <line key={i} className="tick" x1="50" y1="9" x2="50" y2={i % 3 ? 13 : 16} style={{ transform: `rotate(${i * 30}deg)` }} />)}
-        <circle className="arc" cx="50" cy="50" r="44" strokeDasharray={CIRC} strokeDashoffset={CIRC * (1 - frac)} />
-        <line className="hand" x1="50" y1="50" x2="50" y2="17" style={{ transform: `rotate(${360 * (1 - frac)}deg)` }} />
-        <circle cx="50" cy="50" r="3.5" fill="#2a1d12" />
-        <text x="50" y="74">{secs}</text>
-      </svg>
-    </div>
+    <motion.div className={`mx-watch${secs <= 10 && secs > 0 ? ' urgent' : ''}`} role="timer" aria-label={`${secs} seconds left`}
+      initial={{ y: -80, rotate: 20, opacity: 0 }} animate={{ y: 0, rotate: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 160, damping: 10 }}>
+      <div className="face">
+        <i className="hand min" style={{ transform: `rotate(${360 * (1 - frac)}deg)` }} />
+        <i className="hand sec" style={{ transform: `rotate(${(60 - sec) * 6}deg)` }} />
+        <b className="hub" />
+      </div>
+      <div className="digital">{String(m).padStart(2, '0')}:{String(sec).padStart(2, '0')}</div>
+    </motion.div>
   );
+}
+
+/** Polaroid photo: the player's own uploaded profile picture, or a coloured monogram when they have none. */
+function Portrait({ name, url }: { name: string; url?: string }) {
+  const [bad, setBad] = useState(false);
+  if (url && !bad) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={url} alt="" draggable={false} onError={() => setBad(true)} />;
+  }
+  const [c1, c2] = avatarColors(name);
+  return <span className="mono" style={{ background: `linear-gradient(145deg, ${c1}, ${c2})` }}>{(name.trim()[0] ?? '?').toUpperCase()}</span>;
 }
 
 /** Index card whose text types out like a typewriter the first time it appears. */
@@ -44,11 +57,11 @@ function ClueCard({ text, n, fresh }: { text: string; n: number; fresh: boolean 
   }, [shown, text.length]);
   const isReveal = /^Letter \d+ is [A-Z]$/.test(text);
   return (
-    <motion.div data-pin className={`mm-card${isReveal ? ' reveal' : ''}`}
-      initial={fresh ? { y: -70, opacity: 0, scale: 1.3, rotate: -8 } : false} animate={{ y: 0, opacity: 1, scale: 1, rotate: n % 2 ? 1.8 : -2.2 }}
+    <motion.div className={`mx-slip${isReveal ? ' reveal' : ''}`}
+      initial={fresh ? { y: -90, opacity: 0, scale: 1.4, rotate: -14 } : false} animate={{ y: 0, opacity: 1, scale: 1, rotate: n % 2 ? 2.4 : -2.6 }} whileHover={{ rotate: 0, scale: 1.05, zIndex: 4 }}
       transition={{ type: 'spring', stiffness: 420, damping: 17 }}>
-      <span className="num">{isReveal ? 'EVIDENCE' : `CLUE ${n + 1}`}</span>
-      <span className="txt">{text.slice(0, shown)}{shown < text.length && <i className="caret" />}</span>
+      <b>{isReveal ? 'EVIDENCE:' : `CLUE #${n + 1}:`}</b>
+      <span>{text.slice(0, shown)}{shown < text.length && <i className="caret" />}</span>
     </motion.div>
   );
 }
@@ -60,6 +73,26 @@ const FloatEmoji = memo(function FloatEmoji({ f }: { f: Float }) {
   return <div className="mm-float" style={{ left: `${f.x}%`, ['--rot' as string]: `${(f.x % 20) - 10}deg` }}>{f.emoji}<span>{f.name}</span></div>;
 });
 
+
+
+
+function MmRules({ onClose }: { onClose: () => void }) {
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', k);
+    return () => window.removeEventListener('keydown', k);
+  }, [onClose]);
+  return (
+    <div className="mx-rules-back" role="dialog" aria-modal="true" aria-label="Mastermind rules" onClick={onClose}>
+      <div className="mx-rules" onClick={(e) => e.stopPropagation()}>
+        <h2>How Mastermind works</h2>
+        <dl>{MM_RULES.map((r) => <div key={r.h}><dt>{r.h}</dt><dd>{r.t}</dd></div>)}</dl>
+        <button type="button" className="mx-rules-close" onClick={onClose}>Got it</button>
+      </div>
+    </div>
+  );
+}
+
 function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) {
   const { code: raw } = use(params);
   const code = raw.toUpperCase();
@@ -70,6 +103,9 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   const [text, setText] = useState('');
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [rulesOpen, setRulesOpen] = useState(false);
+  const [kickAsk, setKickAsk] = useState<string | null>(null);
+  useEffect(() => { if (!kickAsk) return; const t = window.setTimeout(() => setKickAsk(null), 3500); return () => window.clearTimeout(t); }, [kickAsk]);
   const [now, setNow] = useState(0);
   const [flash, setFlash] = useState<{ k: number; kind: 'good' | 'bad' } | null>(null);
   const [shake, setShake] = useState(0);
@@ -85,6 +121,8 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   const [glowSlot, setGlowSlot] = useState<number[]>([]);
   const offset = useRef(0);
   const [joinName, setJoinName] = useState('');
+  const [photos, setPhotos] = useState<Record<string, string>>({});
+  const sentAvatar = useRef<string | null>(null);
   const prev = useRef({ clues: 0, guesses: 0, status: '', round: 0, tick: -1, react: 0, slots: '' as string, points: {} as Record<string, number> });
 
   useEffect(() => { setToken(loadToken(code)); setJoinName(loadName()); setReady(true); }, [code]);
@@ -118,9 +156,12 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
       offset.current = st.room.server_now - Date.now();
       setS(st);
       setErr(null);
-    } catch (e) { if (mine >= applied.current) setErr(mmError(e)); }
+    } catch (e) {
+      if (e instanceof Error && e.message.includes('REMOVED')) { router.replace('/mastermind?removed=1'); return; }
+      if (mine >= applied.current) setErr(mmError(e));
+    }
     finally { inflight.current = false; }
-  }, [token]);
+  }, [token, router]);
 
   useEffect(() => {
     if (!token) return;
@@ -133,6 +174,23 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
     const id = window.setInterval(() => setNow(Date.now() + offset.current), 250);
     return () => window.clearInterval(id);
   }, []);
+
+  // share my uploaded photo with the room once, and pick up everyone else's (best effort: older servers just show initials)
+  const playerCount = s?.players.length ?? 0;
+  useEffect(() => {
+    if (!token || !s) return;
+    let live = true;
+    (async () => {
+      try {
+        const mine = loadAvatar();
+        if (mine && sentAvatar.current !== `${token}:${mine}`) { await mmAvatars.set(token, mine); sentAvatar.current = `${token}:${mine}`; }
+        const all = await mmAvatars.get(token);
+        if (live) setPhotos(all);
+      } catch { /* migration 098 not applied: keep monograms */ }
+    })();
+    return () => { live = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, playerCount, s?.room.status]);
 
   const secsLeft = s?.room.round_ends ? Math.max(0, Math.ceil((s.room.round_ends - now) / 1000)) : 0;
   const tense = s?.room.status === 'round' && secsLeft > 0 && secsLeft <= 10;
@@ -194,6 +252,14 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
     }
   }, [s]);
 
+  // the SOLVED stamp lands on the newspaper
+  const status = s?.room.status;
+  useEffect(() => {
+    if (status !== 'finished') return;
+    const id = window.setTimeout(() => audio.stamp(), 800);
+    return () => window.clearTimeout(id);
+  }, [status]);
+
   // last ten seconds: heartbeat + tick
   useEffect(() => {
     if (!tense || prev.current.tick === secsLeft) return;
@@ -209,15 +275,16 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   const measure = useCallback(() => {
     const cork = corkRef.current;
     if (!cork) return;
-    const box = cork.getBoundingClientRect();
-    setCorkSize({ w: box.width, h: box.height });
+    setCorkSize({ w: cork.offsetWidth, h: cork.offsetHeight });
+    // layout offsets (not getBoundingClientRect) so cards that are still springing in or hovered never drag the string off the board
     setPins([...cork.querySelectorAll<HTMLElement>('[data-pin]')].filter((el) => el.offsetWidth > 0).map((el) => {
-      const r = el.getBoundingClientRect();
-      return { x: r.left - box.left + r.width / 2, y: r.top - box.top + 4 };
+      let x = 0, y = 0; let n: HTMLElement | null = el;
+      while (n && n !== cork) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent as HTMLElement | null; }
+      return { x: x + el.offsetWidth / 2, y: y + 2 };
     }));
   }, []);
   const clueCount = s?.clues.length ?? 0;
-  useLayoutEffect(() => { const a = window.setTimeout(measure, 450), b = window.setTimeout(measure, 1200); return () => { window.clearTimeout(a); window.clearTimeout(b); }; }, [measure, clueCount, s?.room.status, s?.room.round, s?.players.length]);
+  useLayoutEffect(() => { const t = [450, 1200, 2400, 4000].map((ms) => window.setTimeout(measure, ms)); return () => t.forEach((x) => window.clearTimeout(x)); }, [measure, clueCount, s?.room.status, s?.room.round, s?.players.length]);
   useEffect(() => {
     const ro = new ResizeObserver(() => measure());
     if (corkRef.current) ro.observe(corkRef.current);
@@ -269,7 +336,7 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   if (!token) {
     return (
       <main className="shell narrow"><Header />
-        <div className="mm-room simple" style={mmArtVars}>
+        <div className="mm-room simple" style={{ ...mmArtVars, ...westArtVars, ...comicKitVars }}>
           <div className="mm-center">
             <h1 className="mm-title">Case {code}</h1>
             <div className="mm-folder" data-tab="Join">
@@ -284,11 +351,11 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
       </main>
     );
   }
-  if (!s) return <main className="shell narrow"><Header /><div className="mm-room simple" style={mmArtVars}><div className="mm-center"><p className="mm-sub">{err ?? 'Setting up the room…'}</p></div></div></main>;
+  if (!s) return <main className="shell narrow"><Header /><div className="mm-room simple" style={{ ...mmArtVars, ...westArtVars, ...comicKitVars }}><div className="mm-center"><p className="mm-sub">{err ?? 'Setting up the room…'}</p></div></div></main>;
 
   const { room, me, players } = s;
   const mmPlayer = players.find((p) => p.is_mastermind);
-  const nameOf = (id: string) => players.find((p) => p.id === id)?.name ?? '?';
+  const nameOf = (id: string) => players.find((p) => p.id === id)?.name ?? 'A player who left';
   const activeN = players.filter((p) => !p.sitting).length;
   const board = players.filter((p) => !p.sitting).sort((a, b) => b.points - a.points);
   const inRound = room.status === 'round';
@@ -296,6 +363,16 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   const behindGlass = inRound ? players.filter((p) => p.out && !p.is_mastermind) : [];
   const cards = Array.from({ length: room.clue_limit }, (_, i) => s.clues[i] ?? null);
   const guessing = inRound && !me.is_mastermind && !me.out;
+  const role = me.role ?? (me.is_mastermind ? 'mastermind' : 'detective');
+  const isImp = role === 'impostor' && inRound;
+  const guessOpen = s.clues.length >= 2;
+  const MIN = room.min_players ?? 4;
+  const needMore = Math.max(0, MIN - activeN);
+  const canVote = inRound && !me.is_mastermind && !me.sitting;
+  const impostor = room.impostor_id ? players.find((p) => p.id === room.impostor_id) : undefined;
+  const lazyMm = room.status === 'between' && !!room.lazy;
+  const lazyPlayers = board.filter((p) => (p.lazy_count ?? 0) > 0);
+  const topImp = [...board].sort((a, b) => (b.fooled_count ?? 0) - (a.fooled_count ?? 0))[0];
 
   // letter slots on the table
   const baseKnown = s.slots && s.slots.length ? s.slots : (s.word ? s.word.toUpperCase().split('') : null);
@@ -315,254 +392,342 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
     return `M ${a.x} ${a.y} Q ${(a.x + b.x) / 2} ${Math.max(a.y, b.y) + sag} ${b.x} ${b.y}`;
   });
 
+  const scene = room.status === 'lobby' ? 'lobby' : room.status === 'finished' ? 'final' : 'play';
+  const champ = board[0];
+  const inviteUrl = `${shareOrigin()}/mastermind/${room.code}`;
+  const share = async () => {
+    const msg = champ ? `${champ.name} closed case ${room.code} in LetterLock Mastermind. Think you can crack the next one?` : 'LetterLock Mastermind';
+    if (typeof navigator !== 'undefined' && navigator.share) { try { await navigator.share({ title: 'LetterLock Mastermind', text: msg, url: inviteUrl }); return; } catch { return; } }
+    void copyInvite(inviteUrl);
+  };
+  const stringsSvg = (
+    <svg className="mx-strings" width={corkSize.w} height={corkSize.h} aria-hidden>
+      {strings.map((d, i) => <motion.path key={`${room.round}-${i}`} d={d} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.7, delay: 0.2 + i * 0.12 }} />)}
+    </svg>
+  );
+  const kicker = room.status === 'between'
+    ? (room.solved_by ? `${nameOf(room.solved_by)} cracked it` : 'Nobody cracked it. The word was')
+    : me.is_mastermind ? 'Your secret word · only you can see it' : `${mmPlayer?.name ?? ''} is hiding a ${unknownLen ? '' : `${slots.length}-letter `}word`;
+  const footButtons = (
+    <>
+      {me.is_host && room.status !== 'finished' && (
+        <button className="mx-link" disabled={busy || (!me.sitting && inRound && me.is_mastermind) || (me.sitting && inRound)} onClick={() => act(() => mm.sit(token, !me.sitting))}>
+          {me.sitting ? 'Rejoin the game' : 'Sit out and keep hosting'}
+        </button>
+      )}
+      <button className="mx-link" onClick={() => setRulesOpen(true)}>Rules</button>
+      <button className="mx-link" onClick={async () => { try { if (token) await mm.leave(token); } catch { /* leaving anyway */ } router.push('/play'); }}>Leave</button>
+    </>
+  );
+
   return (
     <main className="shell narrow"><Header />
-      <div className={`mm-room stage s-${room.status}${tense ? ' tense' : ''}`} style={mmArtVars}>
-        <div className="mm-light" key={flicker} data-flicker={flicker ? '1' : undefined} aria-hidden />
-        <div className="mm-dust" aria-hidden>{Array.from({ length: 14 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>
+      <div className={`mm-room mx s-${room.status} ${scene}${tense ? ' tense' : ''}`} style={{ ...mmArtVars, ...westArtVars, ...comicKitVars }}>
+        <div className="mx-bg" aria-hidden />
+        {rulesOpen && <MmRules onClose={() => setRulesOpen(false)} />}
+        {scene !== 'final' && <div className="mx-lamp" key={flicker} data-flicker={flicker ? '1' : undefined} aria-hidden />}
+        {scene === 'play' && <div className="mx-rain" aria-hidden />}
+        {scene !== 'final' && <div className="mm-dust" aria-hidden>{Array.from({ length: 14 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>}
         <div className="mm-vignette" aria-hidden />
-
         <AnimatePresence>
           {flash && <motion.div key={flash.k} className={`mm-flash ${flash.kind}`} initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ duration: 0.9 }} onAnimationComplete={() => setFlash(null)} />}
         </AnimatePresence>
-
         <div className="mm-floats" aria-hidden>
-          <AnimatePresence>
-            {floats.map((f) => (
-              <FloatEmoji key={f.id} f={f} />
-            ))}
-          </AnimatePresence>
+          <AnimatePresence>{floats.map((f) => <FloatEmoji key={f.id} f={f} />)}</AnimatePresence>
         </div>
+        <AnimatePresence>
+          {toast && (
+            <motion.div key={toast.k} className="mx-toast" role="status" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ opacity: 0 }}
+              onAnimationComplete={() => window.setTimeout(() => setToast((t) => (t?.k === toast.k ? null : t)), 2200)}>{toast.msg}</motion.div>
+          )}
+        </AnimatePresence>
 
-        {/* ---------- HUD ---------- */}
-        <div className="mm-hud">
-          <div className="mm-casetag"><span>Case</span><b>{room.code}</b>{room.status !== 'lobby' && <em>Round {room.round}/{room.total_rounds}{room.quick ? ' · Quick' : ''}</em>}</div>
-          {inRound && <Clock secs={secsLeft} total={room.round_secs} />}
-        </div>
+        {/* =================== LOBBY: desk, case folder, cork board =================== */}
+        {scene === 'lobby' && (
+          <div className="mx-stage">
+            <header className="mx-title">
+              <motion.b initial={{ y: -40, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>LETTERLOCK</motion.b>
+              <motion.i initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.15, type: 'spring', stiffness: 300, damping: 14 }}>MASTERMIND</motion.i>
+              <em>GAME LOBBY</em>
+            </header>
+            <span className="mx-count">{activeN} {activeN === 1 ? 'DETECTIVE' : 'DETECTIVES'}</span>
 
-        {/* ---------- WALL (cork board) ---------- */}
-        <div className="mm-wall">
-          <div ref={corkRef} className={`mm-cork${stamp ? ' jolt' : ''}`}>
-            <svg className="mm-strings" width={corkSize.w} height={corkSize.h} aria-hidden>
-              {strings.map((d, i) => <motion.path key={`${room.round}-${i}-${d.length > 0}`} d={d} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 0.15 }} />)}
-            </svg>
+            <motion.div className="mx-folder" initial={{ y: 120, rotate: 14, opacity: 0 }} animate={{ y: 0, rotate: -5, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 140, damping: 14, delay: 0.1 }} whileHover={{ rotate: -2, y: -8 }}>
+              <span className="l1">CASE</span>
+              <span className="code">{room.code}</span>
+              <span className="l2">ROOM CODE</span>
+              {room.quick && <span className="quick">QUICK CASE · 3 ROUNDS</span>}
+            </motion.div>
 
-            {room.status === 'lobby' && (
-              <>
-                <div className="mm-cork-title">Case {room.code}<small>{room.quick ? 'Quick case · 3 short rounds' : 'Everyone takes a turn holding the secret'}</small></div>
-                <div className="mm-lobby-board"><div className="mm-mugs">
-                  {players.map((p) => (
-                    <motion.div key={p.id} data-pin className={`mm-photo${p.id === me.id ? ' me' : ''}`} initial={{ y: -40, opacity: 0, rotate: -6 }} animate={{ y: 0, opacity: 1, rotate: (p.name.length % 5) - 2 }}>
-                      <div className="pic sil" /><div className="cap">{p.name}{p.is_host ? ' ★' : ''}{p.sitting ? ' (watching)' : ''}</div>
-                    </motion.div>
-                  ))}
-                  {Array.from({ length: Math.max(0, 2 - players.length) }, (_, i) => <div key={`w${i}`} className="mm-photo empty"><div className="pic">?</div><div className="cap">Waiting…</div></div>)}
-                </div>
-              <div className="mm-invite on-board">
-                <div className="mm-plate"><span>Room code</span><b>{room.code}</b></div>
-                <div className="mm-qr"><QRCodeSVG value={`${shareOrigin()}/mastermind/${room.code}`} size={104} level="M" marginSize={1} bgColor="#f5ecd6" fgColor="#1a1208" /></div>
-                <div className="mm-invite-txt"><b>Scan to join</b><button type="button" className="btn" onClick={() => void copyInvite(`${shareOrigin()}/mastermind/${room.code}`)}>Copy invite link</button></div>
-              </div>
-                </div>
-              </>
-            )}
-
-            {(inRound || room.status === 'between') && (
-              <div className="mm-evidence">
-                <div data-pin className="mm-photo suspect">
-                  <div className="pic polaroid" /><div className="cap">{me.is_mastermind ? 'You' : mmPlayer?.name ?? '?'}<small>holds the secret</small></div>
-                </div>
-                <div className="mm-cards">
-                  {cards.map((c, i) => c
-                    ? <ClueCard key={`${room.round}-${i}`} text={c} n={i} fresh={i === freshClue} />
-                    : <div key={`e${room.round}-${i}`} className="mm-card empty"><span className="num">CLUE {i + 1}</span><span className="txt">{me.is_mastermind ? 'Write a clue below' : 'Waiting for a clue…'}</span></div>)}
-                </div>
-                <div className="mm-log">
-                  <div className="hd">Interrogation log</div>
-                  {s.guesses.length === 0 && <div className="none">No accusations yet</div>}
-                  <ul>
-                    {s.guesses.slice(-7).map((g, i) => (
-                      <li key={i} className={g.correct ? 'ok' : 'x'}>
-                        <b>{nameOf(g.player_id)}</b> <span className="w">{g.text}</span>
-                        {!g.correct && g.hits !== undefined && (
-                          <span className="pegs" title={`${g.hits} in the right place${g.near ? `, ${g.near} elsewhere` : ''}`}>{Array.from({ length: Math.max(g.text.length, 1) }, (_, k) => <i key={k} className={k < g.hits! ? 'on' : k < g.hits! + (g.near ?? 0) ? 'near' : ''} />)}</span>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
-
-            {room.status === 'finished' && (
-              <div className="mm-podium">
-                {[board[1], board[0], board[2]].map((p, i) => p && (
-                  <motion.div key={p.id} className={`step p${[2, 1, 3][i]}`} initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: [0.35, 0.1, 0.6][i], type: 'spring', stiffness: 200, damping: 16 }}>
-                    <div className="mm-photo">{i === 1 && <span className="crown" aria-hidden>👑</span>}<div className="pic sil" /><div className="cap">{p.name}</div></div>
-                    <div className="block"><span>{['2nd', '1st', '3rd'][i]}</span><b>{p.points}</b></div>
+            <div className="mx-board" ref={corkRef}>
+              {stringsSvg}
+              <motion.div className="mx-qr" initial={{ y: -50, rotate: -16, opacity: 0 }} animate={{ y: 0, rotate: -4, opacity: 1 }} transition={{ delay: 0.25, type: 'spring', stiffness: 240, damping: 12 }}>
+                <QRCodeSVG value={inviteUrl} size={112} level="M" marginSize={1} bgColor="#ffffff" fgColor="#111111" />
+                <button type="button" onClick={() => void copyInvite(inviteUrl)}>Copy invite link</button>
+              </motion.div>
+              <div className="mx-mugs">
+                {players.map((p, i) => (
+                  <motion.div key={p.id} data-pin className={`mx-polaroid${p.id === me.id ? ' me' : ''}${p.sitting ? ' sitting' : ''}`}
+                    initial={{ y: -80, opacity: 0, rotate: -20 }} animate={{ y: 0, opacity: 1, rotate: i % 2 ? 4 : -4 }}
+                    transition={{ delay: 0.35 + i * 0.12, type: 'spring', stiffness: 200, damping: 10 }} whileHover={{ rotate: 0, scale: 1.07, zIndex: 6 }}>
+                    <i className="pin" aria-hidden />
+                    {me.is_host && p.id !== me.id && (
+                      <button type="button" className={`mx-kick${kickAsk === p.id ? ' ask' : ''}`} aria-label={`Remove ${p.name} from the case`}
+                        onClick={(e) => { e.stopPropagation(); if (kickAsk === p.id) { setKickAsk(null); void act(() => mm.kick(token, p.id)); } else setKickAsk(p.id); }}>
+                        {kickAsk === p.id ? 'REMOVE?' : '✕'}
+                      </button>
+                    )}
+                    <div className="pic"><Portrait name={p.name} url={photos[p.id]} /></div>
+                    <span className="cap">{p.id === me.id ? 'YOU' : p.name}{p.is_host ? ' ★' : ''}{p.sitting ? ' (watching)' : ''}</span>
                   </motion.div>
                 ))}
+                <motion.div className="mx-envelope" initial={{ y: -60, opacity: 0, rotate: 12 }} animate={{ y: 0, opacity: 1, rotate: 5 }} transition={{ delay: 0.5, type: 'spring', stiffness: 200, damping: 11 }}>
+                  <i className="pin" aria-hidden />
+                  <span className="lbl"><b>1 IMPOSTOR</b><span>hides in every case</span></span>
+                </motion.div>
+                {needMore > 0 && <motion.div className="mx-polaroid empty" initial={{ opacity: 0 }} animate={{ opacity: 1, rotate: 3 }} transition={{ delay: 0.6 }}>
+                  <i className="pin" aria-hidden />
+                  <div className="pic"><span className="who">?</span></div>
+                  <span className="cap">WAITING…</span>
+                </motion.div>}
               </div>
-            )}
+            </div>
 
-            <AnimatePresence>
-              {stamp && room.status === 'between' && (
-                <motion.div key={stamp.k} className={`mm-stamp ${stamp.kind}`} initial={{ scale: 3.2, opacity: 0, rotate: -24 }} animate={{ scale: 1, opacity: 1, rotate: -12 }} exit={{ opacity: 0 }} transition={{ type: 'spring', stiffness: 520, damping: 22 }}>
-                  {stamp.kind === 'good' ? 'Cracked' : 'Cold case'}
-                </motion.div>
-              )}
-              {room.status === 'finished' && (
-                <motion.div key="closed" className="mm-stamp good closed" initial={{ scale: 3, opacity: 0, rotate: 18 }} animate={{ scale: 1, opacity: 1, rotate: 8 }} transition={{ delay: 0.9, type: 'spring', stiffness: 500, damping: 22 }} onAnimationStart={() => window.setTimeout(() => audio.stamp(), 900)}>
-                  Case closed
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div className="mx-cta">
+              {me.is_host ? (
+                <motion.button className="mx-plaque big" disabled={busy || needMore > 0} onClick={() => act(() => mm.start(token))}
+                  whileHover={needMore === 0 ? { scale: 1.05, rotate: -1 } : undefined} whileTap={{ scale: 0.94 }}
+                  animate={needMore === 0 ? { rotate: [0, -1.5, 1.5, 0] } : {}} transition={{ repeat: needMore === 0 ? Infinity : 0, repeatDelay: 2.4, duration: 0.5 }}>
+                  {needMore > 0 ? `NEED ${needMore} MORE DETECTIVE${needMore > 1 ? 'S' : ''}` : 'OPEN THE CASE'}
+                </motion.button>
+              ) : <p className="mx-note">Waiting for the host to open the case…</p>}
+            </div>
+            <div className="mx-foot">
+              <span>{needMore > 0 ? `Share the code. A case needs ${MIN} detectives, and one of them is secretly the Impostor.` : `${players.length} detectives in the room. One of you is the Impostor…`}</span>
+              {err && <p className="mm-err">{err}</p>}
+              {footButtons}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* ---------- TABLE (letter slots) ---------- */}
-        <div className="mm-tabletop">
-          {room.status === 'lobby' ? (
-            <>
-              <div className="mm-kicker">{players.length < 2 ? 'Share the code. You need at least 2 detectives.' : `${players.length} detectives in the room`}</div>
-            </>
-          ) : room.status === 'finished' ? (
-            <div className="mm-kicker">{board[0] ? `${board[0].name} solves the most cases` : ''}{s.word ? ` · last word: ${s.word.toUpperCase()}` : ''}</div>
-          ) : (
-            <>
-              <div className="mm-kicker">
-                {room.status === 'between'
-                  ? (room.solved_by ? `${nameOf(room.solved_by)} cracked it` : 'Nobody cracked it. The word was')
-                  : me.is_mastermind ? 'Your secret word · only you can see it' : `${mmPlayer?.name ?? ''} is hiding a ${unknownLen ? '' : `${slots.length}-letter `}word`}
-              </div>
-              <div key={`slots${room.round}`} className={`mm-slots${room.status === 'between' ? ' reveal-all' : ''}${me.is_mastermind && inRound ? ' mine' : ''}`}>
+        {/* =================== ROUND: lamp, case file, evidence log, suspects =================== */}
+        {scene === 'play' && (
+          <div className="mx-stage">
+            <header className="mx-title small">
+              <b>LETTERLOCK</b>
+              <i>MASTERMIND MODE</i>
+              <em>CASE {room.code} · ROUND {room.round}/{room.total_rounds}{room.quick ? ' · QUICK' : ''}</em>
+            </header>
+            {inRound && <Watch secs={secsLeft} total={room.round_secs} />}
+
+            <motion.aside className="mx-pad" initial={{ x: -80, rotate: -16, opacity: 0 }} animate={{ x: 0, rotate: -6, opacity: 1 }} transition={{ type: 'spring', stiffness: 160, damping: 15 }}>
+              <h3>EVIDENCE LOG</h3>
+              {s.guesses.length === 0 ? <p className="none">No accusations yet</p> : (
+                <ul>
+                  {s.guesses.slice(-6).map((g, i) => (
+                    <motion.li key={`${s.guesses.length}-${i}`} className={g.correct ? 'ok' : 'x'} initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
+                      <span className="w">{g.text.toUpperCase()}</span>
+                      {!g.correct && g.hits !== undefined && <span className="n">({g.hits})</span>}
+                      <small>{nameOf(g.player_id)}</small>
+                      {g.decoy && <em className="dec">DECOY</em>}
+                      <b className="mark" aria-label={g.correct ? 'correct' : 'wrong'}>{g.correct ? '✓' : '✗'}</b>
+                    </motion.li>
+                  ))}
+                </ul>
+              )}
+            </motion.aside>
+
+            <section className={`mx-file${stamp ? ' jolt' : ''}`}>
+              <span className="tab">CASE FILE</span>
+              <p className="mx-kicker">{kicker}</p>
+              <div key={`slots${room.round}`} className={`mx-tiles${me.is_mastermind && inRound ? ' mine' : ''}`}>
                 {slots.map((ch, i) => {
                   const t = typed[i];
                   const show = ch ?? t ?? '';
-                  const cls = ch ? (glowSlot.includes(i) ? 'lit glow' : 'lit') : t ? 'typed' : unknownLen ? 'unknown' : '';
-                  const clash = ch && t && t !== ch;
+                  const open = !!ch || !!t;
+                  const cls = ch ? (glowSlot.includes(i) ? 'paper glow' : 'paper') : t ? 'paper typed' : 'locked';
                   return (
-                    <motion.div key={i} className={`slot ${cls}${clash ? ' clash' : ''}`}
-                      initial={room.status === 'between' ? { rotateX: 90 } : false} animate={{ rotateX: 0 }} transition={{ delay: i * 0.08 }}>
-                      {unknownLen && !ch && !t ? '?' : show}
+                    <motion.div key={`${i}-${ch ?? (t ? 't' : '_')}`} className={`mx-tile ${cls}${ch && t && t !== ch ? ' clash' : ''}`}
+                      initial={ch ? { rotateY: 180, scale: 1.2 } : t ? { y: -10 } : false} animate={{ rotateY: 0, scale: 1, y: 0 }}
+                      transition={{ delay: room.status === 'between' ? i * 0.09 : 0, duration: 0.45 }}
+                      whileTap={!open ? { rotate: [0, -8, 8, -4, 0] } : undefined}>
+                      {open ? <span>{show}</span> : <span className="sr">{unknownLen ? 'unknown letter' : 'hidden letter'}</span>}
                     </motion.div>
                   );
                 })}
               </div>
+              <div className="mx-clues">
+                {cards.map((c, i) => c
+                  ? <ClueCard key={`${room.round}-${i}`} text={c} n={i} fresh={i === freshClue} />
+                  : <div key={`e${room.round}-${i}`} className="mx-slip empty"><b>CLUE #{i + 1}:</b><span>{me.is_mastermind ? 'write one below' : 'waiting…'}</span></div>)}
+              </div>
               <AnimatePresence>
-                {toast && <motion.div key={toast.k} className="mm-toast" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ opacity: 0 }} onAnimationComplete={() => window.setTimeout(() => setToast((t) => (t?.k === toast.k ? null : t)), 2200)}>{toast.msg}</motion.div>}
+                {stamp && room.status === 'between' && (
+                  <motion.div key={stamp.k} className={`mx-stamp ${stamp.kind}`} initial={{ scale: 3.4, opacity: 0, rotate: -34 }} animate={{ scale: 1, opacity: 1, rotate: -12 }} exit={{ opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 520, damping: 18 }}>{stamp.kind === 'good' ? 'CRACKED' : 'COLD CASE'}</motion.div>
+                )}
+                {lazyMm && (
+                  <motion.div key={`lazy${room.round}`} className="mx-stamp lazy" initial={{ scale: 3.4, opacity: 0, rotate: 20 }} animate={{ scale: 1, opacity: 1, rotate: 8 }} transition={{ delay: 0.9, type: 'spring', stiffness: 520, damping: 18 }}>LAZY MASTERMIND −5</motion.div>
+                )}
               </AnimatePresence>
-            </>
-          )}
-        </div>
+            </section>
+            {inRound && (
+              <motion.div key={`role${room.round}`} className={`mx-role ${role}`} initial={{ y: 80, rotate: -14, opacity: 0, scale: 0.7 }} animate={{ y: 0, rotate: -4, opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, type: 'spring', stiffness: 180, damping: 12 }} whileHover={{ rotate: 0, scale: 1.06 }}>
+                <b>{role === 'impostor' ? 'IMPOSTOR' : role === 'mastermind' ? 'MASTERMIND' : 'DETECTIVE'}</b>
+                <span>{role === 'impostor' ? `Fool them · ${room.decoys_left ?? 0} decoys` : role === 'mastermind' ? 'Clear clues win' : 'Find the Impostor'}</span>
+              </motion.div>
+            )}
 
-        {/* ---------- DOCK (case file) ---------- */}
-        <div className="mm-dock">
-          {room.status === 'lobby' && (
-            me.is_host
-              ? <button className="btn lg mm-cta" disabled={busy || activeN < 2} onClick={() => act(() => mm.start(token))}>{activeN < 2 ? 'Waiting for suspects…' : 'Begin the interrogation'}</button>
-              : <p className="mm-sub">Waiting for the host to begin…</p>
-          )}
-
-          {inRound && me.is_mastermind && (
-            <form className="mm-folder" data-tab={room.clues_left > 0 ? `Write a clue · ${room.clues_left} left` : 'No clues left'} onSubmit={(e) => { e.preventDefault(); if (text.trim()) void act(() => mm.clue(token, text)); }}>
-              <div className="mm-row">
-                <input className="input" placeholder={room.clues_left > 0 ? 'Hint without saying the word' : 'Out of clues. Sit tight.'} maxLength={80} value={text} disabled={room.clues_left <= 0} onChange={(e) => setText(e.target.value)} />
-                <button className="btn" disabled={busy || room.clues_left <= 0}>Pin it</button>
-              </div>
-              {room.can_reveal !== undefined && (
-                <button type="button" className="mm-reveal" disabled={busy || room.clues_left <= 0 || !room.can_reveal} onClick={() => act(() => mm.reveal(token), true)}>
-                  🔎 Reveal a letter instead <small>(costs 1 clue)</small>
-                </button>
-              )}
-              <p className="mm-hint">Fewer clues used = more points for you and the solver.</p>
-            </form>
-          )}
-
-          {guessing && (
-            <form key={shake} className={`mm-folder${shake ? ' shake' : ''}`} data-tab="Case file · your accusation" onSubmit={(e) => { e.preventDefault(); void guess(); }}>
-              <div className="mm-row">
-                <input ref={guessRef} className="input" placeholder="Type the word" maxLength={unknownLen ? 20 : slots.length} value={text} autoCapitalize="off" autoComplete="off" spellCheck={false} onChange={(e) => setText(e.target.value)} />
-                <button className="btn" disabled={busy || !text.trim()}>Accuse</button>
-              </div>
-              <p className="mm-hint"><span className="hearts">{'❤'.repeat(Math.max(0, me.hp))}{'♡'.repeat(Math.max(0, 3 - me.hp))}</span> · a wrong accusation costs a heart</p>
-            </form>
-          )}
-
-          {inRound && me.out && !me.is_mastermind && (
-            <div className="mm-folder" data-tab="You're behind the glass">
-              <p className="mm-hint">Back a suspect. If they crack it, you earn 3 points.</p>
-              <div className="mm-row wrap">
-                {lineup.filter((p) => !p.is_mastermind).map((p) => (
-                  <button key={p.id} className={`btn sm ${me.backing === p.id ? '' : 'ghost'}`} disabled={busy} onClick={() => act(() => mm.back(token, p.id))}>{me.backing === p.id ? '✓ ' : ''}{p.name}</button>
+            <div className="mx-board" ref={corkRef}>
+              {stringsSvg}
+              <div className="mx-mugs">
+                {players.filter((p) => !p.sitting).map((p, i) => (
+                  <motion.div key={p.id} data-pin className={`mx-polaroid${p.id === me.id ? ' me' : ''}${p.out && inRound ? ' out' : ''}${p.is_mastermind ? ' mm' : ''}${p.is_impostor ? ' imp' : ''}`}
+                    initial={{ y: -60, opacity: 0, rotate: -14 }} animate={hitId === p.id ? { x: [0, -10, 10, -6, 0], rotate: i % 2 ? 4 : -4, opacity: 1, y: 0 } : { y: 0, opacity: 1, rotate: i % 2 ? 4 : -4 }}
+                    transition={{ type: 'spring', stiffness: 220, damping: 12, delay: i * 0.08 }} whileHover={{ rotate: 0, scale: 1.08, zIndex: 6 }}>
+                    <i className="pin" aria-hidden />
+                    {me.is_host && p.id !== me.id && (
+                      <button type="button" className={`mx-kick${kickAsk === p.id ? ' ask' : ''}`} aria-label={`Remove ${p.name} from the case`}
+                        onClick={(e) => { e.stopPropagation(); if (kickAsk === p.id) { setKickAsk(null); void act(() => mm.kick(token, p.id)); } else setKickAsk(p.id); }}>
+                        {kickAsk === p.id ? 'REMOVE?' : '✕'}
+                      </button>
+                    )}
+                    <div className="pic"><Portrait name={p.name} url={photos[p.id]} />{p.out && inRound && <b className="x" aria-hidden>✗</b>}</div>
+                    <span className="cap">{p.id === me.id ? 'YOU' : p.name}</span>
+                    <span className="meta">{p.is_mastermind ? 'MASTERMIND' : inRound ? `${'❤'.repeat(Math.max(0, p.hp))}${'♡'.repeat(Math.max(0, 3 - p.hp))}` : ''}</span>
+                    {canVote && !p.is_mastermind && p.id !== me.id && (
+                      <button type="button" className={`mx-vote${me.vote === p.id ? ' on' : ''}`} disabled={busy} onClick={() => act(() => mm.vote(token, p.id), true)}>{me.vote === p.id ? '✓ VOTED' : 'VOTE'}</button>
+                    )}
+                    {inRound && p.voted && !p.is_mastermind && <i className="mx-voted" title="has voted" aria-label="has voted">🗳</i>}
+                    {room.status === 'between' && (p.votes ?? 0) > 0 && <small className="mx-tally">{p.votes} vote{p.votes === 1 ? '' : 's'}</small>}
+                    {room.status === 'between' && p.is_impostor && <motion.b className="mx-unmask" initial={{ scale: 3, opacity: 0, rotate: -40 }} animate={{ scale: 1, opacity: 1, rotate: -14 }} transition={{ delay: 0.9, type: 'spring', stiffness: 520, damping: 16 }}>IMPOSTOR</motion.b>}
+                    <b className="pts">{p.points}</b>
+                    <AnimatePresence>{deltas[p.id] > 0 && room.status === 'between' && <motion.span className="delta" initial={{ y: 10, opacity: 0, scale: 0.5 }} animate={{ y: -10, opacity: 1, scale: 1.2 }} exit={{ opacity: 0 }}>+{deltas[p.id]}</motion.span>}</AnimatePresence>
+                  </motion.div>
                 ))}
               </div>
             </div>
-          )}
 
-          {room.status === 'between' && (
-            <>
-              <div className="mm-recap" aria-label="Round recap">
-                {players.filter((p) => (deltas[p.id] ?? 0) > 0).map((p) => <span key={p.id}><b>{p.name}</b> +{deltas[p.id]}</span>)}
-                <span className="meta">{s.clues.length}/{room.clue_limit} clues used</span>
-              </div>
-              <p className="mm-sub">{room.between_until ? `Next round in ${Math.max(0, Math.ceil((room.between_until - now) / 1000))}s…` : 'Next round starting…'}</p>
-            </>
-          )}
-          {room.status === 'finished' && me.is_host && <button className="btn lg mm-cta" disabled={busy} onClick={() => act(() => mm.again(token))}>Open a new case</button>}
-          {room.status === 'finished' && !me.is_host && <p className="mm-sub">Waiting for the host to open a new case…</p>}
-
-          {room.status !== 'lobby' && room.status !== 'finished' && (
-            <div className="mm-reacts" role="group" aria-label="React">
-              {REACTIONS.map((e) => <button key={e} type="button" onClick={() => react(e)} aria-label={`React ${e}`}>{e}</button>)}
-            </div>
-          )}
-          {err && <p className="mm-err">{err}</p>}
-          {me.is_host && (
-            <button className="btn ghost sm" disabled={busy || (!me.sitting && inRound && me.is_mastermind) || (me.sitting && inRound)}
-              onClick={() => act(() => mm.sit(token, !me.sitting))}>
-              {me.sitting ? 'Rejoin the game' : 'Sit out and keep hosting'}
-            </button>
-          )}
-          <button className="btn ghost sm mm-leave" onClick={() => router.push('/play')}>Leave</button>
-        </div>
-
-        {/* ---------- LEFT: suspects + scores ---------- */}
-        <aside className="mm-side left">
-          <div className="tag">{room.status === 'lobby' ? 'Detectives' : 'Suspects'}</div>
-          <div className="mm-lineup">
-            {(inRound ? lineup : board).map((p) => (
-              <div key={p.id} className={`mm-suspect${p.id === me.id ? ' me' : ''}${p.is_mastermind && inRound ? ' mm' : ''}${hitId === p.id ? ' hit' : ''}`}>
-                <div className="mug">{p.is_mastermind && inRound ? '💡' : p.name.slice(0, 1).toUpperCase()}</div>
-                <div className="who">
-                  <span className="nm">{p.name}{p.id === me.id ? ' (you)' : ''}</span>
-                  <span className="hp">{inRound ? (p.is_mastermind ? 'Mastermind' : '❤'.repeat(Math.max(0, p.hp))) : ''}</span>
+            <div className="mx-typer">
+              {guessing && (
+                <form key={shake} className={`mx-type${shake ? ' shake' : ''}`} onSubmit={(e) => { e.preventDefault(); void guess(); }}>
+                  <input ref={guessRef} className="mx-input" placeholder={guessOpen ? (isImp ? 'DECOY ACCUSATION…' : 'ENTER GUESS…') : 'WAITING FOR 2 CLUES…'} disabled={!guessOpen} aria-label="Your guess" maxLength={unknownLen ? 20 : slots.length} value={text}
+                    autoCapitalize="off" autoComplete="off" spellCheck={false} onChange={(e) => { setText(e.target.value); audio.key(); }} />
+                  <motion.button className="mx-plaque" disabled={busy || !guessOpen || !text.trim() || (isImp && (room.decoys_left ?? 0) <= 0)} whileTap={{ scale: 0.88, rotate: -4 }}>{isImp ? 'DECOY' : 'GUESS'}</motion.button>
+                  <p className="mx-hint">{isImp
+                    ? <>Decoys cost no heart and the log lies about them.</>
+                    : <><span className="hearts">{'❤'.repeat(Math.max(0, me.hp))}{'♡'.repeat(Math.max(0, 3 - me.hp))}</span> a wrong accusation costs a heart · tap VOTE on who you think is the Impostor</>}</p>
+                </form>
+              )}
+              {inRound && me.is_mastermind && (
+                <form className="mx-type" onSubmit={(e) => { e.preventDefault(); if (text.trim()) void act(() => mm.clue(token, text)); }}>
+                  <input className="mx-input" aria-label="Your clue" placeholder={room.clues_left > 0 ? `CLUE ${room.clue_limit - room.clues_left + 1}: hint without saying the word` : 'Out of clues. Sit tight.'}
+                    maxLength={80} value={text} disabled={room.clues_left <= 0} onChange={(e) => { setText(e.target.value); audio.key(); }} />
+                  <motion.button className="mx-plaque" disabled={busy || room.clues_left <= 0} whileTap={{ scale: 0.88, rotate: -4 }}>PIN IT</motion.button>
+                  <p className="mx-hint">
+                    {room.can_reveal !== undefined && (
+                      <button type="button" className="mx-reveal" disabled={busy || room.clues_left <= 0 || !room.can_reveal} onClick={() => act(() => mm.reveal(token), true)}>🔎 Reveal a letter instead (costs 1 clue)</button>
+                    )}
+                    {room.clues_left} of {room.clue_limit} clues left · clear clues that get it solved = more points · two clues unlock guessing
+                  </p>
+                </form>
+              )}
+              {inRound && me.out && !me.is_mastermind && (
+                <div className="mx-type col">
+                  <p className="mx-hint">You&apos;re behind the glass. Back a suspect: if they crack it, you earn 3 points.</p>
+                  <div className="mx-back">
+                    {lineup.filter((p) => !p.is_mastermind).map((p) => (
+                      <button key={p.id} className={`mx-chip${me.backing === p.id ? ' on' : ''}`} disabled={busy} onClick={() => act(() => mm.back(token, p.id))}>{me.backing === p.id ? '✓ ' : ''}{p.name}</button>
+                    ))}
+                  </div>
                 </div>
-                <b className="pts">{p.points}</b>
-                <AnimatePresence>{deltas[p.id] > 0 && room.status === 'between' && <motion.span className="delta" initial={{ y: 8, opacity: 0 }} animate={{ y: -6, opacity: 1 }} exit={{ opacity: 0 }}>+{deltas[p.id]}</motion.span>}</AnimatePresence>
-              </div>
-            ))}
-          </div>
-        </aside>
+              )}
+              {room.status === 'between' && (
+                <div className="mx-type col">
+                  {impostor && (
+                    <motion.div className={`mx-unmask-banner ${room.caught ? 'caught' : 'fooled'}`} initial={{ scale: 0.5, opacity: 0, rotate: -4 }} animate={{ scale: 1, opacity: 1, rotate: -1 }} transition={{ delay: 0.9, type: 'spring', stiffness: 300, damping: 14 }}>
+                      <b>THE IMPOSTOR WAS {impostor.name.toUpperCase()}</b>
+                      <span>{room.caught ? 'Caught! Everyone who pointed at them earns +4.' : room.accused_id ? `The table accused ${nameOf(room.accused_id)}. Wrong! The Impostor scores.` : 'Nobody was accused. The Impostor walks free.'}</span>
+                    </motion.div>
+                  )}
+                  <div className="mx-recap" aria-label="Round recap">
+                    {players.filter((p) => (deltas[p.id] ?? 0) > 0).map((p) => <span key={p.id}><b>{p.name}</b> +{deltas[p.id]}</span>)}
+                    <span className="meta">{s.clues.length}/{room.clue_limit} clues used</span>
+                  </div>
+                  <p className="mx-hint">{room.between_until ? `Next round in ${Math.max(0, Math.ceil((room.between_until - now) / 1000))}s…` : 'Next round starting…'}</p>
+                </div>
+              )}
+            </div>
 
-        {/* ---------- RIGHT: behind the glass ---------- */}
-        <aside className="mm-side right">
-          <div className="mm-glass">
-            <div className="tag">Behind the glass</div>
-            {behindGlass.length === 0 ? (
-              <div className="none">
-                {inRound ? 'Nobody eliminated yet' : 'Eliminated players watch from here'}
-                {inRound && players.some((p) => !p.is_mastermind && p.hp < 3) && (
-                  <ul className="hurt">{players.filter((p) => !p.is_mastermind && p.hp < 3).map((p) => <li key={p.id}>{p.name} <span>{'❤'.repeat(Math.max(0, p.hp))}{'♡'.repeat(3 - Math.max(0, p.hp))}</span></li>)}</ul>
+            <div className="mx-foot">
+              <div className="mm-reacts" role="group" aria-label="React">
+                {REACTIONS.map((e) => <button key={e} type="button" onClick={() => react(e)} aria-label={`React ${e}`}>{e}</button>)}
+              </div>
+              {err && <p className="mm-err">{err}</p>}
+              {footButtons}
+            </div>
+          </div>
+        )}
+
+        {/* =================== FINALE: CASE CLOSED newspaper =================== */}
+        {scene === 'final' && (
+          <div className="mx-stage">
+            <motion.div className="mx-win" initial={{ y: -40, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+              <b>{champ && champ.id === me.id ? 'VICTORY!' : 'CASE CLOSED'}</b><i>MASTERMIND MODE</i>
+            </motion.div>
+            <motion.article className="mx-paper" initial={{ y: 160, rotate: 10, opacity: 0, scale: 0.7 }} animate={{ y: 0, rotate: -1.5, opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 110, damping: 14 }}>
+              <figure className="mx-det">
+                <div className="pic">{champ ? <Portrait name={champ.name} url={photos[champ.id]} /> : null}</div>
+                <figcaption>{champ ? `${champ.name} · detective on the case` : 'Detective on the case'}</figcaption>
+              </figure>
+              <h2 className="mx-head">CASE CLOSED</h2>
+              <motion.div className="mx-solved" initial={{ scale: 4, opacity: 0, rotate: -44 }} animate={{ scale: 1, opacity: 1, rotate: -14 }} transition={{ delay: 0.75, type: 'spring', stiffness: 600, damping: 15 }}>SOLVED</motion.div>
+              {s.word && (
+                <div className="mx-word" aria-label={`Last word: ${s.word}`}>
+                  {s.word.toUpperCase().split('').map((c, i) => (
+                    <motion.span key={i} initial={{ y: -40, opacity: 0, rotate: -25 }} animate={{ y: 0, opacity: 1, rotate: i % 2 ? 2 : -2 }} transition={{ delay: 1.1 + i * 0.08, type: 'spring', stiffness: 300, damping: 14 }}>{c}</motion.span>
+                  ))}
+                </div>
+              )}
+              <div className="mx-stats">
+                <span>ROUNDS: {room.total_rounds}</span>
+                <span>LAST CASE CLUES: {s.clues.length}/{room.clue_limit}</span>
+                <span>ACCUSATIONS: {s.guesses.length}</span>
+              </div>
+              <div className="mx-badges">
+                {board.slice(0, 3).map((p, i) => (
+                  <motion.div key={p.id} className={`mx-badge b${i}`} initial={{ scale: 0, rotate: -120 }} animate={{ scale: 1, rotate: 0 }} transition={{ delay: 1.5 + i * 0.18, type: 'spring', stiffness: 260, damping: 12 }} whileHover={{ scale: 1.12, rotate: 8 }}>
+                    <em>{['MASTERMIND', 'SHARP EYE', 'ON THE CASE'][i]}</em>
+                    <b>{p.name}</b>
+                    <span>{p.points} pts</span>
+                  </motion.div>
+                ))}
+                {lazyPlayers.map((p) => (
+                  <motion.div key={`lz${p.id}`} className="mx-snail" initial={{ scale: 0, rotate: 100 }} animate={{ scale: 1, rotate: -4 }} transition={{ delay: 2.2, type: 'spring', stiffness: 240, damping: 12 }} whileHover={{ scale: 1.1, rotate: 6 }}>
+                    <i aria-hidden /><b>LAZY MASTERMIND</b><span>{p.name} ×{p.lazy_count}</span>
+                  </motion.div>
+                ))}
+                {topImp && (topImp.fooled_count ?? 0) > 0 && (
+                  <motion.div className="mx-snail imp" initial={{ scale: 0, rotate: -100 }} animate={{ scale: 1, rotate: 4 }} transition={{ delay: 2.4, type: 'spring', stiffness: 240, damping: 12 }} whileHover={{ scale: 1.1, rotate: -6 }}>
+                    <i aria-hidden /><b>MASTER IMPOSTOR</b><span>{topImp.name} fooled {topImp.fooled_count}×</span>
+                  </motion.div>
                 )}
               </div>
-            ) : (
-              <div className="sil">
-                {behindGlass.map((p) => <div key={p.id} className="ghost"><div className="mug" /><span>{p.name}</span>{p.id === me.id && <em>you</em>}</div>)}
+              <div className="mx-btns">
+                {me.is_host
+                  ? <motion.button className="mx-plaque big" disabled={busy} onClick={() => act(() => mm.again(token))} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}>↻ REPLAY</motion.button>
+                  : <span className="mx-note dark">Waiting for the host to open a new case…</span>}
+                <motion.button className="mx-plaque big pink" onClick={() => void share()} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}>SHARE ⤴</motion.button>
               </div>
-            )}
+            </motion.article>
+            <div className="mx-foot">
+              {err && <p className="mm-err">{err}</p>}
+              {footButtons}
+            </div>
           </div>
-        </aside>
+        )}
       </div>
     </main>
   );

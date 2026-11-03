@@ -6,8 +6,26 @@ import { audio } from '@/lib/audio';
 import { useT } from '@/lib/i18n/react';
 import type { PublicPlayer, RoomState } from '@/lib/types';
 import { vaultArtVars } from '@/lib/vaultArt';
+import { comicKitVars } from '@/lib/comicKit';
 import { narrator } from '@/lib/narrator';
 import { PlayerAvatar } from './PlayerAvatar';
+import { actionSources } from '@/lib/classAction';
+import { CLASSES } from '@/lib/classes';
+
+/** The player's own class portrait, framed like a comic panel beside the action (decorative; real art, no new assets). */
+function HeroPanel({ cls }: { cls: NonNullable<RoomState['me']>['class'] }) {
+  const srcs = actionSources(cls);
+  const [i, setI] = useState(0);
+  useEffect(() => setI(0), [cls]);
+  if (i >= srcs.length) return null;
+  return (
+    <figure className="v-hero" aria-hidden>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={srcs[i]} alt="" draggable={false} onError={() => setI((n) => n + 1)} />
+      <figcaption>{CLASSES[cls].tagline}</figcaption>
+    </figure>
+  );
+}
 
 /**
  * Classic mode, vault-heist skin. The existing phase screens render inside a steel vault door; every player is a
@@ -133,7 +151,7 @@ export function VaultHeist({ state, msLeft, children }: { state: RoomState; msLe
 
   const rootRef = useRackPad();
   return (
-    <div ref={rootRef} className={`vault p-${phase}${secs <= 5 && secs > 0 ? ' tense' : ''}`} style={vaultArtVars}>
+    <div ref={rootRef} className={`vault p-${phase}${secs <= 5 && secs > 0 ? ' tense' : ''}`} style={{ ...vaultArtVars, ...comicKitVars }}>
       <div className="v-shade" aria-hidden />
       <div className="v-lasers" aria-hidden><i /><i /><i /></div>
       {alarm > 0 && <div key={alarm} className="v-alarm-flash" aria-hidden />}
@@ -144,6 +162,8 @@ export function VaultHeist({ state, msLeft, children }: { state: RoomState; msLe
         </AnimatePresence>
       </div>
 
+      <div className="v-city" aria-hidden />
+      {me && !me.is_spectator && <HeroPanel cls={me.class} />}
       <div className="v-door">
         <i className="v-bolt b1" /><i className="v-bolt b2" /><i className="v-bolt b3" /><i className="v-bolt b4" />
         <div className={`v-dial-slot${spin ? ' spin' : ''}`} key={`d${spin}`}><VaultDial msLeft={msLeft} total={total} /></div>
@@ -168,7 +188,7 @@ export function VaultFinale({ state, children }: { state: RoomState; children: R
   }, [iLost]);
   const rootRef = useRackPad();
   return (
-    <div ref={rootRef} className={`vault p-finished${iLost ? ' lost' : ' won'}`} style={vaultArtVars}>
+    <div ref={rootRef} className={`vault p-finished${iLost ? ' lost' : ' won'}`} style={{ ...vaultArtVars, ...comicKitVars }}>
       <div className="v-shade" aria-hidden />
       {iLost && <div className="v-beacons" aria-hidden><i /><i /></div>}
       {!iLost && <div className="v-glints" aria-hidden>{Array.from({ length: 14 }, (_, i) => <i key={i} style={{ ['--i' as string]: i }} />)}</div>}

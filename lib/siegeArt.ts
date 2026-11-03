@@ -1,5 +1,7 @@
 // Generated Siege art (Higgsfield), served through Vercel's image optimizer.
 import { img } from './mmArt';
+import { westArtVars } from './westArt';
+import { comicKitVars } from './comicKit';
 
 const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/';
 const src = {
@@ -16,6 +18,8 @@ const css = (u: string, w: number) => `url("${img(u, w)}")`;
 
 /** CSS custom properties consumed by app/siege.css */
 export const siegeArtVars = {
+  ...westArtVars,
+  ...comicKitVars,
   '--s-field-wide': css(src.fieldWide, 2048),
   '--s-field-tall': css(src.fieldTall, 1080),
   '--s-tent-wide': css(src.tentWide, 2048),
@@ -24,4 +28,13 @@ export const siegeArtVars = {
   '--s-stone': css(src.stone, 128),
   '--s-scroll': css(src.scroll, 1200),
   '--s-ruins': css(src.ruins, 2048),
+  '--sk-field': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_182425_ad08ecdc-5cb9-46fe-a9ef-7e8ea18395b0.png', 2048),
+  '--sk-red': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_182452_44668eec-f715-4a69-ba92-163da67a43e1.png', 828),
+  '--sk-blue': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_182455_5c9c0a95-218c-4abb-aff6-850e7428d0aa.png', 828),
+  '--sk-castle-r': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_192105_8a82d858-37bd-433a-b94e-5d95572f508f.png', 828),
+  '--sk-castle-b': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_192106_0928d6c2-87ac-4617-adba-095e07cbf62a.png', 828),
+  '--sk-plaque': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_192108_8f3e0615-cfdf-4fb9-b246-c5c8ee07563b.png', 1080),
+  '--sk-lobby': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_192026_86105bc3-bf90-424f-a7d3-61c8e8fe2b02.png', 2048),
+  '--sk-ban-r': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_192649_6fffd46b-c507-4e65-830e-c596920b5fb2.png', 828),
+  '--sk-ban-b': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_192651_00c52bb8-0238-4f9d-b9be-f4963d4c4f88.png', 828),
 } as React.CSSProperties;

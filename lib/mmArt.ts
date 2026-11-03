@@ -9,7 +9,8 @@ const src = {
   silhouette: CDN + 'hf_20261016_170055_40d173ce-3955-4727-b5eb-bc140d1fb586.png',
   polaroid: CDN + 'hf_20261016_170055_b6d7279f-5bea-4fc4-b89b-1180a794fcd9.png',
 };
-export const img = (u: string, w = 1920) => `/_next/image?url=${encodeURIComponent(u)}&w=${w}&q=75`; // Next 16 only accepts the configured qualities (default [75])
+const WIDTHS = [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840]; // Next only serves its configured widths; anything else 400s
+export const img = (u: string, w = 1920) => `/_next/image?url=${encodeURIComponent(u)}&w=${WIDTHS.find((x) => x >= w) ?? 3840}&q=75`; // Next 16 only accepts the configured qualities (default [75])
 const css = (u: string, w?: number) => `url("${img(u, w)}")`;
 
 /** CSS custom properties consumed by app/mastermind/mastermind.css */
@@ -22,4 +23,25 @@ export const mmArtVars = {
   '--art-folder': css(src.folder, 1200),
   '--art-sil': css(src.silhouette, 384),
   '--art-polaroid': css(src.polaroid, 384),
+  '--mk-room': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_182417_a98d58d7-bf33-47a9-9051-e9901eff65d5.png', 2048),
+  '--mk-folder': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_182519_b88441fa-03df-4b6e-b84d-5f0fe2ace8f0.png', 1200),
+  '--mk-polaroid': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_182537_ff69af91-b1b9-4ade-810f-bea0f84e6690.png', 500),
+  '--mk-paper': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_193514_c00b5830-e5d9-4f4f-afd6-851647ee0cef.png', 1920),
+  '--mk-desk': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_193917_c9793dd3-39a7-4d7b-92c7-7c53c0ebcf50.png', 2048),
+  '--mk-board': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194034_5390c6fb-245f-473b-8de2-bcaabe48ead4.png', 1200),
+  '--mk-qr': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194036_eb57fa91-4438-4004-81ee-cd541e7fd198.png', 384),
+  '--mk-plaque': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194102_e046071a-83db-4e43-9344-dec7170f14d1.png', 828),
+  '--mk-lock': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194104_4db47c32-a6fb-415e-ae07-289ccb975915.png', 256),
+  '--mk-tile': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194211_53ffc7e8-318d-48ea-b333-1eaa4e2e8882.png', 256),
+  '--mk-slip': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194212_f70d9589-9902-4d54-8421-7cd86013815e.png', 640),
+  '--mk-pad': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194214_3a2cab9d-b952-461e-8386-5c852badb8d8.png', 640),
+  '--mk-watch': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194215_f514da77-0c95-4478-ada2-233366adeaa2.png', 384),
+  '--mk-typer': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194333_d61a9476-9015-4b04-bc2c-a3a32a5dd200.png', 1200),
+  '--mk-burst': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194100_31f3f1a6-c448-49d6-bfac-2d1fb9774b6a.png', 2048),
+  '--mk-badge': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_194334_3b0d81c9-5cff-4972-b3ae-154d07728baf.png', 256),
+  '--mk-role': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_203057_a1df9994-2cc7-4882-b537-569b1aea8d79.png', 640),
+  '--mk-ballot': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_203058_04c322f4-6e50-4aba-bf60-08f6d94814da.png', 640),
+  '--mk-mug': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_203059_22d973b9-d3a6-45f8-88f9-378d074746f3.png', 640),
+  '--mk-snail': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_203101_80b92432-6278-4153-8f29-0e249cbd9516.png', 384),
+  '--mk-file': css('https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261030_195104_09e738c6-9dba-402a-b9f6-1efe69b38dd0.png', 1920),
 } as React.CSSProperties;

@@ -1,0 +1,181 @@
+/* Duel — orange comic western skin (loaded after west.css). Real DOM, real data; art = generated comic backdrops + class portraits. */
+.west.west{--ink:#111;--y:#ffd400;--p:#ff1f8e;--o:#ff8a1f;--paper:#fff6dc;
+  background:#f59a2b var(--w-street-comic) center/cover no-repeat;color:var(--ink)}
+.west.west::after{background:linear-gradient(180deg,rgba(255,255,255,.18),transparent 30%,transparent 70%,rgba(120,40,0,.35))}
+.west.west .w-vignette{background:radial-gradient(ellipse 80% 70% at 50% 45%,transparent 50%,rgba(120,40,0,.45))}
+.west.west.tense .w-vignette{background:radial-gradient(ellipse 70% 62% at 50% 45%,transparent 38%,rgba(190,20,40,.55))}
+.west.west .w-dust{opacity:.35}
+.west.west.p-lobby{background-image:var(--w-saloon-comic);background-size:cover}
+.west.west.p-finished.won{background-image:var(--w-sunset-comic);background-size:cover;background-position:center}
+.west.west.p-finished.lost{background-image:var(--w-sunset-comic)!important;background-size:cover!important;filter:saturate(.55) brightness(.85)}
+/* portraits: framed comic panels */
+.west.west .w-portrait{width:clamp(96px,22vw,150px);height:clamp(96px,22vw,150px);border-radius:3px;border:5px solid var(--ink);background:#fff;box-shadow:6px 6px 0 var(--p);transform:rotate(-3deg)}
+.west.west .w-gun.right .w-portrait{transform:rotate(3deg);box-shadow:-6px 6px 0 var(--p)}
+.west.west .w-gun.me .w-portrait{box-shadow:6px 6px 0 var(--y),0 0 0 3px var(--ink)}
+.west.west .w-portrait img{object-position:50% 18%}
+.west.west .w-name{align-items:flex-start;text-shadow:none}
+.west.west .w-name b{font:400 clamp(18px,2.4vw,30px) 'LL Display','Luckiest Guy',Impact,sans-serif;text-transform:uppercase;color:var(--ink);background:var(--y);border:3px solid var(--ink);padding:1px 14px;transform:skewX(-8deg);max-width:220px;letter-spacing:.02em}
+.west.west .w-gun.right .w-name b{background:#e83fd0;color:#fff}
+.west.west .w-name span{color:var(--ink);background:#fff;border:2px solid var(--ink);padding:0 8px;opacity:1;font-weight:800;margin-top:3px}
+.west.west .w-cyl{width:44px;height:44px}
+/* timer = sunburst medallion */
+.west.west .w-clock{filter:drop-shadow(4px 4px 0 var(--ink))}
+.west.west .w-time{font:400 28px 'LL Display','Luckiest Guy',Impact,sans-serif;color:var(--ink);text-shadow:none}
+/* prompt card + bounty poster as cream comic cards */
+.west.west .w-note{background:var(--paper);filter:none;border:5px solid var(--ink);border-radius:2px;box-shadow:7px 7px 0 var(--ink);margin-top:10px;width:min(92%,460px);padding:16px 18px;transform-origin:50% 0}
+.west.west .w-note-big{font:400 clamp(22px,3.2vw,40px)/1.05 'LL Display','Luckiest Guy',Impact,sans-serif;text-transform:uppercase;font-style:normal;color:var(--ink)}
+.west.west .w-note-mid{font:700 17px/1.25 'LL Comic',Bangers,Impact,sans-serif;font-style:normal;color:var(--ink);letter-spacing:.03em}
+.west.west .w-note small{color:var(--ink);opacity:1}
+.west.west .w-poster{background:var(--paper);border:5px solid var(--ink);box-shadow:6px 6px 0 var(--p);aspect-ratio:auto;min-height:120px;transform:rotate(1.5deg)}
+.west.west .w-poster-body{position:static;padding:10px 12px 12px;color:var(--ink)}
+.west.west .w-wanted-name,.west.west .w-reward{color:var(--ink);font:400 clamp(16px,2vw,22px) 'LL Display','Luckiest Guy',Impact,sans-serif;text-transform:uppercase;text-shadow:none}
+.west.west .w-tiles.bounty .w-tile{background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:2px 2px 0 var(--ink)}
+.west.west .w-tiles.bounty .w-tile.on{background:var(--y)}
+/* answer bar */
+.west.west .w-bar{background:var(--o);border:5px solid var(--ink);box-shadow:8px 8px 0 var(--ink);filter:none;border-radius:2px;padding:28px 22px 18px}
+.west.west .w-plate{font:400 16px 'LL Display','Luckiest Guy',Impact,sans-serif;letter-spacing:.06em;color:#fff;background:var(--ink);border-radius:0;box-shadow:3px 3px 0 var(--p);transform:translateX(-50%) skewX(-8deg)}
+.west.west .w-tiles.typing .w-tile{background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.west.west .w-tiles.typing .w-tile.on{box-shadow:3px 3px 0 var(--ink)}
+.west.west .w-tiles.typing .w-tile.bad{background:var(--p);color:#fff}
+.west.west .w-tiles.typing .w-tile.caret::after{background:var(--p)}
+.west.west .w-key{background:#fff;color:var(--ink);border:3px solid var(--ink);border-radius:50%;aspect-ratio:1;box-shadow:2px 2px 0 var(--ink);font-family:'LL Display','Luckiest Guy',Impact,sans-serif}
+.west.west .w-key.sel{background:var(--p);color:#fff;box-shadow:0 0 0 3px var(--y),2px 2px 0 3px var(--ink)}
+.west.west .w-bar-msg,.west.west .w-status{color:var(--ink);font:700 16px 'LL Comic',Bangers,Impact,sans-serif;font-style:normal;letter-spacing:.04em;text-shadow:none}
+.west.west .w-bar-msg.ok{color:#0a6b1d}.west.west .w-bar-msg.bad{color:#b0002e}
+.west.west .w-draw{background:var(--y);color:var(--ink);border:4px solid var(--ink);border-radius:2px;box-shadow:5px 5px 0 var(--p),5px 5px 0 4px var(--ink);font:400 clamp(22px,3vw,34px) 'LL Display','Luckiest Guy',Impact,sans-serif;letter-spacing:.04em;transform:rotate(-3deg) skewX(-6deg)}
+.west.west .w-draw:hover:not(:disabled){transform:rotate(-3deg) skewX(-6deg) translateY(-3px) scale(1.05)}
+.west.west .w-draw:focus-visible,.west.west .w-key:focus-visible{outline:4px solid #19d3f3;outline-offset:3px}
+/* rack as an orange comic dock */
+.west-rack .rack-inner{background:var(--o)!important;border:4px solid var(--ink)!important;box-shadow:6px 6px 0 var(--ink)!important;color:var(--ink)}
+.west-rack .rack-inner *{color:var(--ink)}
+/* wide screens: head-to-head composition */
+@media (min-width:900px) and (min-aspect-ratio:1/1){
+  .west.west{display:grid;grid-template-columns:1fr minmax(340px,520px) 1fr;grid-template-rows:auto 1fr auto;column-gap:clamp(12px,3vw,48px);align-items:start;justify-items:center;padding:60px clamp(16px,4vw,64px) calc(var(--rack-h,0px) + 12px)}
+  .west.west .w-top{display:contents}
+  .west.west .w-clock{grid-column:2;grid-row:1;justify-self:center}
+  .west.west .w-gun.left{grid-column:1;grid-row:2;justify-self:end}
+  .west.west .w-gun.right{grid-column:3;grid-row:2;justify-self:start}
+  .west.west .w-gun{grid-template-columns:1fr;justify-items:start}
+  .west.west .w-gun .w-portrait{width:clamp(170px,19vw,290px);height:clamp(210px,24vw,360px)}
+  .west.west .w-gun.right{justify-items:end}.west.west .w-gun.right .w-name{align-items:flex-end}
+  .west.west .w-post{grid-column:2;grid-row:2;width:100%;gap:14px;margin-top:0}
+  .west.west .w-note{order:-1}
+  .west.west .w-poster{width:min(100%,300px)}
+  .west.west .w-bar{grid-column:1/-1;grid-row:3;width:min(760px,100%);justify-self:center;margin-top:12px}
+}
+@media (prefers-reduced-motion:reduce){.west.west .w-draw,.west.west .w-portrait{transition:none!important}}
+/* medallion timer: flat comic disc, no photo bezel */
+.west.west .w-clock{background:radial-gradient(circle,#fff6a8 0 55%,var(--y) 56%);border:5px solid var(--ink);border-radius:50%;width:96px;height:96px;box-shadow:4px 4px 0 var(--p)}
+.west.west .w-clock svg{opacity:.18}
+.west.west .w-time{text-shadow:none!important;-webkit-text-stroke:0;font-size:26px}
+.west.west .w-clock.urgent .w-time{color:#d0002f}
+/* HUD dock stays one row so it never covers the answer bar */
+.west-rack .rack-inner .tiles{flex-wrap:nowrap!important}
+.west-rack .rack-inner .sect{flex:0 0 auto}
+
+/* ---- generated comic art kit (blank art; real text sits on top) ---- */
+.west.west .w-note{background:var(--w-c-card) center/100% 100% no-repeat;border:0;box-shadow:none;padding:30px 34px;filter:drop-shadow(5px 6px 0 rgba(0,0,0,.35))}
+.west.west .w-poster{background:var(--w-c-poster) center/100% 100% no-repeat;border:0;box-shadow:none;padding:26px 24px 22px;filter:drop-shadow(5px 6px 0 rgba(0,0,0,.35))}
+.west.west .w-clock{background:var(--w-c-timer) center/contain no-repeat;border:0;box-shadow:none;width:112px;height:112px;filter:drop-shadow(3px 4px 0 rgba(0,0,0,.35))}
+.west.west .w-clock svg{display:none}
+.west.west .w-name b{background:var(--w-c-bany) center/100% 100% no-repeat;border:0;padding:6px 26px;transform:none;min-width:130px;text-align:center}
+.west.west .w-gun.right .w-name b{background:var(--w-c-banm) center/100% 100% no-repeat;color:#fff}
+.west.west .w-bar{background:var(--w-c-panel) center/100% 100% no-repeat;border:0;box-shadow:none;padding:38px 46px 30px}
+.west.west .w-draw{background:var(--w-c-fire) center/100% 100% no-repeat;border:0;box-shadow:none;min-width:190px;min-height:84px;padding:14px 34px;transform:rotate(-2deg);filter:drop-shadow(3px 4px 0 rgba(0,0,0,.35))}
+.west.west .w-draw:hover:not(:disabled){transform:rotate(-2deg) scale(1.06)}
+.west-rack .rack-inner .tiles{flex-wrap:nowrap!important}
+.west-rack .rack-inner .sect{flex:0 0 auto}
+
+/* ---- Duel lobby + finale (art kit) ---- */
+.p-lobby .w-lobby{color:var(--ink);background:none!important;box-shadow:none!important;border:0!important;width:min(900px,100%)}
+.p-lobby .w-lobby::before,.p-lobby .w-lobby::after{display:none}
+.w-lobby .label{color:var(--ink);text-shadow:none;font:400 18px 'LL Display','Luckiest Guy',Impact,sans-serif;letter-spacing:.06em}
+/* lobby code = wanted poster */
+.w-sign{background:var(--w-c-poster) center/100% 100% no-repeat!important;aspect-ratio:3/3.4;width:min(300px,78vw);margin-top:6px;filter:drop-shadow(5px 6px 0 rgba(0,0,0,.35));border-radius:0}
+.w-sign::before,.w-sign::after{display:none}
+.w-sign span{font:400 clamp(44px,10vw,66px) 'LL Display','Luckiest Guy',Impact,sans-serif;letter-spacing:.12em;color:var(--ink);text-shadow:none;margin-top:18%}
+.p-lobby .w-lobby .lobby-top{background:none;box-shadow:none;border:0;padding:0;gap:20px}
+.p-lobby .w-lobby .lobby-qr{background:var(--w-c-card) center/100% 100% no-repeat;padding:20px 22px 14px;box-shadow:none;filter:drop-shadow(4px 5px 0 rgba(0,0,0,.35))}
+.p-lobby .w-lobby .lobby-qr>span{color:var(--ink)!important;font:400 15px 'LL Comic',Bangers,Impact,sans-serif;letter-spacing:.06em}
+/* seats = wanted posters, VS = burst */
+.w-seat{background:var(--w-c-poster) center/100% 100% no-repeat!important;aspect-ratio:3/3.6;width:clamp(150px,30vw,230px)}
+.w-seat-body{top:26%;bottom:8%;left:12%;right:12%;color:var(--ink)}
+.w-seat b{font:400 clamp(16px,2.6vw,22px) 'LL Display','Luckiest Guy',Impact,sans-serif;color:var(--ink);letter-spacing:.03em}
+.w-seat small{font:700 13px 'LL Comic',Bangers,Impact,sans-serif;font-style:normal;opacity:1;color:var(--ink)}
+.w-seat .w-mug{width:70%;border:4px solid var(--ink);border-radius:2px;background:#fff}
+.w-lobby .dl-vs{background:var(--w-c-fire) center/100% 100% no-repeat;font:400 clamp(30px,5vw,48px) 'LL Display','Luckiest Guy',Impact,sans-serif!important;font-style:normal!important;color:var(--ink)!important;text-shadow:none!important;padding:18px 28px;text-transform:uppercase}
+/* controls: art panels + FIRE-style start */
+.w-lobby .narrow-col,.w-lobby .bot-row,.w-lobby .rules-strip{background:var(--w-c-panel) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;color:var(--ink);padding:26px 34px}
+.w-lobby .rules-strip span,.w-lobby .duel-tag{color:var(--ink)!important;background:#fff!important;border:2px solid var(--ink)!important;font-family:'LL Comic',Bangers,Impact,sans-serif}
+.w-lobby .muted{color:var(--ink)!important}
+.w-lobby .btn{font-family:'LL Display','Luckiest Guy',Impact,sans-serif;letter-spacing:.03em;color:var(--ink)}
+.w-lobby .btn.ghost{background:var(--w-c-card) center/100% 100% no-repeat;border:0;color:var(--ink);padding:12px 22px}
+.p-lobby .w-lobby .btn.lg:not(:disabled),.w-lobby .btn.lg{background:var(--w-c-fire) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;min-height:90px;font-size:clamp(26px,3.4vw,38px);color:var(--ink)!important;filter:drop-shadow(4px 5px 0 rgba(0,0,0,.35))}
+.p-lobby .w-lobby .btn.lg:disabled{filter:grayscale(.7);opacity:.7;color:var(--ink)}
+/* finale */
+.west.p-finished .w-banner{background:var(--w-c-bany) center/100% 100% no-repeat;border:0;box-shadow:none;animation:none;padding:26px 56px 30px;filter:drop-shadow(5px 6px 0 rgba(0,0,0,.35))}
+.west.p-finished .w-banner::before,.west.p-finished .w-banner::after{display:none}
+.west.p-finished .w-banner.lost{background:var(--w-c-banm) center/100% 100% no-repeat}
+.west.p-finished .w-banner span{font-family:'LL Display','Luckiest Guy',Impact,sans-serif;color:var(--ink);text-shadow:none;font-size:clamp(30px,6vw,60px)}
+.west.p-finished .w-banner.lost span{color:#fff}
+.west.p-finished .w-poster-body{padding:0}
+.west.p-finished .w-stamp{font-family:'LL Display','Luckiest Guy',Impact,sans-serif;color:#d0002f;border-color:#d0002f}
+.west.p-finished .w-show{background:var(--w-c-card) center/100% 100% no-repeat;border:0;color:var(--ink);padding:16px 20px}
+.west.p-finished .w-show *{color:var(--ink)}
+.w-stats{background:var(--w-c-card) center/100% 100% no-repeat;color:var(--ink);padding:26px}
+.w-lobby *,.west.p-finished .w-note *,.west.p-finished .w-post *{text-shadow:none!important}
+.p-lobby .w-lobby .lobby-top{display:flex;align-items:center;justify-content:center;flex-wrap:wrap}
+
+/* ===== Duel lobby v2: centred, fits the screen, DRAW! always in view ===== */
+.west.p-lobby .w-lobby{margin:0 auto!important;width:min(920px,100%)!important;align-self:center;display:flex;flex-direction:column;align-items:center;gap:10px;padding-bottom:6px}
+.west.p-lobby .w-lobby .lobby-top{gap:clamp(10px,3vw,28px);flex-wrap:nowrap;justify-content:center}
+.west.p-lobby .w-sign{width:clamp(150px,15vw,200px)!important;margin-top:0}
+.west.p-lobby .w-sign span{font-size:clamp(30px,3.6vw,46px)}
+.west.p-lobby .w-lobby .lobby-qr{padding:16px 18px 10px}
+.west.p-lobby .w-lobby .lobby-qr svg{width:clamp(84px,8vw,104px);height:auto}
+.west.p-lobby .w-seat{width:clamp(132px,15vw,196px)!important}
+.west.p-lobby .w-lobby .duel-lobby{gap:clamp(6px,2vw,28px);transform:none!important}
+.west.p-lobby .w-lobby .host-switch,.west.p-lobby .w-lobby .quick-bot{align-self:center}
+.west.p-lobby .w-lobby .narrow-col{position:sticky;bottom:10px;z-index:6;width:min(560px,100%);padding:16px 28px!important;margin-top:4px}
+.west.p-lobby .w-lobby .narrow-col .btn.lg{min-height:72px}
+.west.p-lobby .w-lobby .narrow-col .muted.small{display:none}
+@media (max-width:560px){
+  .west.p-lobby .w-lobby .lobby-top{flex-wrap:wrap}
+  .west.p-lobby .w-seat{width:clamp(120px,38vw,170px)!important}
+  .west.p-lobby .w-lobby .narrow-col{padding:12px 16px!important}
+}
+@media (max-height:560px) and (orientation:landscape){
+  .west.p-lobby .w-sign{width:130px!important}
+  .west.p-lobby .w-seat{width:120px!important}
+  .west.p-lobby .w-lobby .lobby-qr{display:none}
+  .west.p-lobby .w-lobby .narrow-col .btn.lg{min-height:56px}
+}
+.west.west.p-lobby .w-lobby{grid-column:1/-1!important;justify-self:center!important}
+.west.p-lobby .w-lobby .lobby-qr>span{color:#fff!important;background:#111;padding:2px 10px;margin-top:6px;transform:rotate(-2deg)}
+
+/* ===== Duel v2: finale = one centred column, banner > poster > note > bar, always in view ===== */
+.west.west.p-finished{display:flex!important;flex-direction:column!important;align-items:center;justify-content:flex-start;gap:8px;padding:clamp(48px,8dvh,64px) 16px 12px!important;overflow:auto}
+.west.west.p-finished .w-post.finale{grid-column:auto!important;grid-row:auto!important;width:min(100%,420px)!important;margin:0!important;gap:0!important;display:flex;flex-direction:column;align-items:center;flex:0 1 auto}
+.west.west.p-finished .w-banner{order:0;margin:0 0 6px!important;padding:16px 40px 20px!important;scale:min(1, calc((100dvh - 520px) / 60 + .6))}
+.west.west.p-finished .w-banner span{font-size:clamp(26px,min(5vw,7dvh),52px)!important}
+.west.west.p-finished .w-poster{order:1;width:clamp(120px,min(26vw,26dvh),190px)!important;min-height:0!important;padding:14px 12px 12px!important;aspect-ratio:auto}
+.west.west.p-finished .w-poster-body{gap:4px!important}
+.west.west.p-finished .w-wanted-name{font-size:clamp(14px,2.2dvh,18px)!important}
+.west.west.p-finished .w-mug{width:clamp(56px,min(11dvh,12vw),84px)!important;height:clamp(56px,min(11dvh,12vw),84px)!important;aspect-ratio:1}
+.west.west.p-finished .w-reward{font-size:clamp(11px,1.9dvh,14px)!important;line-height:1.1;text-align:center;max-width:100%;overflow-wrap:anywhere}
+.west.west.p-finished .w-stamp{pointer-events:none;font-size:clamp(14px,2.4dvh,22px)!important;white-space:nowrap}
+.west.west.p-finished .w-note{order:2;order:2!important;margin-top:8px!important;width:min(100%,380px)!important;padding:20px 26px!important}
+.west.west.p-finished .w-show{grid-template-columns:minmax(44px,auto) 1fr;gap:0 10px}
+.west.west.p-finished .w-show span{white-space:nowrap}
+.west.west.p-finished .w-bar{grid-row:auto!important;margin:6px 0 0!important;width:min(100%,560px);padding:20px 30px 14px!important}
+@media (max-height:700px){.west.west.p-finished .w-note{padding:12px 20px!important}.west.west.p-finished .w-show em{display:none}}
+
+/* ===== Duel v2: gameplay fits one viewport on wide screens ===== */
+@media (min-width:900px) and (min-aspect-ratio:1/1) and (max-height:860px){
+  .west.west.p-guess,.west.west.p-answer{padding-top:46px!important;row-gap:2px!important;padding-bottom:calc(var(--rack-h,86px) + 6px)!important}
+  .west.west .w-clock{width:72px!important;height:72px!important}
+  .west.west .w-gun .w-portrait{height:clamp(130px,calc(100dvh - 590px),300px)!important;width:calc(clamp(130px,calc(100dvh - 590px),300px)*.8)!important}
+  .west.west.p-guess .w-poster,.west.west.p-answer .w-poster{width:min(100%,200px)!important;min-height:0!important}
+  .west.west.p-guess .w-note,.west.west.p-answer .w-note{padding:12px 22px!important;width:min(92%,340px)!important}
+  .west.west.p-guess .w-bar,.west.west.p-answer .w-bar{padding:20px 34px 12px!important;margin-top:0!important}
+}

@@ -1,0 +1,174 @@
+/* Class select — reference layout (loaded after class-comic.css) */
+.selpage{--y:#ffd400;--p:#ff1f8e;--k:#111;--c:#19d3f3;background:#ffd400;padding:12px clamp(12px,3vw,40px) 0}
+.selpage .sel-bg{background:#ffd400;background-image:radial-gradient(rgba(255,255,255,.55) 22%,transparent 24%);background-size:14px 14px}
+.selpage .sel-bg::before{display:none}
+.selpage .sel-bg::after{display:block!important;content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 40%,rgba(255,255,255,.55),transparent 60%)}
+/* top */
+.selpage .sel-top{display:flex;align-items:center;gap:clamp(12px,3vw,40px);flex-wrap:nowrap;padding-top:4px}
+.selpage .play-back{order:0;font-size:18px;padding:6px 14px;box-shadow:4px 4px 0 var(--k)}
+.selpage .sel-titlebox{order:1;transform:rotate(-3deg) skewX(-4deg);margin-left:clamp(0px,2vw,30px)}
+.selpage .sel-top h1{order:0;max-width:none;font-size:clamp(34px,5.4vw,78px);line-height:.9;margin:0;white-space:nowrap}
+.selpage .sel-sub{margin:6px 0 0 6px;display:inline-block;background:var(--p);color:#fff;border:3px solid var(--k);font-family:var(--cmc);letter-spacing:.08em;text-transform:uppercase;padding:2px 12px;font-size:clamp(13px,1.4vw,20px);transform:skewX(-8deg);box-shadow:3px 3px 0 var(--k)}
+/* main grid */
+.selpage .sel-main{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(16px,3vw,48px);align-items:start;padding:10px 0 0}
+.selpage .sel-portrait{position:relative;margin:0;aspect-ratio:4/3.3;max-height:min(58vh,560px);width:100%;border:6px solid var(--k);background:#fff;overflow:hidden;transform:rotate(-2deg);clip-path:polygon(0 0,100% 3%,98% 100%,2% 97%);box-shadow:12px 12px 0 var(--p)}
+.selpage .sel-portrait .sp-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 22%;animation:sp-in .35s ease-out both}
+.selpage .sp-fallback{position:absolute;inset:0;display:grid;place-items:center;background:#fff6a8}
+.selpage .sp-tag{position:absolute;left:0;bottom:0;z-index:2;display:flex;flex-direction:column;gap:2px;padding:6px 22px 8px 14px;background:var(--k);color:#fff;clip-path:polygon(0 0,100% 0,92% 100%,0 100%)}
+.selpage .sp-name{font-family:var(--dsp);text-transform:uppercase;font-size:clamp(28px,4vw,56px);line-height:1;color:#fff;text-shadow:.05em .05em 0 var(--p)}
+.selpage .sp-line{font-family:var(--cmc);letter-spacing:.06em;color:var(--y);font-size:clamp(14px,1.5vw,22px)}
+.selpage .sp-diff{position:absolute;right:10px;top:10px;z-index:2;display:flex;align-items:center;gap:6px;background:#fff;border:3px solid var(--k);padding:3px 10px;font-family:var(--cmc);color:var(--k);text-transform:uppercase;letter-spacing:.06em}
+.selpage .sp-diff .cs-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--k);background:#fff;display:inline-block}
+.selpage .sp-diff .cs-dot.on{background:var(--p)}
+/* details */
+.selpage .sel-right{max-height:none!important;overflow:visible!important;padding:0!important;transform:none;display:flex;flex-direction:column;gap:12px}
+.selpage .sel-info{display:flex;flex-direction:column;gap:10px;padding:0!important;animation:sp-in .3s ease-out both}
+.selpage .sel-info .sel-role{align-self:flex-start}
+.selpage .sel-facts{max-width:none;margin:0;gap:12px}
+.selpage .sel-facts .sel-box{display:flex;gap:14px;align-items:center;padding:12px 16px;background:#fff!important;border:4px solid var(--k)!important;box-shadow:6px 6px 0 var(--k);transform:skewX(-3deg)}
+.selpage .sel-facts .sel-box.perk{border-left:12px solid var(--c)!important}
+.selpage .sel-facts .sel-box.price{border-left:12px solid var(--y)!important;background:#fff6a8!important}
+.selpage .sel-facts .sel-box.how{border-left:12px solid var(--p)!important}
+.selpage .sel-facts .sel-box b{font-family:var(--dsp);font-size:clamp(18px,1.8vw,26px);letter-spacing:.04em;margin:0 0 4px;color:var(--k)!important}
+.selpage .sel-facts .sel-box p{font-size:clamp(14px,1.25vw,17px);font-weight:700;line-height:1.3;display:block;-webkit-line-clamp:unset}
+.selpage .sel-ico{flex:0 0 auto;width:60px;height:60px;display:grid;place-items:center;background:var(--c);border:3px solid var(--k);border-radius:50%;overflow:hidden}
+.selpage .sel-ico.coin{background:var(--y);font-family:var(--dsp);font-size:34px;color:var(--k)}
+.selpage .own{display:inline-block;margin-top:6px;font-style:normal;font-family:var(--cmc);letter-spacing:.08em;text-transform:uppercase;background:var(--k);color:#fff;padding:1px 10px;transform:skewX(-8deg)}
+.selpage .sel-more summary{font-size:16px;background:#fff!important;border:3px solid var(--k);display:inline-block;box-shadow:3px 3px 0 var(--k)}
+/* name / mode controls: compact row */
+.selpage .sel-left{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch}
+.selpage .sel-left>*{flex:1 1 220px;max-width:none!important}
+.selpage .sel-mode,.selpage .sel-you,.selpage .sel-who button{border:3px solid var(--k)!important;box-shadow:4px 4px 0 var(--k);padding:8px 12px}
+.selpage .sel-who{display:flex;gap:8px;flex:1 1 100%}
+.selpage .sel-who button{flex:1}
+/* strip: pink torn lower bar with portrait tiles + lock-in */
+.selpage .sel-strip{position:sticky;bottom:0;margin:0 calc(-1 * clamp(12px,3vw,40px));padding:26px clamp(12px,3vw,40px) calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:row;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;background:none!important}
+.selpage .sel-strip::before{display:block!important;content:'';position:absolute;inset:14px 0 0;background:var(--p);border-top:5px solid var(--k);z-index:-1;clip-path:polygon(0 8px,4% 0,9% 8px,15% 1px,22% 9px,30% 0,38% 8px,47% 1px,55% 9px,64% 0,72% 8px,81% 1px,90% 9px,96% 0,100% 7px,100% 100%,0 100%)}
+.selpage .sel-cards{flex-wrap:nowrap;overflow-x:auto;padding:14px 6px 4px!important;gap:12px;scrollbar-width:none;max-width:100%}
+.selpage .sel-cards .sel-card,.selpage .sel-strip .sel-card{width:clamp(78px,8vw,112px)!important;flex:0 0 clamp(78px,8vw,112px)!important;border:4px solid var(--k)!important;border-color:var(--k)!important;background:#fff!important;box-shadow:4px 4px 0 var(--k);transform:rotate(-2deg)!important;transition:transform .15s}
+.selpage .sel-card:nth-child(2n){transform:rotate(2deg)!important}
+.selpage .sel-card.on{box-shadow:0 0 0 4px var(--y),6px 6px 0 4px var(--k)!important;transform:translateY(-10px) rotate(0)!important}
+.selpage .sel-card b{font-size:clamp(11px,1vw,15px)}
+.selpage .sel-change{order:3;font-size:13px;background:#fff;border:2px solid var(--k);padding:2px 8px}
+.selpage .sel-lock{margin-left:auto;font-size:clamp(22px,2.6vw,38px);padding:12px clamp(20px,3vw,44px);background:var(--p)!important;color:#fff;border:5px solid var(--k);box-shadow:7px 7px 0 var(--k);transform:rotate(-2deg) skewX(-6deg);white-space:nowrap}
+.selpage .sel-lock:hover{transform:rotate(-2deg) skewX(-6deg) translateY(-3px) scale(1.04)}
+@keyframes sp-in{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+:is(.selpage .sel-portrait){animation:none}
+/* narrow: portrait on top, details stack, only the middle scrolls feel (page scrolls) */
+@media (max-width:899px){
+  .selpage .sel-main{grid-template-columns:1fr;gap:14px}
+  .selpage .sel-portrait{aspect-ratio:16/10;max-height:36vh;box-shadow:7px 7px 0 var(--p)}
+  .selpage .sel-top h1{font-size:clamp(28px,8vw,44px);white-space:normal}
+  .selpage .sel-strip{flex-direction:column;align-items:stretch;gap:8px}
+  .selpage .sel-lock{margin:0;text-align:center;width:100%;justify-content:center}
+  .selpage .sel-cards .sel-card,.selpage .sel-strip .sel-card{width:64px!important;flex-basis:64px!important}
+  .selpage .sel-facts .sel-box{padding:9px 12px}
+  .selpage .sel-ico{width:44px;height:44px}
+  .selpage .sel-ico.coin{font-size:24px}
+}
+@media (max-width:899px) and (orientation:landscape){
+  .selpage .sel-main{grid-template-columns:1fr 1fr}
+  .selpage .sel-portrait{max-height:46vh}
+  .selpage .sel-strip{flex-direction:row;align-items:flex-end}
+  .selpage .sel-lock{width:auto;margin-left:auto}
+}
+@media (prefers-reduced-motion:reduce){.selpage *{animation:none!important;transition:none!important}}
+/* v2 fit-to-screen */
+.selpage .sel-leftcol{display:flex;flex-direction:column;gap:14px;min-width:0}
+.selpage .sel-leftcol .sel-left{flex-direction:row}
+.selpage .sel-top h1{font-size:clamp(30px,4.2vw,60px)}
+.selpage .sel-titlebox{transform:rotate(-2deg) skewX(-4deg);padding-top:6px}
+.selpage .sel-portrait{max-height:min(44vh,470px);aspect-ratio:16/10}
+.selpage .sel-facts .sel-box{padding:9px 14px;box-shadow:5px 5px 0 var(--k)}
+.selpage .sel-facts .sel-box p{font-size:clamp(13px,1.1vw,16px)}
+.selpage .sel-facts .sel-box b{font-size:clamp(16px,1.5vw,22px);margin-bottom:2px}
+@media (min-width:900px){
+  .selpage .sel-strip{position:relative;margin-top:auto}
+  .selpage .sel-main{flex:1}
+}
+/* v3 compact controls + mobile strip */
+.selpage .sel-leftcol .sel-left{align-items:flex-start;gap:8px}
+.selpage .sel-leftcol .sel-left>*{flex:1 1 200px}
+.selpage .sel-mode{display:flex;align-items:center;gap:10px;flex:0 1 150px!important;padding:6px 10px!important;min-height:0}
+.selpage .sel-you{display:flex;flex-direction:row;align-items:center;gap:10px;padding:6px 10px!important;flex:2 1 260px!important}
+.selpage .sel-you .input{padding:6px 10px;font-size:16px}
+.selpage .sel-who button{padding:6px 12px!important}
+.selpage .sel-who button span{display:none}
+.selpage .sel-portrait{max-height:min(40vh,420px)}
+@media (max-width:899px){
+  .selpage .sel-strip{padding-top:20px;gap:6px}
+  .selpage .sel-change{display:none}
+  .selpage .sel-cards{padding-top:8px!important;gap:8px;justify-content:center}
+  .selpage .sel-cards .sel-card,.selpage .sel-strip .sel-card{width:52px!important;flex-basis:52px!important}
+  .selpage .sel-card b{font-size:9px}
+  .selpage .sel-lock{font-size:20px;padding:8px 14px}
+  .selpage{padding-bottom:0}
+  .selpage .sel-main{padding-bottom:12px}
+  .selpage .sel-portrait{max-height:30vh}
+}
+.selpage .sel-you .input{min-width:110px;flex:1}
+/* short landscape: strip flows with the page, Lock in stays pinned bottom-right */
+@media (max-height:500px){
+  .selpage .sel-strip{position:relative!important;flex-direction:row!important;margin-top:8px}
+  .selpage .sel-strip::before{inset:10px 0 0}
+  .selpage{padding-bottom:64px}
+  .selpage .sel-lock{position:fixed;right:12px;bottom:10px;z-index:40;font-size:20px;padding:6px 18px;width:auto;margin:0}
+  .selpage .sel-top h1{font-size:30px}
+  .selpage .sel-sub{display:none}
+  .selpage .sel-portrait{aspect-ratio:16/9;max-height:none}
+}
+/* v4: Lock in always reachable (sticky bar), compact on short desktops; details toggle fits its label */
+@media (min-width:900px){
+  .selpage .sel-strip{position:sticky!important;bottom:0;z-index:20}
+}
+@media (min-width:900px) and (max-height:760px){
+  .selpage .sel-cards .sel-card,.selpage .sel-strip .sel-card{width:60px!important;flex-basis:60px!important}
+  .selpage .sel-card b{font-size:9px}
+  .selpage .sel-lock{font-size:22px;padding:8px 22px}
+  .selpage .sel-strip{padding-top:20px}
+}
+.selpage details.cs-more.sel-more,.selpage details.cs-more.sel-more[open]{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}
+.selpage details.cs-more.sel-more[open]{background:#fff!important;border:3px solid var(--k)!important;padding:6px!important}
+.selpage .sel-more .sel-box{transform:none;box-shadow:none}
+.selpage .sel-main{padding-bottom:12px}
+.selpage .sel-strip::before{top:14px!important;bottom:0!important;height:auto!important;background-size:auto!important;background-repeat:no-repeat!important;background-color:var(--p)!important;background-image:radial-gradient(rgba(0,0,0,.14) 22%,transparent 26%)!important;background-size:8px 8px!important}
+.selpage .sel-lock{background:#fff!important;color:var(--k)!important;text-shadow:none}.selpage .sel-lock:focus-visible,.selpage .sel-card:focus-visible{outline:4px solid var(--c);outline-offset:3px}
+/* v5 clarity: readable playstyle tag; on phones / short screens the hero row + Lock in is a solid bottom bar and the page reserves room for it, so it never sits on top of the perk / price text */
+.selpage .sel-info .sel-role{font-family:var(--cmc);font-size:13px!important;letter-spacing:.08em;padding:3px 10px;background:var(--k);color:#fff!important;transform:skewX(-6deg)}
+.selpage .sel-who button{font-family:var(--cmc);font-size:15px}
+.selpage .sel-who button:not(.on){background:#fff;color:var(--k)}
+@media (max-width:899px),(max-height:560px){
+  .selpage{padding-bottom:120px!important}
+  .selpage .sel-main{padding-bottom:16px!important}
+  .selpage .sel-strip{position:fixed!important;left:0;right:0;bottom:0;margin:0!important;z-index:30;padding:10px 12px calc(10px + env(safe-area-inset-bottom))!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;flex-wrap:nowrap!important;background:var(--p)!important;border-top:4px solid var(--k)}
+  .selpage .sel-strip::before{display:none!important}
+  .selpage .sel-cards{flex:1 1 auto;min-width:0;padding:6px 2px 2px!important;gap:8px!important;justify-content:flex-start!important}
+  .selpage .sel-cards .sel-card,.selpage .sel-strip .sel-card{width:50px!important;flex:0 0 50px!important;border-width:3px!important;box-shadow:3px 3px 0 var(--k)}
+  .selpage .sel-card.on{transform:translateY(-4px)!important;box-shadow:0 0 0 3px var(--y),3px 3px 0 3px var(--k)!important}
+  .selpage .sel-card b{font-size:9px!important}
+  .selpage .sel-change{display:none!important}
+  .selpage .sel-lock{position:static!important;flex:0 0 auto;width:auto!important;margin:0!important;font-size:18px!important;padding:8px 14px!important;transform:skewX(-6deg)!important;box-shadow:4px 4px 0 var(--k)!important}
+}
+@media (max-height:560px) and (orientation:landscape){
+  .selpage{padding-bottom:96px!important}
+  .selpage .sel-cards .sel-card,.selpage .sel-strip .sel-card{width:42px!important;flex-basis:42px!important}
+}
+@media (max-width:899px) and (orientation:portrait){
+  .selpage{padding-bottom:230px!important}
+  .selpage .sel-strip{flex-direction:column!important;align-items:stretch!important;gap:8px!important}
+  .selpage .sel-cards{justify-content:center!important;flex:0 0 auto}
+  .selpage .sel-lock{width:100%!important;min-width:0!important;max-width:none!important;text-align:center;justify-content:center}
+}
+@media (max-height:560px) and (orientation:landscape){
+  .selpage .sel-lock{min-width:0!important;max-width:48%!important}
+}
+/* v6: portrait is a near-square frame (was a wide strip that cut the face in half); art anchored to the head */
+.selpage .sel-portrait{aspect-ratio:5/4!important;max-height:none!important;width:min(100%,calc(min(46vh,430px) * 1.25))!important;align-self:flex-start}
+.selpage .sel-portrait .sp-img{object-position:50% 12%!important}
+@media (max-width:899px){
+  .selpage .sel-portrait{width:100%!important;aspect-ratio:1/1!important;max-height:none!important}
+}
+@media (max-height:500px) and (orientation:landscape){
+  .selpage .sel-portrait{aspect-ratio:5/4!important;width:min(100%,calc(62vh * 1.25))!important}
+}
+.selpage .sel-portrait .sp-img{object-position:50% 0%!important}

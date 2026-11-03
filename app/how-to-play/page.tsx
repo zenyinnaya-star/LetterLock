@@ -1,39 +1,57 @@
 'use client';
 
 import Link from 'next/link';
+import { useRef } from 'react';
 import { CardIcon, ClassIcon, Icon } from '@/components/icons';
 import { RulesVideo } from '@/components/RulesVideo';
 import { Wordmark } from '@/components/ui';
 import { CARD_INFO, CLASSES, CLASS_ORDER } from '@/lib/classes';
 import { Rich, useT } from '@/lib/i18n/react';
 import type { CardKind } from '@/lib/types';
+import { img } from '@/lib/mmArt';
+import { MM_RULES } from '@/lib/mastermind';
 import '@/app/comic.css';
 import '@/app/rules-comic.css';
 
 const CDN = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU';
-const MODE_VIDEOS = [
-  { id: '264c39d9-823b-4fcf-81ae-739cb8789067', name: 'Classic', blurb: 'Lock a secret word, crack your rivals.', soon: false },
-  { id: '3599d026-942b-447e-a9bf-dffa609bd95c', name: 'Duel', blurb: 'One street, two players, fastest draw.', soon: true },
-  { id: '79313477-bf76-4532-95f2-efe9ff10bc1c', name: 'Mastermind', blurb: 'Hide a word, drop clues, crack it first.', soon: true },
+const STAGE = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg4dUU/hf_20261102_151721_92488ad5-75da-4ed7-b406-19b63b030be0.png';
+const MODES = [
+  { art: 'classic', name: 'Classic', soon: false, blurb: 'Lock a secret word, crack your rivals.' },
+  { art: 'duel', name: 'Duel', soon: true, blurb: 'One street, two players, fastest draw.' },
+  { art: 'mastermind', name: 'Mastermind', soon: true, blurb: 'Hide a word, drop clues, find the Impostor.' },
 ];
+
+function ModeCard({ art, name, soon, blurb }: (typeof MODES)[number]) {
+  const v = useRef<HTMLVideoElement>(null);
+  const go = () => { try { void v.current?.play(); } catch { /* ignore */ } };
+  const stop = () => { try { v.current?.pause(); } catch { /* ignore */ } };
+  return (
+    <figure className="mode-video" onMouseEnter={go} onMouseLeave={stop} onClick={() => (v.current?.paused ? go() : stop())}>
+      <div className="mv-art">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={`/art/comic/${art}.webp`} alt="" draggable={false} />
+        <video ref={v} poster={`/art/comic/${art}.webp`} muted loop playsInline preload="none" aria-hidden>
+          <source src={`/art/comic/${art}.mp4`} type="video/mp4" />
+          <source src={`/art/comic/${art}.webm`} type="video/webm" />
+        </video>
+      </div>
+      <figcaption><b>{name}</b>{soon ? <em className="mv-soon">Coming soon</em> : null}<span>{blurb}</span></figcaption>
+    </figure>
+  );
+}
 
 export default function HowToPlay() {
   const t = useT();
   return (
-    <main className="shell narrow rules rules-comic">
+    <main className="shell narrow rules rules-comic" style={{ ['--rules-stage' as string]: `url("${img(STAGE, 1200)}")` }}>
       <header className="topbar">
         <Wordmark />
         <Link href="/" className="btn sm">{t('rl.play')}</Link>
       </header>
       <h1>{t('rl.title')}</h1>
       <RulesVideo />
-      <section className="mode-videos" aria-label="Mode walkthroughs">
-        {MODE_VIDEOS.map((v) => (
-          <figure key={v.id} className="mode-video">
-            <video controls playsInline preload="metadata" src={`${CDN}/${v.id}.mp4#t=0.1`} aria-label={`${v.name} how to play`} />
-            <figcaption><b>{v.name}</b>{v.soon ? <em className="mv-soon">Coming soon</em> : null} — {v.blurb}</figcaption>
-          </figure>
-        ))}
+      <section className="mode-videos" aria-label="Game modes">
+        {MODES.map((m) => <ModeCard key={m.name} {...m} />)}
       </section>
       <p className="big"><Rich k="rl.intro" /></p>
 
@@ -86,6 +104,11 @@ export default function HowToPlay() {
           <span><b>{CLASSES[c].name}</b> — {CLASSES[c].perk} <i className="muted">{t('rl.catch')}</i> {CLASSES[c].cost}</span>
         </div>
       ))}
+
+      <h2>Mastermind (coming soon)</h2>
+      <ul>
+        {MM_RULES.map((r) => <li key={r.h}><b>{r.h}.</b> {r.t}</li>)}
+      </ul>
 
       <h2>{t('rl.titles')}</h2>
       <div className="line"><span style={{ color: '#ffcf4a' }}><Icon name="trophy" size={24} /></span><span><Rich k="rl.t_champ" /></span></div>
