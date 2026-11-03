@@ -69,3 +69,11 @@
 }
 /* the rack lives outside .vault: give it the palette so its pink halftone panel is opaque (the art-kit image used to hide this) */
 .vault-rack{--y:#ffd400;--p:#ff1f8e;--k:#111;--c:#19d3f3;--w:#fff;--dsp:'LL Display','Luckiest Guy',Impact,sans-serif;--cmc:'LL Comic',Bangers,Impact,sans-serif}
+/* short landscape: the HUD used to go static and end up behind the fixed .vault (lock letters invisible). Keep it pinned and slim. */
+@media (max-height:500px){
+  .vault-rack .rack{position:fixed!important;left:0;right:0;bottom:0;z-index:30}
+  .vault-rack .rack-inner.rack-inner.rack-inner.rack-inner{padding:10px 10px 4px!important;min-height:0!important;gap:8px!important;flex-wrap:nowrap!important}
+  .vault-rack .rack-inner .sect-label{display:none!important}
+  .vault-rack .rack-inner .tile{width:30px!important;height:34px!important;font-size:18px!important}
+  .vault{padding-bottom:84px!important}
+}
