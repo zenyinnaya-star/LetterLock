@@ -3,10 +3,10 @@
 import { audio } from './audio';
 import { getPrefs } from './prefs';
 
-export type Track = 'theme' | 'vault' | 'duel' | 'battle' | 'none';
+export type Track = 'theme' | 'vault' | 'duel' | 'battle' | 'mastermind' | 'none';
 
-const SRC: Record<Exclude<Track, 'none'>, string> = { theme: '/audio/theme.mp3', vault: '/audio/classic-epic-m.mp3', duel: '/audio/duel.mp3', battle: '/audio/story.mp3' };
-const LEVEL: Record<Exclude<Track, 'none'>, number> = { theme: 0.32, vault: 0.4, duel: 0.55, battle: 0.5 };
+const SRC: Record<Exclude<Track, 'none'>, string> = { theme: '/audio/theme.mp3', vault: '/audio/classic-epic-m.mp3', duel: '/audio/duel.mp3', battle: '/audio/story.mp3', mastermind: '/audio/mastermind.mp3' };
+const LEVEL: Record<Exclude<Track, 'none'>, number> = { theme: 0.32, vault: 0.4, duel: 0.55, battle: 0.5, mastermind: 0.38 };
 
 let els: Partial<Record<Exclude<Track, 'none'>, HTMLAudioElement>> = {};
 let want: Track = 'none';
@@ -92,7 +92,7 @@ function hookGesture() {
 
 function apply() {
   if (typeof window === 'undefined') return;
-  (['theme', 'vault', 'duel', 'battle'] as const).forEach((t) => {
+  (['theme', 'vault', 'duel', 'battle', 'mastermind'] as const).forEach((t) => {
     const on = want === t && !audio.isMuted() && getPrefs().music;
     const a = els[t];
     if (on) {
@@ -122,7 +122,7 @@ export const music = {
     if (t === 'duel' || t === 'battle') { const d = el(t); if (d.paused) d.currentTime = 0; }
     // never overlap: fade whatever is playing out first, then bring the new track in
     if (switchTimer) window.clearTimeout(switchTimer);
-    const others = (['theme', 'vault', 'duel', 'battle'] as const).some((k) => k !== t && els[k] && !els[k]!.paused);
+    const others = (['theme', 'vault', 'duel', 'battle', 'mastermind'] as const).some((k) => k !== t && els[k] && !els[k]!.paused);
     if (others && t !== 'none') {
       const keep = want;
       want = 'none'; apply(); want = keep;
