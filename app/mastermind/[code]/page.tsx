@@ -160,10 +160,12 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
       setErr(null);
     } catch (e) {
       if (e instanceof Error && e.message.includes('REMOVED')) { router.replace('/mastermind?removed=1'); return; }
+      // a stale saved seat (old room, wiped data): forget it and show the join form instead of polling an error forever
+      if (e instanceof Error && e.message.includes('BAD_TOKEN')) { try { localStorage.removeItem(`letterlock:mm:${code}`); } catch { /* private mode */ } setS(null); setToken(null); return; }
       if (mine >= applied.current) setErr(mmError(e));
     }
     finally { inflight.current = false; }
-  }, [token, router]);
+  }, [token, router, code]);
 
   useEffect(() => {
     if (!token) return;

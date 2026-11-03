@@ -18,7 +18,7 @@ const STAGE = 'https://d8j0ntlcm91z4.cloudfront.net/user_3IsYXWzYUFU3QK4KqwKxUFg
 const MODES = [
   { art: 'classic', name: 'Classic', soon: false, blurb: 'Lock a secret word, crack your rivals.' },
   { art: 'duel', name: 'Duel', soon: true, blurb: 'One street, two players, fastest draw.' },
-  { art: 'mastermind', name: 'Mastermind', soon: true, blurb: 'Hide a word, drop clues, find the Impostor.' },
+  { art: 'mastermind', name: 'Mastermind', soon: false, blurb: 'Hide a word, drop clues, find the Impostor.' },
 ];
 
 function ModeCard({ art, name, soon, blurb }: (typeof MODES)[number]) {
@@ -105,7 +105,7 @@ export default function HowToPlay() {
         </div>
       ))}
 
-      <h2>Mastermind (coming soon)</h2>
+      <h2>Mastermind</h2>
       <ul>
         {MM_RULES.map((r) => <li key={r.h}><b>{r.h}.</b> {r.t}</li>)}
       </ul>

@@ -243,7 +243,7 @@ const fr: Partial<Record<Key, string>> = {
   'rl.r2': '**Révélation** — vois le mot de chacun et qui s’est planté.',
   'rl.r3': '**Devine** (20 s) — devine une lettre qu’un autre joueur ne peut pas utiliser. Touché = tu pioches une carte.',
   'rl.r4': '**Cartes** (8 s) — joue tes cartes, bloque les attaques, puis les nouvelles lettres tombent.',
-  'rl.rounds_note': 'Tous ceux qui ont répondu proprement prennent **1 nouvelle lettre interdite au hasard**. Mieux tu joues, plus ça se corse. (Personne n’a plus de 2 voyelles interdites.)',
+  'rl.rounds_note': 'Tous ceux qui ont répondu proprement prennent **1 nouvelle lettre interdite au hasard**. Mieux tu joues, plus ça se corse. (Personne n’a plus d’1 voyelle interdite.)',
   'rl.strikes': 'Strikes',
   'rl.s1': 'Une lettre interdite, un faux mot, une répétition ou pas de réponse = **1 strike**.',
   'rl.s2': 'Une manche propre efface tes strikes.',
