@@ -67,3 +67,5 @@
   .vault .v-city{display:none}
   .vault .v-door{transform:none}
 }
+/* the rack lives outside .vault: give it the palette so its pink halftone panel is opaque (the art-kit image used to hide this) */
+.vault-rack{--y:#ffd400;--p:#ff1f8e;--k:#111;--c:#19d3f3;--w:#fff;--dsp:'LL Display','Luckiest Guy',Impact,sans-serif;--cmc:'LL Comic',Bangers,Impact,sans-serif}
