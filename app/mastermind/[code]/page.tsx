@@ -1,7 +1,6 @@
 'use client';
 
-import { ComingSoon } from '@/components/ComingSoon';
-import { CLASSIC_ONLY } from '@/lib/modes';
+
 
 import { shareOrigin } from '@/lib/site';
 import { memo, use, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -733,4 +732,4 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   );
 }
 
-export default function MastermindRoom(props: { params: Promise<{ code: string }> }) { return CLASSIC_ONLY ? <ComingSoon name="Mastermind" /> : <MastermindRoomInner {...props} />; }
+export default function MastermindRoom(props: { params: Promise<{ code: string }> }) { return <MastermindRoomInner {...props} />; }

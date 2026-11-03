@@ -1,7 +1,6 @@
 'use client';
 
-import { ComingSoon } from '@/components/ComingSoon';
-import { CLASSIC_ONLY } from '@/lib/modes';
+
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -63,4 +62,4 @@ function MastermindHomeInner() {
   );
 }
 
-export default function MastermindHome() { return CLASSIC_ONLY ? <ComingSoon name="Mastermind" /> : <MastermindHomeInner />; }
+export default function MastermindHome() { return <MastermindHomeInner />; }
