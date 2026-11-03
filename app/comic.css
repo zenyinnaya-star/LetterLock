@@ -215,3 +215,7 @@
 .room-boot-spin { width: 38px; height: 38px; border-radius: 50%; border: 5px solid #111; border-top-color: #ff1f8e; animation: room-boot-spin .7s linear infinite; }
 @keyframes room-boot-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .room-boot-spin { animation-duration: 2s; } }
+
+/* long mode names (MASTERMIND) shrink to fit beside the button instead of running under it */
+.cp-info { container-type: inline-size; }
+.cp-info b { font-size: clamp(20px, min(3.2vw, calc(160cqi / var(--cp-len, 7))), 44px); white-space: nowrap; }
