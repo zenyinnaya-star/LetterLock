@@ -1,7 +1,6 @@
 'use client';
 
-import { ComingSoon } from '@/components/ComingSoon';
-import { CLASSIC_ONLY } from '@/lib/modes';
+
 
 import { shareOrigin } from '@/lib/site';
 import { memo, use, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -15,6 +14,7 @@ import { mmArtVars } from '@/lib/mmArt';
 import { westArtVars } from '@/lib/westArt';
 import { comicKitVars } from '@/lib/comicKit';
 import { loadName } from '@/lib/session';
+import { music } from '@/lib/music';
 import { avatarColors, loadAvatar } from '@/lib/avatar';
 import '../mastermind.css';
 import '../mm-comic.css';
@@ -94,6 +94,8 @@ function MmRules({ onClose }: { onClose: () => void }) {
 }
 
 function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) {
+  // interrogation-room music for the whole Mastermind flow; the site theme returns on the way out
+  useEffect(() => { music.play('mastermind'); return () => music.play('theme'); }, []);
   const { code: raw } = use(params);
   const code = raw.toUpperCase();
   const router = useRouter();
@@ -733,4 +735,4 @@ function MastermindRoomInner({ params }: { params: Promise<{ code: string }> }) 
   );
 }
 
-export default function MastermindRoom(props: { params: Promise<{ code: string }> }) { return CLASSIC_ONLY ? <ComingSoon name="Mastermind" /> : <MastermindRoomInner {...props} />; }
+export default function MastermindRoom(props: { params: Promise<{ code: string }> }) { return <MastermindRoomInner {...props} />; }

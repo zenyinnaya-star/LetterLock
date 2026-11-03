@@ -37,7 +37,7 @@ export const mmAvatars = {
 
 export const mm = {
   create: (name: string, quick: boolean) => call<MmJoin>('mm_create', { p_name: name, p_quick: quick }),
-  join: (code: string, name: string) => call<MmJoin>('mm_join', { p_code: code, p_name: name }),
+  join: (code: string, name: string) => call<MmJoin>('mm_join', { p_code: code, p_name: name, p_device: deviceId() }),
   start: (token: string) => call<void>('mm_start', { p_token: token }),
   clue: (token: string, text: string) => call<void>('mm_clue', { p_token: token, p_text: text }),
   guess: (token: string, text: string) => call<{ correct: boolean }>('mm_guess', { p_token: token, p_text: text }),
@@ -52,6 +52,15 @@ export const mm = {
   state: (token: string) => call<MmState>('mm_state', { p_token: token }),
 };
 
+/** A random id kept on this device, so a host's kick sticks even if the player comes back under another name. */
+export function deviceId(): string | null {
+  try {
+    let d = localStorage.getItem('letterlock:device');
+    if (!d) { d = (crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`); localStorage.setItem('letterlock:device', d); }
+    return d;
+  } catch { return null; }
+}
+
 const key = (code: string) => `letterlock:mm:${code.toUpperCase()}`;
 export function saveToken(code: string, token: string) { try { localStorage.setItem(key(code), token); } catch { /* private mode */ } }
 export function loadToken(code: string): string | null { try { return localStorage.getItem(key(code)); } catch { return null; } }
@@ -63,7 +72,7 @@ export function mmError(e: unknown): string {
     NO_CLUES_LEFT: 'No clues left this round.', MAX_REVEALS: 'You already revealed as many letters as allowed.',
     'Could not find the function': 'This needs the latest database update.', ROOM_NOT_FOUND: 'No room with that code.', ROOM_FULL: 'Room is full.',
     ALREADY_STARTED: 'That game already started.', NEED_PLAYERS: 'A case needs at least 4 detectives.', WAIT_FOR_CLUES: 'Wait for the Mastermind to post two clues first.', DECOY_LIMIT: 'No decoys left this round.', BAD_TARGET: "You can't point at that person.", NAME: 'Enter a name first.',
-    NOT_ALLOWED: "You can't do that right now.", EMPTY: 'Type something first.', BAD_TOKEN: 'Session expired. Rejoin the room.', REMOVED: 'You were removed from this case.', NOT_HOST: 'Only the host can do that.',
+    NOT_ALLOWED: "You can't do that right now.", EMPTY: 'Type something first.', BAD_TOKEN: 'Session expired. Rejoin the room.', REMOVED: 'You were removed from this case.', KICKED: 'The host removed you from this case.', NOT_HOST: 'Only the host can do that.',
   };
   for (const k of Object.keys(map)) if (m.includes(k)) return map[k];
   return 'Something went wrong. Try again.';

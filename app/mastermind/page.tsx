@@ -1,13 +1,13 @@
 'use client';
 
-import { ComingSoon } from '@/components/ComingSoon';
-import { CLASSIC_ONLY } from '@/lib/modes';
+
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/ui';
 import { mm, mmError, saveToken } from '@/lib/mastermind';
 import { loadName, saveName } from '@/lib/session';
+import { music } from '@/lib/music';
 import { mmArtVars } from '@/lib/mmArt';
 import { westArtVars } from '@/lib/westArt';
 import { comicKitVars } from '@/lib/comicKit';
@@ -15,6 +15,8 @@ import './mastermind.css';
 import './mm-comic.css';
 
 function MastermindHomeInner() {
+  // interrogation-room music for the whole Mastermind flow; the site theme returns on the way out
+  useEffect(() => { music.play('mastermind'); return () => music.play('theme'); }, []);
   const router = useRouter();
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
@@ -63,4 +65,4 @@ function MastermindHomeInner() {
   );
 }
 
-export default function MastermindHome() { return CLASSIC_ONLY ? <ComingSoon name="Mastermind" /> : <MastermindHomeInner />; }
+export default function MastermindHome() { return <MastermindHomeInner />; }

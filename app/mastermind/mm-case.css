@@ -602,3 +602,32 @@
 .mx-role span, .mx-role small, .mx-role p { font-size: clamp(9px, calc(var(--w) * .085), 12px) !important; line-height: 1.15; }
 @media (max-height: 520px) and (orientation: landscape) { .mx-file .mx-slip { margin-left: 52px; margin-right: 48px; } .mx-file .mx-lock-row, .mx-file .mx-word { margin-left: 30px; margin-right: 30px; } }
 @media (max-height: 520px) and (orientation: landscape) { .mx-file .mx-slip { padding-left: 72px !important; } }
+
+/* ===== v7: room code readable (Bangers drew 7 like 1) + wide lobby fits one short screen ===== */
+.mx-folder .code{font-family:'LL Display','Luckiest Guy',Impact,sans-serif!important;letter-spacing:.04em;font-size:clamp(44px,min(6.2vw,9.5dvh),100px)!important}
+@media (min-width:900px) and (min-aspect-ratio:1/1) and (max-height:860px){
+  .mx.lobby .mx-stage{padding-top:52px!important;row-gap:6px!important;padding-bottom:12px!important}
+  .mx.lobby .mx-title b{font-size:clamp(38px,min(7vw,10dvh),104px)}
+  .mx.lobby .mx-title i{font-size:clamp(26px,min(4.4vw,6.2dvh),64px)}
+  .mx.lobby .mx-title em{font-size:clamp(18px,min(2.6vw,3.8dvh),38px)}
+  .mx.lobby .mx-folder{width:auto!important;height:calc(100dvh - 400px);max-height:440px;min-height:220px;max-width:100%}
+  .mx.lobby .mx-plaque.big{min-height:64px!important}
+}
+
+/* ===== v7: play screen fits one short desktop screen, nothing overlaps ===== */
+@media (min-width:900px) and (min-aspect-ratio:1/1) and (max-height:860px){
+  .mx.play .mx-stage{padding-top:50px!important;padding-bottom:8px!important;row-gap:6px!important}
+  .mx.play .mx-title.small b{font-size:clamp(30px,min(5.4vw,7dvh),84px)}
+  .mx.play .mx-title.small i{font-size:clamp(14px,min(2.2vw,3.2dvh),32px)}
+  .mx.play .mx-watch .face{width:clamp(64px,min(9vw,11dvh),140px)}
+  .mx.play .mx-watch .digital{font-size:clamp(20px,min(3vw,4.6dvh),46px);padding:4px 12px}
+  .mx.play .mx-file{width:min(100%,620px)!important;height:calc(100dvh - 440px)!important;max-height:none!important;aspect-ratio:auto!important;padding-top:13%!important;justify-self:center}
+  .mx.play .mx-pad{margin-top:112px;max-height:calc(100dvh - 470px);overflow:hidden}
+  .mx.play .mx-board{max-height:calc(100dvh - 330px)}
+  .mx.play .mx-slip{padding-left:34px}
+}
+@media (min-width:900px) and (min-aspect-ratio:1/1){
+  .mx.play .mx-slip{padding-left:34px;padding-right:12px;font-size:13px}
+  .mx.play .mx-slip.empty span{white-space:nowrap;font-size:12px}
+  .mx.play .mx-pad h3{padding-left:14px}
+}

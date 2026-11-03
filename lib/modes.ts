@@ -10,3 +10,7 @@ export function isLockedRoom(s?: { mode?: string; twist?: string } | null): bool
   if (!CLASSIC_ONLY || !s) return false;
   return (!!s.mode && s.mode !== 'classic') || (!!s.twist && s.twist !== 'none');
 }
+/** Mastermind is open even while the other modes are locked. */
+export function isPlayableKind(kind: string | null | undefined): boolean {
+  return !CLASSIC_ONLY || kind === 'create' || kind === 'mastermind';
+}
