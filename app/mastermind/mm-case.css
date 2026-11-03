@@ -613,3 +613,16 @@
   .mx.lobby .mx-folder{width:auto!important;height:calc(100dvh - 400px);max-height:440px;min-height:220px;max-width:100%}
   .mx.lobby .mx-plaque.big{min-height:64px!important}
 }
+
+/* ===== v7: play screen fits one short desktop screen, nothing overlaps ===== */
+@media (min-width:900px) and (min-aspect-ratio:1/1) and (max-height:860px){
+  .mx.play .mx-stage{padding-top:50px!important;padding-bottom:8px!important;row-gap:6px!important}
+  .mx.play .mx-title.small b{font-size:clamp(30px,min(5.4vw,7dvh),84px)}
+  .mx.play .mx-title.small i{font-size:clamp(14px,min(2.2vw,3.2dvh),32px)}
+  .mx.play .mx-watch .face{width:clamp(64px,min(9vw,11dvh),140px)}
+  .mx.play .mx-watch .digital{font-size:clamp(20px,min(3vw,4.6dvh),46px);padding:4px 12px}
+  .mx.play .mx-file{width:min(100%,620px)!important;height:calc(100dvh - 440px)!important;max-height:none!important;aspect-ratio:auto!important;padding-top:13%!important;justify-self:center}
+  .mx.play .mx-pad{margin-top:112px;max-height:calc(100dvh - 470px);overflow:hidden}
+  .mx.play .mx-board{max-height:calc(100dvh - 330px)}
+  .mx.play .mx-slip{padding-left:34px}
+}
