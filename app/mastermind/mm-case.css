@@ -631,3 +631,8 @@
   .mx.play .mx-slip.empty span{white-space:nowrap;font-size:12px}
   .mx.play .mx-pad h3{padding-left:14px}
 }
+/* room code sized to the notebook itself (container units), so wide codes like WCY5 stay on the page and ROOM CODE clears the pen */
+.mx-folder{container-type:inline-size;padding-bottom:9%!important}
+.mx-folder .code{font-size:clamp(30px,19cqi,96px)!important;letter-spacing:.02em!important}
+.mx-folder .l1{font-size:clamp(22px,13cqi,64px)!important}
+.mx-folder .l2{font-size:clamp(11px,5.5cqi,24px)!important}
