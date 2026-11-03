@@ -48,3 +48,6 @@ select _patch_fn('_mm_begin_round', 'order by seat offset (r.round % n) limit 1;
   update mm_players set turns = turns + 1 where id = mid;');
 select _patch_fn('mm_again', 'update mm_players set points = 0,', 'update mm_players set turns = 0, points = 0,');
 drop function _patch_fn(text, text, text);
+
+-- (applied as follow-up migration mm_fair_total_rounds) _mm_remove: after 'delete from mm_votes where voter_id = v.id;' add
+--   if r.status in ('round','between') then update mm_rooms set total_rounds = greatest(round, least(total_rounds, round + (select count(*) from mm_players where room_id = r.id and not sitting and turns = 0))) where id = r.id; end if;
