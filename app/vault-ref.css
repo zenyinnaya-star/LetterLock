@@ -77,3 +77,6 @@
   .vault-rack .rack-inner .tile{width:30px!important;height:34px!important;font-size:18px!important}
   .vault{padding-bottom:84px!important}
 }
+/* Classic top nav: icon buttons + level chip were dark-on-dark (invisible); match the white comic Leave/Rules buttons */
+.vault-shell .topbar .iconbtn,.vault-shell .topbar .profile-chip{background:#fff!important;border:3px solid #111!important;color:#111!important;box-shadow:3px 3px 0 #111!important;opacity:1!important}
+.vault-shell .topbar .iconbtn svg,.vault-shell .topbar .profile-chip svg{color:#111!important}
