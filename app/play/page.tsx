@@ -82,7 +82,7 @@ export default function Play() {
                 e.currentTarget.style.transform = '';
                 burst(e.clientX, e.clientY, m.pow);
                 const mouse = (e.nativeEvent as PointerEvent).pointerType === 'mouse';
-                if (m.kind !== 'create') { setSel(i); return; }
+                if (!isPlayableKind(m.kind)) { setSel(i); return; }
                 if (i === sel && (mouse || live === i)) { start(m.kind); return; }
                 setSel(i); setLive(i);
               }}>
@@ -104,7 +104,7 @@ export default function Play() {
         </div>
 
         <div className="cp-bar">
-          <div className="cp-info"><b>{d.name}</b><p>{isPlayableKind(d.kind) ? d.desc : 'Coming soon. Classic is the only playable mode for now.'}</p></div>
+          <div className="cp-info" style={{ ['--cp-len' as string]: Math.max(7, d.name.length) }}><b>{d.name}</b><p>{isPlayableKind(d.kind) ? d.desc : 'Coming soon. Classic is the only playable mode for now.'}</p></div>
           <button type="button" className="cp-create" disabled={!isPlayableKind(d.kind)} onClick={(e) => { burst(e.clientX, e.clientY, d.pow); start(d.kind); }}>{SVG.people}<span>{isPlayableKind(d.kind) ? d.cta : 'Coming soon'}</span></button>
           <span className="cp-or">or</span>
           <label className="cp-join">
