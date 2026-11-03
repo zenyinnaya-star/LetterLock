@@ -255,7 +255,7 @@ const en = {
   'rl.r2': '**Reveal** — see everyone’s word and who slipped up.',
   'rl.r3': '**Guess** (20s) — guess one letter another player can’t use. Hit = you draw a card.',
   'rl.r4': '**Cards** (8s) — play cards, block attacks, then new letters land.',
-  'rl.rounds_note': 'Everyone who gave a clean answer gains **1 new random banned letter**. The better you do, the harder it gets. (Nobody gets more than 2 banned vowels.)',
+  'rl.rounds_note': 'Everyone who gave a clean answer gains **1 new random banned letter**. The better you do, the harder it gets. (Vowels are rare, and nobody holds more than 1 banned vowel.)',
   'rl.strikes': 'Strikes',
   'rl.s1': 'A banned letter, a non-word, a repeat, or no answer = **1 strike**.',
   'rl.s2': 'A clean round wipes your strikes.',

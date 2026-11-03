@@ -219,3 +219,40 @@
 /* long mode names (MASTERMIND) shrink to fit beside the button instead of running under it */
 .cp-info { container-type: inline-size; }
 .cp-info b { font-size: clamp(20px, min(3.2vw, calc(160cqi / var(--cp-len, 7))), 44px); white-space: nowrap; }
+
+/* ===== sweep: phone landscape home = logo + PLAY side by side, links clear of the plate ===== */
+@media (max-height:520px) and (orientation:landscape){
+  .cp-stage{padding:10px 12px 8px!important;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:4vw;min-height:100dvh;box-sizing:border-box}
+  .cp-hero{flex:0 0 auto}
+  .cp-logo{font-size:min(15vh,92px)!important;margin:0!important;flex-direction:row!important;transform:rotate(-8deg) skewX(-13deg)!important}
+  .cp-plate{font-size:min(3.4vh,18px)!important;margin-top:.2em!important}
+  .cp-burst{width:min(56vw,460px)!important;aspect-ratio:1.55!important;top:50%!important}
+  .cp-playwrap{margin-top:0!important}
+  .cp-play{font-size:min(14vh,80px)!important}
+  .cp-links{position:fixed;bottom:6px!important;gap:6vw!important;justify-content:center!important}
+  .cp-links a{font-size:min(4.6vh,22px)!important}
+  .cp-tear{height:14vh!important}
+  .cp-key{display:none!important}
+  .cp-icons{top:8px!important;right:8px!important}.cp-icons .iconbtn{width:36px!important;height:36px!important}
+}
+/* phone landscape /play: four small cards in one row, compact bar, no 4-screen scroll */
+@media (max-height:520px) and (orientation:landscape){
+  .cp-pw{padding:8px 14px 20px!important;max-width:none}
+  .cp-title{font-size:min(9vh,44px)!important;margin:30px 0 8px!important;white-space:nowrap}
+  .cp-join .f{flex:1;min-width:120px}
+  .cp-pick .cp-icons{top:6px!important;right:8px!important}.cp-pick .cp-icons .iconbtn{width:34px!important;height:34px!important}
+  .cp-cards{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+  .cp-card{padding:4px!important}.cp-card .in{padding:3px!important}
+  .cp-card .art{aspect-ratio:1.5/1!important}
+  .cp-card .num{font-size:min(7vh,30px)!important;left:6px!important;top:2px!important}
+  .cp-card .lbl{position:absolute;left:10px;right:6px;bottom:6px;z-index:3;padding:0;text-align:left;font-size:min(5.2vh,22px)!important;color:#fff;-webkit-text-fill-color:#fff;-webkit-text-stroke:.1em var(--k);text-shadow:2px 2px 0 var(--k)}
+  .cp-card:nth-child(4) .lbl{font-size:min(4.4vh,18px)!important}
+  .cp-bar{margin-top:12px!important;padding:8px 12px!important;gap:10px!important;flex-direction:row!important;align-items:center!important}
+  .cp-info{display:block!important}.cp-info b{font-size:min(5.5vh,24px)!important}.cp-info p{display:none}
+  .cp-create{font-size:min(5vh,22px)!important;padding:8px 14px 6px!important}
+  .cp-or,.cp-div{display:none!important}
+  .cp-join{flex-direction:row!important;align-items:center!important;min-width:0!important;padding:6px 8px!important}
+  .cp-join span{font-size:14px!important;white-space:nowrap}.cp-join input{font-size:16px!important;padding:4px 6px 2px!important}
+  .cp-minis{display:none!important}
+  .cp-tear.short{height:8vh!important}
+}

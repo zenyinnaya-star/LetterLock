@@ -243,7 +243,7 @@ const es: Partial<Record<Key, string>> = {
   'rl.r2': '**Revelar** — mira la palabra de todos y quién la lió.',
   'rl.r3': '**Adivinar** (20 s) — adivina una letra que otro jugador no puede usar. ¿Acierto? Robas una carta.',
   'rl.r4': '**Cartas** (8 s) — juega cartas, bloquea ataques y luego caen las letras nuevas.',
-  'rl.rounds_note': 'Todos los que respondieron limpio ganan **1 letra prohibida nueva al azar**. Cuanto mejor lo haces, más difícil se pone. (Nadie tiene más de 2 vocales prohibidas.)',
+  'rl.rounds_note': 'Todos los que respondieron limpio ganan **1 letra prohibida nueva al azar**. Cuanto mejor lo haces, más difícil se pone. (Nadie tiene más de 1 vocal prohibida.)',
   'rl.strikes': 'Strikes',
   'rl.s1': 'Una letra prohibida, una palabra inventada, una repetida o no responder = **1 strike**.',
   'rl.s2': 'Una ronda limpia borra tus strikes.',

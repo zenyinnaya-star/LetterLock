@@ -243,7 +243,7 @@ const de: Partial<Record<Key, string>> = {
   'rl.r2': '**Aufdecken** — sieh dir alle Wörter an und wer patzt.',
   'rl.r3': '**Raten** (20 s) — rate einen Buchstaben, den ein anderer nicht benutzen darf. Treffer = du ziehst eine Karte.',
   'rl.r4': '**Karten** (8 s) — Karten spielen, Angriffe blocken, dann landen die neuen Buchstaben.',
-  'rl.rounds_note': 'Alle mit sauberer Antwort bekommen **1 neuen zufälligen verbotenen Buchstaben**. Je besser du bist, desto härter wird’s. (Niemand bekommt mehr als 2 verbotene Vokale.)',
+  'rl.rounds_note': 'Alle mit sauberer Antwort bekommen **1 neuen zufälligen verbotenen Buchstaben**. Je besser du bist, desto härter wird’s. (Niemand bekommt mehr als 1 verbotenen Vokal.)',
   'rl.strikes': 'Strikes',
   'rl.s1': 'Ein verbotener Buchstabe, ein Fantasiewort, eine Wiederholung oder keine Antwort = **1 Strike**.',
   'rl.s2': 'Eine saubere Runde löscht deine Strikes.',

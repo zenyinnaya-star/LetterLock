@@ -58,3 +58,5 @@ main.shell.narrow.rules.rules-comic { max-width: 880px !important; width: calc(1
 .rules-comic .mode-video figcaption span:not(.mv-soon) { flex: 1 1 100%; font-size: 15px; line-height: 1.3; }
 @media (max-width: 640px) { .rules-comic .mode-videos { grid-template-columns: minmax(0, 1fr); } .rules-comic .rv-bigplay { transform: scale(.7); top: auto !important; bottom: 8px; right: 8px; left: auto !important; } }
 @media (prefers-reduced-motion: reduce) { .rules-comic .mv-art video { display: none; } }
+/* polish: big play button sits in the corner so it never covers the scene's caption */
+.rules-comic .rv-bigplay { left: auto !important; top: auto !important; right: 18px; bottom: 18px; transform: none !important; }
