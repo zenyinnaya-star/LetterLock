@@ -602,3 +602,14 @@
 .mx-role span, .mx-role small, .mx-role p { font-size: clamp(9px, calc(var(--w) * .085), 12px) !important; line-height: 1.15; }
 @media (max-height: 520px) and (orientation: landscape) { .mx-file .mx-slip { margin-left: 52px; margin-right: 48px; } .mx-file .mx-lock-row, .mx-file .mx-word { margin-left: 30px; margin-right: 30px; } }
 @media (max-height: 520px) and (orientation: landscape) { .mx-file .mx-slip { padding-left: 72px !important; } }
+
+/* ===== v7: room code readable (Bangers drew 7 like 1) + wide lobby fits one short screen ===== */
+.mx-folder .code{font-family:'LL Display','Luckiest Guy',Impact,sans-serif!important;letter-spacing:.04em;font-size:clamp(44px,min(6.2vw,9.5dvh),100px)!important}
+@media (min-width:900px) and (min-aspect-ratio:1/1) and (max-height:860px){
+  .mx.lobby .mx-stage{padding-top:52px!important;row-gap:6px!important;padding-bottom:12px!important}
+  .mx.lobby .mx-title b{font-size:clamp(38px,min(7vw,10dvh),104px)}
+  .mx.lobby .mx-title i{font-size:clamp(26px,min(4.4vw,6.2dvh),64px)}
+  .mx.lobby .mx-title em{font-size:clamp(18px,min(2.6vw,3.8dvh),38px)}
+  .mx.lobby .mx-folder{width:auto!important;height:calc(100dvh - 400px);max-height:440px;min-height:220px;max-width:100%}
+  .mx.lobby .mx-plaque.big{min-height:64px!important}
+}
